@@ -12,7 +12,7 @@ export default function GHKCUPage() {
       name: "GHK-Cu",
       price: 80,
       quantity: 1,
-      image: "/images/ghkcu.png",
+      image: "/images/ghkcu.PNG",
     };
 
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -65,7 +65,7 @@ export default function GHKCUPage() {
           <div className="border border-blue-900 rounded-2xl p-10 bg-[#050505] shadow-[0_0_50px_rgba(37,99,235,0.15)]">
 
             <img
-              src="/images/ghkcu.png"
+              src="/images/ghkcu.PNG"
               alt="GHK-Cu"
               className="w-full h-[500px] object-contain drop-shadow-[0_0_40px_rgba(37,99,235,0.3)]"
             />

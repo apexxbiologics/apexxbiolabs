@@ -99,107 +99,75 @@ if (accepted === null) {
       )}
 
       <main className="min-h-screen bg-black text-white">
-        {/* HEADER */}
-        <header className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-10 py-6 border-b border-blue-900 bg-black/70 backdrop-blur-md">
-          <img
-  src="/images/logo.PNG"
-  alt="Apexx Biologics"
-  className="h-12 w-auto"
-/>
+        <header className="fixed top-0 left-0 w-full z-50 border-b border-blue-900 bg-black/80 backdrop-blur-md px-4 py-4">
 
-<div className="relative w-full max-w-sm mx-8">
-  <input
-    type="text"
-    placeholder="Search products..."
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-    className="w-full bg-[#050505] border border-blue-900 focus:border-blue-500 outline-none rounded-xl px-4 py-3 text-white placeholder:text-gray-500 text-sm shadow-[0_0_20px_rgba(37,99,235,0.12)]"
-  />
+  <div className="flex items-center justify-between gap-4">
 
-  {search && filteredProducts.length > 0 && (
-    <div className="absolute top-full left-0 right-0 mt-3 bg-black border border-blue-900 rounded-xl shadow-[0_0_30px_rgba(37,99,235,0.25)] overflow-hidden z-[999]">
-      {filteredProducts.map((product) => (
-        <a
-          key={product.name}
-          href={product.href}
-          className="block px-5 py-4 text-sm uppercase tracking-widest hover:bg-blue-900/40 transition-all"
-        >
-          {product.name}
-        </a>
-      ))}
-    </div>
-  )}
-</div>
+    <img
+      src="/images/logo.PNG"
+      alt="Apexx Biologics"
+      className="h-10 w-auto"
+    />
 
-<nav className="flex items-center gap-8 text-sm uppercase tracking-widest">
-
-<div className="relative group py-4">
-
-    <button className="hover:text-blue-400 transition-all uppercase tracking-widest">
-      More
-    </button>
-
-<div className="absolute right-0 top-full hidden group-hover:flex flex-col bg-black border border-blue-900 rounded-xl min-w-[190px] shadow-[0_0_30px_rgba(37,99,235,0.25)] overflow-hidden z-50">
-
-  <a
-  href="/peptide-info"
-  className="px-5 py-4 hover:bg-blue-900/40 transition-all"
->
-  Peptide Info
-</a>
-
-<a
-  href="/coas"
-  className="px-5 py-4 hover:bg-blue-900/40 transition-all"
->
-  COAs
-</a>
-      <a
-        href="/about"
-        className="px-5 py-4 hover:bg-blue-900/40 transition-all"
-      >
-        About Us
+    <nav className="flex items-center gap-4 text-xs uppercase tracking-widest">
+      <a href="/" className="hover:text-blue-400 transition-all">
+        Home
       </a>
 
-      <a
-        href="/contact"
-        className="px-5 py-4 hover:bg-blue-900/40 transition-all"
-      >
-        Contact
-      </a>
+      <div className="relative group py-4">
+        <button className="hover:text-blue-400 transition-all uppercase tracking-widest">
+          More
+        </button>
+
+        <div className="absolute right-0 top-full hidden group-hover:flex flex-col bg-black border border-blue-900 rounded-xl min-w-[190px] shadow-[0_0_30px_rgba(37,99,235,0.25)] overflow-hidden z-50">
+          <a href="/peptide-info" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Peptide Info</a>
+          <a href="/coas" className="px-5 py-4 hover:bg-blue-900/40 transition-all">COAs</a>
+          <a href="/about" className="px-5 py-4 hover:bg-blue-900/40 transition-all">About Us</a>
+          <a href="/contact" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Contact</a>
+          <a href="/process" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Our Process</a>
+          <a href="/faq" className="px-5 py-4 hover:bg-blue-900/40 transition-all">FAQs</a>
+        </div>
+      </div>
 
       <a
-        href="/process"
-        className="px-5 py-4 hover:bg-blue-900/40 transition-all"
+        href="/cart"
+        className="border border-blue-700 px-3 py-2 hover:bg-blue-700 transition-all rounded-lg"
       >
-        Our Process
+        Cart
       </a>
-
-      <a
-        href="/faq"
-        className="px-5 py-4 hover:bg-blue-900/40 transition-all"
-      >
-        FAQs
-      </a>
-
-    </div>
+    </nav>
 
   </div>
 
-  <a
-    href="/cart"
-    className="border border-blue-700 px-5 py-2 hover:bg-blue-700 hover:shadow-[0_0_20px_rgba(37,99,235,0.35)] transition-all rounded-lg"
-  >
-    Cart
-  </a>
+  <div className="relative mt-4">
+    <input
+      type="text"
+      placeholder="Search products..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      className="w-full bg-[#050505] border border-blue-900 focus:border-blue-500 outline-none rounded-xl px-4 py-3 text-white placeholder:text-gray-500 text-sm"
+    />
 
-</nav>
-        </header>
+    {search && filteredProducts.length > 0 && (
+      <div className="absolute top-full left-0 right-0 mt-3 bg-black border border-blue-900 rounded-xl shadow-[0_0_30px_rgba(37,99,235,0.25)] overflow-hidden z-[999]">
+        {filteredProducts.map((product) => (
+          <a
+            key={product.name}
+            href={product.href}
+            className="block px-5 py-4 text-sm uppercase tracking-widest hover:bg-blue-900/40 transition-all"
+          >
+            {product.name}
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+
+</header>
 
         {/* HERO */}
         <section
-          className="relative flex flex-col items-center justify-center text-center py-44 px-6 bg-cover bg-center"
-        >
+className="relative flex flex-col items-center justify-center text-center pt-56 pb-28 px-6 bg-cover bg-center"        >
           <div className="absolute inset-0 bg-black/60"></div>
 
           <div className="relative z-10 flex flex-col items-center">
@@ -478,7 +446,7 @@ if (accepted === null) {
 <div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
 
   <img
-    src="/images/semax.png"
+    src="/images/semax.PNG"
     alt="Semax"
     className="h-72 object-contain w-full mb-8"
   />

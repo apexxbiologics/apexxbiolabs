@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [search, setSearch] = useState("");
 
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
+  const [researchConfirmed, setResearchConfirmed] = useState(false);
+
 const products = [
   { name: "Retatrutide", href: "/products/retatrutide" },
   { name: "BPC-157", href: "/products/bpc157" },
@@ -75,15 +78,43 @@ if (accepted === null) {
 
               <p>By entering this website, you acknowledge that:</p>
 
-              <ul className="list-disc pl-6 space-y-3 text-gray-400">
-                <li>You are at least 21 years of age.</li>
-                <li>You understand these products are for research purposes only.</li>
-                <li>You will comply with all applicable laws and regulations.</li>
-                <li>
-                  You assume full responsibility for the handling, storage, and
-                  use of any purchased products.
-                </li>
-              </ul>
+              <div className="space-y-4 text-gray-400">
+
+  <label className="flex items-start gap-3 cursor-pointer">
+    <input
+      type="checkbox"
+      className="mt-1"
+    />
+    <span>
+      I confirm that I am at least 21 years of age.
+    </span>
+  </label>
+
+  <label className="flex items-start gap-3 cursor-pointer">
+    <input
+      type="checkbox"
+      className="mt-1"
+    />
+    <span>
+      I understand that all products sold by Apexx Biologics are intended
+      strictly for laboratory research use only and are not for human
+      consumption, medical use, veterinary use, diagnosis, treatment,
+      cure, or prevention of disease.
+    </span>
+  </label>
+
+  <label className="flex items-start gap-3 cursor-pointer">
+    <input
+      type="checkbox"
+      className="mt-1"
+    />
+    <span>
+      I agree to comply with all applicable federal, state, and local laws
+      regarding the purchase, possession, and use of research materials.
+    </span>
+  </label>
+
+</div>
             </div>
 
             <div className="flex justify-center mt-10">

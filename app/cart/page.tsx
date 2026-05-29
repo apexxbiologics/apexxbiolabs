@@ -1,5 +1,3 @@
-const [agreed, setAgreed] = useState(false);
-
 "use client";
 
 import { useEffect, useState } from "react";

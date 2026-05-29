@@ -134,7 +134,7 @@ if (accepted === null) {
 
 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
     <img
-      src="/images/logo."
+      src="/images/logo.png"
       alt="Apexx Biologics"
       className="h-10 w-auto"
     />

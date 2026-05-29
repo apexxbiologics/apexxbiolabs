@@ -21,8 +21,6 @@ const filteredProducts = products.filter((product) =>
   product.name.toLowerCase().includes(search.toLowerCase())
 );
 
-  const searchTerm = search.toLowerCase().trim();
-
   const [accepted, setAccepted] = useState<boolean | null>(null);
 
 useEffect(() => {
@@ -104,7 +102,7 @@ if (accepted === null) {
         {/* HEADER */}
         <header className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-10 py-6 border-b border-blue-900 bg-black/70 backdrop-blur-md">
           <img
-  src="/images/logo.png"
+  src="/images/logo.PNG"
   alt="Apexx Biologics"
   className="h-12 w-auto"
 />
@@ -206,7 +204,7 @@ if (accepted === null) {
 
           <div className="relative z-10 flex flex-col items-center">
             <img
-  src="/images/biglogo.png"
+  src="/images/biglogo.PNG"
   alt="Apexx Biologics"
   className="w-full max-w-6xl mb-16 object-contain"
 />
@@ -289,7 +287,7 @@ if (accepted === null) {
   className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl"
 >
               <img
-                src="/images/retatrutide.png"
+                src="/images/retatrutide.PNG"
                 alt="Retatrutide"
                 className="h-72 object-contain w-full mb-8 drop-shadow-[0_0_30px_rgba(37,99,235,0.25)] hover:scale-105 transition-all duration-300"
               />
@@ -310,7 +308,7 @@ if (accepted === null) {
             {/* BPC-157 */}
             <div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
               <img
-                src="/images/bpc157.png"
+                src="/images/bpc157.PNG"
                 alt="BPC-157"
                 className="h-72 object-contain w-full mb-8 drop-shadow-[0_0_30px_rgba(37,99,235,0.25)] hover:scale-105 transition-all duration-300"
               />
@@ -330,7 +328,7 @@ if (accepted === null) {
             {/* TB-500 */}
             <div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
               <img
-                src="/images/tb500.png"
+                src="/images/tb500.PNG"
                 alt="TB-500"
                 className="h-72 object-contain w-full mb-8 drop-shadow-[0_0_30px_rgba(37,99,235,0.25)] hover:scale-105 transition-all duration-300"
               />
@@ -350,7 +348,7 @@ if (accepted === null) {
 <div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
 
   <img
-    src="/images/bacwater.png"
+    src="/images/bacwater.PNG"
     alt="Bacteriostatic Water"
     className="h-72 object-contain w-full mb-8"
   />
@@ -376,7 +374,7 @@ if (accepted === null) {
 <div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
 
   <img
-    src="/images/kpv.png"
+    src="/images/kpv.PNG"
     alt="KPV"
     className="h-72 object-contain w-full mb-8"
   />
@@ -402,7 +400,7 @@ if (accepted === null) {
 <div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
 
   <img
-    src="/images/ghkcu.png"
+    src="/images/ghkcu.PNG"
     alt="GHK-Cu"
     className="h-72 object-contain w-full mb-8"
   />
@@ -428,7 +426,7 @@ if (accepted === null) {
 <div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
 
   <img
-    src="/images/pinealon.png"
+    src="/images/pinealon.PNG"
     alt="Pinealon"
     className="h-72 object-contain w-full mb-8"
   />
@@ -454,7 +452,7 @@ if (accepted === null) {
 <div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
 
   <img
-    src="/images/selank.png"
+    src="/images/selank.PNG"
     alt="Selank"
     className="h-72 object-contain w-full mb-8"
   />

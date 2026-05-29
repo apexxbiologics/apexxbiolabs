@@ -101,10 +101,9 @@ if (accepted === null) {
       <main className="min-h-screen bg-black text-white">
         <header className="fixed top-0 left-0 w-full z-50 border-b border-blue-900 bg-black/80 backdrop-blur-md px-4 py-4">
 
-  <div className="flex items-center justify-between gap-4">
-
+<div className="flex flex-col md:flex-row items-center justify-between gap-4">
     <img
-      src="/images/logo.png"
+      src="/images/logo."
       alt="Apexx Biologics"
       className="h-10 w-auto"
     />
@@ -467,91 +466,6 @@ className="relative flex flex-col items-center justify-center text-center pt-56 
   </a>
 
 </div>
-          </div>
-        </section>
-
-        {/* COA TESTING SECTION */}
-        <section className="px-10 py-28 bg-[#020202] border-t border-blue-950">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-            <div>
-              <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-6">
-                Quality Assurance
-              </p>
-
-              <h3 className="text-5xl font-bold leading-tight mb-8">
-                Third-Party COA Testing
-              </h3>
-
-              <p className="text-gray-400 text-lg leading-relaxed mb-8">
-                Every batch distributed by Apexx Biologics undergoes analytical
-                verification to ensure consistency, purity, and identity.
-                Certificates of Analysis are maintained to support quality
-                assurance and laboratory transparency.
-              </p>
-
-              <div className="space-y-6">
-                <div className="border border-blue-900 p-6 rounded-xl">
-                  <h4 className="text-xl font-semibold text-blue-400 mb-3">
-                    HPLC Verification
-                  </h4>
-
-                  <p className="text-gray-400 leading-relaxed">
-                    High-performance liquid chromatography testing is utilized
-                    to evaluate purity and analytical consistency.
-                  </p>
-                </div>
-
-                <div className="border border-blue-900 p-6 rounded-xl">
-                  <h4 className="text-xl font-semibold text-blue-400 mb-3">
-                    Batch Identification
-                  </h4>
-
-                  <p className="text-gray-400 leading-relaxed">
-                    Each product batch is documented and traceable for internal
-                    quality control procedures.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="border border-blue-900 rounded-2xl p-10 bg-[#050505] shadow-[0_0_50px_rgba(37,99,235,0.15)]">
-              <div className="border border-blue-800 rounded-xl p-8">
-                <p className="uppercase tracking-[0.3em] text-blue-500 text-xs mb-4">
-                  Certificate Preview
-                </p>
-
-                <h4 className="text-3xl font-bold mb-8">Retatrutide</h4>
-
-                <div className="space-y-5 text-sm">
-                  <div className="flex justify-between border-b border-blue-950 pb-3">
-                    <span className="text-gray-400">Batch Number</span>
-                    <span>Pending</span>
-                  </div>
-
-                  <div className="flex justify-between border-b border-blue-950 pb-3">
-                    <span className="text-gray-400">Purity</span>
-                    <span>Pending</span>
-                  </div>
-
-                  <div className="flex justify-between border-b border-blue-950 pb-3">
-                    <span className="text-gray-400">Testing Method</span>
-                    <span>HPLC</span>
-                  </div>
-
-                  <div className="flex justify-between border-b border-blue-950 pb-3">
-                    <span className="text-gray-400">Status</span>
-                    <span>Awaiting Testing</span>
-                  </div>
-                </div>
-
-                <a
-                  href="/coas"
-                  className="block text-center mt-10 w-full bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.45)] py-4 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"
-                >
-                  View COA Page
-                </a>
-              </div>
-            </div>
           </div>
         </section>
 

@@ -1,0 +1,627 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+export default function Home() {
+  const [search, setSearch] = useState("");
+
+const products = [
+  { name: "Retatrutide", href: "/products/retatrutide" },
+  { name: "BPC-157", href: "/products/bpc157" },
+  { name: "TB-500", href: "/products/tb500" },
+  { name: "Bacteriostatic Water", href: "/products/bacwater" },
+  { name: "KPV", href: "/products/kpv" },
+  { name: "GHK-Cu", href: "/products/ghkcu" },
+  { name: "Pinealon", href: "/products/pinealon" },
+  { name: "Selank", href: "/products/selank" },
+  { name: "Semax", href: "/products/semax" },
+];
+
+const filteredProducts = products.filter((product) =>
+  product.name.toLowerCase().includes(search.toLowerCase())
+);
+
+  const searchTerm = search.toLowerCase().trim();
+
+  const [accepted, setAccepted] = useState<boolean | null>(null);
+
+useEffect(() => {
+  const navEntry = performance.getEntriesByType(
+    "navigation"
+  )[0] as PerformanceNavigationTiming;
+
+  const isRefresh = navEntry?.type === "reload";
+
+  const cameFromInternalPage =
+    document.referrer &&
+    document.referrer.includes(window.location.origin) &&
+    !document.referrer.endsWith("/");
+
+  if (isRefresh) {
+    setAccepted(false);
+  } else if (cameFromInternalPage) {
+    setAccepted(true);
+  } else {
+    setAccepted(false);
+  }
+}, []);
+
+const handleAccept = () => {
+  setAccepted(true);
+};
+
+if (accepted === null) {
+  return null;
+}
+
+  return (
+    <>
+      {!accepted && (
+        <div className="fixed inset-0 z-[999] bg-black flex items-center justify-center px-6">
+          <div className="max-w-2xl border border-blue-900 bg-[#050505] p-10 rounded-2xl shadow-[0_0_50px_rgba(37,99,235,0.2)]">
+            <h1 className="text-4xl font-bold text-center mb-8">
+              Disclaimer
+            </h1>
+
+            <div className="space-y-6 text-gray-300 leading-relaxed text-sm">
+              <p>
+                Apexx Biologics products are intended strictly for laboratory
+                research purposes only.
+              </p>
+
+              <p>
+                Products sold on this website are NOT intended for human
+                consumption, medical use, veterinary use, diagnosis, treatment,
+                cure, or prevention of disease.
+              </p>
+
+              <p>By entering this website, you acknowledge that:</p>
+
+              <ul className="list-disc pl-6 space-y-3 text-gray-400">
+                <li>You are at least 21 years of age.</li>
+                <li>You understand these products are for research purposes only.</li>
+                <li>You will comply with all applicable laws and regulations.</li>
+                <li>
+                  You assume full responsibility for the handling, storage, and
+                  use of any purchased products.
+                </li>
+              </ul>
+            </div>
+
+            <div className="flex justify-center mt-10">
+              <button
+                onClick={handleAccept}
+                className="bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_25px_rgba(37,99,235,0.45)] px-10 py-4 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"
+              >
+                I Acknowledge & Enter
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <main className="min-h-screen bg-black text-white">
+        {/* HEADER */}
+        <header className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-10 py-6 border-b border-blue-900 bg-black/70 backdrop-blur-md">
+          <img
+  src="/images/logo.png"
+  alt="Apexx Biologics"
+  className="h-12 w-auto"
+/>
+
+<div className="relative w-full max-w-sm mx-8">
+  <input
+    type="text"
+    placeholder="Search products..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className="w-full bg-[#050505] border border-blue-900 focus:border-blue-500 outline-none rounded-xl px-4 py-3 text-white placeholder:text-gray-500 text-sm shadow-[0_0_20px_rgba(37,99,235,0.12)]"
+  />
+
+  {search && filteredProducts.length > 0 && (
+    <div className="absolute top-full left-0 right-0 mt-3 bg-black border border-blue-900 rounded-xl shadow-[0_0_30px_rgba(37,99,235,0.25)] overflow-hidden z-[999]">
+      {filteredProducts.map((product) => (
+        <a
+          key={product.name}
+          href={product.href}
+          className="block px-5 py-4 text-sm uppercase tracking-widest hover:bg-blue-900/40 transition-all"
+        >
+          {product.name}
+        </a>
+      ))}
+    </div>
+  )}
+</div>
+
+<nav className="flex items-center gap-8 text-sm uppercase tracking-widest">
+
+<div className="relative group py-4">
+
+    <button className="hover:text-blue-400 transition-all uppercase tracking-widest">
+      More
+    </button>
+
+<div className="absolute right-0 top-full hidden group-hover:flex flex-col bg-black border border-blue-900 rounded-xl min-w-[190px] shadow-[0_0_30px_rgba(37,99,235,0.25)] overflow-hidden z-50">
+
+  <a
+  href="/peptide-info"
+  className="px-5 py-4 hover:bg-blue-900/40 transition-all"
+>
+  Peptide Info
+</a>
+
+<a
+  href="/coas"
+  className="px-5 py-4 hover:bg-blue-900/40 transition-all"
+>
+  COAs
+</a>
+      <a
+        href="/about"
+        className="px-5 py-4 hover:bg-blue-900/40 transition-all"
+      >
+        About Us
+      </a>
+
+      <a
+        href="/contact"
+        className="px-5 py-4 hover:bg-blue-900/40 transition-all"
+      >
+        Contact
+      </a>
+
+      <a
+        href="/process"
+        className="px-5 py-4 hover:bg-blue-900/40 transition-all"
+      >
+        Our Process
+      </a>
+
+      <a
+        href="/faq"
+        className="px-5 py-4 hover:bg-blue-900/40 transition-all"
+      >
+        FAQs
+      </a>
+
+    </div>
+
+  </div>
+
+  <a
+    href="/cart"
+    className="border border-blue-700 px-5 py-2 hover:bg-blue-700 hover:shadow-[0_0_20px_rgba(37,99,235,0.35)] transition-all rounded-lg"
+  >
+    Cart
+  </a>
+
+</nav>
+        </header>
+
+        {/* HERO */}
+        <section
+          className="relative flex flex-col items-center justify-center text-center py-44 px-6 bg-cover bg-center"
+        >
+          <div className="absolute inset-0 bg-black/60"></div>
+
+          <div className="relative z-10 flex flex-col items-center">
+            <img
+  src="/images/biglogo.png"
+  alt="Apexx Biologics"
+  className="w-full max-w-6xl mb-16 object-contain"
+/>
+
+            <h2 className="text-6xl md:text-7xl font-bold leading-tight max-w-5xl">
+              Precision Research Peptides
+            </h2>
+
+            <p className="mt-8 text-gray-300 text-lg max-w-2xl leading-relaxed">
+              High-purity research compounds manufactured and tested to strict
+              analytical standards for laboratory applications.
+            </p>
+
+            <div className="flex gap-6 mt-12">
+              <a
+                href="#shop"
+                className="bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.5)] px-8 py-4 text-sm uppercase tracking-widest font-semibold transition-all rounded-lg"
+              >
+                Shop Catalog
+              </a>
+
+              <a
+                href="/coas"
+                className="border border-blue-700 hover:bg-blue-700 px-8 py-4 text-sm uppercase tracking-widest font-semibold transition-all rounded-lg"
+              >
+                View COAs
+              </a>
+            </div>
+
+            <p className="mt-6 text-xs text-gray-500 uppercase tracking-widest">
+              For laboratory research use only. Not for human consumption.
+            </p>
+          </div>
+        </section>
+
+        {/* TRUST BAR */}
+        <section className="border-t border-b border-blue-900 py-10">
+          <div className="flex flex-wrap justify-center gap-16 text-center">
+            <div>
+              <p className="text-xl font-bold text-blue-400">99%+</p>
+              <p className="text-gray-400 uppercase tracking-widest text-xs mt-2">
+                Purity Verified
+              </p>
+            </div>
+
+            <div>
+              <p className="text-xl font-bold text-blue-400">HPLC</p>
+              <p className="text-gray-400 uppercase tracking-widest text-xs mt-2">
+                Batch Tested
+              </p>
+            </div>
+
+            <div>
+              <p className="text-xl font-bold text-blue-400">USA</p>
+              <p className="text-gray-400 uppercase tracking-widest text-xs mt-2">
+                Fast Shipping
+              </p>
+            </div>
+
+            <div>
+              <p className="text-xl font-bold text-blue-400">RUO</p>
+              <p className="text-gray-400 uppercase tracking-widest text-xs mt-2">
+                Research Use Only
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* PRODUCTS */}
+        <section id="shop" className="py-28 px-10 bg-black">
+          <h3 className="text-4xl font-bold text-center mb-16">
+            Featured Compounds
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+            {/* RETATRUTIDE */}
+<div
+  id="retatrutide"
+  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl"
+>
+              <img
+                src="/images/retatrutide.png"
+                alt="Retatrutide"
+                className="h-72 object-contain w-full mb-8 drop-shadow-[0_0_30px_rgba(37,99,235,0.25)] hover:scale-105 transition-all duration-300"
+              />
+
+              <h4 className="text-2xl font-semibold">Retatrutide</h4>
+
+              <p className="text-gray-400 mt-3">10mg Research Peptide</p>
+
+              <a
+  href="/products/retatrutide"
+  className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
+>
+  View Product
+</a>
+
+    </div>
+
+            {/* BPC-157 */}
+            <div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
+              <img
+                src="/images/bpc157.png"
+                alt="BPC-157"
+                className="h-72 object-contain w-full mb-8 drop-shadow-[0_0_30px_rgba(37,99,235,0.25)] hover:scale-105 transition-all duration-300"
+              />
+
+              <h4 className="text-2xl font-semibold">BPC-157</h4>
+
+              <p className="text-gray-400 mt-3">10mg Research Peptide</p>
+
+              <a
+                href="/products/bpc157"
+                className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
+              >
+                View Product
+              </a>
+            </div>
+
+            {/* TB-500 */}
+            <div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
+              <img
+                src="/images/tb500.png"
+                alt="TB-500"
+                className="h-72 object-contain w-full mb-8 drop-shadow-[0_0_30px_rgba(37,99,235,0.25)] hover:scale-105 transition-all duration-300"
+              />
+
+              <h4 className="text-2xl font-semibold">TB-500</h4>
+
+              <p className="text-gray-400 mt-3">10mg Research Peptide</p>
+
+              <a
+                href="/products/tb500"
+                className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
+              >
+                View Product
+              </a>
+            </div>
+            {/* BACTERIOSTATIC WATER */}
+<div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
+
+  <img
+    src="/images/bacwater.png"
+    alt="Bacteriostatic Water"
+    className="h-72 object-contain w-full mb-8"
+  />
+
+  <h4 className="text-2xl font-semibold">
+    Bacteriostatic Water
+  </h4>
+
+  <p className="text-gray-400 mt-3">
+    Research Supply
+  </p>
+
+  <a
+    href="/products/bacwater"
+    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
+  >
+    View Product
+  </a>
+
+</div>
+
+{/* KPV */}
+<div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
+
+  <img
+    src="/images/kpv.png"
+    alt="KPV"
+    className="h-72 object-contain w-full mb-8"
+  />
+
+  <h4 className="text-2xl font-semibold">
+    KPV
+  </h4>
+
+  <p className="text-gray-400 mt-3">
+    10mg Research Peptide
+  </p>
+
+  <a
+    href="/products/kpv"
+    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
+  >
+    View Product
+  </a>
+
+</div>
+
+{/* GHK-CU */}
+<div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
+
+  <img
+    src="/images/ghkcu.png"
+    alt="GHK-Cu"
+    className="h-72 object-contain w-full mb-8"
+  />
+
+  <h4 className="text-2xl font-semibold">
+    GHK-Cu
+  </h4>
+
+  <p className="text-gray-400 mt-3">
+    50mg Research Peptide
+  </p>
+
+  <a
+    href="/products/ghkcu"
+    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
+  >
+    View Product
+  </a>
+
+</div>
+
+{/* PINEALON */}
+<div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
+
+  <img
+    src="/images/pinealon.png"
+    alt="Pinealon"
+    className="h-72 object-contain w-full mb-8"
+  />
+
+  <h4 className="text-2xl font-semibold">
+    Pinealon
+  </h4>
+
+  <p className="text-gray-400 mt-3">
+    10mg Research Peptide
+  </p>
+
+  <a
+    href="/products/pinealon"
+    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
+  >
+    View Product
+  </a>
+
+</div>
+
+{/* SELANK */}
+<div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
+
+  <img
+    src="/images/selank.png"
+    alt="Selank"
+    className="h-72 object-contain w-full mb-8"
+  />
+
+  <h4 className="text-2xl font-semibold">
+    Selank
+  </h4>
+
+  <p className="text-gray-400 mt-3">
+    10mg Research Peptide
+  </p>
+
+  <a
+    href="/products/selank"
+    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
+  >
+    View Product
+  </a>
+
+</div>
+
+{/* SEMAX */}
+<div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
+
+  <img
+    src="/images/semax.png"
+    alt="Semax"
+    className="h-72 object-contain w-full mb-8"
+  />
+
+  <h4 className="text-2xl font-semibold">
+    Semax
+  </h4>
+
+  <p className="text-gray-400 mt-3">
+    10mg Research Peptide
+  </p>
+
+  <a
+    href="/products/semax"
+    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
+  >
+    View Product
+  </a>
+
+</div>
+          </div>
+        </section>
+
+        {/* COA TESTING SECTION */}
+        <section className="px-10 py-28 bg-[#020202] border-t border-blue-950">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div>
+              <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-6">
+                Quality Assurance
+              </p>
+
+              <h3 className="text-5xl font-bold leading-tight mb-8">
+                Third-Party COA Testing
+              </h3>
+
+              <p className="text-gray-400 text-lg leading-relaxed mb-8">
+                Every batch distributed by Apexx Biologics undergoes analytical
+                verification to ensure consistency, purity, and identity.
+                Certificates of Analysis are maintained to support quality
+                assurance and laboratory transparency.
+              </p>
+
+              <div className="space-y-6">
+                <div className="border border-blue-900 p-6 rounded-xl">
+                  <h4 className="text-xl font-semibold text-blue-400 mb-3">
+                    HPLC Verification
+                  </h4>
+
+                  <p className="text-gray-400 leading-relaxed">
+                    High-performance liquid chromatography testing is utilized
+                    to evaluate purity and analytical consistency.
+                  </p>
+                </div>
+
+                <div className="border border-blue-900 p-6 rounded-xl">
+                  <h4 className="text-xl font-semibold text-blue-400 mb-3">
+                    Batch Identification
+                  </h4>
+
+                  <p className="text-gray-400 leading-relaxed">
+                    Each product batch is documented and traceable for internal
+                    quality control procedures.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="border border-blue-900 rounded-2xl p-10 bg-[#050505] shadow-[0_0_50px_rgba(37,99,235,0.15)]">
+              <div className="border border-blue-800 rounded-xl p-8">
+                <p className="uppercase tracking-[0.3em] text-blue-500 text-xs mb-4">
+                  Certificate Preview
+                </p>
+
+                <h4 className="text-3xl font-bold mb-8">Retatrutide</h4>
+
+                <div className="space-y-5 text-sm">
+                  <div className="flex justify-between border-b border-blue-950 pb-3">
+                    <span className="text-gray-400">Batch Number</span>
+                    <span>Pending</span>
+                  </div>
+
+                  <div className="flex justify-between border-b border-blue-950 pb-3">
+                    <span className="text-gray-400">Purity</span>
+                    <span>Pending</span>
+                  </div>
+
+                  <div className="flex justify-between border-b border-blue-950 pb-3">
+                    <span className="text-gray-400">Testing Method</span>
+                    <span>HPLC</span>
+                  </div>
+
+                  <div className="flex justify-between border-b border-blue-950 pb-3">
+                    <span className="text-gray-400">Status</span>
+                    <span>Awaiting Testing</span>
+                  </div>
+                </div>
+
+                <a
+                  href="/coas"
+                  className="block text-center mt-10 w-full bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.45)] py-4 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"
+                >
+                  View COA Page
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ABOUT SECTION */}
+        <section className="px-10 py-28 border-t border-blue-950">
+          <div className="max-w-4xl mx-auto text-center">
+            <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-6">
+              About Apexx
+            </p>
+
+            <h3 className="text-5xl font-bold mb-8">
+              Scientific Precision. Trusted Quality.
+            </h3>
+
+            <p className="text-gray-400 text-lg leading-relaxed">
+              Apexx Biologics specializes in high-purity research compounds
+              manufactured under strict analytical standards. Every batch
+              undergoes rigorous verification to ensure purity, consistency,
+              and reliability for laboratory applications.
+            </p>
+          </div>
+        </section>
+
+        {/* FOOTER */}
+        <footer className="border-t border-blue-900 py-10 px-6 text-center text-gray-500 text-sm bg-black">
+          <p className="mb-4">
+            © 2026 Apexx Biologics. All rights reserved.
+          </p>
+
+          <p className="max-w-4xl mx-auto leading-relaxed text-gray-600">
+            Products offered by Apexx Biologics are intended strictly for
+            laboratory research use only and are not for human consumption,
+            medical, veterinary, or household use.
+          </p>
+        </footer>
+      </main>
+    </>
+  );
+}

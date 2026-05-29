@@ -247,14 +247,22 @@ className="relative flex flex-col items-center justify-center text-center pt-56 
   className="w-full max-w-6xl mb-16 object-contain"
 />
 
-            <h2 className="text-6xl md:text-7xl font-bold leading-tight max-w-5xl">
-              Precision Research Peptides
-            </h2>
+            <div className="mt-4 inline-block border border-blue-700/70 rounded-full px-6 py-2 bg-blue-950/20 shadow-[0_0_25px_rgba(37,99,235,0.25)]">
+  <p className="text-blue-400 text-xs uppercase tracking-[0.35em] font-semibold">
+    Research Use Only • Precision Tested
+  </p>
+</div>
 
-            <p className="mt-8 text-gray-300 text-lg max-w-2xl leading-relaxed">
-              High-purity research compounds manufactured and tested to strict
-              analytical standards for laboratory applications.
-            </p>
+<h2 className="mt-8 text-5xl md:text-7xl font-extrabold leading-tight max-w-5xl bg-gradient-to-r from-blue-500 via-cyan-300 to-blue-700 bg-clip-text text-transparent tracking-tight">
+  Precision Research Peptides
+</h2>
+
+<p className="mt-8 text-gray-300 text-lg md:text-xl max-w-3xl leading-relaxed">
+  High-purity research compounds developed for laboratory applications,
+  analytical consistency, and research-focused quality assurance.
+</p>
+
+<div className="mt-8 h-[1px] w-72 bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
 
             <div className="flex gap-6 mt-12">
               <a

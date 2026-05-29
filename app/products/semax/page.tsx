@@ -12,7 +12,7 @@ export default function SemaxPage() {
       name: "Semax",
       price: 65,
       quantity: 1,
-      image: "/images/semax.png",
+      image: "/images/semax.PNG",
     };
 
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -65,7 +65,7 @@ export default function SemaxPage() {
           <div className="border border-blue-900 rounded-2xl p-10 bg-[#050505] shadow-[0_0_50px_rgba(37,99,235,0.15)]">
 
             <img
-              src="/images/semax.png"
+              src="/images/semax.PNG"
               alt="Semax"
               className="w-full h-[500px] object-contain drop-shadow-[0_0_40px_rgba(37,99,235,0.3)]"
             />

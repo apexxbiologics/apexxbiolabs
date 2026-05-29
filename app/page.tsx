@@ -335,7 +335,7 @@ className="relative flex flex-col items-center justify-center text-center pt-56 
               <img
                 src="/images/retatrutide.PNG"
                 alt="Retatrutide"
-                className="h-72 object-contain w-full mb-8 drop-shadow-[0_0_30px_rgba(37,99,235,0.25)] hover:scale-105 transition-all duration-300"
+                className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
               />
 
               <h4 className="text-2xl font-semibold">Retatrutide</h4>
@@ -356,7 +356,7 @@ className="relative flex flex-col items-center justify-center text-center pt-56 
               <img
                 src="/images/bpc157.PNG"
                 alt="BPC-157"
-                className="h-72 object-contain w-full mb-8 drop-shadow-[0_0_30px_rgba(37,99,235,0.25)] hover:scale-105 transition-all duration-300"
+                className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
               />
 
               <h4 className="text-2xl font-semibold">BPC-157</h4>
@@ -376,7 +376,7 @@ className="relative flex flex-col items-center justify-center text-center pt-56 
               <img
                 src="/images/tb500.PNG"
                 alt="TB-500"
-                className="h-72 object-contain w-full mb-8 drop-shadow-[0_0_30px_rgba(37,99,235,0.25)] hover:scale-105 transition-all duration-300"
+                className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
               />
 
               <h4 className="text-2xl font-semibold">TB-500</h4>

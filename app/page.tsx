@@ -8,6 +8,8 @@ export default function Home() {
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [researchConfirmed, setResearchConfirmed] = useState(false);
 
+    const [cartCount, setCartCount] = useState(0);
+
 const products = [
   { name: "Retatrutide", href: "/products/retatrutide" },
   { name: "BPC-157", href: "/products/bpc157" },
@@ -45,6 +47,29 @@ useEffect(() => {
   } else {
     setAccepted(false);
   }
+}, []);
+
+useEffect(() => {
+  const updateCartCount = () => {
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+    const count = cart.reduce(
+      (sum: number, item: any) => sum + item.quantity,
+      0
+    );
+
+    setCartCount(count);
+  };
+
+  updateCartCount();
+
+  window.addEventListener("storage", updateCartCount);
+  window.addEventListener("cartUpdated", updateCartCount);
+
+  return () => {
+    window.removeEventListener("storage", updateCartCount);
+    window.removeEventListener("cartUpdated", updateCartCount);
+  };
 }, []);
 
 const handleAccept = () => {

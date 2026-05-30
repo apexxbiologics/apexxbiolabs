@@ -614,3 +614,8 @@ className="relative flex flex-col items-center justify-center text-center pt-56 
 
   </div>
 </footer>
+
+</main>
+</>
+);
+}

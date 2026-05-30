@@ -264,19 +264,15 @@ export default function PeptideInfoPage() {
   )}
 </div>
 
-          {/* BPC157 */}
+{/* BPC-157 */}
 <div className="border border-blue-900 rounded-2xl overflow-hidden">
-
   <button
     onClick={() =>
-      setOpenPeptide(
-        openPeptide === "bpc157" ? null : "bpc157"
-      )
+      setOpenPeptide(openPeptide === "bpc157" ? null : "bpc157")
     }
     className="w-full text-left p-8 bg-[#050505] hover:bg-[#080808] transition-all"
   >
-    <div className="flex items-center justify-between">
-
+    <div className="flex items-center justify-between gap-6">
       <div>
         <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
           Recovery Peptide
@@ -290,79 +286,67 @@ export default function PeptideInfoPage() {
       <span className="text-4xl text-blue-400">
         {openPeptide === "bpc157" ? "−" : "+"}
       </span>
-
     </div>
   </button>
 
   {openPeptide === "bpc157" && (
-
     <div className="p-10 bg-[#050505] border-t border-blue-900">
-  <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-4">
-    Recovery Peptide
-  </p>
+      <p className="text-sm text-gray-500 mb-8">
+        15 amino acids | MW: 1419.55 g/mol | Sequence: GEPPPGKPADDAGLV
+      </p>
 
-  <h2 className="text-4xl font-bold mb-4 text-blue-400">
-    BPC-157
-  </h2>
+      <p className="text-gray-300 text-lg leading-relaxed mb-8">
+        BPC-157 is a synthetic pentadecapeptide studied in laboratory and
+        preclinical models for its role in cytoprotection, vascular/endothelial
+        signaling, gastrointestinal research, and tissue-repair pathway models.
+      </p>
 
-  <p className="text-sm text-gray-500 mb-8">
-    15 amino acids | MW: 1419.55 g/mol | Sequence: GEPPPGKPADDAGLV
-  </p>
+      <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
+        <h3 className="text-xl font-semibold text-blue-400 mb-3">
+          Mechanism Research
+        </h3>
 
-  <p className="text-gray-300 text-lg leading-relaxed mb-8">
-    BPC-157 is a synthetic pentadecapeptide studied in laboratory and
-    preclinical models for its role in cytoprotection, vascular/endothelial
-    signaling, gastrointestinal research, and tissue-repair pathway models.
-  </p>
+        <p className="text-gray-400 leading-relaxed">
+          Experimental studies have investigated BPC-157 for its interaction
+          with nitric oxide pathways, VEGF-related angiogenic signaling,
+          cellular migration, growth-factor activity, and inflammatory pathway
+          modulation.
+        </p>
+      </div>
 
-  <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
-    <h3 className="text-xl font-semibold text-blue-400 mb-3">
-      Mechanism Research
-    </h3>
+      <div>
+        <h3 className="text-xl font-semibold text-white mb-4">
+          Research Areas
+        </h3>
 
-    <p className="text-gray-400 leading-relaxed">
-      Experimental studies have investigated BPC-157 for its interaction with
-      nitric oxide pathways, VEGF-related angiogenic signaling, cellular
-      migration, growth-factor activity, and inflammatory pathway modulation.
-    </p>
-  </div>
+        <div className="flex flex-wrap gap-3">
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Tissue repair models
+          </span>
 
-  <div>
-    <h3 className="text-xl font-semibold text-white mb-4">
-      Research Areas
-    </h3>
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Angiogenesis research
+          </span>
 
-    <div className="flex flex-wrap gap-3">
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Tissue repair models
-      </span>
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            GI mucosal integrity
+          </span>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Angiogenesis research
-      </span>
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Nitric oxide pathways
+          </span>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        GI mucosal integrity
-      </span>
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Connective tissue studies
+          </span>
+        </div>
+      </div>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Nitric oxide pathways
-      </span>
-
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Connective tissue studies
-      </span>
+      <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
+        For laboratory research use only. Not for human consumption.
+      </p>
     </div>
-  </div>
-
-  <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
-    For laboratory research use only. Not for human consumption.
-  </p>
-
-</div>
-
   )}
-
 </div>
 
 {/* GHK-CU */}

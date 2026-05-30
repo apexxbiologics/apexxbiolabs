@@ -22,7 +22,7 @@ export default function AboutPage() {
           </p>
 
           <h1 className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-blue-500 via-cyan-300 to-blue-700 bg-clip-text text-transparent">
-            Apexx Biologics
+            APEXX BIOLABS
           </h1>
         </div>
 
@@ -40,12 +40,12 @@ export default function AboutPage() {
 
   {
     icon: <Ban size={46} />,
-    text: "All products sold by APEXX Biologics are intended exclusively for in-vitro laboratory research and are NOT intended for human consumption, medical use, veterinary use, diagnosis, treatment, cure, or prevention of any disease or condition.",
+    text: "All products sold by APEXX BIOLABS are intended exclusively for in-vitro laboratory research and are NOT intended for human consumption, medical use, veterinary use, diagnosis, treatment, cure, or prevention of any disease or condition.",
   },
 
   {
     icon: <FileCheck size={46} />,
-    text: "By purchasing from APEXX Biologics, customers acknowledge that all materials are being obtained solely for lawful research purposes and will be handled only by qualified individuals familiar with research materials and laboratory procedures.",
+    text: "By purchasing from APEXX BIOLABS, customers acknowledge that all materials are being obtained solely for lawful research purposes and will be handled only by qualified individuals familiar with research materials and laboratory procedures.",
   },
 
   {

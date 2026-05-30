@@ -568,19 +568,49 @@ className="relative flex flex-col items-center justify-center text-center pt-56 
           </div>
         </section>
 
-        {/* FOOTER */}
-        <footer className="border-t border-blue-900 py-10 px-6 text-center text-gray-500 text-sm bg-black">
-          <p className="mb-4">
-            © 2026 Apexx Biolabs. All rights reserved.
-          </p>
+{/* FOOTER */}
+<footer className="border-t border-blue-900 py-10 px-6 bg-black">
+  <div className="max-w-7xl mx-auto">
 
-          <p className="max-w-4xl mx-auto leading-relaxed text-gray-600">
-            Products offered by Apexx Biolabs are intended strictly for
-            laboratory research use only and are not for human consumption,
-            medical, veterinary, or household use.
-          </p>
-        </footer>
-      </main>
-    </>
-  );
-}
+    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+
+      <p className="text-gray-500 text-sm text-center md:text-left">
+        © 2026 Apexx Biolabs. All rights reserved.
+      </p>
+
+      <div className="flex flex-wrap justify-center gap-6 text-xs uppercase tracking-widest">
+
+        <a
+          href="/terms"
+          className="text-gray-500 hover:text-blue-400 transition-all"
+        >
+          Terms & Conditions
+        </a>
+
+        <a
+          href="/privacy"
+          className="text-gray-500 hover:text-blue-400 transition-all"
+        >
+          Privacy Policy
+        </a>
+
+        <a
+          href="/contact"
+          className="text-gray-500 hover:text-blue-400 transition-all"
+        >
+          Contact
+        </a>
+
+      </div>
+
+    </div>
+
+    <div className="mt-8 border-t border-blue-950 pt-6">
+      <p className="max-w-5xl mx-auto text-center leading-relaxed text-gray-600 text-xs uppercase tracking-widest">
+        FOR LABORATORY RESEARCH USE ONLY. NOT FOR HUMAN CONSUMPTION.
+        NOT FOR MEDICAL, DIAGNOSTIC, THERAPEUTIC, OR VETERINARY USE.
+      </p>
+    </div>
+
+  </div>
+</footer>

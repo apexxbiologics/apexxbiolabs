@@ -1,50 +1,45 @@
 export default function PrivacyPage() {
-  const sections = [
-    [
-      "1",
-      "Information We Collect",
-      "We may collect information you provide directly to us, including your name, email address, shipping information, billing information, communications, and account information. Technical information such as IP addresses, browser type, device information, and cookies may also be collected.",
-    ],
-    [
-      "2",
-      "How We Use Information",
-      "Information may be used to process orders, communicate with customers, provide support, improve our website and services, maintain security, prevent fraud, and comply with legal obligations.",
-    ],
-    [
-      "3",
-      "Information Sharing",
-      "We do not sell personal information. Information may be shared with payment processors, shipping providers, website service providers, and legal authorities when required by law.",
-    ],
-    [
-      "4",
-      "Cookies & Tracking",
-      "Our website may use cookies and similar technologies to improve functionality, analyze traffic, and enhance user experience. Browser settings may be used to manage cookie preferences.",
-    ],
-    [
-      "5",
-      "Data Security",
-      "Reasonable technical and organizational safeguards are used to help protect personal information. However, no electronic transmission or storage system can be guaranteed to be completely secure.",
-    ],
-    [
-      "6",
-      "Your Rights",
-      "Depending on your jurisdiction, you may have rights regarding access, correction, deletion, portability, or restriction of personal information. Requests may be submitted through our contact information.",
-    ],
-    [
-      "7",
-      "International Users",
-      "Information may be transferred to and processed in jurisdictions where our service providers operate. By using this website, you consent to such transfers where permitted by law.",
-    ],
-    [
-      "8",
-      "Children's Privacy",
-      "This website is not intended for individuals under the age of 21. We do not knowingly collect information from individuals under 21 years of age.",
-    ],
-    [
-      "9",
-      "Changes To This Policy",
-      "We may update this Privacy Policy periodically. Updated versions will be reflected by revising the Last Updated date displayed on this page.",
-    ],
+  const policies = [
+    {
+      number: "01",
+      title: "Information We Collect",
+      text: "We may collect information you provide directly, including name, email, shipping information, billing information, account details, and communications with us.",
+    },
+    {
+      number: "02",
+      title: "Automatic Information",
+      text: "We may collect technical information such as IP address, browser type, device information, pages visited, cookies, and similar tracking technologies.",
+    },
+    {
+      number: "03",
+      title: "How We Use Information",
+      text: "Information may be used to process orders, provide support, improve our website, prevent fraud, maintain security, and comply with legal obligations.",
+    },
+    {
+      number: "04",
+      title: "Information Sharing",
+      text: "We do not sell personal information. We may share information with payment processors, shipping carriers, service providers, or legal authorities when required.",
+    },
+    {
+      number: "05",
+      title: "Cookies & Tracking",
+      text: "Cookies may be used to improve site functionality, analyze traffic, remember preferences, and enhance the customer experience.",
+    },
+    {
+      number: "06",
+      title: "Data Security",
+      text: "We use reasonable safeguards to help protect personal information, but no electronic transmission or storage system is completely secure.",
+    },
+    {
+      number: "07",
+      title: "Your Rights",
+      text: "Depending on your location, you may have rights to access, correct, delete, restrict, or request information about your personal data.",
+    },
+    {
+      number: "08",
+      title: "Children’s Privacy",
+      text: "This website is not intended for individuals under 21 years of age. We do not knowingly collect information from individuals under 21.",
+    },
   ];
 
   return (
@@ -56,7 +51,7 @@ export default function PrivacyPage() {
         ← Back to Home
       </a>
 
-      <section className="max-w-6xl mx-auto mt-16">
+      <section className="max-w-7xl mx-auto mt-16">
         <div className="text-center mb-16">
           <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6">
             Legal Documentation
@@ -71,76 +66,65 @@ export default function PrivacyPage() {
           </p>
         </div>
 
-        <div className="border border-blue-900 rounded-3xl p-8 md:p-12 bg-[#050505] shadow-[0_0_50px_rgba(37,99,235,0.15)] mb-12">
+        <div className="border border-blue-900 rounded-3xl p-8 md:p-12 bg-[#050505] shadow-[0_0_45px_rgba(37,99,235,0.15)] mb-12">
           <h2 className="text-3xl font-bold text-blue-400 mb-6">
             Privacy Commitment
           </h2>
 
-          <p className="text-gray-400 text-lg leading-relaxed">
-            Apexx Biolabs is committed to protecting your privacy. This
-            Privacy Policy explains how we collect, use, disclose, and
-            safeguard your information when you visit our website,
-            interact with our services, or make a purchase.
+          <p className="text-gray-300 text-lg leading-relaxed">
+            Apexx Biolabs is committed to protecting your privacy. This policy
+            explains how information may be collected, used, shared, and
+            safeguarded when you visit our website, place an order, or contact
+            our support team.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {sections.map(([number, title, text]) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+          {policies.map((policy) => (
             <div
-              key={number}
-              className="border border-blue-900 rounded-2xl p-8 bg-[#050505] hover:border-blue-500 hover:shadow-[0_0_35px_rgba(37,99,235,0.20)] transition-all"
+              key={policy.number}
+              className="border border-blue-900 rounded-3xl p-8 bg-[#050505] hover:border-blue-500 hover:shadow-[0_0_35px_rgba(37,99,235,0.2)] transition-all"
             >
-              <div className="flex items-center gap-4 mb-5">
-                <div className="w-12 h-12 rounded-xl border border-blue-700 bg-blue-950/30 flex items-center justify-center text-blue-400 font-bold">
-                  {number}
-                </div>
-
-                <h2 className="text-2xl font-bold text-blue-400">
-                  {title}
-                </h2>
+              <div className="w-14 h-14 rounded-2xl border border-blue-700 bg-blue-950/30 flex items-center justify-center text-blue-400 font-bold mb-6">
+                {policy.number}
               </div>
 
+              <h2 className="text-2xl font-bold text-blue-400 mb-5 uppercase tracking-wide">
+                {policy.title}
+              </h2>
+
               <p className="text-gray-400 leading-relaxed">
-                {text}
+                {policy.text}
               </p>
             </div>
           ))}
         </div>
 
-        <div className="mt-12 border border-blue-900 rounded-3xl p-8 bg-[#050505]">
-          <h2 className="text-2xl font-bold text-blue-400 mb-6">
+        <div className="mt-14 border border-blue-900 rounded-3xl p-8 bg-[#050505]">
+          <h2 className="text-3xl font-bold text-blue-400 mb-6">
             Contact Information
           </h2>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <p className="uppercase tracking-widest text-blue-500 text-sm mb-2">
                 Email
               </p>
-
-              <p className="text-gray-400">
-                support@apexxbiolabs.com
-              </p>
+              <p className="text-gray-400">support@apexxbiolabs.com</p>
             </div>
 
             <div>
               <p className="uppercase tracking-widest text-blue-500 text-sm mb-2">
                 Website
               </p>
-
-              <p className="text-gray-400">
-                www.apexxbiolabs.com
-              </p>
+              <p className="text-gray-400">apexxbiolabs.com</p>
             </div>
 
             <div>
               <p className="uppercase tracking-widest text-blue-500 text-sm mb-2">
-                Questions
+                Privacy Questions
               </p>
-
-              <p className="text-gray-400">
-                Contact our support team regarding privacy questions.
-              </p>
+              <p className="text-gray-400">Contact us for privacy-related requests.</p>
             </div>
           </div>
         </div>

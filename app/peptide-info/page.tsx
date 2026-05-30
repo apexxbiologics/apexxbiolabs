@@ -894,6 +894,8 @@ export default function PeptideInfoPage() {
   )}
 </div>
 
+</div>
+
       </section>
 
     </main>

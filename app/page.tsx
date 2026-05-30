@@ -159,14 +159,13 @@ if (accepted === null) {
       <main className="min-h-screen bg-black text-white">
         <header className="fixed top-0 left-0 w-full z-50 border-b border-blue-900 bg-black/80 backdrop-blur-md px-4 py-4">
 
-<div className="flex flex-col lg:flex-row items-center justify-between gap-6">    <img
+<div className="flex flex-row items-center justify-between gap-4">    <img
   src="/images/logo.png"
   alt="Apexx Biolabs"
   className="h-12 w-auto shrink-0"
 />
 <div className="flex justify-center mt-4">
-  <div className="relative w-full max-w-lg">
-    <input
+<div className="relative w-full max-w-md">    <input
       type="text"
       placeholder="Search products..."
       value={search}

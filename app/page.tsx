@@ -159,12 +159,36 @@ if (accepted === null) {
       <main className="min-h-screen bg-black text-white">
         <header className="fixed top-0 left-0 w-full z-50 border-b border-blue-900 bg-black/80 backdrop-blur-md px-4 py-4">
 
-<div className="flex flex-col md:flex-row items-center justify-between gap-4">
-    <img
-      src="/images/logo.png"
-      alt="Apexx Biolabs"
-      className="h-10 w-auto"
+<div className="flex flex-col lg:flex-row items-center justify-between gap-6">    <img
+  src="/images/logo.png"
+  alt="Apexx Biolabs"
+  className="h-12 w-auto shrink-0"
+/>
+<div className="flex justify-center mt-4">
+  <div className="relative w-full max-w-lg">
+    <input
+      type="text"
+      placeholder="Search products..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      className="w-full bg-[#050505] border border-blue-900 focus:border-blue-500 outline-none rounded-xl px-4 py-3 text-white placeholder:text-gray-500 text-sm shadow-[0_0_20px_rgba(37,99,235,0.12)]"
     />
+
+    {search && filteredProducts.length > 0 && (
+      <div className="absolute top-full left-0 right-0 mt-3 bg-black border border-blue-900 rounded-xl shadow-[0_0_30px_rgba(37,99,235,0.25)] overflow-hidden z-[999]">
+        {filteredProducts.map((product) => (
+          <a
+            key={product.name}
+            href={product.href}
+            className="block px-5 py-4 text-sm uppercase tracking-widest hover:bg-blue-900/40 transition-all"
+          >
+            {product.name}
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</div>
 
     <nav className="flex items-center gap-4 text-xs uppercase tracking-widest">
       <a
@@ -209,32 +233,6 @@ if (accepted === null) {
     </nav>
 
   </div>
-
-<div className="flex justify-center mt-4">
-  <div className="relative w-full max-w-lg">
-    <input
-      type="text"
-      placeholder="Search products..."
-      value={search}
-      onChange={(e) => setSearch(e.target.value)}
-      className="w-full bg-[#050505] border border-blue-900 focus:border-blue-500 outline-none rounded-xl px-4 py-3 text-white placeholder:text-gray-500 text-sm shadow-[0_0_20px_rgba(37,99,235,0.12)]"
-    />
-
-    {search && filteredProducts.length > 0 && (
-      <div className="absolute top-full left-0 right-0 mt-3 bg-black border border-blue-900 rounded-xl shadow-[0_0_30px_rgba(37,99,235,0.25)] overflow-hidden z-[999]">
-        {filteredProducts.map((product) => (
-          <a
-            key={product.name}
-            href={product.href}
-            className="block px-5 py-4 text-sm uppercase tracking-widest hover:bg-blue-900/40 transition-all"
-          >
-            {product.name}
-          </a>
-        ))}
-      </div>
-    )}
-  </div>
-</div>
 
 </header>
 

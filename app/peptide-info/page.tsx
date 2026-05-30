@@ -440,364 +440,458 @@ export default function PeptideInfoPage() {
 </div>
 
 {/* KPV */}
-<div className="border border-blue-900 rounded-2xl p-10 bg-[#050505] shadow-[0_0_35px_rgba(37,99,235,0.12)]">
+<div className="border border-blue-900 rounded-2xl overflow-hidden">
+  <button
+    onClick={() =>
+      setOpenPeptide(openPeptide === "kpv" ? null : "kpv")
+    }
+    className="w-full text-left p-8 bg-[#050505] hover:bg-[#080808] transition-all"
+  >
+    <div className="flex items-center justify-between gap-6">
+      <div>
+        <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
+          Anti-Inflammatory Peptide
+        </p>
 
-  <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-4">
-    Anti-Inflammatory Peptide
-  </p>
+        <h2 className="text-4xl font-bold text-blue-400">
+          KPV
+        </h2>
+      </div>
 
-  <h2 className="text-4xl font-bold mb-4 text-blue-400">
-    KPV
-  </h2>
-
-  <p className="text-sm text-gray-500 mb-8">
-    3 amino acids | MW: 342.43 g/mol | Sequence: Lys-Pro-Val
-  </p>
-
-  <p className="text-gray-300 text-lg leading-relaxed mb-8">
-    KPV is a naturally occurring tripeptide derived from
-    alpha-melanocyte-stimulating hormone (α-MSH) and is widely studied in
-    laboratory and preclinical models involving inflammatory modulation,
-    mucosal integrity, antimicrobial activity, and tissue-repair pathway
-    research.
-  </p>
-
-  <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
-    <h3 className="text-xl font-semibold text-blue-400 mb-3">
-      Mechanism Research
-    </h3>
-
-    <p className="text-gray-400 leading-relaxed">
-      Experimental studies have investigated KPV for its interaction with
-      NF-κB signaling pathways, inflammatory cytokine modulation, antimicrobial
-      mechanisms, mucosal barrier support, and peptide-mediated cellular
-      protection pathways in laboratory models.
-    </p>
-  </div>
-
-  <div>
-    <h3 className="text-xl font-semibold text-white mb-4">
-      Research Areas
-    </h3>
-
-    <div className="flex flex-wrap gap-3">
-
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        NF-κB inflammatory pathway research
+      <span className="text-4xl text-blue-400">
+        {openPeptide === "kpv" ? "−" : "+"}
       </span>
+    </div>
+  </button>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Gastrointestinal mucosal studies
-      </span>
+  {openPeptide === "kpv" && (
+    <div className="p-10 bg-[#050505] border-t border-blue-900">
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Antimicrobial peptide research
-      </span>
+      <p className="text-sm text-gray-500 mb-8">
+        3 amino acids | MW: 342.43 g/mol | Sequence: Lys-Pro-Val
+      </p>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Tissue-repair pathway models
-      </span>
+      <p className="text-gray-300 text-lg leading-relaxed mb-8">
+        KPV is a naturally occurring tripeptide derived from
+        alpha-melanocyte-stimulating hormone (α-MSH) and is widely studied in
+        laboratory and preclinical models involving inflammatory modulation,
+        mucosal integrity, antimicrobial activity, and tissue-repair pathway
+        research.
+      </p>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Cellular protection signaling
-      </span>
+      <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
+        <h3 className="text-xl font-semibold text-blue-400 mb-3">
+          Mechanism Research
+        </h3>
+
+        <p className="text-gray-400 leading-relaxed">
+          Experimental studies have investigated KPV for its interaction with
+          NF-κB signaling pathways, inflammatory cytokine modulation,
+          antimicrobial mechanisms, mucosal barrier support, and peptide-mediated
+          cellular protection pathways in laboratory models.
+        </p>
+      </div>
+
+      <div>
+        <h3 className="text-xl font-semibold text-white mb-4">
+          Research Areas
+        </h3>
+
+        <div className="flex flex-wrap gap-3">
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            NF-κB inflammatory pathway research
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Gastrointestinal mucosal studies
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Antimicrobial peptide research
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Tissue-repair pathway models
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Cellular protection signaling
+          </span>
+
+        </div>
+      </div>
+
+      <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
+        For laboratory research use only. Not for human consumption.
+      </p>
 
     </div>
-  </div>
-
-  <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
-    For laboratory research use only. Not for human consumption.
-  </p>
-
+  )}
 </div>
 
 {/* PINEALON */}
-<div className="border border-blue-900 rounded-2xl p-10 bg-[#050505] shadow-[0_0_35px_rgba(37,99,235,0.12)]">
+<div className="border border-blue-900 rounded-2xl overflow-hidden">
+  <button
+    onClick={() =>
+      setOpenPeptide(openPeptide === "pinealon" ? null : "pinealon")
+    }
+    className="w-full text-left p-8 bg-[#050505] hover:bg-[#080808] transition-all"
+  >
+    <div className="flex items-center justify-between gap-6">
+      <div>
+        <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
+          Neuroregenerative Peptide
+        </p>
 
-  <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-4">
-    Neuroregenerative Peptide
-  </p>
+        <h2 className="text-4xl font-bold text-blue-400">
+          Pinealon
+        </h2>
+      </div>
 
-  <h2 className="text-4xl font-bold mb-4 text-blue-400">
-    Pinealon
-  </h2>
-
-  <p className="text-sm text-gray-500 mb-8">
-    3 amino acids | MW: 418.40 g/mol | Sequence: Glu-Asp-Arg (EDR)
-  </p>
-
-  <p className="text-gray-300 text-lg leading-relaxed mb-8">
-    Pinealon is a synthetic tripeptide composed of L-glutamic acid,
-    L-aspartic acid, and L-arginine (EDR). It is studied in laboratory and
-    preclinical models involving neuroprotective signaling, neuronal
-    communication pathways, oxidative-stress modulation, and cellular
-    longevity research.
-  </p>
-
-  <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
-    <h3 className="text-xl font-semibold text-blue-400 mb-3">
-      Mechanism Research
-    </h3>
-
-    <p className="text-gray-400 leading-relaxed">
-      Experimental studies have investigated Pinealon for its interaction with
-      neuronal gene-expression pathways, oxidative-stress response systems,
-      mitochondrial signaling, peptide-mediated neuroregulation, and cellular
-      communication mechanisms in laboratory research models.
-    </p>
-  </div>
-
-  <div>
-    <h3 className="text-xl font-semibold text-white mb-4">
-      Research Areas
-    </h3>
-
-    <div className="flex flex-wrap gap-3">
-
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Neuroprotective pathway research
+      <span className="text-4xl text-blue-400">
+        {openPeptide === "pinealon" ? "−" : "+"}
       </span>
+    </div>
+  </button>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Cognitive signaling studies
-      </span>
+  {openPeptide === "pinealon" && (
+    <div className="p-10 bg-[#050505] border-t border-blue-900">
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Oxidative stress modulation
-      </span>
+      <p className="text-sm text-gray-500 mb-8">
+        3 amino acids | MW: 418.40 g/mol | Sequence: Glu-Asp-Arg (EDR)
+      </p>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Mitochondrial research models
-      </span>
+      <p className="text-gray-300 text-lg leading-relaxed mb-8">
+        Pinealon is a synthetic tripeptide composed of L-glutamic acid,
+        L-aspartic acid, and L-arginine (EDR). It is studied in laboratory and
+        preclinical models involving neuroprotective signaling, neuronal
+        communication pathways, oxidative-stress modulation, and cellular
+        longevity research.
+      </p>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Cellular longevity investigations
-      </span>
+      <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
+        <h3 className="text-xl font-semibold text-blue-400 mb-3">
+          Mechanism Research
+        </h3>
+
+        <p className="text-gray-400 leading-relaxed">
+          Experimental studies have investigated Pinealon for its interaction
+          with neuronal gene-expression pathways, oxidative-stress response
+          systems, mitochondrial signaling, peptide-mediated neuroregulation,
+          and cellular communication mechanisms in laboratory research models.
+        </p>
+      </div>
+
+      <div>
+        <h3 className="text-xl font-semibold text-white mb-4">
+          Research Areas
+        </h3>
+
+        <div className="flex flex-wrap gap-3">
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Neuroprotective pathway research
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Cognitive signaling studies
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Oxidative stress modulation
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Mitochondrial research models
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Cellular longevity investigations
+          </span>
+
+        </div>
+      </div>
+
+      <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
+        For laboratory research use only. Not for human consumption.
+      </p>
 
     </div>
-  </div>
-
-  <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
-    For laboratory research use only. Not for human consumption.
-  </p>
-
+  )}
 </div>
 
 {/* SELANK */}
-<div className="border border-blue-900 rounded-2xl p-10 bg-[#050505] shadow-[0_0_35px_rgba(37,99,235,0.12)]">
+<div className="border border-blue-900 rounded-2xl overflow-hidden">
+  <button
+    onClick={() =>
+      setOpenPeptide(openPeptide === "selank" ? null : "selank")
+    }
+    className="w-full text-left p-8 bg-[#050505] hover:bg-[#080808] transition-all"
+  >
+    <div className="flex items-center justify-between gap-6">
+      <div>
+        <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
+          Nootropic Research Peptide
+        </p>
 
-  <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-4">
-    Nootropic & Neuroprotective Peptide
-  </p>
+        <h2 className="text-4xl font-bold text-blue-400">
+          Selank
+        </h2>
+      </div>
 
-  <h2 className="text-4xl font-bold mb-4 text-blue-400">
-    Selank
-  </h2>
-
-  <p className="text-sm text-gray-500 mb-8">
-    7 amino acids | MW: 751.89 g/mol | Sequence: TKPRPGP
-  </p>
-
-  <p className="text-gray-300 text-lg leading-relaxed mb-8">
-    Selank is a synthetic heptapeptide derived from the naturally occurring
-    immunomodulatory peptide tuftsin. It is widely studied in laboratory and
-    preclinical models involving GABAergic signaling, neuroprotection,
-    cognitive-function pathways, stress-response modulation, and immune-system
-    regulatory research.
-  </p>
-
-  <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
-    <h3 className="text-xl font-semibold text-blue-400 mb-3">
-      Mechanism Research
-    </h3>
-
-    <p className="text-gray-400 leading-relaxed">
-      Experimental studies have investigated Selank for its interaction with
-      GABA-A receptor modulation, BDNF-related signaling pathways,
-      neurochemical regulation, inflammatory cytokine balance, and peptide-based
-      stress-response mechanisms in laboratory models.
-    </p>
-  </div>
-
-  <div>
-    <h3 className="text-xl font-semibold text-white mb-4">
-      Research Areas
-    </h3>
-
-    <div className="flex flex-wrap gap-3">
-
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        GABAergic signaling research
+      <span className="text-4xl text-blue-400">
+        {openPeptide === "selank" ? "−" : "+"}
       </span>
+    </div>
+  </button>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Cognitive-function studies
-      </span>
+  {openPeptide === "selank" && (
+    <div className="p-10 bg-[#050505] border-t border-blue-900">
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Neuroprotective pathway models
-      </span>
+      <p className="text-sm text-gray-500 mb-8">
+        7 amino acids | MW: 751.9 g/mol | Synthetic Tuftsin Analog
+      </p>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Stress-response modulation
-      </span>
+      <p className="text-gray-300 text-lg leading-relaxed mb-8">
+        Selank is a synthetic heptapeptide derived from the naturally occurring
+        immunomodulatory peptide tuftsin. It is studied in laboratory and
+        preclinical models involving neurochemical signaling, cognitive
+        processes, stress-response pathways, and neuroimmune interactions.
+      </p>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Immunomodulatory peptide research
-      </span>
+      <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
+        <h3 className="text-xl font-semibold text-blue-400 mb-3">
+          Mechanism Research
+        </h3>
+
+        <p className="text-gray-400 leading-relaxed">
+          Experimental studies have investigated Selank for its interaction
+          with GABAergic signaling systems, neurotransmitter regulation,
+          neurotrophic-factor expression, immune-modulatory pathways, and
+          stress-adaptation mechanisms in laboratory research models.
+        </p>
+      </div>
+
+      <div>
+        <h3 className="text-xl font-semibold text-white mb-4">
+          Research Areas
+        </h3>
+
+        <div className="flex flex-wrap gap-3">
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            GABA signaling research
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Neurotransmitter pathway studies
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Cognitive-function models
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Neuroimmune interactions
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Stress-response pathway research
+          </span>
+
+        </div>
+      </div>
+
+      <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
+        For laboratory research use only. Not for human consumption.
+      </p>
 
     </div>
-  </div>
-
-  <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
-    For laboratory research use only. Not for human consumption.
-  </p>
-
+  )}
 </div>
 
 {/* SEMAX */}
-<div className="border border-blue-900 rounded-2xl p-10 bg-[#050505] shadow-[0_0_35px_rgba(37,99,235,0.12)]">
+<div className="border border-blue-900 rounded-2xl overflow-hidden">
+  <button
+    onClick={() =>
+      setOpenPeptide(openPeptide === "semax" ? null : "semax")
+    }
+    className="w-full text-left p-8 bg-[#050505] hover:bg-[#080808] transition-all"
+  >
+    <div className="flex items-center justify-between gap-6">
+      <div>
+        <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
+          Nootropic Research Peptide
+        </p>
 
-  <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-4">
-    Nootropic & Neuroprotective Peptide
-  </p>
+        <h2 className="text-4xl font-bold text-blue-400">
+          Semax
+        </h2>
+      </div>
 
-  <h2 className="text-4xl font-bold mb-4 text-blue-400">
-    Semax
-  </h2>
-
-  <p className="text-sm text-gray-500 mb-8">
-    7 amino acids | MW: 813.92 g/mol | Sequence: MEHFPGP
-  </p>
-
-  <p className="text-gray-300 text-lg leading-relaxed mb-8">
-    Semax is a synthetic heptapeptide derived from the N-terminal fragment of
-    adrenocorticotropic hormone (ACTH 4-10). It is widely studied in laboratory
-    and preclinical models involving neuroprotective signaling, BDNF
-    modulation, cognitive-function pathways, neuroplasticity, and peptide-based
-    neurotransmitter regulation research.
-  </p>
-
-  <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
-    <h3 className="text-xl font-semibold text-blue-400 mb-3">
-      Mechanism Research
-    </h3>
-
-    <p className="text-gray-400 leading-relaxed">
-      Experimental studies have investigated Semax for its interaction with
-      BDNF and TrkB signaling pathways, dopamine and serotonin modulation,
-      neuroplasticity mechanisms, oxidative-stress response systems, and
-      neurotrophic peptide signaling in laboratory research models.
-    </p>
-  </div>
-
-  <div>
-    <h3 className="text-xl font-semibold text-white mb-4">
-      Research Areas
-    </h3>
-
-    <div className="flex flex-wrap gap-3">
-
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        BDNF signaling research
+      <span className="text-4xl text-blue-400">
+        {openPeptide === "semax" ? "−" : "+"}
       </span>
+    </div>
+  </button>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Neuroplasticity pathway studies
-      </span>
+  {openPeptide === "semax" && (
+    <div className="p-10 bg-[#050505] border-t border-blue-900">
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Cognitive-function research
-      </span>
+      <p className="text-sm text-gray-500 mb-8">
+        7 amino acids | MW: 813.9 g/mol | ACTH(4-10) Analog
+      </p>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Neuroprotective signaling models
-      </span>
+      <p className="text-gray-300 text-lg leading-relaxed mb-8">
+        Semax is a synthetic heptapeptide derived from the adrenocorticotropic
+        hormone (ACTH) fragment ACTH(4-10). It is studied in laboratory and
+        preclinical models involving neurotrophic signaling, cognitive
+        performance pathways, neuronal plasticity, and neuroprotective
+        mechanisms.
+      </p>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Neurotransmitter modulation
-      </span>
+      <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
+        <h3 className="text-xl font-semibold text-blue-400 mb-3">
+          Mechanism Research
+        </h3>
+
+        <p className="text-gray-400 leading-relaxed">
+          Experimental studies have investigated Semax for its interaction
+          with brain-derived neurotrophic factor (BDNF) pathways, neuronal
+          plasticity signaling, neurotransmitter regulation, cellular
+          stress-response systems, and neuroprotective mechanisms in
+          laboratory research models.
+        </p>
+      </div>
+
+      <div>
+        <h3 className="text-xl font-semibold text-white mb-4">
+          Research Areas
+        </h3>
+
+        <div className="flex flex-wrap gap-3">
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            BDNF pathway research
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Neuroplasticity studies
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Cognitive-performance models
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Neuroprotection research
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Neurotransmitter signaling
+          </span>
+
+        </div>
+      </div>
+
+      <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
+        For laboratory research use only. Not for human consumption.
+      </p>
 
     </div>
-  </div>
-
-  <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
-    For laboratory research use only. Not for human consumption.
-  </p>
-
+  )}
 </div>
 
-{/* TB500 */}
-<div className="border border-blue-900 rounded-2xl p-10 bg-[#050505] shadow-[0_0_35px_rgba(37,99,235,0.12)]">
+{/* TB-500 */}
+<div className="border border-blue-900 rounded-2xl overflow-hidden">
+  <button
+    onClick={() =>
+      setOpenPeptide(openPeptide === "tb500" ? null : "tb500")
+    }
+    className="w-full text-left p-8 bg-[#050505] hover:bg-[#080808] transition-all"
+  >
+    <div className="flex items-center justify-between gap-6">
+      <div>
+        <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
+          Regenerative Research Peptide
+        </p>
 
-  <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-4">
-    Healing Peptide
-  </p>
+        <h2 className="text-4xl font-bold text-blue-400">
+          TB-500
+        </h2>
+      </div>
 
-  <h2 className="text-4xl font-bold mb-4 text-blue-400">
-    TB-500
-  </h2>
-
-  <p className="text-sm text-gray-500 mb-8">
-    7 amino acids | MW: 4963.44 g/mol | Active Fragment: Ac-LKKTETQ
-  </p>
-
-  <p className="text-gray-300 text-lg leading-relaxed mb-8">
-    TB-500 is a synthetic research peptide derived from thymosin beta-4 and is
-    widely studied in laboratory and preclinical models involving cellular
-    migration, angiogenesis, connective tissue signaling, and regenerative
-    pathway research.
-  </p>
-
-  <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
-    <h3 className="text-xl font-semibold text-blue-400 mb-3">
-      Mechanism Research
-    </h3>
-
-    <p className="text-gray-400 leading-relaxed">
-      Experimental studies have investigated TB-500 for its interaction with
-      actin regulation, cellular migration signaling, angiogenic pathways,
-      inflammatory modulation, and tissue-repair mechanisms in laboratory
-      models.
-    </p>
-  </div>
-
-  <div>
-    <h3 className="text-xl font-semibold text-white mb-4">
-      Research Areas
-    </h3>
-
-    <div className="flex flex-wrap gap-3">
-
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Cellular migration research
+      <span className="text-4xl text-blue-400">
+        {openPeptide === "tb500" ? "−" : "+"}
       </span>
+    </div>
+  </button>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Angiogenesis studies
-      </span>
+  {openPeptide === "tb500" && (
+    <div className="p-10 bg-[#050505] border-t border-blue-900">
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Connective tissue models
-      </span>
+      <p className="text-sm text-gray-500 mb-8">
+        43 amino acids | MW: 4963.4 g/mol | Synthetic Thymosin Beta-4 Fragment
+      </p>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Tissue regeneration pathways
-      </span>
+      <p className="text-gray-300 text-lg leading-relaxed mb-8">
+        TB-500 is a synthetic research peptide derived from thymosin beta-4,
+        a naturally occurring peptide involved in cellular migration and tissue
+        maintenance pathways. It is widely studied in laboratory and preclinical
+        models involving regeneration, angiogenesis, inflammatory signaling,
+        and connective tissue research.
+      </p>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Experimental inflammatory research
-      </span>
+      <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
+        <h3 className="text-xl font-semibold text-blue-400 mb-3">
+          Mechanism Research
+        </h3>
+
+        <p className="text-gray-400 leading-relaxed">
+          Experimental studies have investigated TB-500 for its interaction
+          with actin-regulating pathways, cellular migration mechanisms,
+          angiogenic signaling, extracellular matrix remodeling, and tissue
+          repair processes in laboratory research models.
+        </p>
+      </div>
+
+      <div>
+        <h3 className="text-xl font-semibold text-white mb-4">
+          Research Areas
+        </h3>
+
+        <div className="flex flex-wrap gap-3">
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Cellular migration research
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Angiogenesis studies
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Connective tissue research
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Tissue regeneration models
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Inflammatory pathway investigations
+          </span>
+
+        </div>
+      </div>
+
+      <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
+        For laboratory research use only. Not for human consumption.
+      </p>
 
     </div>
-  </div>
-
-  <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
-    For laboratory research use only. Not for human consumption.
-  </p>
-
-</div>
-
+  )}
 </div>
 
       </section>

@@ -222,9 +222,9 @@ export default function ProcessPage() {
                 {renderIcon(step.icon)}
               </div>
 
-              <h2 className="text-xl font-bold uppercase tracking-widest mb-5">
-                {step.title}
-              </h2>
+            <h2 className="text-lg font-bold uppercase tracking-wide mb-5 h-16 flex items-center justify-center text-center">
+  {step.title}
+</h2>
 
               <div className="h-[1px] w-full bg-blue-800 mb-5" />
 

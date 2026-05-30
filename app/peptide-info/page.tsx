@@ -349,75 +349,94 @@ export default function PeptideInfoPage() {
   )}
 </div>
 
-{/* GHK-CU */}
-<div className="border border-blue-900 rounded-2xl p-10 bg-[#050505] shadow-[0_0_35px_rgba(37,99,235,0.12)]">
+{/* GHK-Cu */}
+<div className="border border-blue-900 rounded-2xl overflow-hidden">
+  <button
+    onClick={() =>
+      setOpenPeptide(openPeptide === "ghkcu" ? null : "ghkcu")
+    }
+    className="w-full text-left p-8 bg-[#050505] hover:bg-[#080808] transition-all"
+  >
+    <div className="flex items-center justify-between gap-6">
+      <div>
+        <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
+          Regeneration Peptide
+        </p>
 
-  <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-4">
-    Regeneration Peptide
-  </p>
+        <h2 className="text-4xl font-bold text-blue-400">
+          GHK-Cu
+        </h2>
+      </div>
 
-  <h2 className="text-4xl font-bold mb-4 text-blue-400">
-    GHK-Cu
-  </h2>
-
-  <p className="text-sm text-gray-500 mb-8">
-    3 amino acids + Cu²⁺ | MW: 744.3 g/mol | Sequence: Gly-His-Lys:Cu²⁺
-  </p>
-
-  <p className="text-gray-300 text-lg leading-relaxed mb-8">
-    GHK-Cu is a naturally occurring copper-binding tripeptide complex studied
-    in laboratory and preclinical models involving collagen synthesis,
-    regenerative signaling, antioxidant pathway activation, and tissue-repair
-    research mechanisms.
-  </p>
-
-  <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
-    <h3 className="text-xl font-semibold text-blue-400 mb-3">
-      Mechanism Research
-    </h3>
-
-    <p className="text-gray-400 leading-relaxed">
-      Experimental studies have investigated GHK-Cu for its role in copper
-      transport, collagen production pathways, antioxidant signaling,
-      inflammatory modulation, extracellular matrix remodeling, and regenerative
-      cellular communication in laboratory models.
-    </p>
-  </div>
-
-  <div>
-    <h3 className="text-xl font-semibold text-white mb-4">
-      Research Areas
-    </h3>
-
-    <div className="flex flex-wrap gap-3">
-
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Collagen synthesis research
+      <span className="text-4xl text-blue-400">
+        {openPeptide === "ghkcu" ? "−" : "+"}
       </span>
+    </div>
+  </button>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Tissue regeneration studies
-      </span>
+  {openPeptide === "ghkcu" && (
+    <div className="p-10 bg-[#050505] border-t border-blue-900">
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Antioxidant pathway models
-      </span>
+      <p className="text-sm text-gray-500 mb-8">
+        3 amino acids + Cu²⁺ | MW: 744.3 g/mol | Sequence: Gly-His-Lys:Cu²⁺
+      </p>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Extracellular matrix signaling
-      </span>
+      <p className="text-gray-300 text-lg leading-relaxed mb-8">
+        GHK-Cu is a naturally occurring copper-binding tripeptide complex studied
+        in laboratory and preclinical models involving collagen synthesis,
+        regenerative signaling, antioxidant pathway activation, and tissue-repair
+        research mechanisms.
+      </p>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Skin and connective tissue research
-      </span>
+      <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
+        <h3 className="text-xl font-semibold text-blue-400 mb-3">
+          Mechanism Research
+        </h3>
+
+        <p className="text-gray-400 leading-relaxed">
+          Experimental studies have investigated GHK-Cu for its role in copper
+          transport, collagen production pathways, antioxidant signaling,
+          inflammatory modulation, extracellular matrix remodeling, and
+          regenerative cellular communication in laboratory models.
+        </p>
+      </div>
+
+      <div>
+        <h3 className="text-xl font-semibold text-white mb-4">
+          Research Areas
+        </h3>
+
+        <div className="flex flex-wrap gap-3">
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Collagen synthesis research
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Tissue regeneration studies
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Antioxidant pathway models
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Extracellular matrix signaling
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Skin and connective tissue research
+          </span>
+
+        </div>
+      </div>
+
+      <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
+        For laboratory research use only. Not for human consumption.
+      </p>
 
     </div>
-  </div>
-
-  <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
-    For laboratory research use only. Not for human consumption.
-  </p>
-
+  )}
 </div>
 
 {/* KPV */}

@@ -210,12 +210,14 @@ if (accepted === null) {
 
   </div>
 
-<div className="relative mt-4 md:mt-0 w-full max-w-xs">    <input
+<div className="flex justify-center mt-4">
+  <div className="relative w-full max-w-lg">
+    <input
       type="text"
       placeholder="Search products..."
       value={search}
       onChange={(e) => setSearch(e.target.value)}
-      className="w-full bg-[#050505] border border-blue-900 focus:border-blue-500 outline-none rounded-xl px-4 py-3 text-white placeholder:text-gray-500 text-sm"
+      className="w-full bg-[#050505] border border-blue-900 focus:border-blue-500 outline-none rounded-xl px-4 py-3 text-white placeholder:text-gray-500 text-sm shadow-[0_0_20px_rgba(37,99,235,0.12)]"
     />
 
     {search && filteredProducts.length > 0 && (
@@ -232,6 +234,7 @@ if (accepted === null) {
       </div>
     )}
   </div>
+</div>
 
 </header>
 

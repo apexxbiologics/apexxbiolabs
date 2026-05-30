@@ -32,8 +32,18 @@ export default function ContactPage() {
             className="border border-blue-900 rounded-3xl p-10 bg-[#050505] hover:border-blue-400 hover:shadow-[0_0_40px_rgba(37,99,235,0.25)] transition-all"
           >
             <div className="flex items-center gap-5 mb-6">
-              <span className="text-5xl text-blue-400">📷</span>
-
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  fill="none"
+  viewBox="0 0 24 24"
+  strokeWidth={1.8}
+  stroke="currentColor"
+  className="w-12 h-12 text-blue-400"
+>
+  <rect x="3" y="3" width="18" height="18" rx="5" />
+  <circle cx="12" cy="12" r="4" />
+  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
+</svg>
               <div>
                 <p className="uppercase tracking-[0.3em] text-blue-500 text-xs mb-2">
                   Instagram
@@ -58,8 +68,20 @@ export default function ContactPage() {
             className="border border-blue-900 rounded-3xl p-10 bg-[#050505] hover:border-blue-400 hover:shadow-[0_0_40px_rgba(37,99,235,0.25)] transition-all"
           >
             <div className="flex items-center gap-5 mb-6">
-              <span className="text-5xl text-blue-400">✉️</span>
-
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  fill="none"
+  viewBox="0 0 24 24"
+  strokeWidth={1.8}
+  stroke="currentColor"
+  className="w-12 h-12 text-blue-400"
+>
+  <path
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    d="M21.75 7.5v9A2.25 2.25 0 0 1 19.5 18.75h-15A2.25 2.25 0 0 1 2.25 16.5v-9m19.5 0L12 13.5 2.25 7.5m19.5 0A2.25 2.25 0 0 0 19.5 5.25h-15A2.25 2.25 0 0 0 2.25 7.5"
+  />
+</svg>
               <div>
                 <p className="uppercase tracking-[0.3em] text-blue-500 text-xs mb-2">
                   Email

@@ -233,8 +233,7 @@ if (accepted === null) {
             <img
   src="/images/biglogo.PNG"
   alt="Apexx Biolabs"
-  className="w-full max-w-6xl mb-16 object-contain"
-/>
+className="w-full max-w-6xl h-auto object-contain mb-16 px-4"/>
 
             <div className="mt-4 inline-block border border-blue-700/70 rounded-full px-6 py-2 bg-blue-950/20 shadow-[0_0_25px_rgba(37,99,235,0.25)]">
   <p className="text-blue-400 text-xs uppercase tracking-[0.35em] font-semibold">

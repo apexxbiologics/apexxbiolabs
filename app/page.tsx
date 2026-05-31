@@ -557,75 +557,68 @@ className="relative flex flex-col items-center justify-center text-center pt-56 
           </div>
         </section>
 
-{/* FOOTER */}
 <footer className="border-t border-blue-900 py-10 px-6 bg-black">
   <div className="max-w-7xl mx-auto">
-
-    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-
-      <p className="text-gray-500 text-sm text-center md:text-left">
+    <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+      <p className="text-gray-500 text-sm text-center lg:text-left">
         © 2026 Apexx Biolabs. All rights reserved.
       </p>
 
-<div className="flex flex-wrap justify-center gap-6 text-xs uppercase tracking-widest">
+      <div className="flex flex-wrap items-center justify-center gap-6 text-xs uppercase tracking-widest">
+        <a href="/about" className="text-gray-500 hover:text-blue-400 transition-all">
+          About
+        </a>
 
-  <a
-    href="/terms"
-    className="text-gray-500 hover:text-blue-400 transition-all"
-  >
-    Terms & Conditions
-  </a>
+        <a href="/contact" className="text-gray-500 hover:text-blue-400 transition-all">
+          Contact
+        </a>
 
-  <a
-    href="/privacy"
-    className="text-gray-500 hover:text-blue-400 transition-all"
-  >
-    Privacy Policy
-  </a>
+        <a href="/terms" className="text-gray-500 hover:text-blue-400 transition-all">
+          Terms & Conditions
+        </a>
 
-  <a
-    href="/refunds"
-    className="text-gray-500 hover:text-blue-400 transition-all"
-  >
-    Refund Policy
-  </a>
+        <a href="/privacy" className="text-gray-500 hover:text-blue-400 transition-all">
+          Privacy Policy
+        </a>
 
-  <a
-    href="/shipping"
-    className="text-gray-500 hover:text-blue-400 transition-all"
-  >
-    Shipping Policy
-  </a>
+        <a href="/refunds" className="text-gray-500 hover:text-blue-400 transition-all">
+          Refund Policy
+        </a>
 
-  <span className="text-blue-900">|</span>
+        <a href="/shipping" className="text-gray-500 hover:text-blue-400 transition-all">
+          Shipping Policy
+        </a>
 
-  <a
-    href="mailto:support@apexxbiolabs.com"
-    className="text-blue-400 hover:text-blue-300 transition-all"
-  >
-    support@apexxbiolabs.com
-  </a>
+        <span className="hidden md:inline text-blue-900">|</span>
 
-  <a
-    href="https://instagram.com/apexxbiolabs"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-blue-400 hover:text-blue-300 transition-all"
-  >
-    @apexxbiolabs
-  </a>
+        <a
+          href="mailto:support@apexxbiolabs.com"
+          className="text-blue-400 hover:text-blue-300 transition-all"
+        >
+          support@apexxbiolabs.com
+        </a>
 
-</div>
-
+        <a
+          href="https://instagram.com/apexxbiolabs"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 hover:text-blue-300 transition-all"
+        >
+          @apexxbiolabs
+        </a>
+      </div>
     </div>
 
-    <div className="mt-8 border-t border-blue-950 pt-6">
-      <p className="max-w-5xl mx-auto text-center leading-relaxed text-gray-600 text-xs uppercase tracking-widest">
+    <div className="mt-8 border-t border-blue-950 pt-6 text-center">
+      <p className="text-blue-500/70 uppercase tracking-widest text-xs mb-4">
+        Research Materials • Quality Controlled • Secure Packaging • Customer Support
+      </p>
+
+      <p className="max-w-5xl mx-auto text-gray-600 text-xs uppercase tracking-widest leading-relaxed">
         FOR LABORATORY RESEARCH USE ONLY. NOT FOR HUMAN CONSUMPTION.
         NOT FOR MEDICAL, DIAGNOSTIC, THERAPEUTIC, OR VETERINARY USE.
       </p>
     </div>
-
   </div>
 </footer>
 

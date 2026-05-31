@@ -145,6 +145,20 @@ export default function PinealonPage() {
               </a>
             </div>
 
+            <div className="mt-10 border border-blue-900 rounded-2xl p-6 bg-[#050505]">
+  <h3 className="text-blue-400 font-bold uppercase tracking-widest text-sm mb-3">
+    FDA Disclaimer
+  </h3>
+
+  <p className="text-gray-500 text-sm leading-relaxed">
+    These statements have not been evaluated by the U.S. Food and Drug
+    Administration. This product is not intended to diagnose, treat, cure, or
+    prevent any disease. Products sold by Apexx Biolabs are intended strictly
+    for laboratory research use only and are not for human or veterinary
+    consumption.
+  </p>
+</div>
+
             <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest leading-relaxed">
               For laboratory research use only. Not for human consumption,
               medical use, veterinary use, diagnosis, treatment, or prevention

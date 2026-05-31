@@ -226,7 +226,7 @@ if (accepted === null) {
 
         {/* HERO */}
 <section
-  className="relative flex flex-col items-center text-center pt-44 md:pt-24 pb-28 px-6 bg-cover bg-center overflow-visible"
+  className="relative flex flex-col items-center text-center pt-52 md:pt-24 pb-28 px-6 bg-cover bg-center overflow-visible"
 >
   <div className="absolute inset-0 bg-black/60"></div>
 

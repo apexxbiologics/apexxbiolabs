@@ -226,16 +226,16 @@ if (accepted === null) {
 
         {/* HERO */}
 <section
-  className="relative flex flex-col items-center justify-center text-center pt-16 md:pt-24 pb-28 px-6 bg-cover bg-center overflow-hidden"
+  className="relative flex flex-col items-center justify-center text-center pt-16 md:pt-24 pb-28 px-0 md:px-6 bg-cover bg-center overflow-hidden"
 >
   <div className="absolute inset-0 bg-black/60"></div>
 
   <div className="relative z-10 flex flex-col items-center w-full">
-    <img
-      src="/images/biglogo.PNG"
-      alt="Apexx Biolabs"
-      className="w-full max-w-6xl mb-16 object-contain"
-    />
+<img
+  src="/images/biglogo.PNG"
+  alt="Apexx Biolabs"
+  className="w-screen md:w-full max-w-none md:max-w-6xl mb-10 md:mb-16 object-contain"
+/>
 
             <div className="mt-4 inline-block border border-blue-700/70 rounded-full px-6 py-2 bg-blue-950/20 shadow-[0_0_25px_rgba(37,99,235,0.25)]">
   <p className="text-blue-400 text-xs uppercase tracking-[0.35em] font-semibold">

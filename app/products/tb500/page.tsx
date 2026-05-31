@@ -152,6 +152,21 @@ export default function TB500Page() {
   </p>
 </div>
 
+<div className="mt-6 border border-blue-900 rounded-2xl p-6 bg-[#050505]">
+  <h3 className="text-blue-400 font-bold uppercase tracking-widest text-sm mb-3">
+    Customer Acknowledgment
+  </h3>
+
+  <p className="text-gray-500 text-sm leading-relaxed">
+    By purchasing this product, the customer acknowledges that this material is
+    intended solely for lawful laboratory research purposes and will not be used
+    for human consumption, veterinary use, medical use, diagnosis, treatment,
+    cure, or prevention of disease. Apexx Biolabs does not provide dosing
+    instructions, treatment recommendations, medical advice, or guidance
+    regarding human use of any product.
+  </p>
+</div>
+
             <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest leading-relaxed">
               For laboratory research use only. Not for human consumption,
               medical use, veterinary use, diagnosis, treatment, or prevention

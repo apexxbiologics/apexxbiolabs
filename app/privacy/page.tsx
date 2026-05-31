@@ -5,6 +5,7 @@ import {
   Share2,
   Cookie,
   Lock,
+  Archive,
   Shield,
   Globe,
 } from "lucide-react";
@@ -41,6 +42,11 @@ export default function PrivacyPage() {
       title: "Data Security",
       text: "We use reasonable safeguards to help protect personal information, but no electronic transmission or storage system is completely secure.",
     },
+    {
+  icon: Archive,
+  title: "Data Retention",
+  text: "We retain information only for as long as necessary to fulfill business, legal, accounting, compliance, and operational requirements. Information may be securely deleted or anonymized when no longer required.",
+},
     {
       icon: Shield,
       title: "Your Rights",

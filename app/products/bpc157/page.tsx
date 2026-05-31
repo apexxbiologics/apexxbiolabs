@@ -10,7 +10,7 @@ export default function BPC157Page() {
     const product = {
       id: "bpc157",
       name: "BPC-157",
-      price: 80,
+      price: 60,
       quantity: 1,
       image: "/images/bpc157.PNG",
     };

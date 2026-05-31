@@ -10,14 +10,14 @@ export default function RetatrutidePage() {
     "10mg": {
       id: "retatrutide-10mg",
       name: "Retatrutide 10mg",
-      price: 90,
+      price: 80,
       quantityLabel: "10mg",
       image: "/images/retatrutide.PNG",
     },
     "20mg": {
       id: "retatrutide-20mg",
       name: "Retatrutide 20mg",
-      price: 160,
+      price: 150,
       quantityLabel: "20mg",
       image: "/images/retatrutide20.PNG",
     },

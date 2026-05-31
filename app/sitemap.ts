@@ -31,24 +31,44 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
     },
     {
-  url: "https://www.apexxbiolabs.com/products/retatrutide",
-  lastModified: new Date(),
-},
-{
-  url: "https://www.apexxbiolabs.com/products/tb500",
-  lastModified: new Date(),
-},
-{
-  url: "https://www.apexxbiolabs.com/products/bpc157",
-  lastModified: new Date(),
-},
-{
-  url: "https://www.apexxbiolabs.com/products/ghkcu",
-  lastModified: new Date(),
-},
-{
-  url: "https://www.apexxbiolabs.com/products/bacwater",
-  lastModified: new Date(),
-},
+      url: "https://www.apexxbiolabs.com/products",
+      lastModified: new Date(),
+    },
+    {
+      url: "https://www.apexxbiolabs.com/products/bacwater",
+      lastModified: new Date(),
+    },
+    {
+      url: "https://www.apexxbiolabs.com/products/bpc157",
+      lastModified: new Date(),
+    },
+    {
+      url: "https://www.apexxbiolabs.com/products/ghkcu",
+      lastModified: new Date(),
+    },
+    {
+      url: "https://www.apexxbiolabs.com/products/kpv",
+      lastModified: new Date(),
+    },
+    {
+      url: "https://www.apexxbiolabs.com/products/pinealon",
+      lastModified: new Date(),
+    },
+    {
+      url: "https://www.apexxbiolabs.com/products/retatrutide",
+      lastModified: new Date(),
+    },
+    {
+      url: "https://www.apexxbiolabs.com/products/selank",
+      lastModified: new Date(),
+    },
+    {
+      url: "https://www.apexxbiolabs.com/products/semax",
+      lastModified: new Date(),
+    },
+    {
+      url: "https://www.apexxbiolabs.com/products/tb500",
+      lastModified: new Date(),
+    },
   ];
 }

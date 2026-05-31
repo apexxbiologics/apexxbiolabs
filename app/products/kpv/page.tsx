@@ -5,6 +5,7 @@ import { useState } from "react";
 export default function KPVPage() {
 
       const [added, setAdded] = useState(false);
+      const inStock = false;
 
   const addToCart = () => {
     const product = {
@@ -119,14 +120,23 @@ export default function KPVPage() {
             <div className="flex flex-col sm:flex-row gap-5">
 
   <div className="flex flex-col sm:flex-row gap-5">
+{inStock ? (
   <button
     onClick={addToCart}
     className="bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_25px_rgba(37,99,235,0.45)] px-10 py-5 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"
   >
     {added ? "Added To Cart" : "Add To Cart"}
   </button>
+) : (
+  <button
+    disabled
+    className="bg-gray-800 text-gray-500 cursor-not-allowed px-10 py-5 uppercase tracking-widest text-sm font-semibold rounded-lg border border-gray-700"
+  >
+    Out of Stock
+  </button>
+)}
 
-  {added && (
+  {inStock && added && (
     <a
       href="/cart"
       className="text-center border border-blue-700 hover:bg-blue-700 px-10 py-5 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"

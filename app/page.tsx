@@ -85,12 +85,12 @@ if (accepted === null) {
     <>
       {!accepted && (
 <div className="fixed inset-0 z-[999] bg-black flex items-start md:items-center justify-center px-4 py-6 overflow-y-auto">          
-<div className="w-full max-w-2xl border border-blue-900 bg-[#050505] p-5 md:p-10 rounded-2xl shadow-[0_0_50px_rgba(37,99,235,0.2)]">            <h1 className="text-4xl font-bold text-center mb-8">
+<div className="w-full max-w-2xl border border-blue-900 bg-[#050505] p-4 md:p-10 rounded-2xl shadow-[0_0_50px_rgba(37,99,235,0.2)]">            
+  <h1 className="text-2xl md:text-4xl font-bold text-center mb-6">
               Disclaimer
             </h1>
 
-            <div className="space-y-6 text-gray-300 leading-relaxed text-sm">
-              <p>
+<div className="space-y-4 text-gray-300 leading-relaxed text-xs md:text-sm">              <p>
                 Apexx Biolabs products are intended strictly for laboratory
                 research purposes only.
               </p>
@@ -105,7 +105,7 @@ if (accepted === null) {
 
               <div className="space-y-4 text-gray-400">
 
-<label className="flex items-start gap-3 cursor-pointer border border-blue-900 rounded-xl p-5 bg-black/40">
+<label className="flex items-start gap-3 cursor-pointer border border-blue-900 rounded-xl p-3 md:p-5 bg-black/40">
   <input
     type="checkbox"
     checked={disclaimerChecked}

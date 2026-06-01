@@ -57,7 +57,7 @@ export default function TB500Page() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-start">
 
           {/* IMAGE */}
-          <div className="border border-blue-900 rounded-2xl p-10 bg-[#050505] shadow-[0_0_50px_rgba(37,99,235,0.15)]">
+          <div className="border border-blue-900 rounded-2xl p-10 bg-[#050505]">
             <img
               src="/images/tb500.PNG"
               alt="TB-500"

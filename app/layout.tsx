@@ -13,12 +13,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: "Apexx Biolabs | Laboratory Research Materials",
-    template: "%s | Apexx Biolabs",
-  },
+  metadataBase: new URL("https://www.apexxbiolabs.com"),
+
+  title: "Apexx Biolabs",
   description:
-    "Apexx Biolabs supplies laboratory research materials intended strictly for scientific, educational, and analytical research applications. Research Use Only.",
+    "Laboratory research materials intended strictly for scientific, educational, and analytical research purposes.",
+
+  alternates: {
+    canonical: "/",
+  },
 
   verification: {
     google: "32QpnbgyOIQ_12SS9SlNK3I_eKubhzvcFAaNOEXDZYU",

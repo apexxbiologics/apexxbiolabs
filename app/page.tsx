@@ -84,9 +84,8 @@ if (accepted === null) {
   return (
     <>
       {!accepted && (
-        <div className="fixed inset-0 z-[999] bg-black flex items-center justify-center px-6">
-          <div className="max-w-2xl border border-blue-900 bg-[#050505] p-10 rounded-2xl shadow-[0_0_50px_rgba(37,99,235,0.2)]">
-            <h1 className="text-4xl font-bold text-center mb-8">
+<div className="fixed inset-0 z-[999] bg-black flex items-start md:items-center justify-center px-4 py-6 overflow-y-auto">          
+<div className="w-full max-w-2xl border border-blue-900 bg-[#050505] p-5 md:p-10 rounded-2xl shadow-[0_0_50px_rgba(37,99,235,0.2)]">            <h1 className="text-4xl font-bold text-center mb-8">
               Disclaimer
             </h1>
 

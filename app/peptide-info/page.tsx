@@ -275,7 +275,7 @@ export default function PeptideInfoPage() {
     <div className="flex items-center justify-between gap-6">
       <div>
         <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
-          Recovery Peptide
+          Tissue Research Peptide
         </p>
 
         <h2 className="text-4xl font-bold text-blue-400">
@@ -360,7 +360,7 @@ export default function PeptideInfoPage() {
     <div className="flex items-center justify-between gap-6">
       <div>
         <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
-          Regeneration Peptide
+          Cellular Signaling Research Peptide
         </p>
 
         <h2 className="text-4xl font-bold text-blue-400">
@@ -450,7 +450,7 @@ export default function PeptideInfoPage() {
     <div className="flex items-center justify-between gap-6">
       <div>
         <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
-          Anti-Inflammatory Peptide
+          Immunology Research Peptide
         </p>
 
         <h2 className="text-4xl font-bold text-blue-400">
@@ -541,7 +541,7 @@ export default function PeptideInfoPage() {
     <div className="flex items-center justify-between gap-6">
       <div>
         <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
-          Neuroregenerative Peptide
+          Neurobiology Research Peptide
         </p>
 
         <h2 className="text-4xl font-bold text-blue-400">
@@ -814,7 +814,7 @@ export default function PeptideInfoPage() {
     <div className="flex items-center justify-between gap-6">
       <div>
         <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
-          Regenerative Research Peptide
+          Tissue Research Peptide
         </p>
 
         <h2 className="text-4xl font-bold text-blue-400">

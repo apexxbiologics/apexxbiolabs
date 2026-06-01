@@ -72,13 +72,12 @@ export default function RetatrutidePage() {
         </p>
       </header>
 
-      <section className="px-10 py-24">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-          <div className="border border-blue-900 rounded-2xl p-10 bg-[#050505] shadow-[0_0_50px_rgba(37,99,235,0.15)]">
+<section className="px-6 md:px-10 pt-10 md:pt-16 pb-24">        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+          <div className="border border-blue-900 rounded-2xl p-4 md:p-8 bg-[#050505] shadow-[0_0_50px_rgba(37,99,235,0.15)]">
             <img
               src={selectedProduct.image}
               alt={selectedProduct.name}
-              className="w-full h-[500px] object-contain"
+              className="w-full h-[320px] md:h-[500px] object-contain"
             />
           </div>
 

@@ -67,7 +67,7 @@ export default function SemaxPage() {
             <img
               src="/images/semax.PNG"
               alt="Semax"
-              className="w-full h-[500px] object-contain drop-shadow-[0_0_40px_rgba(37,99,235,0.3)]"
+              className="w-full h-[500px] object-contain"
             />
 
           </div>

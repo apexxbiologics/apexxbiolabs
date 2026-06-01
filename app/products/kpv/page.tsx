@@ -60,7 +60,7 @@ export default function KPVPage() {
       {/* PRODUCT SECTION */}
       <section className="px-10 py-24">
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-start">
 
           {/* IMAGE */}
           <div className="border border-blue-900 rounded-2xl p-10 bg-[#050505] shadow-[0_0_50px_rgba(37,99,235,0.15)]">

@@ -340,22 +340,25 @@ if (accepted === null) {
 
     </div>
 
-            {/* BPC-157 */}
-            <div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
-              <img
-                src="/images/bpc157.PNG"
-                alt="BPC-157"
-                className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
-              />
+{/* BPC-157 */}
+<div
+  onClick={() => (window.location.href = "/products/bpc157")}
+  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
+>
+  <img
+    src="/images/bpc157.PNG"
+    alt="BPC-157"
+    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
+  />
 
-              <h4 className="text-2xl font-semibold">BPC-157</h4>
+  <h4 className="text-2xl font-semibold">BPC-157</h4>
 
-              <p className="text-gray-400 mt-3">10mg Research Peptide</p>
+  <p className="text-gray-400 mt-3">10mg Research Peptide</p>
 
-<span className="inline-block mt-8 border border-blue-700 px-5 py-3 text-sm uppercase tracking-widest rounded-lg">
-  View Product
-</span>
-            </div>
+  <span className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg">
+    View Product
+  </span>
+</div>
 
             {/* TB-500 */}
             <div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">

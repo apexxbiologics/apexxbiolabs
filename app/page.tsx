@@ -440,12 +440,15 @@ if (accepted === null) {
 </div>
 
 {/* GHK-CU */}
-<div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
+<div
+  onClick={() => (window.location.href = "/products/ghkcu")}
+  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
+>
 
   <img
     src="/images/ghkcu.PNG"
     alt="GHK-Cu"
-    className="h-72 object-contain w-full mb-8"
+    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
   />
 
   <h4 className="text-2xl font-semibold">
@@ -458,6 +461,7 @@ if (accepted === null) {
 
   <a
     href="/products/ghkcu"
+    onClick={(e) => e.stopPropagation()}
     className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
   >
     View Product
@@ -496,12 +500,15 @@ if (accepted === null) {
 </div>
 
 {/* SELANK */}
-<div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
+<div
+  onClick={() => (window.location.href = "/products/selank")}
+  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
+>
 
   <img
     src="/images/selank.PNG"
     alt="Selank"
-    className="h-72 object-contain w-full mb-8"
+    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
   />
 
   <h4 className="text-2xl font-semibold">
@@ -514,6 +521,7 @@ if (accepted === null) {
 
   <a
     href="/products/selank"
+    onClick={(e) => e.stopPropagation()}
     className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
   >
     View Product
@@ -522,12 +530,15 @@ if (accepted === null) {
 </div>
 
 {/* SEMAX */}
-<div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
+<div
+  onClick={() => (window.location.href = "/products/semax")}
+  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
+>
 
   <img
     src="/images/semax.PNG"
     alt="Semax"
-    className="h-72 object-contain w-full mb-8"
+    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
   />
 
   <h4 className="text-2xl font-semibold">
@@ -540,6 +551,7 @@ if (accepted === null) {
 
   <a
     href="/products/semax"
+    onClick={(e) => e.stopPropagation()}
     className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
   >
     View Product

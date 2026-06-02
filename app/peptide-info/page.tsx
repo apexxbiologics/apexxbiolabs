@@ -178,8 +178,7 @@ export default function PeptideInfoPage() {
 </section>
 
 {/* RETATRUTIDE */}
-<div className="border border-blue-900 rounded-2xl overflow-hidden">
-  <button
+<div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">  <button
     onClick={() =>
       setOpenPeptide(openPeptide === "retatrutide" ? null : "retatrutide")
     }
@@ -265,8 +264,7 @@ export default function PeptideInfoPage() {
 </div>
 
 {/* BPC-157 */}
-<div className="border border-blue-900 rounded-2xl overflow-hidden">
-  <button
+<div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">  <button
     onClick={() =>
       setOpenPeptide(openPeptide === "bpc157" ? null : "bpc157")
     }
@@ -350,8 +348,7 @@ export default function PeptideInfoPage() {
 </div>
 
 {/* GHK-Cu */}
-<div className="border border-blue-900 rounded-2xl overflow-hidden">
-  <button
+<div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">  <button
     onClick={() =>
       setOpenPeptide(openPeptide === "ghkcu" ? null : "ghkcu")
     }
@@ -440,8 +437,7 @@ export default function PeptideInfoPage() {
 </div>
 
 {/* KPV */}
-<div className="border border-blue-900 rounded-2xl overflow-hidden">
-  <button
+<div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">  <button
     onClick={() =>
       setOpenPeptide(openPeptide === "kpv" ? null : "kpv")
     }
@@ -531,8 +527,7 @@ export default function PeptideInfoPage() {
 </div>
 
 {/* PINEALON */}
-<div className="border border-blue-900 rounded-2xl overflow-hidden">
-  <button
+<div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">  <button
     onClick={() =>
       setOpenPeptide(openPeptide === "pinealon" ? null : "pinealon")
     }
@@ -622,8 +617,7 @@ export default function PeptideInfoPage() {
 </div>
 
 {/* SELANK */}
-<div className="border border-blue-900 rounded-2xl overflow-hidden">
-  <button
+<div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">  <button
     onClick={() =>
       setOpenPeptide(openPeptide === "selank" ? null : "selank")
     }
@@ -712,8 +706,7 @@ export default function PeptideInfoPage() {
 </div>
 
 {/* SEMAX */}
-<div className="border border-blue-900 rounded-2xl overflow-hidden">
-  <button
+<div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">  <button
     onClick={() =>
       setOpenPeptide(openPeptide === "semax" ? null : "semax")
     }
@@ -804,8 +797,7 @@ export default function PeptideInfoPage() {
 </div>
 
 {/* TB-500 */}
-<div className="border border-blue-900 rounded-2xl overflow-hidden">
-  <button
+<div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">  <button
     onClick={() =>
       setOpenPeptide(openPeptide === "tb500" ? null : "tb500")
     }

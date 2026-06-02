@@ -366,7 +366,11 @@ if (accepted === null) {
   onClick={() => (window.location.href = "/products/tb500")}
   className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
 >
-
+  <img
+    src="/images/tb500.PNG"
+    alt="TB-500"
+    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
+  />
               <h4 className="text-2xl font-semibold">TB-500</h4>
 
               <p className="text-gray-400 mt-3">10mg Research Peptide</p>
@@ -383,7 +387,11 @@ if (accepted === null) {
   onClick={() => (window.location.href = "/products/bacwater")}
   className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
 >
-
+  <img
+    src="/images/bacwater.PNG"
+    alt="Bacteriostatic Water"
+    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
+  />
   <h4 className="text-2xl font-semibold">
     Bacteriostatic Water
   </h4>
@@ -402,12 +410,15 @@ if (accepted === null) {
 </div>
 
 {/* KPV */}
-<div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
+<div
+  onClick={() => (window.location.href = "/products/kpv")}
+  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
+>
 
   <img
     src="/images/kpv.PNG"
     alt="KPV"
-    className="h-72 object-contain w-full mb-8"
+    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
   />
 
   <h4 className="text-2xl font-semibold">
@@ -420,6 +431,7 @@ if (accepted === null) {
 
   <a
     href="/products/kpv"
+    onClick={(e) => e.stopPropagation()}
     className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
   >
     View Product
@@ -454,12 +466,15 @@ if (accepted === null) {
 </div>
 
 {/* PINEALON */}
-<div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
+<div
+  onClick={() => (window.location.href = "/products/pinealon")}
+  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
+>
 
   <img
     src="/images/pinealon.PNG"
     alt="Pinealon"
-    className="h-72 object-contain w-full mb-8"
+    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
   />
 
   <h4 className="text-2xl font-semibold">
@@ -472,6 +487,7 @@ if (accepted === null) {
 
   <a
     href="/products/pinealon"
+    onClick={(e) => e.stopPropagation()}
     className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
   >
     View Product

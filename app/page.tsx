@@ -361,13 +361,11 @@ if (accepted === null) {
   </span>
 </div>
 
-            {/* TB-500 */}
-            <div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
-              <img
-                src="/images/tb500.PNG"
-                alt="TB-500"
-                className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
-              />
+{/* TB-500 */}
+<div
+  onClick={() => (window.location.href = "/products/tb500")}
+  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
+>
 
               <h4 className="text-2xl font-semibold">TB-500</h4>
 
@@ -380,14 +378,11 @@ if (accepted === null) {
                 View Product
               </a>
             </div>
-            {/* BACTERIOSTATIC WATER */}
-<div className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl">
-
-  <img
-    src="/images/bacwater.PNG"
-    alt="Bacteriostatic Water"
-    className="h-72 object-contain w-full mb-8"
-  />
+{/* BACTERIOSTATIC WATER */}
+<div
+  onClick={() => (window.location.href = "/products/bacwater")}
+  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
+>
 
   <h4 className="text-2xl font-semibold">
     Bacteriostatic Water

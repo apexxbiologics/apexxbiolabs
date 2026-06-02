@@ -27,7 +27,7 @@ export default function PeptideInfoPage() {
           APEXX BIOLABS
         </p>
 
-      </header>
+</section>
 
       {/* HERO */}
       <section className="text-center py-28 px-6 border-b border-blue-950">

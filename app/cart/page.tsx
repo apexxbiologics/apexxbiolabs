@@ -94,32 +94,34 @@ export default function CartPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                      <button
-                        onClick={() => decreaseQuantity(item.id)}
-                        className="border border-blue-700 px-4 py-2 hover:bg-blue-700 rounded-lg"
-                      >
-                        -
-                      </button>
+<div className="flex items-center justify-between md:justify-end gap-4 min-w-[260px]">
+  <div className="flex items-center justify-center gap-3 w-[130px]">
+    <button
+      onClick={() => decreaseQuantity(item.id)}
+      className="w-10 h-10 border border-blue-700 hover:bg-blue-700 rounded-lg flex items-center justify-center"
+    >
+      -
+    </button>
 
-                      <span className="text-xl font-bold">
-                        {item.quantity}
-                      </span>
+    <span className="w-8 text-center text-xl font-bold">
+      {item.quantity}
+    </span>
 
-                      <button
-                        onClick={() => increaseQuantity(item.id)}
-                        className="border border-blue-700 px-4 py-2 hover:bg-blue-700 rounded-lg"
-                      >
-                        +
-                      </button>
+    <button
+      onClick={() => increaseQuantity(item.id)}
+      className="w-10 h-10 border border-blue-700 hover:bg-blue-700 rounded-lg flex items-center justify-center"
+    >
+      +
+    </button>
+  </div>
 
-                      <button
-                        onClick={() => removeItem(item.id)}
-                        className="border border-red-700 text-red-400 px-4 py-2 hover:bg-red-900/40 rounded-lg"
-                      >
-                        Remove
-                      </button>
-                    </div>
+  <button
+    onClick={() => removeItem(item.id)}
+    className="w-[90px] border border-red-700 text-red-400 px-4 py-2 hover:bg-red-900/40 rounded-lg"
+  >
+    Remove
+  </button>
+</div>
 
                     <p className="text-blue-400 font-bold text-xl">
                       ${item.price * item.quantity}

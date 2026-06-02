@@ -316,10 +316,11 @@ if (accepted === null) {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
 
-            {/* RETATRUTIDE */}
+{/* RETATRUTIDE */}
 <div
   id="retatrutide"
-  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl"
+  onClick={() => (window.location.href = "/products/retatrutide")}
+  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
 >
               <img
                 src="/images/retatrutide.PNG"

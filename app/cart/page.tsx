@@ -74,10 +74,9 @@ export default function CartPage() {
                   key={item.id}
                   className="border-b border-blue-950 pb-6"
                 >
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+<div className="grid grid-cols-[1fr_260px_120px] items-center gap-6">
 
-                    <div className="flex items-center gap-6">
-                      <img
+<div className="flex items-center gap-6 min-w-0">                      <img
                         src={item.image || "/images/logo.PNG"}
                         alt={item.name}
                         className="w-24 h-24 object-contain border border-blue-900 rounded-xl p-2 bg-[#050505]"
@@ -123,9 +122,9 @@ export default function CartPage() {
   </button>
 </div>
 
-                    <p className="text-blue-400 font-bold text-xl">
-                      ${item.price * item.quantity}
-                    </p>
+<p className="text-blue-400 font-bold text-xl text-right w-[120px]">
+  ${item.price * item.quantity}
+</p>
 
                   </div>
                 </div>

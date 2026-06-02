@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 type CartItem = {
   id: string;
@@ -132,22 +133,16 @@ export default function CartPage() {
                 <span>Total</span>
                 <span className="text-blue-400">${total}</span>
               </div>
-<div className="border border-blue-900 rounded-xl p-6 bg-[#050505] mt-8">
+              <div className="border border-blue-900 rounded-xl p-6 bg-[#050505] mt-8">
   <h3 className="text-lg font-semibold text-blue-400 mb-4">
     Research Use Disclaimer
   </h3>
 
   <p className="text-gray-400 text-sm leading-relaxed mb-4">
     By placing an order, you acknowledge that all products sold by Apexx
-    Biolabs are intended strictly for lawful laboratory research purposes only
-    and are not intended for human consumption, medical use, veterinary use,
+    Biolabs are intended strictly for laboratory research use only and
+    are not intended for human consumption, medical use, veterinary use,
     diagnosis, treatment, cure, or prevention of disease.
-  </p>
-
-  <p className="text-gray-400 text-sm leading-relaxed mb-4">
-    Apexx Biolabs does not provide dosing instructions, treatment
-    recommendations, medical advice, or guidance regarding human use of any
-    product.
   </p>
 
   <label className="flex items-start gap-3 cursor-pointer">
@@ -156,31 +151,14 @@ export default function CartPage() {
       checked={agreed}
       onChange={(e) => setAgreed(e.target.checked)}
       className="mt-1"
+      
     />
 
     <span className="text-sm text-gray-300">
-      I certify that I am at least 21 years old and understand these products
-      are purchased solely for lawful laboratory research purposes.
+      I certify that I am at least 21 years old and understand these
+      products are purchased solely for lawful research purposes.
     </span>
   </label>
-
-  <div className="mt-5 flex flex-wrap gap-4 text-xs uppercase tracking-widest">
-    <a href="/terms" className="text-blue-400 hover:text-blue-300">
-      Terms & Conditions
-    </a>
-
-    <a href="/privacy" className="text-blue-400 hover:text-blue-300">
-      Privacy Policy
-    </a>
-
-    <a href="/refunds" className="text-blue-400 hover:text-blue-300">
-      Refund Policy
-    </a>
-
-    <a href="/shipping" className="text-blue-400 hover:text-blue-300">
-      Shipping Policy
-    </a>
-  </div>
 </div>
             </div>
           )}
@@ -194,16 +172,16 @@ export default function CartPage() {
     Continue Shopping
   </a>
 
-  <button
-    disabled={!agreed}
-    className={`px-8 py-4 uppercase tracking-widest text-sm font-semibold rounded-lg transition-all ${
-      agreed
-        ? "bg-green-600 hover:bg-green-500"
-        : "bg-gray-800 text-gray-500 cursor-not-allowed"
-    }`}
-  >
-    Proceed To Checkout
-  </button>
+<Link
+  href="/checkout"
+  className={`px-8 py-4 uppercase tracking-widest text-sm font-semibold rounded-lg transition-all text-center ${
+    agreed
+      ? "bg-green-600 hover:bg-green-500"
+      : "bg-gray-800 text-gray-500 pointer-events-none"
+  }`}
+>
+  Proceed To Checkout
+</Link>
 
 </div>
         </div>

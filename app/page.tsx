@@ -105,7 +105,7 @@ if (accepted === null) {
 
               <div className="space-y-4 text-gray-400">
 
-<label className="flex items-start gap-3 cursor-pointer border border-blue-900 rounded-xl p-3 md:p-5 bg-black/40">
+<label className="flex items-start gap-3 cursor-pointer border border-blue-900 rounded-xl p-3 md:p-5bg-black/40">
   <input
     type="checkbox"
     checked={disclaimerChecked}
@@ -352,12 +352,9 @@ if (accepted === null) {
 
               <p className="text-gray-400 mt-3">10mg Research Peptide</p>
 
-              <a
-                href="/products/bpc157"
-                className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
-              >
-                View Product
-              </a>
+<span className="inline-block mt-8 border border-blue-700 px-5 py-3 text-sm uppercase tracking-widest rounded-lg">
+  View Product
+</span>
             </div>
 
             {/* TB-500 */}

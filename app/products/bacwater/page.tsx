@@ -52,7 +52,7 @@ const addToCart = () => {
         </a>
 
         <p className="uppercase tracking-[0.3em] text-gray-400 text-xs">
-          Apexx Biologics
+          Apexx Biolabs
         </p>
       </header>
 

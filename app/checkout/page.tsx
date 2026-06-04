@@ -15,6 +15,7 @@ export default function CheckoutPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [sameBilling, setSameBilling] = useState(true);
   const [agreed, setAgreed] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("cashapp");
 
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -197,8 +198,84 @@ export default function CheckoutPage() {
                 : "bg-gray-800 text-gray-500 cursor-not-allowed"
             }`}
           >
-            Proceed to Secure Payment
-          </button>
+            <section className="border border-blue-900 rounded-2xl p-6 bg-[#050505] mb-8">
+  <h2 className="text-2xl font-bold mb-2">PAYMENT METHOD</h2>
+
+  <p className="text-gray-400 text-sm mb-6">
+    Select a payment method. Payment instructions will be sent by email after
+    your order is submitted.
+  </p>
+
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    {[
+      { id: "cashapp", label: "Cash App" },
+      { id: "venmo", label: "Venmo" },
+      { id: "zelle", label: "Zelle" },
+    ].map((method) => (
+      <button
+        key={method.id}
+        type="button"
+        onClick={() => setPaymentMethod(method.id)}
+        className={`border rounded-xl p-5 text-left transition-all ${
+          paymentMethod === method.id
+            ? "border-blue-400 bg-blue-950/30"
+            : "border-blue-900 bg-black hover:border-blue-500"
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <span
+            className={`w-4 h-4 rounded-full border ${
+              paymentMethod === method.id
+                ? "bg-blue-500 border-blue-400"
+                : "border-gray-500"
+            }`}
+          ></span>
+
+          <span className="text-lg font-bold">{method.label}</span>
+        </div>
+      </button>
+    ))}
+  </div>
+
+  <div className="border border-blue-900 rounded-xl p-6 bg-black/50">
+    <h3 className="text-blue-400 font-bold uppercase tracking-widest text-sm mb-4">
+      Payment Instructions
+    </h3>
+
+    <ul className="list-disc pl-5 space-y-3 text-gray-300 text-sm leading-relaxed">
+      <li>
+        After your order is submitted, payment instructions will be sent to the
+        email address provided during checkout. Please check your Inbox and
+        Spam/Junk folders.
+      </li>
+
+      <li>
+        Submit the exact payment amount using the information provided in the
+        email.
+      </li>
+
+      <li>
+        Include ONLY your order number in the payment notes/comments section.
+      </li>
+
+      <li>
+        Do not include product names, product descriptions, or additional
+        details.
+      </li>
+
+      <li>
+        After payment verification, an order confirmation and shipment tracking
+        information will be sent by email.
+      </li>
+
+      <li>
+        Orders not paid within 24 hours may be automatically cancelled.
+      </li>
+    </ul>
+  </div>
+</section>
+
+Place Order & Receive Payment Instructions          </button>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10 text-center text-xs text-gray-500">
             <div>

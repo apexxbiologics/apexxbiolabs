@@ -176,20 +176,13 @@ className="h-20 sm:h-28 md:h-32 object-contain"          />
                   onChange={(e) => setCity(e.target.value)}
                 />
 
-<input
-  className="checkout-input"
-  placeholder="State"
-  value={stateValue}
-  onChange={(e) => setStateValue(e.target.value)}
-/>
 <select
+  className="checkout-input"
   value={stateValue}
   onChange={(e) => setStateValue(e.target.value)}
-  className="w-full"
   required
 >
   <option value="">Select State</option>
-
   <option value="AL">Alabama</option>
   <option value="AK">Alaska</option>
   <option value="AZ">Arizona</option>

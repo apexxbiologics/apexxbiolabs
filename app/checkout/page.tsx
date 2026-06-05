@@ -453,11 +453,10 @@ className="flex flex-col sm:flex-row sm:items-center gap-4 border border-blue-95
 
           <button
             onClick={handlePlaceOrder}
-disabled={!isCheckoutComplete || loading} 
-           className={`w-full py-5 rounded-lg uppercase tracking-widest font-bold transition-all ${
-                isCheckoutComplete
-                  ? "bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_25px_rgba(37,99,235,0.45)]"
-                  : "bg-gray-800 text-gray-500 cursor-not-allowed"
+disabled={!isCheckoutComplete || loading}            className={`w-full py-5 rounded-lg uppercase tracking-widest font-bold transition-all ${
+              agreed && cart.length > 0
+                ? "bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_25px_rgba(37,99,235,0.45)]"
+                : "bg-gray-800 text-gray-500 cursor-not-allowed"
             }`}
           >
             {loading

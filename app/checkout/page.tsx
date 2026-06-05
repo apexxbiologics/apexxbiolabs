@@ -99,14 +99,12 @@ if (!/^\d{5}$/.test(zipCode)) {
           <img
             src="/images/biglogo.PNG"
             alt="Apexx Biolabs"
-            className="h-32 object-contain"
-          />
+className="h-20 sm:h-28 md:h-32 object-contain"          />
         </div>
       </section>
 
-      <section className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
-        <div className="px-6 md:px-12 py-10 border-r border-blue-950">
-          <div className="flex items-center justify-between mb-10">
+<section className="grid grid-cols-1 xl:grid-cols-2 min-h-screen">        
+<div className="px-4 sm:px-6 md:px-10 py-8 xl:border-r border-blue-950">          <div className="flex items-center justify-between mb-10">
             <a href="/cart" className="text-blue-400 hover:text-blue-300">
               ← Return to cart
             </a>
@@ -305,8 +303,7 @@ if (!/^\d{5}$/.test(zipCode)) {
           </div>
         </div>
 
-        <div className="px-6 md:px-12 py-10 bg-[#020202]">
-          <div className="flex items-center justify-between mb-8">
+<div className="px-4 sm:px-6 md:px-10 py-8 bg-[#020202] border-t xl:border-t-0 border-blue-950">          <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3 text-blue-400">
               <ShoppingCart />
               <h2 className="text-2xl font-bold">Order Summary</h2>
@@ -322,8 +319,7 @@ if (!/^\d{5}$/.test(zipCode)) {
               cart.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center gap-4 border border-blue-950 rounded-xl p-4 bg-black"
-                >
+className="flex flex-col sm:flex-row sm:items-center gap-4 border border-blue-950 rounded-xl p-4 bg-black"                >
                   <img
                     src={item.image}
                     alt={item.name}
@@ -370,8 +366,7 @@ if (!/^\d{5}$/.test(zipCode)) {
               email after your order is submitted.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              {[
+<div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">              {[
                 { id: "cashapp", label: "Cash App" },
                 { id: "venmo", label: "Venmo" },
                 { id: "zelle", label: "Zelle" },

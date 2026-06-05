@@ -34,7 +34,7 @@ export async function POST(request: Request) {
       .join("");
 
     await resend.emails.send({
-      from: "Apexx Biolabs <orders@apexxbiolabs.com>",
+      from: "Apexx Biolabs <order@apexxbiolabs.com>",
       to: customerEmail,
       subject: `Payment Instructions - Order ${orderNumber}`,
       html: `
@@ -69,8 +69,8 @@ export async function POST(request: Request) {
     });
 
     await resend.emails.send({
-      from: "Apexx Biolabs <orders@apexxbiolabs.com>",
-      to: "orders@apexxbiolabs.com",
+      from: "Apexx Biolabs <order@apexxbiolabs.com>",
+      to: "order@apexxbiolabs.com",
       subject: `New Apexx Order ${orderNumber}`,
       html: `
         <h2>New Order Received</h2>

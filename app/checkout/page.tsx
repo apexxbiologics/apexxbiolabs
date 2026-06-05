@@ -38,60 +38,6 @@ export default function CheckoutPage() {
 
   const shipping = subtotal > 0 ? 5.99 : 0;
   const total = subtotal + shipping;
-  const isCheckoutComplete =
-  customerEmail.trim() !== "" &&
-  firstName.trim() !== "" &&
-  lastName.trim() !== "" &&
-  address.trim() !== "" &&
-  city.trim() !== "" &&
-  stateValue.trim() !== "" &&
-  /^\d{5}$/.test(zipCode) &&
-  agreed &&
-  cart.length > 0;
-
-  const handlePlaceOrder = async () => {
-    if (!agreed || cart.length === 0 || loading) return;
-
-"use client";
-
-import { useEffect, useState } from "react";
-import { Lock, ShoppingCart, ShieldCheck, Package, Star } from "lucide-react";
-
-type CartItem = {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-};
-
-export default function CheckoutPage() {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [sameBilling, setSameBilling] = useState(true);
-  const [agreed, setAgreed] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("cashapp");
-
-  const [customerEmail, setCustomerEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [stateValue, setStateValue] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const savedCart = JSON.parse(localStorage.getItem("cart") || "[]");
-    setCart(savedCart);
-  }, []);
-
-  const subtotal = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-
-  const shipping = subtotal > 0 ? 5.99 : 0;
-  const total = subtotal + shipping;
 
   const handlePlaceOrder = async () => {
     if (!agreed || cart.length === 0 || loading) return;

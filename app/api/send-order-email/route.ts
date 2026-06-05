@@ -38,8 +38,7 @@ await resend.emails.send({
   to: customerEmail,
   subject: `Order Confirmation - ${orderNumber}`,
   html: `
-    <div style="font-family: Arial, sans-serif; max-width: 700px; margin: auto;">
-
+    <div style="font-family: Arial, sans-serif; max-width: 700px; margin: auto; color: #111;">
       <h2>Thank you for your order.</h2>
 
       <p>
@@ -48,11 +47,11 @@ await resend.emails.send({
 
       <p>
         <strong>Order Number:</strong> ${orderNumber}<br/>
-        <strong>Total Due:</strong> $${Number(total).toFixed(2)}
+        <strong>Total Due:</strong> $${Number(total).toFixed(2)}<br/>
+        <strong>Selected Payment Method:</strong> ${paymentMethod}
       </p>
 
       <h3>Order Summary</h3>
-
       <ul>
         ${itemsHtml}
       </ul>
@@ -65,7 +64,7 @@ await resend.emails.send({
 
       <hr/>
 
-      <h3>Payment Instructions</h3>
+      <h3>Complete Your Payment</h3>
 
       <p>
         Please submit the exact payment amount of
@@ -74,15 +73,15 @@ await resend.emails.send({
 
       <ul>
         <li>Include ONLY your order number: <strong>${orderNumber}</strong></li>
-        <li>Do not include product names or descriptions in payment notes.</li>
+        <li>Do not include product names, product descriptions, or additional details in the payment notes.</li>
         <li>Orders not paid within 24 hours may be automatically cancelled.</li>
       </ul>
 
       ${
         paymentMethod === "cashapp"
           ? `
-          <h3>Cash App</h3>
-          <p><strong>$YOURCASHTAG</strong></p>
+            <h3>Cash App</h3>
+            <p><strong>$YOURCASHTAG</strong></p>
           `
           : ""
       }
@@ -90,8 +89,8 @@ await resend.emails.send({
       ${
         paymentMethod === "venmo"
           ? `
-          <h3>Venmo</h3>
-          <p><strong>@YOURVENMO</strong></p>
+            <h3>Venmo</h3>
+            <p><strong>@YOURVENMO</strong></p>
           `
           : ""
       }
@@ -99,8 +98,8 @@ await resend.emails.send({
       ${
         paymentMethod === "zelle"
           ? `
-          <h3>Zelle</h3>
-          <p><strong>YOUR_ZELLE_EMAIL@example.com</strong></p>
+            <h3>Zelle</h3>
+            <p><strong>YOUR_ZELLE_EMAIL@example.com</strong></p>
           `
           : ""
       }
@@ -111,15 +110,16 @@ await resend.emails.send({
 
       <hr/>
 
-      <p style="font-size:12px;color:#666;">
+      <p style="font-size: 12px; color: #666;">
         Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only.
+        Not for human consumption, medical use, veterinary use, diagnosis, treatment, cure, or prevention of disease.
       </p>
 
       <p>
         Apexx Biolabs<br/>
-        orders@apexxbiolabs.com
+        orders@apexxbiolabs.com<br/>
+        apexxbiolabs.com
       </p>
-
     </div>
   `,
 });

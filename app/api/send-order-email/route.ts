@@ -34,79 +34,93 @@ export async function POST(request: Request) {
       .join("");
 
 await resend.emails.send({
-  from: "Apexx Biolabs <order@apexxbiolabs.com>",
+  from: "Apexx Biolabs <orders@apexxbiolabs.com>",
   to: customerEmail,
   subject: `Order Confirmation - ${orderNumber}`,
   html: `
-    <h2>Thank you for your order.</h2>
+    <div style="font-family: Arial, sans-serif; max-width: 700px; margin: auto;">
 
-    <p>
-      Your order has been received and is currently awaiting payment verification.
-    </p>
+      <h2>Thank you for your order.</h2>
 
-    <p><strong>Order Number:</strong> ${orderNumber}</p>
-    <p><strong>Total Due:</strong> $${Number(total).toFixed(2)}</p>
+      <p>
+        Your order has been received and is currently awaiting payment verification.
+      </p>
 
-    <h3>Order Summary</h3>
+      <p>
+        <strong>Order Number:</strong> ${orderNumber}<br/>
+        <strong>Total Due:</strong> $${Number(total).toFixed(2)}
+      </p>
 
-    <ul>
-      ${itemsHtml}
-    </ul>
+      <h3>Order Summary</h3>
 
-    <hr />
+      <ul>
+        ${itemsHtml}
+      </ul>
 
-    <h3>Payment Instructions</h3>
+      <p>
+        <strong>Subtotal:</strong> $${Number(subtotal).toFixed(2)}<br/>
+        <strong>Shipping:</strong> $${Number(shipping).toFixed(2)}<br/>
+        <strong>Total:</strong> $${Number(total).toFixed(2)}
+      </p>
 
-    <p>
-      Submit the exact payment amount of
-      <strong>$${Number(total).toFixed(2)}</strong>.
-    </p>
+      <hr/>
 
-    <p>
-      Include ONLY your order number
-      <strong>${orderNumber}</strong>
-      in the payment notes/comments section.
-    </p>
+      <h3>Payment Instructions</h3>
 
-    <p>
-      Do not include product names, product descriptions,
-      or additional details.
-    </p>
+      <p>
+        Please submit the exact payment amount of
+        <strong>$${Number(total).toFixed(2)}</strong>.
+      </p>
 
-    ${
-      paymentMethod === "cashapp"
-        ? `<p><strong>Cash App:</strong> YOUR_CASHAPP_TAG</p>`
-        : ""
-    }
+      <ul>
+        <li>Include ONLY your order number: <strong>${orderNumber}</strong></li>
+        <li>Do not include product names or descriptions in payment notes.</li>
+        <li>Orders not paid within 24 hours may be automatically cancelled.</li>
+      </ul>
 
-    ${
-      paymentMethod === "venmo"
-        ? `<p><strong>Venmo:</strong> YOUR_VENMO_USERNAME</p>`
-        : ""
-    }
+      ${
+        paymentMethod === "cashapp"
+          ? `
+          <h3>Cash App</h3>
+          <p><strong>$YOURCASHTAG</strong></p>
+          `
+          : ""
+      }
 
-    ${
-      paymentMethod === "zelle"
-        ? `<p><strong>Zelle:</strong> YOUR_ZELLE_EMAIL</p>`
-        : ""
-    }
+      ${
+        paymentMethod === "venmo"
+          ? `
+          <h3>Venmo</h3>
+          <p><strong>@YOURVENMO</strong></p>
+          `
+          : ""
+      }
 
-    <p>
-      Orders not paid within 24 hours may be automatically cancelled.
-    </p>
+      ${
+        paymentMethod === "zelle"
+          ? `
+          <h3>Zelle</h3>
+          <p><strong>YOUR_ZELLE_EMAIL@example.com</strong></p>
+          `
+          : ""
+      }
 
-    <p>
-      After payment verification, shipment tracking information
-      will be sent by email.
-    </p>
+      <p>
+        After payment verification, shipment tracking information will be sent by email.
+      </p>
 
-    <hr />
+      <hr/>
 
-    <p>
-      Apexx Biolabs<br/>
-      order@apexxbiolabs.com<br/>
-      apexxbiolabs.com
-    </p>
+      <p style="font-size:12px;color:#666;">
+        Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only.
+      </p>
+
+      <p>
+        Apexx Biolabs<br/>
+        orders@apexxbiolabs.com
+      </p>
+
+    </div>
   `,
 });
     await resend.emails.send({

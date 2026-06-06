@@ -14,7 +14,6 @@ type CartItem = {
 
 export default function CheckoutPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [sameBilling, setSameBilling] = useState(true);
   const [agreed, setAgreed] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("cashapp");
   const [loading, setLoading] = useState(false);
@@ -321,28 +320,6 @@ const { isLoaded } = useJsApiLoader({
               <p className="mt-3 text-xs text-gray-500">
                 ZIP code must be 5 digits. State must be selected from the dropdown.
               </p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-bold mb-5">BILLING ADDRESS</h2>
-
-              <label className="flex items-center gap-3 border border-blue-900 rounded-lg px-4 py-4 mb-3 cursor-pointer">
-                <input
-                  type="radio"
-                  checked={sameBilling}
-                  onChange={() => setSameBilling(true)}
-                />
-                Same as shipping address
-              </label>
-
-              <label className="flex items-center gap-3 border border-blue-900 rounded-lg px-4 py-4 cursor-pointer">
-                <input
-                  type="radio"
-                  checked={!sameBilling}
-                  onChange={() => setSameBilling(false)}
-                />
-                Use a different billing address
-              </label>
             </section>
 
             <section className="border border-blue-900 rounded-xl p-5 bg-[#050505]">

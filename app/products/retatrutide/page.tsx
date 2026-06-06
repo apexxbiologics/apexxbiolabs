@@ -138,7 +138,7 @@ export default function RetatrutidePage() {
 <div className="space-y-5 mb-10">
   <div className="flex justify-between border-b border-blue-950 pb-4">
     <span className="text-gray-400">Size</span>
-    <span>10mg / 20mg</span>
+<span>{selectedMg}</span>
   </div>
 
   <div className="flex justify-between border-b border-blue-950 pb-4">

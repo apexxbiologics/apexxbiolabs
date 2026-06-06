@@ -74,8 +74,7 @@ export default function CartPage() {
                   key={item.id}
                   className="border-b border-blue-950 pb-6"
                 >
-<div className="grid grid-cols-[1fr_260px_120px] items-center gap-6">
-
+<div className="flex flex-col lg:grid lg:grid-cols-[1fr_260px_120px] items-start lg:items-center gap-6">
 <div className="flex items-center gap-6 min-w-0">                      <img
                         src={item.image || "/images/logo.PNG"}
                         alt={item.name}
@@ -93,8 +92,7 @@ export default function CartPage() {
                       </div>
                     </div>
 
-<div className="flex items-center justify-between md:justify-end gap-4 min-w-[260px]">
-  <div className="flex items-center justify-center gap-3 w-[130px]">
+<div className="flex items-center justify-between lg:justify-end gap-4 w-full lg:min-w-[260px]">  <div className="flex items-center justify-center gap-3 w-[130px]">
     <button
       onClick={() => decreaseQuantity(item.id)}
       className="w-10 h-10 border border-blue-700 hover:bg-blue-700 rounded-lg flex items-center justify-center"

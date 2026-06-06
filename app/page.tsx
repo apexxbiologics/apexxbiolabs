@@ -397,7 +397,7 @@ if (accepted === null) {
   </h4>
 
   <p className="text-gray-400 mt-3">
-    Research Supply
+    Research Reconstitution Solution
   </p>
 
   <a

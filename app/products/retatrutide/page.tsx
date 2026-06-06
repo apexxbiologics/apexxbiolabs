@@ -72,12 +72,12 @@ export default function RetatrutidePage() {
         </p>
       </header>
 
-<section className="px-6 md:px-10 pt-10 md:pt-16 pb-24">        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-start">
-          <div className="border border-blue-900 rounded-2xl p-4 md:p-8 bg-[#050505] shadow-[0_0_50px_rgba(37,99,235,0.15)]">
+<section className="px-6 md:px-10 pt-10 md:pt-16 pb-24">        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+          <div className="border border-blue-900 rounded-2xl p-10 bg-[#050505] shadow-[0_0_50px_rgba(37,99,235,0.15)]">
             <img
               src={selectedProduct.image}
               alt={selectedProduct.name}
-              className="w-full h-[320px] md:h-[500px] object-contain"
+              className="w-full h-[500px] object-contain"
             />
           </div>
 
@@ -135,27 +135,27 @@ export default function RetatrutidePage() {
               </div>
             </div>
 
-            <div className="space-y-5 mb-10">
-              <div className="flex justify-between border-b border-blue-950 pb-4">
-                <span className="text-gray-400">Quantity</span>
-                <span>{selectedProduct.quantityLabel}</span>
-              </div>
+<div className="space-y-5 mb-10">
+  <div className="flex justify-between border-b border-blue-950 pb-4">
+    <span className="text-gray-400">Size</span>
+    <span>10mg / 20mg</span>
+  </div>
 
-              <div className="flex justify-between border-b border-blue-950 pb-4">
-                <span className="text-gray-400">Form</span>
-                <span>Lyophilized Powder</span>
-              </div>
+  <div className="flex justify-between border-b border-blue-950 pb-4">
+    <span className="text-gray-400">Form</span>
+    <span>Lyophilized Powder</span>
+  </div>
 
-              <div className="flex justify-between border-b border-blue-950 pb-4">
-                <span className="text-gray-400">Testing</span>
-                <span>HPLC Verified</span>
-              </div>
+  <div className="flex justify-between border-b border-blue-950 pb-4">
+    <span className="text-gray-400">Purity</span>
+    <span>99%+</span>
+  </div>
 
-              <div className="flex justify-between border-b border-blue-950 pb-4">
-                <span className="text-gray-400">Storage</span>
-                <span>2–8°C</span>
-              </div>
-            </div>
+  <div className="flex justify-between border-b border-blue-950 pb-4">
+    <span className="text-gray-400">Storage</span>
+    <span>2–8°C</span>
+  </div>
+</div>
 
             <div className="flex flex-col sm:flex-row gap-5">
               <button

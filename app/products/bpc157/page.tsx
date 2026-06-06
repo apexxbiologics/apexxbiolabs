@@ -86,29 +86,27 @@ export default function BPC157Page() {
             </div>
 
             {/* DETAILS */}
-            <div className="space-y-5 mb-10">
+<div className="space-y-5 mb-10">
+  <div className="flex justify-between border-b border-blue-950 pb-4">
+    <span className="text-gray-400">Size</span>
+    <span>10mg</span>
+  </div>
 
-              <div className="flex justify-between border-b border-blue-950 pb-4">
-                <span className="text-gray-400">Quantity</span>
-                <span>10mg</span>
-              </div>
+  <div className="flex justify-between border-b border-blue-950 pb-4">
+    <span className="text-gray-400">Form</span>
+    <span>Lyophilized Powder</span>
+  </div>
 
-              <div className="flex justify-between border-b border-blue-950 pb-4">
-                <span className="text-gray-400">Form</span>
-                <span>Lyophilized Powder</span>
-              </div>
+  <div className="flex justify-between border-b border-blue-950 pb-4">
+    <span className="text-gray-400">Purity</span>
+    <span>99%+</span>
+  </div>
 
-              <div className="flex justify-between border-b border-blue-950 pb-4">
-                <span className="text-gray-400">Testing</span>
-                <span>HPLC Verified</span>
-              </div>
-
-              <div className="flex justify-between border-b border-blue-950 pb-4">
-                <span className="text-gray-400">Storage</span>
-                <span>2–8°C</span>
-              </div>
-
-            </div>
+  <div className="flex justify-between border-b border-blue-950 pb-4">
+    <span className="text-gray-400">Storage</span>
+    <span>2–8°C</span>
+  </div>
+</div>
 
             {/* BUTTONS */}
 <div className="flex flex-col sm:flex-row gap-5">

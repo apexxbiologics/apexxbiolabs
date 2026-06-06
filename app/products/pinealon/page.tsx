@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function PinealonPage() {
 
   const [added, setAdded] = useState(false);
-  const inStock = false;
+  const inStock = true;
 
   const addToCart = () => {
     const product = {

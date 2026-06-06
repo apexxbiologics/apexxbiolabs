@@ -124,8 +124,8 @@ await resend.emails.send({
   `,
 });
     await resend.emails.send({
-      from: "Apexx Biolabs <order@apexxbiolabs.com>",
-      to: "order@apexxbiolabs.com",
+      from: "Apexx Biolabs <orders@apexxbiolabs.com>",
+      to: "orders@apexxbiolabs.com",
       subject: `New Apexx Order ${orderNumber}`,
       html: `
         <h2>New Order Received</h2>

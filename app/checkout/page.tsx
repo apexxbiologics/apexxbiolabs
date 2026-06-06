@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
 import { Lock, ShoppingCart, ShieldCheck, Package, Star } from "lucide-react";
 
 type CartItem = {
@@ -27,6 +28,15 @@ export default function CheckoutPage() {
   const [stateValue, setStateValue] = useState("");
   const [zipCode, setZipCode] = useState("");
 
+  const autocompleteRef =
+  useRef<google.maps.places.Autocomplete | null>(null);
+
+const { isLoaded } = useJsApiLoader({
+  googleMapsApiKey:
+    process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+  libraries: ["places"],
+});
+
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem("cart") || "[]");
     setCart(savedCart);
@@ -50,6 +60,47 @@ export default function CheckoutPage() {
     /^\d{5}$/.test(zipCode) &&
     agreed &&
     cart.length > 0;
+
+    const handlePlaceChanged = () => {
+  const place = autocompleteRef.current?.getPlace();
+
+  if (!place?.address_components) return;
+
+  let streetNumber = "";
+  let route = "";
+  let cityName = "";
+  let stateCode = "";
+  let zip = "";
+
+  place.address_components.forEach((component) => {
+    const types = component.types;
+
+    if (types.includes("street_number")) {
+      streetNumber = component.long_name;
+    }
+
+    if (types.includes("route")) {
+      route = component.long_name;
+    }
+
+    if (types.includes("locality")) {
+      cityName = component.long_name;
+    }
+
+    if (types.includes("administrative_area_level_1")) {
+      stateCode = component.short_name;
+    }
+
+    if (types.includes("postal_code")) {
+      zip = component.long_name;
+    }
+  });
+
+  setAddress(`${streetNumber} ${route}`.trim());
+  setCity(cityName);
+  setStateValue(stateCode);
+  setZipCode(zip);
+};
 
   const handlePlaceOrder = async () => {
     if (!isCheckoutComplete || loading) return;
@@ -162,12 +213,27 @@ export default function CheckoutPage() {
                   onChange={(e) => setLastName(e.target.value)}
                 />
 
-                <input
-                  className="checkout-input md:col-span-2"
-                  placeholder="Street address"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                />
+{isLoaded ? (
+  <Autocomplete
+    onLoad={(autocomplete) => {
+      autocompleteRef.current = autocomplete;
+    }}
+    onPlaceChanged={handlePlaceChanged}
+  >
+    <input
+      className="checkout-input md:col-span-2 w-full"
+      placeholder="Start typing your address..."
+      value={address}
+      onChange={(e) => setAddress(e.target.value)}
+    />
+  </Autocomplete>
+) : (
+  <input
+    className="checkout-input md:col-span-2"
+    placeholder="Loading address lookup..."
+    disabled
+  />
+)}
 
                 <input
                   className="checkout-input md:col-span-2"

@@ -88,27 +88,27 @@ const addToCart = () => {
               $30.00
             </div>
 
-            <div className="space-y-5 mb-10">
-              <div className="flex justify-between border-b border-blue-950 pb-4">
-                <span className="text-gray-400">Volume</span>
-                <span>30mL</span>
-              </div>
+<div className="space-y-5 mb-10">
+  <div className="flex justify-between border-b border-blue-950 pb-4">
+    <span className="text-gray-400">Size</span>
+    <span>30mL</span>
+  </div>
 
-              <div className="flex justify-between border-b border-blue-950 pb-4">
-                <span className="text-gray-400">Type</span>
-                <span>Sterile Diluent</span>
-              </div>
+  <div className="flex justify-between border-b border-blue-950 pb-4">
+    <span className="text-gray-400">Form</span>
+    <span>Sterile Solution</span>
+  </div>
 
-              <div className="flex justify-between border-b border-blue-950 pb-4">
-                <span className="text-gray-400">Use</span>
-                <span>Research Use Only</span>
-              </div>
+  <div className="flex justify-between border-b border-blue-950 pb-4">
+    <span className="text-gray-400">Purity</span>
+    <span>99%+</span>
+  </div>
 
-              <div className="flex justify-between border-b border-blue-950 pb-4">
-                <span className="text-gray-400">Storage</span>
-                <span>Store as labeled</span>
-              </div>
-            </div>
+  <div className="flex justify-between border-b border-blue-950 pb-4">
+    <span className="text-gray-400">Storage</span>
+    <span>2–25°C</span>
+  </div>
+</div>
 
             <div className="flex flex-col sm:flex-row gap-5">
 

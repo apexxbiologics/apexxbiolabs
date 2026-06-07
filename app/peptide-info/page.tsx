@@ -44,7 +44,7 @@ export default function PeptideInfoPage() {
       </section>
 
       {/* PEPTIDE GRID */}
-      <section className="px-10 py-24">
+className="px-4 md:px-10 py-12 md:py-24"
 
         <div className="max-w-7xl mx-auto space-y-12">
 
@@ -55,7 +55,7 @@ export default function PeptideInfoPage() {
     Peptide Research Overview
   </p>
 
-  <h1 className="text-6xl font-bold mb-8 text-white">
+  <h1 className="text-4xl md:text-6xl font-bold mb-8 text-white">
     Understanding Peptides
   </h1>
 
@@ -1300,14 +1300,10 @@ export default function PeptideInfoPage() {
     For laboratory research use only. Not for human consumption.
   </p>
 
-</div>
+    </div>
   )}
 </div>
-
-</div>
-
-      </section>
-
-    </main>
+    </div>
+  </main>
   );
 }

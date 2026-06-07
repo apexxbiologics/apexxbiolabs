@@ -1226,10 +1226,12 @@ export default function PeptideInfoPage() {
         <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
           Research Peptide Blend
         </p>
+
         <h2 className="text-4xl font-bold text-blue-400">
           CJC/IPA Without DAC
         </h2>
       </div>
+
       <span className="text-4xl text-blue-400">
         {openPeptide === "cjcipa" ? "−" : "+"}
       </span>
@@ -1238,11 +1240,57 @@ export default function PeptideInfoPage() {
 
   {openPeptide === "cjcipa" && (
     <div className="p-10 bg-[#050505] border-t border-blue-900">
-      <p className="text-gray-300 text-lg leading-relaxed">
-        CJC/IPA Without DAC is a research peptide blend studied in laboratory
-        models involving endocrine signaling, receptor interactions, and
-        peptide-mediated cellular communication.
+      <p className="text-sm text-gray-500 mb-8">
+        CJC-1295 Without DAC + Ipamorelin | Synthetic Research Peptide Blend
       </p>
+
+      <p className="text-gray-300 text-lg leading-relaxed mb-8">
+        CJC/IPA Without DAC is a synthetic research peptide blend studied in
+        laboratory models involving endocrine signaling, growth-hormone-related
+        pathways, receptor interactions, and peptide-mediated cellular
+        communication.
+      </p>
+
+      <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
+        <h3 className="text-xl font-semibold text-blue-400 mb-3">
+          Mechanism Research
+        </h3>
+
+        <p className="text-gray-400 leading-relaxed">
+          Experimental studies investigate CJC-1295 Without DAC and Ipamorelin
+          in relation to growth-hormone secretagogue receptor pathways,
+          GHRH-receptor signaling, pulsatile endocrine signaling models, and
+          peptide-mediated regulation of cellular communication systems.
+        </p>
+      </div>
+
+      <div>
+        <h3 className="text-xl font-semibold text-white mb-4">
+          Research Areas
+        </h3>
+
+        <div className="flex flex-wrap gap-3">
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Endocrine signaling research
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            GHRH pathway studies
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Secretagogue receptor models
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Peptide blend research
+          </span>
+
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Cellular communication studies
+          </span>
+        </div>
+      </div>
 
       <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
         For laboratory research use only. Not for human consumption.

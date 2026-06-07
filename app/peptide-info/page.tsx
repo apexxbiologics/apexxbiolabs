@@ -905,41 +905,71 @@ export default function PeptideInfoPage() {
     </div>
   </button>
 
-  {openPeptide === "motsc" && (
-    <div className="p-10 bg-[#050505] border-t border-blue-900">
-      <p className="text-sm text-gray-500 mb-8">
-        16 amino acids | Mitochondrial-derived peptide
-      </p>
+{openPeptide === "motsc" && (
+  <div className="p-10 bg-[#050505] border-t border-blue-900">
 
-      <p className="text-gray-300 text-lg leading-relaxed mb-8">
-        MOTS-C is a mitochondrial-derived research peptide studied in laboratory
-        models involving metabolic signaling, cellular energy regulation,
-        mitochondrial communication, and stress-response pathways.
-      </p>
+    <p className="text-sm text-gray-500 mb-8">
+      16 amino acids | MW: 2174.5 g/mol | Mitochondrial-Derived Peptide
+    </p>
 
-      <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
-        <h3 className="text-xl font-semibold text-blue-400 mb-3">
-          Mechanism Research
-        </h3>
-        <p className="text-gray-400 leading-relaxed">
-          Experimental studies investigate MOTS-C in relation to AMPK-associated
-          signaling, mitochondrial regulation, glucose metabolism pathways, and
-          cellular adaptation under metabolic stress conditions.
-        </p>
-      </div>
+    <p className="text-gray-300 text-lg leading-relaxed mb-8">
+      MOTS-C is a naturally occurring mitochondrial-derived peptide encoded
+      within mitochondrial DNA. It is widely studied in laboratory and
+      preclinical models involving cellular energy regulation, metabolic
+      signaling, mitochondrial communication, oxidative-stress responses,
+      and adaptive stress-response pathways.
+    </p>
 
-      <div className="flex flex-wrap gap-3">
-        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">Mitochondrial research</span>
-        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">Metabolic signaling</span>
-        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">AMPK pathway studies</span>
-        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">Cellular stress models</span>
-      </div>
+    <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
+      <h3 className="text-xl font-semibold text-blue-400 mb-3">
+        Mechanism Research
+      </h3>
 
-      <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
-        For laboratory research use only. Not for human consumption.
+      <p className="text-gray-400 leading-relaxed">
+        Experimental studies have investigated MOTS-C for its interaction
+        with AMPK-associated signaling pathways, mitochondrial regulation,
+        glucose metabolism mechanisms, cellular stress adaptation,
+        oxidative-stress responses, and metabolic homeostasis models in
+        laboratory research environments.
       </p>
     </div>
-  )}
+
+    <div>
+      <h3 className="text-xl font-semibold text-white mb-4">
+        Research Areas
+      </h3>
+
+      <div className="flex flex-wrap gap-3">
+
+        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+          Mitochondrial research
+        </span>
+
+        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+          AMPK pathway studies
+        </span>
+
+        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+          Cellular energy regulation
+        </span>
+
+        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+          Metabolic signaling research
+        </span>
+
+        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+          Oxidative stress investigations
+        </span>
+
+      </div>
+    </div>
+
+    <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
+      For laboratory research use only. Not for human consumption.
+    </p>
+
+  </div>
+)}
 </div>
 
 {/* ARA-290 */}
@@ -962,40 +992,69 @@ export default function PeptideInfoPage() {
   </button>
 
   {openPeptide === "ara290" && (
-    <div className="p-10 bg-[#050505] border-t border-blue-900">
-      <p className="text-sm text-gray-500 mb-8">
-        11 amino acids | Erythropoietin-derived peptide analog
-      </p>
+<div className="p-10 bg-[#050505] border-t border-blue-900">
 
-      <p className="text-gray-300 text-lg leading-relaxed mb-8">
-        ARA-290 is a research peptide studied in laboratory models involving
-        tissue-protective signaling, inflammatory pathway modulation,
-        neurobiology research, and cellular stress-response mechanisms.
-      </p>
+  <p className="text-sm text-gray-500 mb-8">
+    11 amino acids | MW: 1257.4 g/mol | Erythropoietin-Derived Peptide
+  </p>
 
-      <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
-        <h3 className="text-xl font-semibold text-blue-400 mb-3">
-          Mechanism Research
-        </h3>
-        <p className="text-gray-400 leading-relaxed">
-          Experimental research investigates ARA-290 in relation to innate repair
-          receptor signaling, cytokine modulation, cellular protection pathways,
-          and inflammatory response models.
-        </p>
-      </div>
+  <p className="text-gray-300 text-lg leading-relaxed mb-8">
+    ARA-290 is a synthetic peptide derived from the tissue-protective region
+    of erythropoietin. It is widely studied in laboratory and preclinical
+    models involving cellular protection pathways, inflammatory signaling,
+    neurobiology research, tissue-response mechanisms, and innate repair
+    receptor interactions.
+  </p>
 
-      <div className="flex flex-wrap gap-3">
-        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">Inflammatory pathway research</span>
-        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">Cellular protection studies</span>
-        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">Neurobiology models</span>
-        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">Tissue signaling research</span>
-      </div>
+  <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
+    <h3 className="text-xl font-semibold text-blue-400 mb-3">
+      Mechanism Research
+    </h3>
 
-      <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
-        For laboratory research use only. Not for human consumption.
-      </p>
+    <p className="text-gray-400 leading-relaxed">
+      Experimental studies have investigated ARA-290 for its interaction
+      with innate repair receptor signaling, cytokine modulation pathways,
+      inflammatory response mechanisms, cellular stress responses, and
+      tissue-protective signaling networks in laboratory research models.
+    </p>
+  </div>
+
+  <div>
+    <h3 className="text-xl font-semibold text-white mb-4">
+      Research Areas
+    </h3>
+
+    <div className="flex flex-wrap gap-3">
+
+      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+        Inflammatory pathway research
+      </span>
+
+      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+        Neurobiology studies
+      </span>
+
+      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+        Cellular protection models
+      </span>
+
+      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+        Cytokine signaling research
+      </span>
+
+      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+        Tissue-response investigations
+      </span>
+
     </div>
-  )}
+  </div>
+
+<p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
+  For laboratory research use only. Not for human consumption.
+</p>
+
+</div>
+)}
 </div>
 
 {/* PE-22-28 */}
@@ -1007,7 +1066,7 @@ export default function PeptideInfoPage() {
     <div className="flex items-center justify-between gap-6">
       <div>
         <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
-          Research Peptide
+          Neurobiology Research Peptide
         </p>
         <h2 className="text-4xl font-bold text-blue-400">PE-22-28</h2>
       </div>
@@ -1019,11 +1078,53 @@ export default function PeptideInfoPage() {
 
   {openPeptide === "pe2228" && (
     <div className="p-10 bg-[#050505] border-t border-blue-900">
-      <p className="text-gray-300 text-lg leading-relaxed">
-        PE-22-28 is a synthetic research peptide studied in laboratory models
-        involving neurobiology, neurotransmitter signaling, and behavioral
-        research pathways.
+      <p className="text-sm text-gray-500 mb-8">
+        Synthetic Research Peptide | Experimental Neurobiology Research Compound
       </p>
+
+      <p className="text-gray-300 text-lg leading-relaxed mb-8">
+        PE-22-28 is a synthetic research peptide studied in laboratory models
+        involving neurochemical signaling, neurotransmitter regulation,
+        neuronal communication pathways, behavioral research models, and central
+        nervous system signaling mechanisms.
+      </p>
+
+      <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
+        <h3 className="text-xl font-semibold text-blue-400 mb-3">
+          Mechanism Research
+        </h3>
+
+        <p className="text-gray-400 leading-relaxed">
+          Experimental studies have investigated PE-22-28 for its interactions
+          with neurotransmitter systems, neuronal signaling pathways, synaptic
+          communication mechanisms, neuroplasticity-related processes, and
+          cellular signaling networks within laboratory research environments.
+        </p>
+      </div>
+
+      <div>
+        <h3 className="text-xl font-semibold text-white mb-4">
+          Research Areas
+        </h3>
+
+        <div className="flex flex-wrap gap-3">
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Neurobiology research
+          </span>
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Neurotransmitter studies
+          </span>
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Synaptic signaling research
+          </span>
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Behavioral model investigations
+          </span>
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Neuroplasticity studies
+          </span>
+        </div>
+      </div>
 
       <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
         For laboratory research use only. Not for human consumption.
@@ -1051,13 +1152,66 @@ export default function PeptideInfoPage() {
     </div>
   </button>
 
-  {openPeptide === "adamax" && (
-    <div className="p-10 bg-[#050505] border-t border-blue-900">
-      <p className="text-gray-300 text-lg leading-relaxed">
-        ADAMAX is a research peptide currently being studied in laboratory
-        environments involving neurochemical signaling, cognition-related
-        pathways, and cellular communication systems.
-      </p>
+<div className="p-10 bg-[#050505] border-t border-blue-900">
+
+  <p className="text-sm text-gray-500 mb-8">
+    Synthetic Semax Derivative | Adamantane-Modified Research Peptide
+  </p>
+
+  <p className="text-gray-300 text-lg leading-relaxed mb-8">
+    ADAMAX is a synthetic peptide derived from the Semax family and is
+    studied in laboratory models involving neurochemical signaling,
+    neuroplasticity-associated pathways, neurotransmitter regulation,
+    and cognitive neuroscience research. Experimental research frequently
+    investigates ADAMAX as a modified peptide analog designed to enhance
+    stability and peptide activity in laboratory settings. :contentReference[oaicite:0]{index=0}
+  </p>
+
+  <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
+    <h3 className="text-xl font-semibold text-blue-400 mb-3">
+      Mechanism Research
+    </h3>
+
+    <p className="text-gray-400 leading-relaxed">
+      Experimental studies investigate ADAMAX in relation to
+      neuropeptide signaling, neuroplasticity-associated mechanisms,
+      monoaminergic neurotransmitter pathways, stress-response models,
+      and peptide-mediated central nervous system signaling. Research
+      also explores how adamantane modification may influence peptide
+      stability and biological activity compared with related peptide
+      analogs. :contentReference[oaicite:1]{index=1}
+    </p>
+  </div>
+
+  <div>
+    <h3 className="text-xl font-semibold text-white mb-4">
+      Research Areas
+    </h3>
+
+    <div className="flex flex-wrap gap-3">
+
+      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+        Neuroplasticity research
+      </span>
+
+      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+        Neurotransmitter signaling
+      </span>
+
+      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+        Cognitive neuroscience
+      </span>
+
+      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+        Stress-response studies
+      </span>
+
+      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+        Peptide stability research
+      </span>
+
+    </div>
+  </div>
 
       <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
         For laboratory research use only. Not for human consumption.

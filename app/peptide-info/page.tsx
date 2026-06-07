@@ -883,6 +883,223 @@ export default function PeptideInfoPage() {
       </p>
 
     </div>
+
+    {/* MOTS-C */}
+<div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">
+  <button
+    onClick={() => setOpenPeptide(openPeptide === "motsc" ? null : "motsc")}
+    className="w-full text-left p-8 bg-[#050505] hover:bg-[#080808] transition-all"
+  >
+    <div className="flex items-center justify-between gap-6">
+      <div>
+        <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
+          Mitochondrial Research Peptide
+        </p>
+        <h2 className="text-4xl font-bold text-blue-400">MOTS-C</h2>
+      </div>
+      <span className="text-4xl text-blue-400">
+        {openPeptide === "motsc" ? "−" : "+"}
+      </span>
+    </div>
+  </button>
+
+  {openPeptide === "motsc" && (
+    <div className="p-10 bg-[#050505] border-t border-blue-900">
+      <p className="text-sm text-gray-500 mb-8">
+        16 amino acids | Mitochondrial-derived peptide
+      </p>
+
+      <p className="text-gray-300 text-lg leading-relaxed mb-8">
+        MOTS-C is a mitochondrial-derived research peptide studied in laboratory
+        models involving metabolic signaling, cellular energy regulation,
+        mitochondrial communication, and stress-response pathways.
+      </p>
+
+      <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
+        <h3 className="text-xl font-semibold text-blue-400 mb-3">
+          Mechanism Research
+        </h3>
+        <p className="text-gray-400 leading-relaxed">
+          Experimental studies investigate MOTS-C in relation to AMPK-associated
+          signaling, mitochondrial regulation, glucose metabolism pathways, and
+          cellular adaptation under metabolic stress conditions.
+        </p>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">Mitochondrial research</span>
+        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">Metabolic signaling</span>
+        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">AMPK pathway studies</span>
+        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">Cellular stress models</span>
+      </div>
+
+      <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
+        For laboratory research use only. Not for human consumption.
+      </p>
+    </div>
+  )}
+</div>
+
+{/* ARA-290 */}
+<div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">
+  <button
+    onClick={() => setOpenPeptide(openPeptide === "ara290" ? null : "ara290")}
+    className="w-full text-left p-8 bg-[#050505] hover:bg-[#080808] transition-all"
+  >
+    <div className="flex items-center justify-between gap-6">
+      <div>
+        <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
+          Cytoprotective Research Peptide
+        </p>
+        <h2 className="text-4xl font-bold text-blue-400">ARA-290</h2>
+      </div>
+      <span className="text-4xl text-blue-400">
+        {openPeptide === "ara290" ? "−" : "+"}
+      </span>
+    </div>
+  </button>
+
+  {openPeptide === "ara290" && (
+    <div className="p-10 bg-[#050505] border-t border-blue-900">
+      <p className="text-sm text-gray-500 mb-8">
+        11 amino acids | Erythropoietin-derived peptide analog
+      </p>
+
+      <p className="text-gray-300 text-lg leading-relaxed mb-8">
+        ARA-290 is a research peptide studied in laboratory models involving
+        tissue-protective signaling, inflammatory pathway modulation,
+        neurobiology research, and cellular stress-response mechanisms.
+      </p>
+
+      <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
+        <h3 className="text-xl font-semibold text-blue-400 mb-3">
+          Mechanism Research
+        </h3>
+        <p className="text-gray-400 leading-relaxed">
+          Experimental research investigates ARA-290 in relation to innate repair
+          receptor signaling, cytokine modulation, cellular protection pathways,
+          and inflammatory response models.
+        </p>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">Inflammatory pathway research</span>
+        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">Cellular protection studies</span>
+        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">Neurobiology models</span>
+        <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">Tissue signaling research</span>
+      </div>
+
+      <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
+        For laboratory research use only. Not for human consumption.
+      </p>
+    </div>
+  )}
+</div>
+
+{/* PE-22-28 */}
+<div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">
+  <button
+    onClick={() => setOpenPeptide(openPeptide === "pe2228" ? null : "pe2228")}
+    className="w-full text-left p-8 bg-[#050505] hover:bg-[#080808] transition-all"
+  >
+    <div className="flex items-center justify-between gap-6">
+      <div>
+        <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
+          Research Peptide
+        </p>
+        <h2 className="text-4xl font-bold text-blue-400">PE-22-28</h2>
+      </div>
+      <span className="text-4xl text-blue-400">
+        {openPeptide === "pe2228" ? "−" : "+"}
+      </span>
+    </div>
+  </button>
+
+  {openPeptide === "pe2228" && (
+    <div className="p-10 bg-[#050505] border-t border-blue-900">
+      <p className="text-gray-300 text-lg leading-relaxed">
+        PE-22-28 is a synthetic research peptide studied in laboratory models
+        involving neurobiology, neurotransmitter signaling, and behavioral
+        research pathways.
+      </p>
+
+      <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
+        For laboratory research use only. Not for human consumption.
+      </p>
+    </div>
+  )}
+</div>
+
+{/* ADAMAX */}
+<div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">
+  <button
+    onClick={() => setOpenPeptide(openPeptide === "adamax" ? null : "adamax")}
+    className="w-full text-left p-8 bg-[#050505] hover:bg-[#080808] transition-all"
+  >
+    <div className="flex items-center justify-between gap-6">
+      <div>
+        <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
+          Research Peptide
+        </p>
+        <h2 className="text-4xl font-bold text-blue-400">ADAMAX</h2>
+      </div>
+      <span className="text-4xl text-blue-400">
+        {openPeptide === "adamax" ? "−" : "+"}
+      </span>
+    </div>
+  </button>
+
+  {openPeptide === "adamax" && (
+    <div className="p-10 bg-[#050505] border-t border-blue-900">
+      <p className="text-gray-300 text-lg leading-relaxed">
+        ADAMAX is a research peptide currently being studied in laboratory
+        environments involving neurochemical signaling, cognition-related
+        pathways, and cellular communication systems.
+      </p>
+
+      <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
+        For laboratory research use only. Not for human consumption.
+      </p>
+    </div>
+  )}
+</div>
+
+{/* CJC/IPA WITHOUT DAC */}
+<div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">
+  <button
+    onClick={() => setOpenPeptide(openPeptide === "cjcipa" ? null : "cjcipa")}
+    className="w-full text-left p-8 bg-[#050505] hover:bg-[#080808] transition-all"
+  >
+    <div className="flex items-center justify-between gap-6">
+      <div>
+        <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
+          Research Peptide Blend
+        </p>
+        <h2 className="text-4xl font-bold text-blue-400">
+          CJC/IPA Without DAC
+        </h2>
+      </div>
+      <span className="text-4xl text-blue-400">
+        {openPeptide === "cjcipa" ? "−" : "+"}
+      </span>
+    </div>
+  </button>
+
+  {openPeptide === "cjcipa" && (
+    <div className="p-10 bg-[#050505] border-t border-blue-900">
+      <p className="text-gray-300 text-lg leading-relaxed">
+        CJC/IPA Without DAC is a research peptide blend studied in laboratory
+        models involving endocrine signaling, receptor interactions, and
+        peptide-mediated cellular communication.
+      </p>
+
+      <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
+        For laboratory research use only. Not for human consumption.
+      </p>
+    </div>
+  )}
+</div>
+
   )}
 </div>
 

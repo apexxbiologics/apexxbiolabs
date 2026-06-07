@@ -95,14 +95,15 @@ await resend.emails.send({
           : ""
       }
 
-      ${
-        paymentMethod === "zelle"
-          ? `
-            <h3>Zelle</h3>
-            <p><strong>YOUR_ZELLE_EMAIL@example.com</strong></p>
-          `
-          : ""
-      }
+${
+  paymentMethod === "zelle"
+    ? `
+      <h3>Zelle</h3>
+      <p>Please send payment via Zelle to:</p>
+      <p><strong>apexxbiolabs7</strong></p>
+    `
+    : ""
+}
 
       <p>
         After payment verification, shipment tracking information will be sent by email.

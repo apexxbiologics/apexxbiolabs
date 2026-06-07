@@ -1216,8 +1216,7 @@ export default function PeptideInfoPage() {
       <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
         For laboratory research use only. Not for human consumption.
       </p>
-    </div>
-  )}
+</div>
 </div>
 
 {/* CJC/IPA WITHOUT DAC */}

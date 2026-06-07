@@ -883,8 +883,10 @@ export default function PeptideInfoPage() {
       </p>
 
     </div>
+  )}
+</div>
 
-    {/* MOTS-C */}
+{/* MOTS-C */}
 <div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">
   <button
     onClick={() => setOpenPeptide(openPeptide === "motsc" ? null : "motsc")}
@@ -1097,9 +1099,6 @@ export default function PeptideInfoPage() {
         For laboratory research use only. Not for human consumption.
       </p>
     </div>
-  )}
-</div>
-
   )}
 </div>
 

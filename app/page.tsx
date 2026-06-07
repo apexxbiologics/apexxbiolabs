@@ -21,6 +21,11 @@ const products = [
   { name: "Pinealon", href: "/products/pinealon" },
   { name: "Selank", href: "/products/selank" },
   { name: "Semax", href: "/products/semax" },
+  { name: "MOTS-C", href: "/products/motsc" },
+{ name: "ARA-290", href: "/products/ara290" },
+{ name: "PE-22-28", href: "/products/pe2228" },
+{ name: "ADAMAX", href: "/products/adamax" },
+{ name: "CJC/IPA Without DAC", href: "/products/cjcipa" },
 ];
 
 const filteredProducts = products.filter((product) =>
@@ -558,6 +563,127 @@ if (accepted === null) {
   </a>
 
 </div>
+
+{/* MOTS-C */}
+<div
+  onClick={() => (window.location.href = "/products/motsc")}
+  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
+>
+  <img
+    src="/images/motsc.PNG"
+    alt="MOTS-C"
+    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
+  />
+
+  <h4 className="text-2xl font-semibold">MOTS-C</h4>
+
+  <p className="text-gray-400 mt-3">10mg Research Peptide</p>
+
+  <a
+    href="/products/motsc"
+    onClick={(e) => e.stopPropagation()}
+    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
+  >
+    View Product
+  </a>
+</div>
+
+{/* ARA-290 */}
+<div
+  onClick={() => (window.location.href = "/products/ara290")}
+  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
+>
+  <img
+    src="/images/ara290.PNG"
+    alt="ARA-290"
+    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
+  />
+
+  <h4 className="text-2xl font-semibold">ARA-290</h4>
+
+  <p className="text-gray-400 mt-3">10mg Research Peptide</p>
+
+  <a
+    href="/products/ara290"
+    onClick={(e) => e.stopPropagation()}
+    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
+  >
+    View Product
+  </a>
+</div>
+
+{/* PE-22-28 */}
+<div
+  onClick={() => (window.location.href = "/products/pe2228")}
+  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
+>
+  <img
+    src="/images/pe2228.PNG"
+    alt="PE-22-28"
+    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
+  />
+
+  <h4 className="text-2xl font-semibold">PE-22-28</h4>
+
+  <p className="text-gray-400 mt-3">10mg Research Peptide</p>
+
+  <a
+    href="/products/pe2228"
+    onClick={(e) => e.stopPropagation()}
+    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
+  >
+    View Product
+  </a>
+</div>
+
+{/* ADAMAX */}
+<div
+  onClick={() => (window.location.href = "/products/adamax")}
+  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
+>
+  <img
+    src="/images/adamax.PNG"
+    alt="ADAMAX"
+    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
+  />
+
+  <h4 className="text-2xl font-semibold">ADAMAX</h4>
+
+  <p className="text-gray-400 mt-3">10mg Research Peptide</p>
+
+  <a
+    href="/products/adamax"
+    onClick={(e) => e.stopPropagation()}
+    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
+  >
+    View Product
+  </a>
+</div>
+
+{/* CJC/IPA WITHOUT DAC */}
+<div
+  onClick={() => (window.location.href = "/products/cjcipa")}
+  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
+>
+  <img
+    src="/images/cjcipa.PNG"
+    alt="CJC/IPA Without DAC"
+    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
+  />
+
+  <h4 className="text-2xl font-semibold">CJC/IPA Without DAC</h4>
+
+  <p className="text-gray-400 mt-3">10mg Research Peptide</p>
+
+  <a
+    href="/products/cjcipa"
+    onClick={(e) => e.stopPropagation()}
+    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
+  >
+    View Product
+  </a>
+</div>
+
           </div>
         </section>
 

@@ -111,7 +111,6 @@ export default function BPC157Page() {
             {/* BUTTONS */}
 <div className="flex flex-col sm:flex-row gap-5">
 
-  <div className="flex flex-col sm:flex-row gap-5">
   <button
     onClick={addToCart}
     className="bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_25px_rgba(37,99,235,0.45)] px-10 py-5 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"
@@ -119,24 +118,30 @@ export default function BPC157Page() {
     {added ? "Added To Cart" : "Add To Cart"}
   </button>
 
+  <a
+    href="/#shop"
+    className="text-center border border-blue-700 hover:bg-blue-700 px-10 py-5 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"
+  >
+    Continue Shopping
+  </a>
+
   {added && (
     <a
       href="/cart"
-      className="text-center border border-blue-700 hover:bg-blue-700 px-10 py-5 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"
+      className="text-center border border-green-700 hover:bg-green-700 px-10 py-5 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"
     >
       View Cart
     </a>
   )}
 
-</div>
+  <a
+    href="/coas"
+    className="text-center border border-blue-700 hover:bg-blue-700 px-10 py-5 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"
+  >
+    View COA
+  </a>
 
-              <a
-                href="/coas"
-                className="text-center border border-blue-700 hover:bg-blue-700 px-10 py-5 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"
-              >
-                View COA
-              </a>
-            </div>
+</div>
 
             <div className="mt-10 border border-blue-900 rounded-2xl p-6 bg-[#050505]">
   <h3 className="text-blue-400 font-bold uppercase tracking-widest text-sm mb-3">

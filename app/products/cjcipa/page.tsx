@@ -78,7 +78,7 @@ export default function CJCIPAWithoutDACPage() {
             </p>
 
             <div className="text-3xl font-bold text-blue-400 mb-10">
-              $85.00
+              $70.00
             </div>
 
             <div className="space-y-5 mb-10">

@@ -1142,81 +1142,77 @@ export default function PeptideInfoPage() {
     <div className="flex items-center justify-between gap-6">
       <div>
         <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-2">
-          Research Peptide
+          Neurobiology Research Peptide
         </p>
+
         <h2 className="text-4xl font-bold text-blue-400">ADAMAX</h2>
       </div>
+
       <span className="text-4xl text-blue-400">
         {openPeptide === "adamax" ? "−" : "+"}
       </span>
     </div>
   </button>
 
-<div className="p-10 bg-[#050505] border-t border-blue-900">
+  {openPeptide === "adamax" && (
+    <div className="p-10 bg-[#050505] border-t border-blue-900">
+      <p className="text-sm text-gray-500 mb-8">
+        Synthetic Semax Derivative | Adamantane-Modified Research Peptide
+      </p>
 
-  <p className="text-sm text-gray-500 mb-8">
-    Synthetic Semax Derivative | Adamantane-Modified Research Peptide
-  </p>
+      <p className="text-gray-300 text-lg leading-relaxed mb-8">
+        ADAMAX is a synthetic peptide derived from the Semax family and is
+        studied in laboratory models involving neurochemical signaling,
+        neuroplasticity-associated pathways, neurotransmitter regulation, and
+        cognitive neuroscience research.
+      </p>
 
-  <p className="text-gray-300 text-lg leading-relaxed mb-8">
-    ADAMAX is a synthetic peptide derived from the Semax family and is
-    studied in laboratory models involving neurochemical signaling,
-    neuroplasticity-associated pathways, neurotransmitter regulation,
-    and cognitive neuroscience research. Experimental research frequently
-    investigates ADAMAX as a modified peptide analog designed to enhance
-    stability and peptide activity in laboratory settings. :contentReference[oaicite:0]{index=0}
-  </p>
+      <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
+        <h3 className="text-xl font-semibold text-blue-400 mb-3">
+          Mechanism Research
+        </h3>
 
-  <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
-    <h3 className="text-xl font-semibold text-blue-400 mb-3">
-      Mechanism Research
-    </h3>
+        <p className="text-gray-400 leading-relaxed">
+          Experimental studies investigate ADAMAX in relation to neuropeptide
+          signaling, neuroplasticity-associated mechanisms, monoaminergic
+          neurotransmitter pathways, stress-response models, and
+          peptide-mediated central nervous system signaling.
+        </p>
+      </div>
 
-    <p className="text-gray-400 leading-relaxed">
-      Experimental studies investigate ADAMAX in relation to
-      neuropeptide signaling, neuroplasticity-associated mechanisms,
-      monoaminergic neurotransmitter pathways, stress-response models,
-      and peptide-mediated central nervous system signaling. Research
-      also explores how adamantane modification may influence peptide
-      stability and biological activity compared with related peptide
-      analogs. :contentReference[oaicite:1]{index=1}
-    </p>
-  </div>
+      <div>
+        <h3 className="text-xl font-semibold text-white mb-4">
+          Research Areas
+        </h3>
 
-  <div>
-    <h3 className="text-xl font-semibold text-white mb-4">
-      Research Areas
-    </h3>
+        <div className="flex flex-wrap gap-3">
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Neuroplasticity research
+          </span>
 
-    <div className="flex flex-wrap gap-3">
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Neurotransmitter signaling
+          </span>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Neuroplasticity research
-      </span>
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Cognitive neuroscience
+          </span>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Neurotransmitter signaling
-      </span>
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Stress-response studies
+          </span>
 
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Cognitive neuroscience
-      </span>
-
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Stress-response studies
-      </span>
-
-      <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-        Peptide stability research
-      </span>
-
-    </div>
-  </div>
+          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+            Peptide stability research
+          </span>
+        </div>
+      </div>
 
       <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
         For laboratory research use only. Not for human consumption.
       </p>
-</div>
+    </div>
+  )}
 </div>
 
 {/* CJC/IPA WITHOUT DAC */}

@@ -1,0 +1,26 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "apexxbiologics.com"
+        }
+      ],
+      "destination": "https://www.apexxbiolabs.com/$1",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.apexxbiologics.com"
+        }
+      ],
+      "destination": "https://www.apexxbiolabs.com/$1",
+      "permanent": true
+    }
+  ]
+}

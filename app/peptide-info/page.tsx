@@ -189,17 +189,17 @@ export default function PeptideInfoPage() {
         </p>
 
         <h2 className="text-4xl font-bold text-blue-400">
-          Retatrutide
+          APX-3
         </h2>
       </div>
 
       <span className="text-4xl text-blue-400">
-        {openPeptide === "retatrutide" ? "−" : "+"}
+        {openPeptide === "APX-3" ? "−" : "+"}
       </span>
     </div>
   </button>
 
-  {openPeptide === "retatrutide" && (
+  {openPeptide === "APX-3" && (
     <div className="p-10 bg-[#050505] border-t border-blue-900">
       <p className="text-sm text-gray-500 mb-8">
         39 amino acids | MW: 4731.41 g/mol | GCGR / GIPR / GLP-1R Triple Agonist

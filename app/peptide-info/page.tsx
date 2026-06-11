@@ -268,6 +268,7 @@ onClick={() =>
   </div>
 </div>
 
+
         <p className="text-gray-400 leading-relaxed">
         For laboratory research use only. Not for human consumption.
       </p>

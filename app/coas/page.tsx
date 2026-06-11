@@ -1,6 +1,6 @@
 export default function COAsPage() {
   const products = [
-    "Retatrutide",
+    "APX-3",
     "BPC-157",
     "TB-500",
     "Bacteriostatic Water",

@@ -333,7 +333,7 @@ if (accepted === null) {
                 className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
               />
 
-              <h4 className="text-2xl font-semibold">Retatrutide</h4>
+              <h4 className="text-2xl font-semibold">APX-3</h4>
 
               <p className="text-gray-400 mt-3">10-20mg Research Peptide</p>
 

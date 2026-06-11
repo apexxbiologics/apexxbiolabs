@@ -12,7 +12,7 @@ const [disclaimerChecked, setDisclaimerChecked] = useState(false);
       const [moreOpen, setMoreOpen] = useState(false);
 
 const products = [
-  { name: "APX-3", href: "/products/retatrutide" },
+  { name: "APX-3", href: "/products/apx-3" },
   { name: "BPC-157", href: "/products/bpc157" },
   { name: "TB-500", href: "/products/tb500" },
   { name: "Bacteriostatic Water", href: "/products/bacwater" },
@@ -324,7 +324,7 @@ if (accepted === null) {
 {/* APX-3 */}
 <div
   id="APX-3"
-  onClick={() => (window.location.href = "/products/retatrutide")}
+  onClick={() => (window.location.href = "/products/apx-3")}
   className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
 >
               <img

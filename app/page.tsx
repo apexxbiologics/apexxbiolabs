@@ -321,15 +321,15 @@ if (accepted === null) {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
 
-{/* RETATRUTIDE */}
+{/* APX-3 */}
 <div
-  id="retatrutide"
+  id="APX-3"
   onClick={() => (window.location.href = "/products/retatrutide")}
   className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
 >
               <img
                 src="/images/retatrutide.PNG"
-                alt="Retatrutide"
+                alt="APX-3"
                 className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
               />
 

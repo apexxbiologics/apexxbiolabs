@@ -177,9 +177,9 @@ export default function PeptideInfoPage() {
 
 {/* RETATRUTIDE */}
 <div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">  <button
-    onClick={() =>
-      setOpenPeptide(openPeptide === "retatrutide" ? null : "retatrutide")
-    }
+onClick={() =>
+  setOpenPeptide(openPeptide === "apx3" ? null : "apx3")
+}
     className="w-full text-left p-8 bg-[#050505] hover:bg-[#080808] transition-all"
   >
     <div className="flex items-center justify-between gap-6">
@@ -194,67 +194,81 @@ export default function PeptideInfoPage() {
       </div>
 
       <span className="text-4xl text-blue-400">
-        {openPeptide === "APX-3" ? "−" : "+"}
-      </span>
+{openPeptide === "apx3" ? "−" : "+"}      </span>
     </div>
   </button>
 
-  {openPeptide === "APX-3" && (
+{openPeptide === "apx3" && (    
     <div className="p-10 bg-[#050505] border-t border-blue-900">
-      <p className="text-sm text-gray-500 mb-8">
-        39 amino acids | MW: 4731.41 g/mol | GCGR / GIPR / GLP-1R Triple Agonist
-      </p>
+<p className="text-sm text-gray-500 mb-8">
+  39 amino acids | MW: 4731.41 g/mol | GCGR / GIPR / GLP-1R Research Compound
+</p>
 
-      <p className="text-gray-300 text-lg leading-relaxed mb-8">
-        Retatrutide (LY3437943) is a novel triple agonist research peptide
-        studied for its interaction with glucagon receptor (GCGR),
-        glucose-dependent insulinotropic polypeptide receptor (GIPR), and
-        glucagon-like peptide-1 receptor (GLP-1R) pathways in metabolic and
-        energy-regulation research models.
-      </p>
+<p className="text-gray-300 text-lg leading-relaxed mb-8">
+  APX-3 (LY3437943) is a synthetic research peptide utilized in
+  laboratory investigations involving glucagon receptor (GCGR),
+  glucose-dependent insulinotropic polypeptide receptor (GIPR),
+  and glucagon-like peptide-1 receptor (GLP-1R) signaling pathways.
+</p>
 
-      <div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
-        <h3 className="text-xl font-semibold text-blue-400 mb-3">
-          Mechanism Research
-        </h3>
+<div className="border border-blue-900 rounded-xl p-6 mb-8 bg-black/40">
+  <h3 className="text-xl font-semibold text-blue-400 mb-3">
+    Mechanism Research
+  </h3>
+
+  <p className="text-gray-400 leading-relaxed">
+    Published experimental studies have evaluated LY3437943 in
+    preclinical and laboratory research settings to examine receptor
+    interactions, signaling mechanisms, and receptor-mediated cellular
+    pathways. Ongoing research continues to investigate the compound's
+    molecular characteristics and receptor interactions in controlled
+    experimental models.
+  </p>
+</div>
+
+<div>
+  <h3 className="text-xl font-semibold text-white mb-4">
+    Research Areas
+  </h3>
+
+  <div className="flex flex-wrap gap-3">
+
+    <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+      Triple receptor signaling research
+    </span>
+
+    <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+      GCGR pathway investigations
+    </span>
+
+    <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+      GIPR pathway investigations
+    </span>
+
+    <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+      GLP-1R pathway investigations
+    </span>
+
+    <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+      Cellular signaling studies
+    </span>
+
+    <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+      Receptor interaction research
+    </span>
+
+    <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+      Peptide characterization research
+    </span>
+
+    <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
+      Laboratory model investigations
+    </span>
+
+  </div>
+</div>
 
         <p className="text-gray-400 leading-relaxed">
-          Experimental studies have investigated Retatrutide for its role in
-          incretin signaling, glucose metabolism pathways, insulin sensitivity,
-          appetite regulation, thermogenic activity, and energy-expenditure
-          mechanisms in laboratory models.
-        </p>
-      </div>
-
-      <div>
-        <h3 className="text-xl font-semibold text-white mb-4">
-          Research Areas
-        </h3>
-
-        <div className="flex flex-wrap gap-3">
-          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-            Triple receptor agonist research
-          </span>
-
-          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-            Metabolic pathway studies
-          </span>
-
-          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-            Energy expenditure research
-          </span>
-
-          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-            Glucose signaling models
-          </span>
-
-          <span className="border border-blue-700 text-blue-400 rounded-full px-4 py-2 text-sm">
-            Incretin pathway investigation
-          </span>
-        </div>
-      </div>
-
-      <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest">
         For laboratory research use only. Not for human consumption.
       </p>
     </div>
@@ -262,7 +276,8 @@ export default function PeptideInfoPage() {
 </div>
 
 {/* BPC-157 */}
-<div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">  <button
+<div className="border border-blue-900 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_25px_rgba(37,99,235,0.2)] transition-all duration-300">
+  <button
     onClick={() =>
       setOpenPeptide(openPeptide === "bpc157" ? null : "bpc157")
     }

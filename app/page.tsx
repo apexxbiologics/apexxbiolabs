@@ -324,12 +324,12 @@ if (accepted === null) {
 {/* APX-3 */}
 <div
   id="APX-3"
-  onClick={() => (window.location.href = "/products/apx-3")}
+  onClick={() => (window.location.href = "/products/apx3")}
   className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
 >
               <img
                 src="/images/retatrutide.PNG"
-                alt="APX-3"
+                alt="APX3"
                 className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
               />
 
@@ -338,7 +338,7 @@ if (accepted === null) {
               <p className="text-gray-400 mt-3">10-20mg Research Peptide</p>
 
               <a
-  href="/products/retatrutide"
+  href="/products/apx3"
   className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
 >
   View Product

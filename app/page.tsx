@@ -338,7 +338,7 @@ if (accepted === null) {
               <p className="text-gray-400 mt-3">10-20mg Research Peptide</p>
 
               <a
-  href="/products/APX-3"
+  href="/products/retatrutide"
   className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
 >
   View Product

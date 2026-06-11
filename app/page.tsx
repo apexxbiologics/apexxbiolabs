@@ -12,7 +12,7 @@ const [disclaimerChecked, setDisclaimerChecked] = useState(false);
       const [moreOpen, setMoreOpen] = useState(false);
 
 const products = [
-  { name: "Retatrutide", href: "/products/retatrutide" },
+  { name: "APX-3", href: "/products/retatrutide" },
   { name: "BPC-157", href: "/products/bpc157" },
   { name: "TB-500", href: "/products/tb500" },
   { name: "Bacteriostatic Water", href: "/products/bacwater" },

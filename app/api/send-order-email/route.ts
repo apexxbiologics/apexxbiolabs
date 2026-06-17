@@ -90,7 +90,7 @@ await resend.emails.send({
         paymentMethod === "venmo"
           ? `
             <h3>Venmo</h3>
-            <p><strong>@YOURVENMO</strong></p>
+            <p><strong>apexx-biolabs</strong></p>
           `
           : ""
       }

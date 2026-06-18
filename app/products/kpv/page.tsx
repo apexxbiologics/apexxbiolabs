@@ -90,7 +90,7 @@ export default function KPVPage() {
             </p>
 
             <div className="text-3xl font-bold text-blue-400 mb-10">
-              $50.00
+              $55.00
             </div>
 
             <div className="space-y-5 mb-10">

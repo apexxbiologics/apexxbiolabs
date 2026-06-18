@@ -241,7 +241,7 @@ if (accepted === null) {
   {/* Hero Image */}
 <img
   src="/images/biglogo.png"
-  alt="Apexx Biologics"
+  alt="Apexx Biolabs"
   className="w-full max-w-6xl mx-auto h-auto block"
 />
 

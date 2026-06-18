@@ -126,7 +126,7 @@ export default function ARA290Page() {
                   View Cart
                 </a>
               )}
-              
+
               <a
   href="/#shop"
   className="text-center border border-blue-700 hover:bg-blue-700 px-10 py-5 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"
@@ -141,6 +141,41 @@ export default function ARA290Page() {
                 View COA
               </a>
             </div>
+            <div className="mt-10 border border-blue-900 rounded-2xl p-6 bg-[#050505]">
+              <h3 className="text-blue-400 font-bold uppercase tracking-widest text-sm mb-3">
+                FDA Disclaimer
+              </h3>
+
+              <p className="text-gray-500 text-sm leading-relaxed">
+                These statements have not been evaluated by the U.S. Food and
+                Drug Administration. This product is not intended to diagnose,
+                treat, cure, or prevent any disease. Products sold by Apexx
+                Biolabs are intended strictly for laboratory research use only
+                and are not for human or veterinary consumption.
+              </p>
+            </div>
+
+            <div className="mt-6 border border-blue-900 rounded-2xl p-6 bg-[#050505]">
+              <h3 className="text-blue-400 font-bold uppercase tracking-widest text-sm mb-3">
+                Customer Acknowledgment
+              </h3>
+
+              <p className="text-gray-500 text-sm leading-relaxed">
+                By purchasing this product, the customer acknowledges that this
+                material is intended solely for lawful laboratory research
+                purposes and will not be used for human consumption, veterinary
+                use, medical use, diagnosis, treatment, cure, or prevention of
+                disease. Apexx Biolabs does not provide dosing instructions,
+                treatment recommendations, medical advice, or guidance regarding
+                human use of any product.
+              </p>
+            </div>
+
+            <p className="mt-10 text-xs text-gray-600 uppercase tracking-widest leading-relaxed">
+              For laboratory research use only. Not for human consumption,
+              medical use, veterinary use, diagnosis, treatment, or prevention
+              of disease.
+            </p>
           </div>
         </div>
       </section>

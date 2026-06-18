@@ -9,12 +9,12 @@ export default function COAsPage() {
   coa: "/images/coas/apx3-20mg-blue-cap-coa.pdf",
 },
 {
-  name: "TB-500",
-  batch: "Blue Cap-1",
+  name: "BPC-157",
+  batch: "Black Cap-1",
   status: "Verified",
-  purity: "99.47%",
-  content: "11.83 mg",
-  coa: "/images/coas/tb500-10mg-blue-cap-coa.pdf",
+  purity: "99.33%",
+  content: "11.58 mg",
+  coa: "/images/coas/bpc-157-10mg-black-cap-coa.pdf",
 },
 {
   name: "TB-500",

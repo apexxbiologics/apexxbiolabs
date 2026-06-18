@@ -14,7 +14,7 @@ export default function COAsPage() {
   status: "Verified",
   purity: "99.33%",
   content: "11.58 mg",
-  coa: "/coas/bpc-157-10mg-black-cap-coa.pdf",
+  coa: "/images/coas/bpc-157-10mg-black-cap-coa.pdf",
 },
 {
   name: "TB-500",

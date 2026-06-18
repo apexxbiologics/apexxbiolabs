@@ -241,11 +241,11 @@ if (accepted === null) {
 <section className="relative overflow-hidden bg-black">
 
   {/* Hero Image */}
-  <img
-    src="/biglogo.png"
-    alt="Apexx Biologics"
-    className="w-full"
-  />
+<img
+  src="/biglogo.png"
+  alt="Apexx Biologics"
+  className="w-full h-auto"
+/>
 
   {/* Floating Particles */}
   <div className="particles"></div>

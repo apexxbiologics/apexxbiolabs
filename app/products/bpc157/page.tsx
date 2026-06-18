@@ -128,7 +128,7 @@ export default function BPC157Page() {
   {added && (
     <a
       href="/cart"
-      className="text-center border border-green-700 hover:bg-green-700 px-10 py-5 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"
+      className="text-center border border-blue-700 hover:bg-green-700 px-10 py-5 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"
     >
       View Cart
     </a>

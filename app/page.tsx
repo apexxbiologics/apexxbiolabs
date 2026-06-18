@@ -232,8 +232,6 @@ if (accepted === null) {
 <section
   className="relative flex flex-col items-center text-center pt-58 md:pt-24 pb-28 px-6 bg-cover bg-center overflow-visible"
 >
-  <div className="absolute inset-0 bg-black/60"></div>
-
 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-blue-600/10 blur-[180px] rounded-full pointer-events-none"></div>
 
   <div className="relative z-10 flex flex-col items-center w-full">
@@ -244,7 +242,7 @@ if (accepted === null) {
 <img
   src="/images/biglogo.png"
   alt="Apexx Biologics"
-  className="w-full h-auto"
+  className="w-full max-w-6xl mx-auto h-auto block"
 />
 
   {/* Floating Particles */}

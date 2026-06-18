@@ -234,6 +234,8 @@ if (accepted === null) {
 >
   <div className="absolute inset-0 bg-black/60"></div>
 
+<div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-blue-600/10 blur-[180px] rounded-full pointer-events-none"></div>
+
   <div className="relative z-10 flex flex-col items-center w-full">
 <img
   src="/images/biglogo.PNG"

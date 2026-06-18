@@ -237,11 +237,23 @@ if (accepted === null) {
 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-blue-600/10 blur-[180px] rounded-full pointer-events-none"></div>
 
   <div className="relative z-10 flex flex-col items-center w-full">
-<img
-  src="/images/biglogo.PNG"
-  alt="Apexx Biolabs"
-  className="w-full max-w-6xl h-auto object-contain mb-10 md:mb-16"
-/>
+<div className="relative w-full max-w-6xl mb-10 md:mb-16">
+<section className="relative overflow-hidden bg-black">
+
+  {/* Hero Image */}
+  <img
+    src="/biglogo.png"
+    alt="Apexx Biologics"
+    className="w-full"
+  />
+
+  {/* Floating Particles */}
+  <div className="particles"></div>
+
+</section>
+
+  <div className="crystal-sparkle"></div>
+</div>
 
             <div className="mt-4 inline-block border border-blue-700/70 rounded-full px-6 py-2 bg-blue-950/20 shadow-[0_0_25px_rgba(37,99,235,0.25)]">
   <p className="text-blue-400 text-xs uppercase tracking-[0.35em] font-semibold">

@@ -6,7 +6,7 @@ export default function COAsPage() {
   status: "Verified",
   purity: "99.92%",
   content: "23.89 mg",
-  coa: "/coas/apx3-20mg-blue-cap-coa.pdf",
+  coa: "/images/coas/apx3-20mg-blue-cap-coa.pdf",
 },
 {
   name: "BPC-157",
@@ -22,7 +22,7 @@ export default function COAsPage() {
   status: "Verified",
   purity: "99.47%",
   content: "11.83 mg",
-  coa: "/coas/tb500-10mg-blue-cap-coa.pdf",
+  coa: "/images/coas/tb500-10mg-blue-cap-coa.pdf",
 },
     { name: "Bacteriostatic Water", batch: "Pending", status: "Awaiting Testing" },
     { name: "KPV", batch: "Pending", status: "Awaiting Testing" },

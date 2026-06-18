@@ -30,6 +30,31 @@ export default function COAsPage() {
     { name: "Pinealon", batch: "Pending", status: "Awaiting Testing" },
     { name: "Selank", batch: "Pending", status: "Awaiting Testing" },
     { name: "Semax", batch: "Pending", status: "Awaiting Testing" },
+    {
+  name: "MOTS-c",
+  batch: "Pending",
+  status: "Awaiting Testing",
+},
+{
+  name: "ARA-290",
+  batch: "Pending",
+  status: "Awaiting Testing",
+},
+{
+  name: "PE-22-28",
+  batch: "Pending",
+  status: "Awaiting Testing",
+},
+{
+  name: "Adamax",
+  batch: "Pending",
+  status: "Awaiting Testing",
+},
+{
+  name: "CJC/IPA without DAC",
+  batch: "Pending",
+  status: "Awaiting Testing",
+},
   ];
 
   return (

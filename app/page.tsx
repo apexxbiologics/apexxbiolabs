@@ -239,15 +239,11 @@ if (accepted === null) {
 <section className="relative overflow-hidden bg-black">
 
   {/* Hero Image */}
-<div className="relative w-full max-w-6xl mx-auto mb-10 md:mb-16">
   <img
     src="/images/biglogo.png"
     alt="Apexx Biolabs"
     className="relative z-20 w-full h-auto block"
   />
-
-  <div className="particles"></div>
-</div>
 
 </section>
 

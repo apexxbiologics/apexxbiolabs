@@ -11,7 +11,7 @@ export default function GHKCUPage() {
     const product = {
       id: "ghkcu",
       name: "GHK-Cu",
-      price: 85,
+      price: 65,
       quantity: 1,
       image: "/images/ghkcu.PNG",
     };
@@ -90,7 +90,7 @@ export default function GHKCUPage() {
             </p>
 
             <div className="text-3xl font-bold text-blue-400 mb-10">
-              $85.00
+              $65.00
             </div>
 
             <div className="space-y-5 mb-10">

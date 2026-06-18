@@ -130,6 +130,12 @@ export default function TB500Page() {
 
 </div>
 
+<a
+  href="/#shop"
+  className="text-center border border-blue-700 hover:bg-blue-700 px-10 py-5 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"
+>
+  Continue Shopping
+</a>
               <a
                 href="/coas"
                 className="text-center border border-blue-700 hover:bg-blue-700 px-10 py-5 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"

@@ -125,14 +125,14 @@ export default function BPC157Page() {
   Continue Shopping
 </a>
 
-  {added && (
-    <a
-      href="/cart"
-      className="text-center border border-blue-700 hover:bg-green-700 px-10 py-5 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"
-    >
-      View Cart
-    </a>
-  )}
+{added && (
+  <a
+    href="/cart"
+    className="text-center border border-blue-700 hover:bg-blue-700 hover:shadow-[0_0_25px_rgba(37,99,235,0.45)] px-10 py-5 uppercase tracking-widest text-sm font-semibold transition-all rounded-lg"
+  >
+    View Cart
+  </a>
+)}
 
   <a
     href="/coas"

@@ -236,18 +236,20 @@ if (accepted === null) {
 
   <div className="relative z-10 flex flex-col items-center w-full">
 <div className="relative w-full max-w-6xl mb-10 md:mb-16">
-<section className="relative overflow-hidden bg-black">
 
   {/* Hero Image */}
-<img
-  src="/images/hero.png"
-  alt="Apexx Biolabs"
-  className="w-full h-auto block"
-/>
+<div className="relative w-full max-w-7xl mx-auto mb-10 md:mb-16 overflow-hidden rounded-2xl">
 
-</section>
+  <img
+    src="/images/biglogo.png"
+    alt="Apexx Biolabs"
+    className="w-full h-auto block"
+  />
 
-  <div className="crystal-sparkle"></div>
+  <div className="hero-wave"></div>
+  <div className="hero-sparkles"></div>
+  <div className="hero-glow"></div>
+
 </div>
 
             <div className="mt-4 inline-block border border-blue-700/70 rounded-full px-6 py-2 bg-blue-950/20 shadow-[0_0_25px_rgba(37,99,235,0.25)]">
@@ -287,6 +289,7 @@ if (accepted === null) {
               For laboratory research use only. Not for human consumption.
             </p>
           </div>
+        </div>
         </section>
 
         {/* TRUST BAR */}

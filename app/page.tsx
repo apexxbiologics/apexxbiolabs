@@ -123,7 +123,7 @@ if (accepted === null) {
 
               <div className="space-y-4 text-gray-400">
 
-<label className="flex items-start gap-3 cursor-pointer border border-blue-900 rounded-xl p-3 md:p-5bg-black/40">
+<label className="flex items-start gap-3 cursor-pointer border border-blue-900 rounded-xl p-3 md:p-5 bg-black/40">
   <input
     type="checkbox"
     checked={disclaimerChecked}

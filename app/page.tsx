@@ -206,6 +206,15 @@ if (accepted === null) {
       <a href="/contact" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Contact</a>
       <a href="/process" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Our Process</a>
       <a href="/faq" className="px-5 py-4 hover:bg-blue-900/40 transition-all">FAQs</a>
+      <a href="/shipping" className="px-5 py-4 hover:bg-blue-900/40 transition-all">
+  Shipping Policy
+</a>
+<a href="/refunds" className="px-5 py-4 hover:bg-blue-900/40 transition-all">
+  Refund Policy
+</a>
+<a href="/privacy" className="px-5 py-4 hover:bg-blue-900/40 transition-all">
+  Privacy Policy
+</a>
     </div>
   )}
 </div>

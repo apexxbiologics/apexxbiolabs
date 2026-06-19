@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ShoppingCart } from "lucide-react";
 
 export default function Home() {
@@ -9,6 +9,7 @@ export default function Home() {
 const [disclaimerChecked, setDisclaimerChecked] = useState(false);
 
     const [cartCount, setCartCount] = useState(0);
+    const videoRef = useRef<HTMLVideoElement | null>(null);
 
 const products = [
   { name: "APX-3", href: "/products/apx3" },
@@ -76,6 +77,19 @@ useEffect(() => {
     window.removeEventListener("cartUpdated", updateCartCount);
   };
 }, []);
+useEffect(() => {
+  const video = videoRef.current;
+
+  if (!video) return;
+
+  video.muted = true;
+
+  const playPromise = video.play();
+
+  if (playPromise !== undefined) {
+    playPromise.catch(() => {});
+  }
+}, [accepted]);
 
 const handleAccept = () => {
   setAccepted(true);
@@ -228,18 +242,18 @@ if (accepted === null) {
 </header>
 
 {/* HERO */}
-<section className="relative flex flex-col items-center justify-center text-center pt-36 pb-24 px-6 bg-black overflow-hidden">
-
+<section className="relative flex flex-col items-center justify-center text-center pt-72 md:pt-36 pb-24 px-6 bg-black overflow-hidden">
   <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
 
-<div className="relative w-full max-w-6xl mx-auto mb-10 overflow-hidden rounded-3xl border border-blue-900/30 bg-black">
+<div className="relative w-full max-w-6xl mx-auto mb-10 overflow-visible rounded-3xl border border-blue-900/30 bg-black">
   <video
+    ref={videoRef}
     autoPlay
     muted
     playsInline
     preload="auto"
     poster="/images/hero.png"
-    className="w-full h-auto block object-contain"
+    className="w-full h-auto block"
   >
     <source src="/videos/hero.mp4" type="video/mp4" />
   </video>

@@ -233,17 +233,16 @@ if (accepted === null) {
   <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
 
 <div className="relative w-full max-w-6xl mx-auto mb-10 overflow-hidden rounded-3xl border border-blue-900/30 bg-black">
-
   <video
     autoPlay
     muted
     playsInline
-    preload="auto"
-    className="w-full h-auto object-contain"
+    preload="metadata"
+    controls={false}
+    className="w-full h-auto max-h-none object-contain"
   >
     <source src="/videos/hero.mp4" type="video/mp4" />
   </video>
-
 </div>
 
     <div className="mt-4 inline-block border border-blue-700/70 rounded-full px-6 py-2 bg-blue-950/20 shadow-[0_0_25px_rgba(37,99,235,0.25)]">

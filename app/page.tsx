@@ -241,14 +241,7 @@ if (accepted === null) {
         className="w-full h-auto block mx-auto"
       />
 
-<div
-  className="hero-wave"
-  style={{
-    background: "red",
-    opacity: 0.5,
-    zIndex: 999,
-  }}
-></div>
+<div className="hero-wave"></div>
 <div className="crystal-shine"></div>
 <div className="hero-sparkles"></div>
     </div>

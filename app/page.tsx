@@ -9,7 +9,6 @@ export default function Home() {
 const [disclaimerChecked, setDisclaimerChecked] = useState(false);
 
     const [cartCount, setCartCount] = useState(0);
-      const [moreOpen, setMoreOpen] = useState(false);
 
 const products = [
   { name: "APX-3", href: "/products/apx3" },
@@ -190,33 +189,24 @@ if (accepted === null) {
   Home
 </a>
 
-      <div className="relative py-4">
+<div className="relative py-4 group">
   <button
-  onClick={() => setMoreOpen(!moreOpen)}
-  className="border border-blue-700 text-blue-400 px-4 py-2 hover:bg-blue-700 hover:text-white hover:shadow-[0_0_20px_rgba(37,99,235,0.35)] transition-all rounded-lg font-semibold tracking-[0.15em] uppercase"
->
-  More
-</button>
+    className="border border-blue-700 text-blue-400 px-4 py-2 hover:bg-blue-700 hover:text-white hover:shadow-[0_0_20px_rgba(37,99,235,0.35)] transition-all rounded-lg font-semibold tracking-[0.15em] uppercase"
+  >
+    More
+  </button>
 
-  {moreOpen && (
-    <div className="absolute right-0 top-full flex flex-col bg-black border border-blue-900 rounded-xl min-w-[190px] shadow-[0_0_30px_rgba(37,99,235,0.25)] overflow-hidden z-50">
-      <a href="/peptide-info" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Peptide Info</a>
-      <a href="/coas" className="px-5 py-4 hover:bg-blue-900/40 transition-all">COAs</a>
-      <a href="/about" className="px-5 py-4 hover:bg-blue-900/40 transition-all">About Us</a>
-      <a href="/contact" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Contact</a>
-      <a href="/process" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Our Process</a>
-      <a href="/faq" className="px-5 py-4 hover:bg-blue-900/40 transition-all">FAQs</a>
-      <a href="/shipping" className="px-5 py-4 hover:bg-blue-900/40 transition-all">
-  Shipping Policy
-</a>
-<a href="/refunds" className="px-5 py-4 hover:bg-blue-900/40 transition-all">
-  Refund Policy
-</a>
-<a href="/privacy" className="px-5 py-4 hover:bg-blue-900/40 transition-all">
-  Privacy Policy
-</a>
-    </div>
-  )}
+  <div className="absolute right-0 top-full hidden group-hover:flex flex-col bg-black border border-blue-900 rounded-xl min-w-[220px] shadow-[0_0_30px_rgba(37,99,235,0.25)] overflow-hidden z-50">
+    <a href="/peptide-info" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Peptide Info</a>
+    <a href="/coas" className="px-5 py-4 hover:bg-blue-900/40 transition-all">COAs</a>
+    <a href="/about" className="px-5 py-4 hover:bg-blue-900/40 transition-all">About Us</a>
+    <a href="/contact" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Contact</a>
+    <a href="/process" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Our Process</a>
+    <a href="/faq" className="px-5 py-4 hover:bg-blue-900/40 transition-all">FAQs</a>
+    <a href="/shipping" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Shipping Policy</a>
+    <a href="/refunds" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Refund Policy</a>
+    <a href="/privacy" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Privacy Policy</a>
+  </div>
 </div>
 
       <a

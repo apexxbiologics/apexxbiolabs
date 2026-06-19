@@ -11,6 +11,24 @@ const [disclaimerChecked, setDisclaimerChecked] = useState(false);
     const [cartCount, setCartCount] = useState(0);
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const productScrollRef = useRef<HTMLDivElement | null>(null);
+    const autoScrollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+const startProductScroll = (direction: "left" | "right") => {
+  stopProductScroll();
+
+  autoScrollRef.current = setInterval(() => {
+    productScrollRef.current?.scrollBy({
+      left: direction === "left" ? -18 : 18,
+    });
+  }, 16);
+};
+
+const stopProductScroll = () => {
+  if (autoScrollRef.current) {
+    clearInterval(autoScrollRef.current);
+    autoScrollRef.current = null;
+  }
+};
 
 const products = [
   { name: "APX-3", href: "/products/apx3" },

@@ -242,14 +242,14 @@ if (accepted === null) {
 
   <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
 
-<div className="relative w-full max-w-6xl mx-auto mb-10 overflow-hidden rounded-2xl border border-blue-900/40 bg-[#020617]">
+<div className="relative w-full max-w-6xl mx-auto mb-10 overflow-hidden rounded-3xl border border-blue-900/30 bg-black">
 
   <video
     autoPlay
     muted
     playsInline
     preload="auto"
-    className="w-full h-auto block mx-auto scale-[1.02] brightness-110 contrast-110"
+    className="w-full h-auto object-contain"
   >
     <source src="/videos/hero.mp4" type="video/mp4" />
   </video>

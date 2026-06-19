@@ -755,7 +755,7 @@ if (accepted === null) {
           rel="noopener noreferrer"
           className="text-blue-400 hover:text-blue-300 transition-all"
         >
-          @apexxbiolabs
+          @apexx.nyc
         </a>
       </div>
     </div>

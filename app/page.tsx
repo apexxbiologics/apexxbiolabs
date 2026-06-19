@@ -490,7 +490,7 @@ if (accepted === null) {
             <div className="bg-black h-[360px] flex items-center justify-center border-b border-blue-950">
               <img
                 src={product.image}
-                alt={product.name}
+alt=""
                 className="h-72 object-contain hover:scale-105 transition-all duration-300"
               />
             </div>

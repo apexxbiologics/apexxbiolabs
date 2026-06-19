@@ -71,6 +71,7 @@ export default function PrivacyPage() {
       <section className="max-w-7xl mx-auto mt-16">
         <div className="text-center mb-20">
           <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6">
+            Legal Documentation
           </p>
 
           <h1 className="text-6xl md:text-8xl font-black tracking-tight bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent mb-8">

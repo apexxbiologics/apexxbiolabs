@@ -24,32 +24,23 @@ export default function ContactPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-14">
           <a
-            href="https://www.instagram.com/apexxbiolabs"
+            href="https://www.tiktok.com/@apexx.nyc"
             target="_blank"
             rel="noopener noreferrer"
             className="border border-blue-900 rounded-3xl p-10 bg-[#050505] hover:border-blue-400 hover:shadow-[0_0_35px_rgba(37,99,235,0.25)] transition-all text-left"
           >
             <div className="w-16 h-16 rounded-2xl border border-blue-700 bg-blue-950/30 flex items-center justify-center text-blue-400 mb-6 shadow-[0_0_20px_rgba(37,99,235,0.25)]">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.8}
-                stroke="currentColor"
-                className="w-9 h-9"
-              >
-                <rect x="3" y="3" width="18" height="18" rx="5" />
-                <circle cx="12" cy="12" r="4" />
-                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
-              </svg>
+<div className="text-4xl font-black text-blue-400">
+  ♪
+</div>
             </div>
 
             <p className="uppercase tracking-widest text-blue-500 text-sm mb-3">
-              Instagram
+              TikTok
             </p>
 
             <h2 className="text-3xl font-bold text-blue-400 mb-4">
-              @apexxbiolabs
+              @apexx.nyc
             </h2>
 
             <p className="text-gray-400 leading-relaxed">

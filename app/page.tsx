@@ -247,7 +247,6 @@ if (accepted === null) {
   <video
     autoPlay
     muted
-    loop
     playsInline
     preload="auto"
     className="w-full h-auto block mx-auto scale-[1.02] brightness-110 contrast-110"

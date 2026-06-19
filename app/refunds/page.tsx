@@ -1,5 +1,4 @@
 import {
-  Ban,
   XCircle,
   PackageX,
   Truck,
@@ -16,11 +15,11 @@ export default function RefundPolicyPage() {
       title: "Order Cancellations",
       text: "Orders may only be canceled before shipment. Once an order has been packaged, processed, or shipped, it cannot be canceled.",
     },
- {
-  icon: PackageX,
-  title: "Damaged or Incorrect Orders",
-  text: "If you receive a damaged, incorrect, or missing item, contact us within 48 hours of delivery with your order number, clear photos, and a description of the issue. Apexx Biolabs reserves the right to review all claims and may request additional information, photographs, or documentation before issuing a replacement, store credit, or refund.",
-},
+    {
+      icon: PackageX,
+      title: "Damaged or Incorrect Orders",
+      text: "If you receive a damaged, incorrect, or missing item, contact us within 48 hours of delivery with your order number, clear photos, and a description of the issue.",
+    },
     {
       icon: Truck,
       title: "Lost or Stolen Packages",
@@ -58,31 +57,81 @@ export default function RefundPolicyPage() {
       </a>
 
       <section className="max-w-7xl mx-auto mt-16">
-        <div className="text-center mb-16">
+        <div className="text-center mb-20">
           <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6">
             Legal Documentation
           </p>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-700 bg-clip-text text-transparent mb-8">
+          <h1 className="text-6xl md:text-8xl font-black tracking-tight bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent mb-8">
             Refund Policy
           </h1>
 
-          <p className="text-gray-500 uppercase tracking-widest text-sm">
-            Last Updated: June 2026
+          <div className="h-[1px] w-72 mx-auto bg-gradient-to-r from-transparent via-blue-500 to-transparent mb-8"></div>
+
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-blue-700 bg-blue-950/20 text-blue-300 text-sm mb-10">
+            <span>✓</span>
+            <span>Last Updated: June 2026</span>
+          </div>
+
+          <p className="text-gray-300 text-xl max-w-4xl mx-auto leading-relaxed font-light">
+            Refund, replacement, cancellation, and order issue policies for
+            Apexx Biolabs research-use-only products.
           </p>
         </div>
 
-        <div className="border border-red-700 rounded-3xl p-8 md:p-12 bg-red-950/20 shadow-[0_0_45px_rgba(239,68,68,0.15)] mb-12">
-          <h2 className="text-3xl font-bold text-red-400 mb-6">
+        <div className="border border-red-700 rounded-3xl p-8 md:p-12 bg-red-950/20 shadow-[0_0_45px_rgba(239,68,68,0.15)] mb-16">
+          <p className="uppercase tracking-[0.35em] text-red-400 text-sm mb-5">
+            Important Notice
+          </p>
+
+          <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
             All Sales Are Final
           </h2>
 
-          <p className="text-gray-300 text-lg leading-relaxed">
+          <p className="text-gray-300 text-lg leading-relaxed max-w-5xl">
             Due to the nature of laboratory research products, contamination
             risks, and quality-control requirements, all sales are final once an
             order has been processed and shipped. We do not accept returns of
             opened, used, or partially used products.
           </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          <div className="border border-blue-900 rounded-3xl p-8 bg-[#050505] shadow-[0_0_35px_rgba(37,99,235,0.12)]">
+            <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-4">
+              Cancellation Window
+            </p>
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Before Shipment
+            </h2>
+            <p className="text-gray-400 leading-relaxed">
+              Orders may only be canceled before packaging, processing, or shipment.
+            </p>
+          </div>
+
+          <div className="border border-blue-900 rounded-3xl p-8 bg-[#050505] shadow-[0_0_35px_rgba(37,99,235,0.12)]">
+            <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-4">
+              Issue Reporting
+            </p>
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Within 48 Hours
+            </h2>
+            <p className="text-gray-400 leading-relaxed">
+              Damaged, incorrect, or missing item claims must be submitted within 48 hours of delivery.
+            </p>
+          </div>
+
+          <div className="border border-blue-900 rounded-3xl p-8 bg-[#050505] shadow-[0_0_35px_rgba(37,99,235,0.12)]">
+            <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-4">
+              Resolution Options
+            </p>
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Case-by-Case
+            </h2>
+            <p className="text-gray-400 leading-relaxed">
+              Verified issues may be reviewed for replacement, store credit, or partial refund eligibility.
+            </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
@@ -92,13 +141,13 @@ export default function RefundPolicyPage() {
             return (
               <div
                 key={policy.title}
-                className="border border-blue-900 rounded-3xl p-8 bg-[#050505] hover:border-blue-500 hover:shadow-[0_0_35px_rgba(37,99,235,0.2)] transition-all"
+                className="group border border-blue-900 rounded-3xl p-8 bg-[#050505] hover:border-blue-400 hover:shadow-[0_0_35px_rgba(37,99,235,0.22)] hover:-translate-y-1 transition-all duration-300"
               >
-                <div className="w-16 h-16 rounded-2xl border border-blue-700 bg-blue-950/30 flex items-center justify-center text-blue-400 mb-6 shadow-[0_0_20px_rgba(37,99,235,0.25)]">
+                <div className="w-16 h-16 rounded-2xl border border-blue-700 bg-blue-950/30 flex items-center justify-center text-blue-400 mb-6 shadow-[0_0_20px_rgba(37,99,235,0.25)] group-hover:shadow-[0_0_30px_rgba(37,99,235,0.45)] transition-all">
                   <Icon size={32} strokeWidth={2} />
                 </div>
 
-                <h2 className="text-2xl font-bold text-blue-400 mb-5 uppercase tracking-wide">
+                <h2 className="text-xl font-bold text-white group-hover:text-blue-300 transition-colors mb-5">
                   {policy.title}
                 </h2>
 
@@ -110,8 +159,8 @@ export default function RefundPolicyPage() {
           })}
         </div>
 
-        <div className="mt-14 border border-blue-900 rounded-3xl p-8 bg-[#050505]">
-          <h2 className="text-3xl font-bold text-blue-400 mb-6">
+        <div className="mt-14 border border-blue-900 rounded-3xl p-8 bg-[#050505] shadow-[0_0_40px_rgba(37,99,235,0.12)]">
+          <h2 className="text-3xl font-bold text-blue-400 mb-8">
             Need Help?
           </h2>
 

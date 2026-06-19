@@ -242,10 +242,9 @@ if (accepted === null) {
 </header>
 
 {/* HERO */}
-<section className="relative flex flex-col items-center justify-center text-center pt-72 md:pt-40 pb-28 px-6 bg-black overflow-hidden">  <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
+<section className="relative flex flex-col items-center justify-center text-center pt-72 md:pt-40 pb-28 px-6 bg-gradient-to-b from-[#020617] via-[#030712] to-black overflow-hidden">  <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
 
-<div className="relative w-full max-w-6xl mx-auto mb-10 overflow-visible rounded-3xl border border-blue-900/30 bg-black">
-  <video
+<div className="relative w-full max-w-6xl mx-auto mb-12 overflow-hidden rounded-[2rem] border border-blue-500/20 bg-[#020617] shadow-[0_25px_80px_rgba(0,0,0,0.65)]">  <video
     ref={videoRef}
     autoPlay
     muted
@@ -332,10 +331,13 @@ if (accepted === null) {
         </section>
 
         {/* PRODUCTS */}
-        <section id="shop" className="py-28 px-10 bg-black">
-          <h3 className="text-4xl font-bold text-center mb-16">
-            Featured Compounds
-          </h3>
+<p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6 text-center">
+  Research Catalog
+</p>
+
+<h3 className="text-5xl md:text-7xl font-black tracking-tight text-center mb-16 bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent">
+  Featured Compounds
+</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
 
@@ -343,7 +345,7 @@ if (accepted === null) {
 <div
   id="APX-3"
   onClick={() => (window.location.href = "/products/apx3")}
-  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
+  className="group border border-blue-900/50 bg-gradient-to-b from-[#0B1120] to-[#020617] p-8 hover:border-blue-400/70 hover:shadow-[0_0_55px_rgba(37,99,235,0.25)] hover:-translate-y-2 transition-all duration-300 rounded-3xl cursor-pointer"
 >
               <img
                 src="/images/retatrutide.PNG"

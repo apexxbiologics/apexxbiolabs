@@ -236,7 +236,6 @@ if (accepted === null) {
   <video
     autoPlay
     muted
-    defaultMuted
     playsInline
     preload="auto"
     poster="/images/hero.png"

@@ -162,8 +162,8 @@ if (accepted === null) {
         </div>
       )}
 
-      <main className="min-h-screen bg-black text-white">
-        <header className="fixed top-0 left-0 w-full z-50 border-b border-blue-900 bg-black/80 backdrop-blur-md px-4 py-4">
+<main className="min-h-screen bg-[#030712] text-white">
+          <header className="fixed top-0 left-0 w-full z-50 border-b border-blue-900 bg-[#030712]/80 backdrop-blur-md px-4 py-4">
 
 <div className="flex flex-col md:flex-row items-center justify-between gap-4">    <img
   src="/images/logo.png"
@@ -180,7 +180,7 @@ if (accepted === null) {
     />
 
     {search && filteredProducts.length > 0 && (
-      <div className="absolute top-full left-0 right-0 mt-3 bg-black border border-blue-900 rounded-xl shadow-[0_0_30px_rgba(37,99,235,0.25)] overflow-hidden z-[999]">
+      <div className="absolute top-full left-0 right-0 mt-3 bg-[#030712] border border-blue-900 rounded-xl shadow-[0_0_30px_rgba(37,99,235,0.25)] overflow-hidden z-[999]">
         {filteredProducts.map((product) => (
           <a
             key={product.name}

@@ -11,25 +11,6 @@ const [disclaimerChecked, setDisclaimerChecked] = useState(false);
     const [cartCount, setCartCount] = useState(0);
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const productScrollRef = useRef<HTMLDivElement | null>(null);
-    const scrollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-const startProductScroll = (direction: "left" | "right") => {
-  stopProductScroll();
-
-  scrollIntervalRef.current = setInterval(() => {
-    productScrollRef.current?.scrollBy({
-      left: direction === "left" ? -18 : 18,
-      behavior: "auto",
-    });
-  }, 16);
-};
-
-const stopProductScroll = () => {
-  if (scrollIntervalRef.current) {
-    clearInterval(scrollIntervalRef.current);
-    scrollIntervalRef.current = null;
-  }
-};
 
 const products = [
   { name: "APX-3", href: "/products/apx3" },
@@ -91,45 +72,6 @@ useEffect(() => {
 
   window.addEventListener("storage", updateCartCount);
   window.addEventListener("cartUpdated", updateCartCount);
-  const productScrollRef = useRef<HTMLDivElement | null>(null);
-  const productScrollInterval = useRef<number | null>(null);
-
-  const startProductScroll = (direction: "left" | "right") => {
-    stopProductScroll();
-    const el = productScrollRef.current;
-    if (!el) return;
-
-    const step = direction === "left" ? -6 : 6;
-    productScrollInterval.current = window.setInterval(() => {
-      el.scrollBy({ left: step });
-    }, 16);
-  };
-
-  const stopProductScroll = () => {
-    if (productScrollInterval.current !== null) {
-      clearInterval(productScrollInterval.current);
-      productScrollInterval.current = null;
-    }
-  };
-const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
-const startProductScroll = (direction: "left" | "right") => {
-  stopProductScroll();
-
-  scrollIntervalRef.current = setInterval(() => {
-    productScrollRef.current?.scrollBy({
-      left: direction === "left" ? -18 : 18,
-      behavior: "auto",
-    });
-  }, 16);
-};
-
-const stopProductScroll = () => {
-  if (scrollIntervalRef.current) {
-    clearInterval(scrollIntervalRef.current);
-    scrollIntervalRef.current = null;
-  }
-};
 
   return () => {
     window.removeEventListener("storage", updateCartCount);

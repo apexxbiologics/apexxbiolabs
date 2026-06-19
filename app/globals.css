@@ -12,6 +12,8 @@ body {
 
 .hero-wave {
   position: absolute;
+  z-index: 50;  
+  position: absolute;
   left: -10%;
   bottom: -18%;
   width: 125%;

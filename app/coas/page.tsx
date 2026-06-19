@@ -112,13 +112,11 @@ export default function COAsPage() {
 
 </div>
 
-
-<p className="text-gray-300 text-xl max-w-3xl mx-auto leading-relaxed font-light">          
-Third-party analytical verification and batch documentation supporting research transparency, quality assurance, and product integrity.        
+<p className="text-gray-300 text-xl max-w-3xl mx-auto leading-relaxed font-light">
+  Third-party analytical verification and batch documentation supporting research transparency, quality assurance, and product integrity.
 </p>
-</section>
 
-<div className="flex justify-center mb-16 mt-16">
+<div className="flex justify-center mt-8">
   <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-green-500/30 bg-green-500/5">
     <span className="text-green-400">✓</span>
     <span className="text-green-300 uppercase tracking-widest text-sm">
@@ -126,13 +124,14 @@ Third-party analytical verification and batch documentation supporting research 
     </span>
   </div>
 </div>
+</section>
 
 <section className="px-10 py-24">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
           {products.map((product) => (
             <div
               key={product.name}
-              className="min-h-[260px] flex flex-col justify-between border border-blue-900 rounded-2xl p-8 bg-[#050505]hover:shadow-[0_0_50px_rgba(37,99,235,0.35)]
+              className="min-h-[260px] flex flex-col justify-between border border-blue-900 rounded-2xl p-8 bg-[#050505] hover:shadow-[0_0_50px_rgba(37,99,235,0.35)]
 hover:-translate-y-2
 duration-300 transition-all"
             >

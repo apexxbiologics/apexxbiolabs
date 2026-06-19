@@ -230,7 +230,6 @@ if (accepted === null) {
 
 {/* HERO */}
 <section className="relative flex flex-col items-center justify-center text-center pt-36 pb-24 px-6 bg-black overflow-hidden">
-  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-blue-600/10 blur-[180px] rounded-full pointer-events-none"></div>
 
   <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
 

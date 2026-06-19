@@ -228,69 +228,62 @@ if (accepted === null) {
 
 </header>
 
-        {/* HERO */}
-<section
-  className="relative flex flex-col items-center text-center pt-58 md:pt-24 pb-28 px-6 bg-cover bg-center overflow-visible"
->
-<div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-blue-600/10 blur-[180px] rounded-full pointer-events-none"></div>
+{/* HERO */}
+<section className="relative flex flex-col items-center justify-center text-center pt-36 pb-24 px-6 bg-black overflow-hidden">
+  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-blue-600/10 blur-[180px] rounded-full pointer-events-none"></div>
 
-  <div className="relative z-10 flex flex-col items-center w-full">
-<div className="relative w-full max-w-6xl mb-10 md:mb-16">
+  <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
 
-  {/* Hero Image */}
-<div className="relative w-full max-w-7xl mx-auto mb-10 md:mb-16 overflow-hidden rounded-2xl">
+    <div className="relative w-full max-w-6xl mx-auto mb-10 overflow-hidden rounded-2xl border border-blue-900/40 bg-[#020617] shadow-[0_0_60px_rgba(37,99,235,0.22)]">
+      <img
+        src="/images/biglogo.png"
+        alt="Apexx Biolabs"
+        className="w-full h-auto block mx-auto"
+      />
 
-  <img
-    src="/images/biglogo.png"
-    alt="Apexx Biolabs"
-    className="w-full h-auto block"
-  />
+      <div className="hero-wave"></div>
+      <div className="hero-sparkles"></div>
+      <div className="hero-glow"></div>
+    </div>
 
-  <div className="hero-wave"></div>
-  <div className="hero-sparkles"></div>
-  <div className="hero-glow"></div>
+    <div className="mt-4 inline-block border border-blue-700/70 rounded-full px-6 py-2 bg-blue-950/20 shadow-[0_0_25px_rgba(37,99,235,0.25)]">
+      <p className="text-blue-400 text-xs uppercase tracking-[0.35em] font-semibold">
+        Research Use Only • Precision Tested
+      </p>
+    </div>
 
-</div>
+    <h2 className="mt-8 text-5xl md:text-7xl font-extrabold leading-tight max-w-5xl bg-gradient-to-r from-blue-500 via-cyan-300 to-blue-700 bg-clip-text text-transparent tracking-tight">
+      Precision Research Peptides
+    </h2>
 
-            <div className="mt-4 inline-block border border-blue-700/70 rounded-full px-6 py-2 bg-blue-950/20 shadow-[0_0_25px_rgba(37,99,235,0.25)]">
-  <p className="text-blue-400 text-xs uppercase tracking-[0.35em] font-semibold">
-    Research Use Only • Precision Tested
-  </p>
-</div>
+    <p className="mt-8 text-gray-300 text-lg md:text-xl max-w-3xl leading-relaxed">
+      High-purity research compounds developed for laboratory applications,
+      analytical consistency, and research-focused quality assurance.
+    </p>
 
-<h2 className="mt-8 text-5xl md:text-7xl font-extrabold leading-tight max-w-5xl bg-gradient-to-r from-blue-500 via-cyan-300 to-blue-700 bg-clip-text text-transparent tracking-tight">
-  Precision Research Peptides
-</h2>
+    <div className="mt-8 h-[1px] w-72 bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
 
-<p className="mt-8 text-gray-300 text-lg md:text-xl max-w-3xl leading-relaxed">
-  High-purity research compounds developed for laboratory applications,
-  analytical consistency, and research-focused quality assurance.
-</p>
+    <div className="flex gap-6 mt-12">
+      <a
+        href="#shop"
+        className="bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.5)] px-8 py-4 text-sm uppercase tracking-widest font-semibold transition-all rounded-lg"
+      >
+        Shop Catalog
+      </a>
 
-<div className="mt-8 h-[1px] w-72 bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
+      <a
+        href="/coas"
+        className="border border-blue-700 hover:bg-blue-700 px-8 py-4 text-sm uppercase tracking-widest font-semibold transition-all rounded-lg"
+      >
+        View COAs
+      </a>
+    </div>
 
-            <div className="flex gap-6 mt-12">
-              <a
-                href="#shop"
-                className="bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.5)] px-8 py-4 text-sm uppercase tracking-widest font-semibold transition-all rounded-lg"
-              >
-                Shop Catalog
-              </a>
-
-              <a
-                href="/coas"
-                className="border border-blue-700 hover:bg-blue-700 px-8 py-4 text-sm uppercase tracking-widest font-semibold transition-all rounded-lg"
-              >
-                View COAs
-              </a>
-            </div>
-
-            <p className="mt-6 text-xs text-gray-500 uppercase tracking-widest">
-              For laboratory research use only. Not for human consumption.
-            </p>
-          </div>
-        </div>
-        </section>
+    <p className="mt-6 text-xs text-gray-500 uppercase tracking-widest">
+      For laboratory research use only. Not for human consumption.
+    </p>
+  </div>
+</section>
 
         {/* TRUST BAR */}
         <section className="border-t border-b border-blue-900 py-10">

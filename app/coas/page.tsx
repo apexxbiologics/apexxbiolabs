@@ -106,7 +106,7 @@ export default function COAsPage() {
 
 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-800 bg-blue-950/20 text-sm text-blue-300 mb-8">
   <span>✓</span>
-  <span>Last Updated: June 18, 2026</span>
+  <span>Last Updated: June 19, 2026</span>
 </div>
 
         <p className="text-gray-400 text-lg max-w-4xl mx-auto leading-relaxed">

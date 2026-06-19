@@ -791,7 +791,7 @@ alt=""
 
         <div className="flex gap-3">
           <a
-            href="https://www.tiktok.com/@apexxbiolabs"
+            href="https://www.tiktok.com/@apexx.nyc"
             target="_blank"
             rel="noopener noreferrer"
             className="w-11 h-11 rounded-full border border-blue-800 bg-[#050505] flex items-center justify-center hover:bg-blue-700 transition-all"

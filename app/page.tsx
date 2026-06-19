@@ -346,7 +346,7 @@ if (accepted === null) {
 <div
   id="APX-3"
   onClick={() => (window.location.href = "/products/apx3")}
-  className="group border border-blue-900/50 bg-gradient-to-b from-[#0B1120] to-[#020617] p-8 hover:border-blue-400/70 hover:shadow-[0_0_55px_rgba(37,99,235,0.25)] hover:-translate-y-2 transition-all duration-300 rounded-3xl cursor-pointer"
+  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
 >
               <img
                 src="/images/retatrutide.PNG"

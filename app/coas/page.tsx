@@ -52,7 +52,8 @@ export default function COAsPage() {
   purity: "99.33%",
   content: "11.71 mg",
   coa: "/images/coas/semax-10mg-coa.pdf",
-},    {
+},    
+{
   name: "MOTS-c",
   batch: "Pending",
   status: "Awaiting Testing",
@@ -150,16 +151,26 @@ export default function COAsPage() {
                 </div>
               </div>
 
-              {product.coa ? (
-                <a
-                  href={product.coa}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full border border-blue-700 py-4 uppercase tracking-widest text-sm hover:bg-blue-700 transition-all rounded-lg text-center"
-                >
-                  View COA
-                </a>
-              ) : (
+{product.coa ? (
+  <>
+    {product.status === "Verified" && (
+      <div className="mb-4 text-center">
+        <span className="px-3 py-1 rounded-full bg-green-500/10 text-green-400 border border-green-500/30 text-xs uppercase tracking-widest">
+          ✓ Third-Party Verified
+        </span>
+      </div>
+    )}
+
+    <a
+      href={product.coa}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="w-full border border-blue-700 py-4 uppercase tracking-widest text-sm hover:bg-blue-700 transition-all rounded-lg text-center block"
+    >
+      View COA
+    </a>
+  </>
+) : (
                 <button className="w-full border border-blue-900 py-4 uppercase tracking-widest text-sm rounded-lg text-gray-500 cursor-not-allowed">
                   COA Coming Soon
                 </button>

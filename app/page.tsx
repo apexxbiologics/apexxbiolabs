@@ -232,14 +232,14 @@ if (accepted === null) {
 
   <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
 
-<div className="relative w-full max-w-6xl mx-auto mb-10 overflow-hidden rounded-3xl border border-blue-900/30 bg-black aspect-[1536/1024]">
+<div className="relative w-full max-w-6xl mx-auto mb-10 overflow-hidden rounded-3xl border border-blue-900/30 bg-black">
   <video
     autoPlay
     muted
     playsInline
     preload="auto"
     poster="/images/hero.png"
-    className="absolute inset-0 w-full h-full object-contain"
+    className="w-full h-auto block object-contain"
   >
     <source src="/videos/hero.mp4" type="video/mp4" />
   </video>

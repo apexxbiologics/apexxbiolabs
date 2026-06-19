@@ -242,8 +242,7 @@ if (accepted === null) {
 </header>
 
 {/* HERO */}
-<section className="relative flex flex-col items-center justify-center text-center pt-72 md:pt-36 pb-24 px-6 bg-black overflow-hidden">
-  <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
+<section className="relative flex flex-col items-center justify-center text-center pt-72 md:pt-40 pb-28 px-6 bg-black overflow-hidden">  <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
 
 <div className="relative w-full max-w-6xl mx-auto mb-10 overflow-visible rounded-3xl border border-blue-900/30 bg-black">
   <video
@@ -259,42 +258,43 @@ if (accepted === null) {
   </video>
 </div>
 
-    <div className="mt-4 inline-block border border-blue-700/70 rounded-full px-6 py-2 bg-blue-950/20 shadow-[0_0_25px_rgba(37,99,235,0.25)]">
-      <p className="text-blue-400 text-xs uppercase tracking-[0.35em] font-semibold">
-        Research Use Only • Precision Tested
-      </p>
-    </div>
+<div className="mt-10 inline-flex items-center gap-3 px-6 py-3 rounded-full border border-blue-700 bg-blue-950/20 text-blue-300 text-sm uppercase tracking-widest shadow-[0_0_25px_rgba(37,99,235,0.2)]">
+  <span>✓</span>
+  <span>Research Use Only • Precision Tested</span>
+</div>
 
-    <h2 className="mt-8 text-5xl md:text-7xl font-extrabold leading-tight max-w-5xl bg-gradient-to-r from-blue-500 via-cyan-300 to-blue-700 bg-clip-text text-transparent tracking-tight">
-      Precision Research Peptides
-    </h2>
+<h2 className="mt-8 text-6xl md:text-8xl font-black leading-tight max-w-6xl bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent tracking-tight">
+  Precision Research
+  <br />
+  Peptides
+</h2>
 
-    <p className="mt-8 text-gray-300 text-lg md:text-xl max-w-3xl leading-relaxed">
-      High-purity research compounds developed for laboratory applications,
-      analytical consistency, and research-focused quality assurance.
-    </p>
+<div className="mt-8 h-[1px] w-72 bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
 
-    <div className="mt-8 h-[1px] w-72 bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
+<p className="mt-8 text-gray-300 text-xl max-w-4xl leading-relaxed font-light">
+  High-purity research compounds developed for laboratory applications,
+  analytical consistency, and research-focused quality assurance.
+</p>
 
-    <div className="flex gap-6 mt-12">
-      <a
-        href="#shop"
-        className="bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.5)] px-8 py-4 text-sm uppercase tracking-widest font-semibold transition-all rounded-lg"
-      >
-        Shop Catalog
-      </a>
+<div className="flex flex-col sm:flex-row gap-6 mt-12">
+  <a
+    href="#shop"
+    className="bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] px-9 py-4 text-sm uppercase tracking-widest font-semibold transition-all rounded-xl"
+  >
+    Shop Catalog
+  </a>
 
-      <a
-        href="/coas"
-        className="border border-blue-700 hover:bg-blue-700 px-8 py-4 text-sm uppercase tracking-widest font-semibold transition-all rounded-lg"
-      >
-        View COAs
-      </a>
-    </div>
+  <a
+    href="/coas"
+    className="border border-blue-700 hover:bg-blue-700 hover:shadow-[0_0_25px_rgba(37,99,235,0.35)] px-9 py-4 text-sm uppercase tracking-widest font-semibold transition-all rounded-xl"
+  >
+    View COAs
+  </a>
+</div>
 
-    <p className="mt-6 text-xs text-gray-500 uppercase tracking-widest">
-      For laboratory research use only. Not for human consumption.
-    </p>
+<p className="mt-8 text-xs text-gray-600 uppercase tracking-widest">
+  For laboratory research use only. Not for human consumption.
+</p>
   </div>
 </section>
 

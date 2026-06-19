@@ -240,9 +240,6 @@ if (accepted === null) {
         className="w-full h-auto block mx-auto"
       />
 
-<div className="hero-wave"></div>
-<div className="crystal-shine"></div>
-<div className="hero-sparkles"></div>
     </div>
 
     <div className="mt-4 inline-block border border-blue-700/70 rounded-full px-6 py-2 bg-blue-950/20 shadow-[0_0_25px_rgba(37,99,235,0.25)]">

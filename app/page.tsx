@@ -698,24 +698,62 @@ if (accepted === null) {
         </section>
 
         {/* ABOUT SECTION */}
-        <section className="px-10 py-28 border-t border-blue-950">
-          <div className="max-w-4xl mx-auto text-center">
-            <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-6">
-              About Apexx
-            </p>
+<section className="py-32 px-6 border-t border-blue-950 border-b border-blue-950 bg-black">
+  <div className="max-w-6xl mx-auto text-center">
 
-            <h3 className="text-5xl font-bold mb-8">
-              Scientific Precision. Trusted Quality.
-            </h3>
+    <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6">
+      About Apexx
+    </p>
 
-            <p className="text-gray-400 text-lg leading-relaxed">
-              Apexx Biolabs specializes in high-purity research compounds
-              manufactured under strict analytical standards. Every batch
-              undergoes rigorous verification to ensure purity, consistency,
-              and reliability for laboratory applications.
-            </p>
-          </div>
-        </section>
+    <h2 className="text-5xl md:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent mb-8">
+      Scientific Precision.
+      <br />
+      Trusted Quality.
+    </h2>
+
+    <div className="h-[1px] w-64 mx-auto bg-gradient-to-r from-transparent via-blue-500 to-transparent mb-10"></div>
+
+    <p className="text-gray-300 text-xl max-w-4xl mx-auto leading-relaxed mb-16">
+      Apexx Biolabs specializes in high-purity research compounds
+      manufactured under strict analytical standards. Every batch undergoes
+      rigorous verification to support purity, consistency, and reliability
+      for laboratory research applications.
+    </p>
+
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="border border-blue-900 rounded-2xl p-8 bg-[#050505]">
+        <div className="text-blue-400 text-3xl mb-4">✓</div>
+        <h3 className="text-xl font-bold mb-3">
+          Third-Party Testing
+        </h3>
+        <p className="text-gray-400">
+          Independent analytical verification supporting transparency and consistency.
+        </p>
+      </div>
+
+      <div className="border border-blue-900 rounded-2xl p-8 bg-[#050505]">
+        <div className="text-blue-400 text-3xl mb-4">⚗</div>
+        <h3 className="text-xl font-bold mb-3">
+          Research Standards
+        </h3>
+        <p className="text-gray-400">
+          Manufactured and handled according to strict laboratory quality practices.
+        </p>
+      </div>
+
+      <div className="border border-blue-900 rounded-2xl p-8 bg-[#050505]">
+        <div className="text-blue-400 text-3xl mb-4">🔬</div>
+        <h3 className="text-xl font-bold mb-3">
+          Batch Transparency
+        </h3>
+        <p className="text-gray-400">
+          COAs and supporting documentation available for verified batches.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
 
 <footer className="border-t border-blue-900 py-10 px-6 bg-black">
   <div className="max-w-7xl mx-auto">

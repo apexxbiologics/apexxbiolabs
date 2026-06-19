@@ -24,8 +24,17 @@ export default function COAsPage() {
   content: "11.83 mg",
   coa: "/images/coas/tb500-10mg-blue-cap-coa.pdf",
 },
-    { name: "Bacteriostatic Water", batch: "Pending", status: "Awaiting Testing" },
-    { name: "KPV", batch: "Pending", status: "Awaiting Testing" },
+
+{
+  name: "Bacteriostatic Water",
+  batch: "PRX-2026-04-A",
+  status: "Verified",
+  purity: "Pass",
+  content: "30 mL",
+  coa: "/images/coas/bacwater-coa.pdf",
+},
+
+{ name: "KPV", batch: "Pending", status: "Awaiting Testing" },
     { name: "GHK-Cu", batch: "Pending", status: "Awaiting Testing" },
     { name: "Pinealon", batch: "Pending", status: "Awaiting Testing" },
     { name: "Selank", batch: "Pending", status: "Awaiting Testing" },

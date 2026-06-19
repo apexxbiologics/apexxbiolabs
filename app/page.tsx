@@ -11,6 +11,25 @@ const [disclaimerChecked, setDisclaimerChecked] = useState(false);
     const [cartCount, setCartCount] = useState(0);
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const productScrollRef = useRef<HTMLDivElement | null>(null);
+    const scrollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+const startProductScroll = (direction: "left" | "right") => {
+  stopProductScroll();
+
+  scrollIntervalRef.current = setInterval(() => {
+    productScrollRef.current?.scrollBy({
+      left: direction === "left" ? -18 : 18,
+      behavior: "auto",
+    });
+  }, 16);
+};
+
+const stopProductScroll = () => {
+  if (scrollIntervalRef.current) {
+    clearInterval(scrollIntervalRef.current);
+    scrollIntervalRef.current = null;
+  }
+};
 
 const products = [
   { name: "APX-3", href: "/products/apx3" },
@@ -72,6 +91,45 @@ useEffect(() => {
 
   window.addEventListener("storage", updateCartCount);
   window.addEventListener("cartUpdated", updateCartCount);
+  const productScrollRef = useRef<HTMLDivElement | null>(null);
+  const productScrollInterval = useRef<number | null>(null);
+
+  const startProductScroll = (direction: "left" | "right") => {
+    stopProductScroll();
+    const el = productScrollRef.current;
+    if (!el) return;
+
+    const step = direction === "left" ? -6 : 6;
+    productScrollInterval.current = window.setInterval(() => {
+      el.scrollBy({ left: step });
+    }, 16);
+  };
+
+  const stopProductScroll = () => {
+    if (productScrollInterval.current !== null) {
+      clearInterval(productScrollInterval.current);
+      productScrollInterval.current = null;
+    }
+  };
+const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+const startProductScroll = (direction: "left" | "right") => {
+  stopProductScroll();
+
+  scrollIntervalRef.current = setInterval(() => {
+    productScrollRef.current?.scrollBy({
+      left: direction === "left" ? -18 : 18,
+      behavior: "auto",
+    });
+  }, 16);
+};
+
+const stopProductScroll = () => {
+  if (scrollIntervalRef.current) {
+    clearInterval(scrollIntervalRef.current);
+    scrollIntervalRef.current = null;
+  }
+};
 
   return () => {
     window.removeEventListener("storage", updateCartCount);
@@ -332,9 +390,11 @@ if (accepted === null) {
         </section>
 
 {/* PRODUCTS */}
-<section id="shop" className="py-28 px-6 md:px-10 bg-gradient-to-b from-black via-[#030712] to-black text-white">
+<section
+  id="shop"
+  className="py-28 px-6 md:px-10 bg-gradient-to-b from-black via-[#030712] to-black text-white"
+>
   <div className="max-w-7xl mx-auto">
-
     <div className="flex items-end justify-between mb-12">
       <div>
         <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-5">
@@ -352,7 +412,7 @@ if (accepted === null) {
 
       <a
         href="/products"
-        className="hidden md:inline-flex border border-blue-700/60 text-blue-300 rounded-full px-8 py-3 text-sm font-semibold uppercase tracking-widest hover:bg-blue-700 hover:text-white hover:shadow-[0_0_25px_rgba(37,99,235,0.35)] transition-all"
+        className="hidden md:inline-flex border border-blue-700/60 text-blue-300 rounded-full px-8 py-3 text-sm font-semibold uppercase tracking-widest hover:bg-blue-700 hover:text-white transition-all"
       >
         View all
       </a>
@@ -360,26 +420,22 @@ if (accepted === null) {
 
     <div className="relative">
       <button
-        onMouseEnter={() =>
-          productScrollRef.current?.scrollBy({
-            left: -360,
-            behavior: "smooth",
-          })
-        }
+        onMouseEnter={() => startProductScroll("left")}
+        onMouseLeave={stopProductScroll}
         onClick={() =>
           productScrollRef.current?.scrollBy({
             left: -360,
             behavior: "smooth",
           })
         }
-        className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full border border-blue-700/60 bg-[#020617]/90 backdrop-blur-xl items-center justify-center text-3xl text-blue-300 hover:bg-blue-700 hover:text-white hover:shadow-[0_0_30px_rgba(37,99,235,0.45)] transition-all"
+        className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full border border-blue-700/60 bg-black items-center justify-center text-3xl text-blue-300 hover:bg-blue-700 hover:text-white transition-all"
       >
         ‹
       </button>
 
       <div
         ref={productScrollRef}
-        className="flex gap-7 overflow-x-auto scroll-smooth pb-6 px-1 md:px-20"
+        className="flex gap-7 overflow-x-auto scroll-smooth pb-6 px-1 md:px-20 no-scrollbar"
       >
         {[
           {
@@ -469,9 +525,9 @@ if (accepted === null) {
         ].map((product) => (
           <div
             key={product.name}
-            className="min-w-[290px] md:min-w-[340px] bg-[#050505] border border-blue-900/60 rounded-3xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_45px_rgba(37,99,235,0.28)] hover:-translate-y-2 transition-all duration-300"
+            className="min-w-[290px] md:min-w-[340px] bg-[#050505] border border-blue-900/60 rounded-3xl overflow-hidden hover:border-blue-400 hover:-translate-y-2 transition-all duration-300"
           >
-            <div className="bg-gradient-to-b from-[#0B1120] to-black h-[360px] flex items-center justify-center border-b border-blue-950">
+            <div className="bg-black h-[360px] flex items-center justify-center border-b border-blue-950">
               <img
                 src={product.image}
                 alt={product.name}
@@ -484,9 +540,7 @@ if (accepted === null) {
                 {product.name}
               </h4>
 
-              <p className="text-gray-400 mb-8">
-                {product.desc}
-              </p>
+              <p className="text-gray-400 mb-8">{product.desc}</p>
 
               <div className="flex gap-3">
                 <a
@@ -498,7 +552,7 @@ if (accepted === null) {
 
                 <a
                   href={product.href}
-                  className="flex-1 bg-blue-600 text-white rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:bg-blue-500 hover:shadow-[0_0_25px_rgba(37,99,235,0.45)] transition-all"
+                  className="flex-1 bg-blue-600 text-white rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:bg-blue-500 transition-all"
                 >
                   View
                 </a>
@@ -509,19 +563,15 @@ if (accepted === null) {
       </div>
 
       <button
-        onMouseEnter={() =>
-          productScrollRef.current?.scrollBy({
-            left: 360,
-            behavior: "smooth",
-          })
-        }
+        onMouseEnter={() => startProductScroll("right")}
+        onMouseLeave={stopProductScroll}
         onClick={() =>
           productScrollRef.current?.scrollBy({
             left: 360,
             behavior: "smooth",
           })
         }
-        className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full border border-blue-700/60 bg-[#020617]/90 backdrop-blur-xl items-center justify-center text-3xl text-blue-300 hover:bg-blue-700 hover:text-white hover:shadow-[0_0_30px_rgba(37,99,235,0.45)] transition-all"
+        className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full border border-blue-700/60 bg-black items-center justify-center text-3xl text-blue-300 hover:bg-blue-700 hover:text-white transition-all"
       >
         ›
       </button>

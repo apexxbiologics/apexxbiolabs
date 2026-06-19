@@ -331,13 +331,14 @@ if (accepted === null) {
         </section>
 
         {/* PRODUCTS */}
-<p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6 text-center">
-  Research Catalog
-</p>
+        <section id="shop" className="py-24">
+          <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6 text-center">
+            Research Catalog
+          </p>
 
-<h3 className="text-5xl md:text-7xl font-black tracking-tight text-center mb-16 bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent">
-  Featured Compounds
-</h3>
+          <h3 className="text-5xl md:text-7xl font-black tracking-tight text-center mb-16 bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent">
+            Featured Compounds
+          </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
 
@@ -707,8 +708,8 @@ if (accepted === null) {
           </div>
         </section>
 
-        {/* ABOUT SECTION */}
-<section className="py-32 px-6 border-t border-blue-950 border-b border-blue-950 bg-black">
+        <section className="py-32 px-6 border-t border-blue-950 border-b border-blue-950 bg-black">
+
   <div className="max-w-6xl mx-auto text-center">
 
     <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6">

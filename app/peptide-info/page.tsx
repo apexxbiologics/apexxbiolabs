@@ -62,35 +62,6 @@ export default function PeptideInfoPage() {
   Understanding Peptides
 </h2>
 
-<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-  <div className="border border-blue-900 rounded-2xl p-6 bg-black/40">
-    <h3 className="text-xl font-bold text-blue-400 mb-3">
-      Research Use Only
-    </h3>
-    <p className="text-gray-400 leading-relaxed">
-      Products are intended strictly for laboratory research and analytical applications.
-    </p>
-  </div>
-
-  <div className="border border-blue-900 rounded-2xl p-6 bg-black/40">
-    <h3 className="text-xl font-bold text-blue-400 mb-3">
-      Analytical Testing
-    </h3>
-    <p className="text-gray-400 leading-relaxed">
-      COAs help document identity, purity, content, and batch-level quality verification.
-    </p>
-  </div>
-
-  <div className="border border-blue-900 rounded-2xl p-6 bg-black/40">
-    <h3 className="text-xl font-bold text-blue-400 mb-3">
-      Batch Transparency
-    </h3>
-    <p className="text-gray-400 leading-relaxed">
-      Verified documentation supports research consistency and product traceability.
-    </p>
-  </div>
-</div>
-
   <p className="text-gray-300 text-xl leading-relaxed mb-12 max-w-5xl">
     Peptides are short chains of amino acids that function as highly specific
     biological signaling molecules. Found naturally throughout the body,

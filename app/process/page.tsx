@@ -1,179 +1,93 @@
 export default function ProcessPage() {
   const steps = [
     {
-      number: "1",
+      number: "01",
       icon: "flask",
       title: "Sourcing",
-      text: "We source high-quality research materials from trusted and verified suppliers.",
+      text: "Research materials are sourced from verified supplier channels with an emphasis on consistency and documentation.",
     },
     {
-      number: "2",
+      number: "02",
       icon: "clipboard",
       title: "Testing & Verification",
-      text: "Each batch is reviewed for identity, purity, and consistency with COA documentation.",
+      text: "Batch documentation is reviewed for identity, purity, content, and supporting COA verification when available.",
     },
     {
-      number: "3",
+      number: "03",
       icon: "shield",
       title: "Batch Tracking",
-      text: "Products are organized with batch information to support traceability and consistency.",
+      text: "Products are organized with batch-level information to support traceability, transparency, and consistency.",
     },
     {
-      number: "4",
+      number: "04",
       icon: "vial",
       title: "Professional Packaging",
-      text: "Materials are prepared in secure, professional, and tamper-conscious packaging.",
+      text: "Materials are prepared with secure, professional, and tamper-conscious packaging standards.",
     },
     {
-      number: "5",
+      number: "05",
       icon: "box",
       title: "Secure Shipping",
-      text: "Orders are packaged carefully and shipped discreetly with tracking information.",
+      text: "Orders are packaged carefully and shipped discreetly with tracking information when available.",
     },
     {
-      number: "6",
+      number: "06",
       icon: "check",
       title: "Delivery & Support",
-      text: "Customers receive delivery updates and support for order-related questions.",
+      text: "Customers receive order support for fulfillment updates, batch documentation, and research-use inquiries.",
     },
   ];
 
   const renderIcon = (icon: string) => {
     if (icon === "flask") {
       return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.8}
-          stroke="currentColor"
-          className="w-16 h-16 text-blue-400"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M10 2v5l-5 8a4 4 0 003.4 6h7.2A4 4 0 0019 15l-5-8V2"
-          />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-12 h-12 text-blue-400">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10 2v5l-5 8a4 4 0 003.4 6h7.2A4 4 0 0019 15l-5-8V2" />
         </svg>
       );
     }
 
     if (icon === "clipboard") {
       return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.8}
-          stroke="currentColor"
-          className="w-16 h-16 text-blue-400"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M9 3h6l1 2h3v16H5V5h3l1-2z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M9 12l2 2 4-5"
-          />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-12 h-12 text-blue-400">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 3h6l1 2h3v16H5V5h3l1-2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-5" />
         </svg>
       );
     }
 
     if (icon === "shield") {
       return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.8}
-          stroke="currentColor"
-          className="w-16 h-16 text-blue-400"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M8 12l3 3 5-6"
-          />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-12 h-12 text-blue-400">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 12l3 3 5-6" />
         </svg>
       );
     }
 
     if (icon === "vial") {
       return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.8}
-          stroke="currentColor"
-          className="w-16 h-16 text-blue-400"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M9 2h6v4l3 5v9H6v-9l3-5V2z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M8 15h8"
-          />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-12 h-12 text-blue-400">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 2h6v4l3 5v9H6v-9l3-5V2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 15h8" />
         </svg>
       );
     }
 
     if (icon === "box") {
       return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.8}
-          stroke="currentColor"
-          className="w-16 h-16 text-blue-400"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M3 7l9-4 9 4-9 4-9-4z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M3 7v10l9 4 9-4V7"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 11v10"
-          />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-12 h-12 text-blue-400">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 7l9-4 9 4-9 4-9-4z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10l9 4 9-4V7" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 11v10" />
         </svg>
       );
     }
 
     return (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.8}
-        stroke="currentColor"
-        className="w-16 h-16 text-blue-400"
-      >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-12 h-12 text-blue-400">
         <circle cx="12" cy="12" r="9" />
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M8 12l3 3 5-6"
-        />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8 12l3 3 5-6" />
       </svg>
     );
   };
@@ -192,50 +106,53 @@ export default function ProcessPage() {
           Apexx Biolabs
         </p>
 
-        <h1 className="text-6xl md:text-7xl font-extrabold bg-gradient-to-r from-white via-blue-300 to-blue-600 bg-clip-text text-transparent mb-6">
+        <h1 className="text-6xl md:text-8xl font-black tracking-tight bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent mb-8">
           Our Process
         </h1>
 
-        <p className="text-2xl md:text-3xl font-bold tracking-[0.35em] uppercase mb-6">
-          Quality.{" "}
-          <span className="text-blue-400">Transparency.</span>{" "}
-          Reliability.
+        <div className="h-[1px] w-72 mx-auto bg-gradient-to-r from-transparent via-blue-500 to-transparent mb-10"></div>
+
+        <p className="text-gray-300 text-xl max-w-4xl mx-auto leading-relaxed font-light mb-10">
+          From sourcing to delivery, each step is designed to support
+          consistency, traceability, secure handling, and a professional
+          research-use experience.
         </p>
 
-        <p className="text-gray-400 text-lg max-w-4xl mx-auto leading-relaxed mb-20">
-          From sourcing to delivery, each step is designed to support consistency,
-          traceability, secure handling, and a professional research-use
-          experience.
-        </p>
+        <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-blue-700 bg-blue-950/20 text-blue-300 text-sm uppercase tracking-widest mb-20">
+          <span>✓</span>
+          <span>Quality Focused • Batch Tracked • Research Use Only</span>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 text-left">
           {steps.map((step) => (
             <div
               key={step.number}
-              className="relative border border-blue-800 rounded-3xl p-6 bg-[#050505] shadow-[0_0_35px_rgba(37,99,235,0.16)] hover:border-blue-400 hover:shadow-[0_0_45px_rgba(37,99,235,0.28)] transition-all"
+              className="group relative border border-blue-900 rounded-3xl p-8 bg-[#050505] hover:border-blue-400 hover:shadow-[0_0_45px_rgba(37,99,235,0.28)] hover:-translate-y-2 transition-all duration-300"
             >
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full border border-blue-500 bg-blue-700 text-white flex items-center justify-center text-xl font-bold shadow-[0_0_25px_rgba(37,99,235,0.65)]">
-                {step.number}
+              <div className="flex items-start justify-between mb-8">
+                <div className="w-16 h-16 rounded-2xl border border-blue-700 bg-blue-950/30 flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.25)] group-hover:shadow-[0_0_30px_rgba(37,99,235,0.45)] transition-all">
+                  {renderIcon(step.icon)}
+                </div>
+
+                <span className="text-5xl font-black text-blue-950 group-hover:text-blue-800 transition-colors">
+                  {step.number}
+                </span>
               </div>
 
-              <div className="mt-10 flex justify-center mb-6">
-                {renderIcon(step.icon)}
-              </div>
+              <h2 className="text-2xl font-bold text-white group-hover:text-blue-300 transition-colors mb-4">
+                {step.title}
+              </h2>
 
-            <h2 className="text-lg font-bold uppercase tracking-wide mb-5 h-16 flex items-center justify-center text-center">
-  {step.title}
-</h2>
+              <div className="h-[1px] w-full bg-gradient-to-r from-blue-700 via-blue-950 to-transparent mb-5" />
 
-              <div className="h-[1px] w-full bg-blue-800 mb-5" />
-
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-gray-400 leading-relaxed">
                 {step.text}
               </p>
             </div>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-14 border border-blue-900 rounded-3xl p-6 bg-[#050505]">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-16 border border-blue-900 rounded-3xl p-6 bg-[#050505] shadow-[0_0_35px_rgba(37,99,235,0.12)]">
           {[
             "COA Verified",
             "Research Use Only",
@@ -245,7 +162,7 @@ export default function ProcessPage() {
           ].map((item) => (
             <div
               key={item}
-              className="text-blue-400 uppercase tracking-widest text-sm font-semibold"
+              className="border border-blue-950 rounded-2xl px-4 py-4 text-blue-400 uppercase tracking-widest text-xs font-semibold bg-black/40"
             >
               {item}
             </div>

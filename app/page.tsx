@@ -10,6 +10,7 @@ const [disclaimerChecked, setDisclaimerChecked] = useState(false);
 
     const [cartCount, setCartCount] = useState(0);
     const videoRef = useRef<HTMLVideoElement | null>(null);
+    const productScrollRef = useRef<HTMLDivElement | null>(null);
 
 const products = [
   { name: "APX-3", href: "/products/apx3" },
@@ -330,383 +331,151 @@ if (accepted === null) {
           </div>
         </section>
 
-        {/* PRODUCTS */}
-        <section id="shop" className="py-24">
-          <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6 text-center">
-            Research Catalog
-          </p>
+{/* PRODUCTS */}
+<section id="shop" className="py-28 px-6 bg-[#f8fafc] text-black">
+  <div className="max-w-7xl mx-auto">
 
-          <h3 className="text-5xl md:text-7xl font-black tracking-tight text-center mb-16 bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent">
-            Featured Compounds
-          </h3>
+    <div className="flex items-end justify-between mb-10">
+      <div>
+        <h3 className="text-4xl md:text-5xl font-black tracking-tight">
+          Featured Products
+        </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <p className="text-gray-500 mt-3 text-lg">
+          Research peptides, third-party identity tested
+        </p>
+      </div>
 
-{/* APX-3 */}
-<div
-  id="APX-3"
-  onClick={() => (window.location.href = "/products/apx3")}
-  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
->
-              <img
-                src="/images/retatrutide.PNG"
-                alt="APX3"
-                className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
-              />
-
-              <h4 className="text-2xl font-semibold">APX-3</h4>
-
-              <p className="text-gray-400 mt-3">10-20mg Research Peptide</p>
-
-              <a
-  href="/products/apx3"
-  className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
->
-  View Product
-</a>
-
+      <a
+        href="#shop"
+        className="hidden md:inline-flex border border-black rounded-full px-8 py-3 text-sm font-semibold hover:bg-black hover:text-white transition-all"
+      >
+        View all
+      </a>
     </div>
 
-{/* BPC-157 */}
-<div
-  onClick={() => (window.location.href = "/products/bpc157")}
-  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
->
-  <img
-    src="/images/bpc157.PNG"
-    alt="BPC-157"
-    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
-  />
+    <div className="relative">
+      <button
+        onClick={() =>
+          productScrollRef.current?.scrollBy({
+            left: -380,
+            behavior: "smooth",
+          })
+        }
+        className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full border border-black bg-white items-center justify-center text-2xl hover:bg-black hover:text-white transition-all"
+      >
+        ‹
+      </button>
 
-  <h4 className="text-2xl font-semibold">BPC-157</h4>
-
-  <p className="text-gray-400 mt-3">10mg Research Peptide</p>
-
-  <span className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg">
-    View Product
-  </span>
-</div>
-
-{/* TB-500 */}
-<div
-  onClick={() => (window.location.href = "/products/tb500")}
-  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
->
-  <img
-    src="/images/tb500.PNG"
-    alt="TB-500"
-    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
-  />
-              <h4 className="text-2xl font-semibold">TB-500</h4>
-
-              <p className="text-gray-400 mt-3">10mg Research Peptide</p>
-
-              <a
-                href="/products/tb500"
-                className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
-              >
-                View Product
-              </a>
+      <div
+        ref={productScrollRef}
+        className="flex gap-6 overflow-x-auto scroll-smooth pb-6 px-2 md:px-16 no-scrollbar"
+      >
+        {[
+          {
+            name: "APX-3",
+            desc: "10–20mg Research Peptide",
+            image: "/images/retatrutide.PNG",
+            href: "/products/apx3",
+          },
+          {
+            name: "BPC-157",
+            desc: "10mg Research Peptide",
+            image: "/images/bpc157.PNG",
+            href: "/products/bpc157",
+          },
+          {
+            name: "TB-500",
+            desc: "10mg Research Peptide",
+            image: "/images/tb500.PNG",
+            href: "/products/tb500",
+          },
+          {
+            name: "Bacteriostatic Water",
+            desc: "Research Reconstitution Solution",
+            image: "/images/bacwater.PNG",
+            href: "/products/bacwater",
+          },
+          {
+            name: "KPV",
+            desc: "10mg Research Peptide",
+            image: "/images/kpv.PNG",
+            href: "/products/kpv",
+          },
+          {
+            name: "GHK-Cu",
+            desc: "100mg Research Peptide",
+            image: "/images/ghkcu.PNG",
+            href: "/products/ghkcu",
+          },
+          {
+            name: "Selank",
+            desc: "10mg Research Peptide",
+            image: "/images/selank.PNG",
+            href: "/products/selank",
+          },
+          {
+            name: "Semax",
+            desc: "10mg Research Peptide",
+            image: "/images/semax.PNG",
+            href: "/products/semax",
+          },
+        ].map((product) => (
+          <div
+            key={product.name}
+            className="min-w-[290px] md:min-w-[330px] bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-200"
+          >
+            <div className="bg-[#e9eef5] h-[360px] flex items-center justify-center">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="h-72 object-contain"
+              />
             </div>
-{/* BACTERIOSTATIC WATER */}
-<div
-  onClick={() => (window.location.href = "/products/bacwater")}
-  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
->
-  <img
-    src="/images/bacwater.PNG"
-    alt="Bacteriostatic Water"
-    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
-  />
-  <h4 className="text-2xl font-semibold">
-    Bacteriostatic Water
-  </h4>
 
-  <p className="text-gray-400 mt-3">
-    Research Reconstitution Solution
-  </p>
+            <div className="p-6">
+              <h4 className="text-xl font-black mb-3">
+                {product.name}
+              </h4>
 
-  <a
-    href="/products/bacwater"
-    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
-  >
-    View Product
-  </a>
+              <p className="text-gray-500 mb-8">
+                {product.desc}
+              </p>
 
-</div>
+              <div className="flex gap-3">
+                <a
+                  href="/coas"
+                  className="flex-1 border border-black rounded-full py-3 text-center font-semibold hover:bg-black hover:text-white transition-all"
+                >
+                  View COA
+                </a>
 
-{/* KPV */}
-<div
-  onClick={() => (window.location.href = "/products/kpv")}
-  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
->
-
-  <img
-    src="/images/kpv.PNG"
-    alt="KPV"
-    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
-  />
-
-  <h4 className="text-2xl font-semibold">
-    KPV
-  </h4>
-
-  <p className="text-gray-400 mt-3">
-    10mg Research Peptide
-  </p>
-
-  <a
-    href="/products/kpv"
-    onClick={(e) => e.stopPropagation()}
-    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
-  >
-    View Product
-  </a>
-
-</div>
-
-{/* GHK-CU */}
-<div
-  onClick={() => (window.location.href = "/products/ghkcu")}
-  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
->
-
-  <img
-    src="/images/ghkcu.PNG"
-    alt="GHK-Cu"
-    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
-  />
-
-  <h4 className="text-2xl font-semibold">
-    GHK-Cu
-  </h4>
-
-  <p className="text-gray-400 mt-3">
-    100mg Research Peptide
-  </p>
-
-  <a
-    href="/products/ghkcu"
-    onClick={(e) => e.stopPropagation()}
-    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
-  >
-    View Product
-  </a>
-
-</div>
-
-{/* PINEALON */}
-<div
-  onClick={() => (window.location.href = "/products/pinealon")}
-  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
->
-
-  <img
-    src="/images/pinealon.PNG"
-    alt="Pinealon"
-    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
-  />
-
-  <h4 className="text-2xl font-semibold">
-    Pinealon
-  </h4>
-
-  <p className="text-gray-400 mt-3">
-    10mg Research Peptide
-  </p>
-
-  <a
-    href="/products/pinealon"
-    onClick={(e) => e.stopPropagation()}
-    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
-  >
-    View Product
-  </a>
-
-</div>
-
-{/* SELANK */}
-<div
-  onClick={() => (window.location.href = "/products/selank")}
-  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
->
-
-  <img
-    src="/images/selank.PNG"
-    alt="Selank"
-    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
-  />
-
-  <h4 className="text-2xl font-semibold">
-    Selank
-  </h4>
-
-  <p className="text-gray-400 mt-3">
-    10mg Research Peptide
-  </p>
-
-  <a
-    href="/products/selank"
-    onClick={(e) => e.stopPropagation()}
-    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
-  >
-    View Product
-  </a>
-
-</div>
-
-{/* SEMAX */}
-<div
-  onClick={() => (window.location.href = "/products/semax")}
-  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
->
-
-  <img
-    src="/images/semax.PNG"
-    alt="Semax"
-    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
-  />
-
-  <h4 className="text-2xl font-semibold">
-    Semax
-  </h4>
-
-  <p className="text-gray-400 mt-3">
-    10mg Research Peptide
-  </p>
-
-  <a
-    href="/products/semax"
-    onClick={(e) => e.stopPropagation()}
-    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
-  >
-    View Product
-  </a>
-
-</div>
-
-{/* MOTS-C */}
-<div
-  onClick={() => (window.location.href = "/products/motsc")}
-  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
->
-  <img
-    src="/images/motsc.PNG"
-    alt="MOTS-C"
-    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
-  />
-
-  <h4 className="text-2xl font-semibold">MOTS-C</h4>
-
-  <p className="text-gray-400 mt-3">10mg Research Peptide</p>
-
-  <a
-    href="/products/motsc"
-    onClick={(e) => e.stopPropagation()}
-    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
-  >
-    View Product
-  </a>
-</div>
-
-{/* ARA-290 */}
-<div
-  onClick={() => (window.location.href = "/products/ara290")}
-  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
->
-  <img
-    src="/images/ara290.PNG"
-    alt="ARA-290"
-    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
-  />
-
-  <h4 className="text-2xl font-semibold">ARA-290</h4>
-
-  <p className="text-gray-400 mt-3">10mg Research Peptide</p>
-
-  <a
-    href="/products/ara290"
-    onClick={(e) => e.stopPropagation()}
-    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
-  >
-    View Product
-  </a>
-</div>
-
-{/* PE-22-28 */}
-<div
-  onClick={() => (window.location.href = "/products/pe2228")}
-  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
->
-  <img
-    src="/images/pe2228.PNG"
-    alt="PE-22-28"
-    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
-  />
-
-  <h4 className="text-2xl font-semibold">PE-22-28</h4>
-
-  <p className="text-gray-400 mt-3">10mg Research Peptide</p>
-
-  <a
-    href="/products/pe2228"
-    onClick={(e) => e.stopPropagation()}
-    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
-  >
-    View Product
-  </a>
-</div>
-
-{/* ADAMAX */}
-<div
-  onClick={() => (window.location.href = "/products/adamax")}
-  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
->
-  <img
-    src="/images/adamax.PNG"
-    alt="ADAMAX"
-    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
-  />
-
-  <h4 className="text-2xl font-semibold">ADAMAX</h4>
-
-  <p className="text-gray-400 mt-3">10mg Research Peptide</p>
-
-  <a
-    href="/products/adamax"
-    onClick={(e) => e.stopPropagation()}
-    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
-  >
-    View Product
-  </a>
-</div>
-
-{/* CJC/IPA WITHOUT DAC */}
-<div
-  onClick={() => (window.location.href = "/products/cjcipa")}
-  className="border border-blue-900 bg-[#050505] p-8 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-all duration-300 rounded-xl cursor-pointer"
->
-  <img
-    src="/images/cjcipa.PNG"
-    alt="CJC/IPA Without DAC"
-    className="h-72 object-contain w-full mb-8 hover:scale-105 transition-all duration-300"
-  />
-
-  <h4 className="text-2xl font-semibold">CJC/IPA Without DAC</h4>
-
-  <p className="text-gray-400 mt-3">10mg Research Peptide</p>
-
-  <a
-    href="/products/cjcipa"
-    onClick={(e) => e.stopPropagation()}
-    className="inline-block mt-8 border border-blue-700 hover:bg-blue-700 px-5 py-3 text-sm uppercase tracking-widest transition-all rounded-lg"
-  >
-    View Product
-  </a>
-</div>
-
+                <a
+                  href={product.href}
+                  className="flex-1 bg-black text-white rounded-full py-3 text-center font-semibold hover:bg-blue-700 transition-all"
+                >
+                  View
+                </a>
+              </div>
+            </div>
           </div>
-        </section>
+        ))}
+      </div>
+
+      <button
+        onClick={() =>
+          productScrollRef.current?.scrollBy({
+            left: 380,
+            behavior: "smooth",
+          })
+        }
+        className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full border border-black bg-white items-center justify-center text-2xl hover:bg-black hover:text-white transition-all"
+      >
+        ›
+      </button>
+    </div>
+  </div>
+</section>
 
         <section className="py-32 px-6 border-t border-blue-950 border-b border-blue-950 bg-black">
 

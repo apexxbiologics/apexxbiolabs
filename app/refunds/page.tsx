@@ -68,11 +68,6 @@ export default function RefundPolicyPage() {
 
           <div className="h-[1px] w-72 mx-auto bg-gradient-to-r from-transparent via-blue-500 to-transparent mb-8"></div>
 
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-blue-700 bg-blue-950/20 text-blue-300 text-sm mb-10">
-            <span>✓</span>
-            <span>Last Updated: June 2026</span>
-          </div>
-
           <p className="text-gray-300 text-xl max-w-4xl mx-auto leading-relaxed font-light">
             Refund, replacement, cancellation, and order issue policies for
             Apexx Biolabs research-use-only products.

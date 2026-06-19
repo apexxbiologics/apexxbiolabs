@@ -112,7 +112,7 @@ export default function COAsPage() {
 
 </div>
 
-<p className="text-gray-300 text-xl max-w-3xl mx-auto leading-relaxed font-light">
+<p className="text-gray-300 text-xl max-w-3xl mx-auto leading-relaxed font-light mt-12">  
   Third-party analytical verification and batch documentation supporting research transparency, quality assurance, and product integrity.
 </p>
 
@@ -126,7 +126,7 @@ export default function COAsPage() {
 </div>
 </section>
 
-<section className="px-10 py-24">
+<section className="px-10 pt-8 pb-24">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
           {products.map((product) => (
             <div

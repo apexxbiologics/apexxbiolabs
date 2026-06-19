@@ -242,7 +242,7 @@ if (accepted === null) {
 
   <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
 
-<div className="relative w-full max-w-6xl mx-auto mb-10 overflow-hidden rounded-2xl border border-blue-900/40 bg-[#020617] shadow-[0_0_60px_rgba(37,99,235,0.22)]">
+<div className="relative w-full max-w-6xl mx-auto mb-10 overflow-hidden rounded-2xl border border-blue-900/40 bg-[#020617]">
 
   <video
     autoPlay

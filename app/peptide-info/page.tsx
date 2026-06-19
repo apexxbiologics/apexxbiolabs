@@ -26,22 +26,27 @@ export default function PeptideInfoPage() {
       </header>
 
       {/* HERO */}
-      <section className="text-center py-28 px-6 border-b border-blue-950">
+<section className="text-center py-24 px-6 border-b border-blue-950 bg-black">
+  <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6">
+    Research Library
+  </p>
 
-        <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-6">
-          Research Library
-        </p>
+  <h1 className="text-6xl md:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent">
+    Peptide Information
+  </h1>
 
-        <h1 className="text-6xl font-bold mb-8">
-          Peptide Information
-        </h1>
+  <div className="mt-6 h-[1px] w-64 mx-auto bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
 
-        <p className="text-gray-400 text-lg max-w-4xl mx-auto leading-relaxed">
-          Educational information regarding research peptides,
-          analytical classifications, and laboratory reference details.
-        </p>
+  <p className="mt-10 text-gray-300 text-xl max-w-4xl mx-auto leading-relaxed font-light">
+    Educational research information covering peptide classifications,
+    laboratory handling, analytical testing, and research-use documentation.
+  </p>
 
-      </section>
+  <div className="mt-8 inline-flex items-center gap-2 px-5 py-2 rounded-full border border-blue-700 bg-blue-950/20 text-blue-300 text-sm">
+    <span>✓</span>
+    <span>Research Use Only • Educational Reference</span>
+  </div>
+</section>
 
       {/* PEPTIDE GRID */}
         <div className="max-w-7xl mx-auto space-y-12">
@@ -49,13 +54,42 @@ export default function PeptideInfoPage() {
           {/* INTRO TO PEPTIDES */}
 <section className="border border-blue-900 rounded-3xl p-12 bg-[#050505] shadow-[0_0_45px_rgba(37,99,235,0.12)] mb-16">
 
-  <p className="uppercase tracking-[0.35em] text-blue-500 text-sm mb-6">
-    Peptide Research Overview
-  </p>
+<p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6">
+  Peptide Research Overview
+</p>
 
-  <h1 className="text-4xl md:text-6xl font-bold mb-8 text-white">
-    Understanding Peptides
-  </h1>
+<h2 className="text-5xl md:text-6xl font-black mb-8 tracking-tight text-white">
+  Understanding Peptides
+</h2>
+
+<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+  <div className="border border-blue-900 rounded-2xl p-6 bg-black/40">
+    <h3 className="text-xl font-bold text-blue-400 mb-3">
+      Research Use Only
+    </h3>
+    <p className="text-gray-400 leading-relaxed">
+      Products are intended strictly for laboratory research and analytical applications.
+    </p>
+  </div>
+
+  <div className="border border-blue-900 rounded-2xl p-6 bg-black/40">
+    <h3 className="text-xl font-bold text-blue-400 mb-3">
+      Analytical Testing
+    </h3>
+    <p className="text-gray-400 leading-relaxed">
+      COAs help document identity, purity, content, and batch-level quality verification.
+    </p>
+  </div>
+
+  <div className="border border-blue-900 rounded-2xl p-6 bg-black/40">
+    <h3 className="text-xl font-bold text-blue-400 mb-3">
+      Batch Transparency
+    </h3>
+    <p className="text-gray-400 leading-relaxed">
+      Verified documentation supports research consistency and product traceability.
+    </p>
+  </div>
+</div>
 
   <p className="text-gray-300 text-xl leading-relaxed mb-12 max-w-5xl">
     Peptides are short chains of amino acids that function as highly specific

@@ -19,12 +19,12 @@ export default function ShippingPolicyPage() {
     {
       icon: PackageCheck,
       title: "Order Tracking",
-      text: "Once your order ships, you will receive tracking information. Tracking updates may take up to 24 hours after label creation.",
+      text: "Once your order ships, tracking information will be provided. Tracking updates may take up to 24 hours after label creation.",
     },
     {
       icon: EyeOff,
       title: "Discreet Packaging",
-      text: "All orders are shipped in plain, discreet packaging. Package contents will not be visibly identified on the exterior packaging.",
+      text: "All orders are shipped in plain, discreet packaging. Package contents are not visibly identified on exterior packaging.",
     },
     {
       icon: AlertCircle,
@@ -34,7 +34,7 @@ export default function ShippingPolicyPage() {
     {
       icon: PackageX,
       title: "Lost or Stolen Packages",
-      text: "Once a shipment has been transferred to the carrier, ownership and responsibility transfer to the customer. Contact the shipping carrier directly regarding lost or stolen package disputes.",
+      text: "Once a shipment is transferred to the carrier, ownership and responsibility transfer to the customer. Contact the carrier directly regarding lost or stolen package disputes.",
     },
     {
       icon: Clock,
@@ -46,11 +46,11 @@ export default function ShippingPolicyPage() {
       title: "Damaged Shipments",
       text: "If your order arrives damaged, contact us within 48 hours of delivery with your order number and clear photographs of the shipping box, label, and product.",
     },
-{
-  icon: Truck,
-  title: "Shipping Restrictions",
-  text: "All products are intended solely for lawful laboratory research purposes. Customers are responsible for compliance with all applicable laws and regulations. Apexx Biolabs reserves the right to cancel or refuse any order that appears inconsistent with our research-use-only policies or applicable laws and regulations.",
-},
+    {
+      icon: Truck,
+      title: "Shipping Restrictions",
+      text: "All products are intended solely for lawful laboratory research purposes. Apexx Biolabs reserves the right to cancel or refuse orders inconsistent with our research-use-only policies or applicable laws.",
+    },
   ];
 
   return (
@@ -63,40 +63,76 @@ export default function ShippingPolicyPage() {
       </a>
 
       <section className="max-w-7xl mx-auto mt-16">
-        <div className="text-center mb-16">
+        <div className="text-center mb-20">
           <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6">
             Legal Documentation
           </p>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-700 bg-clip-text text-transparent mb-8">
+          <h1 className="text-6xl md:text-8xl font-black tracking-tight bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent mb-8">
             Shipping Policy
           </h1>
 
-          <p className="text-gray-500 uppercase tracking-widest text-sm">
-            Last Updated: June 2026
+          <div className="h-[1px] w-72 mx-auto bg-gradient-to-r from-transparent via-blue-500 to-transparent mb-8"></div>
+
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-blue-700 bg-blue-950/20 text-blue-300 text-sm mb-10">
+            <span>✓</span>
+            <span>Last Updated: June 2026</span>
+          </div>
+
+          <p className="text-gray-300 text-xl max-w-4xl mx-auto leading-relaxed font-light">
+            Shipping information, delivery expectations, packaging standards,
+            and carrier-related policies for Apexx Biolabs orders.
           </p>
         </div>
 
-        <div className="border border-blue-900 rounded-3xl p-8 md:p-12 bg-[#050505] shadow-[0_0_45px_rgba(37,99,235,0.15)] mb-12">
-          <h2 className="text-3xl font-bold text-blue-400 mb-6">
-            Processing Times
-          </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          <div className="border border-blue-900 rounded-3xl p-8 bg-[#050505] shadow-[0_0_35px_rgba(37,99,235,0.12)]">
+            <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-4">
+              Processing
+            </p>
+            <h2 className="text-3xl font-bold text-white mb-4">
+              1–2 Business Days
+            </h2>
+            <p className="text-gray-400 leading-relaxed">
+              Orders are typically processed after payment has been received and
+              approved. Weekend and holiday orders process the next business day.
+            </p>
+          </div>
 
-          <p className="text-gray-300 text-lg leading-relaxed">
-            Orders are typically processed within 1–2 business days after
-            payment has been received and approved. Orders placed after business
-            hours, on weekends, or during holidays will be processed on the next
-            business day.
-          </p>
+          <div className="border border-blue-900 rounded-3xl p-8 bg-[#050505] shadow-[0_0_35px_rgba(37,99,235,0.12)]">
+            <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-4">
+              Packaging
+            </p>
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Secure & Discreet
+            </h2>
+            <p className="text-gray-400 leading-relaxed">
+              Orders are packed professionally in plain exterior packaging to
+              support privacy, protection, and careful handling.
+            </p>
+          </div>
+
+          <div className="border border-blue-900 rounded-3xl p-8 bg-[#050505] shadow-[0_0_35px_rgba(37,99,235,0.12)]">
+            <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-4">
+              Tracking
+            </p>
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Carrier Updates
+            </h2>
+            <p className="text-gray-400 leading-relaxed">
+              Tracking is provided once available. Carrier scans and movement
+              updates may take up to 24 hours after label creation.
+            </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-14">
-          <div className="border border-blue-900 rounded-3xl p-8 bg-[#050505] hover:border-blue-500 hover:shadow-[0_0_35px_rgba(37,99,235,0.2)] transition-all">
-            <h2 className="text-3xl font-bold text-blue-400 mb-4">
+          <div className="group border border-blue-900 rounded-3xl p-8 bg-[#050505] hover:border-blue-400 hover:shadow-[0_0_45px_rgba(37,99,235,0.28)] hover:-translate-y-2 transition-all duration-300">
+            <h2 className="text-3xl font-bold text-white group-hover:text-blue-300 transition-colors mb-4">
               Ground Shipping
             </h2>
 
-            <p className="text-5xl font-extrabold text-white mb-4">
+            <p className="text-5xl font-black text-blue-400 mb-4">
               $5.99
             </p>
 
@@ -112,12 +148,12 @@ export default function ShippingPolicyPage() {
             </ul>
           </div>
 
-          <div className="border border-blue-900 rounded-3xl p-8 bg-[#050505] hover:border-blue-500 hover:shadow-[0_0_35px_rgba(37,99,235,0.2)] transition-all">
-            <h2 className="text-3xl font-bold text-blue-400 mb-4">
+          <div className="group border border-blue-900 rounded-3xl p-8 bg-[#050505] hover:border-blue-400 hover:shadow-[0_0_45px_rgba(37,99,235,0.28)] hover:-translate-y-2 transition-all duration-300">
+            <h2 className="text-3xl font-bold text-white group-hover:text-blue-300 transition-colors mb-4">
               Express Shipping
             </h2>
 
-            <p className="text-5xl font-extrabold text-white mb-4">
+            <p className="text-5xl font-black text-blue-400 mb-4">
               $25.99
             </p>
 
@@ -146,13 +182,13 @@ export default function ShippingPolicyPage() {
             return (
               <div
                 key={policy.title}
-                className="border border-blue-900 rounded-3xl p-8 bg-[#050505] hover:border-blue-500 hover:shadow-[0_0_35px_rgba(37,99,235,0.2)] transition-all"
+                className="group border border-blue-900 rounded-3xl p-8 bg-[#050505] hover:border-blue-400 hover:shadow-[0_0_35px_rgba(37,99,235,0.22)] hover:-translate-y-1 transition-all duration-300"
               >
-                <div className="w-16 h-16 rounded-2xl border border-blue-700 bg-blue-950/30 flex items-center justify-center text-blue-400 mb-6 shadow-[0_0_20px_rgba(37,99,235,0.25)]">
+                <div className="w-16 h-16 rounded-2xl border border-blue-700 bg-blue-950/30 flex items-center justify-center text-blue-400 mb-6 shadow-[0_0_20px_rgba(37,99,235,0.25)] group-hover:shadow-[0_0_30px_rgba(37,99,235,0.45)] transition-all">
                   <Icon size={32} strokeWidth={2} />
                 </div>
 
-                <h2 className="text-2xl font-bold text-blue-400 mb-5 uppercase tracking-wide">
+                <h2 className="text-xl font-bold text-white group-hover:text-blue-300 transition-colors mb-5">
                   {policy.title}
                 </h2>
 
@@ -164,8 +200,8 @@ export default function ShippingPolicyPage() {
           })}
         </div>
 
-        <div className="mt-14 border border-blue-900 rounded-3xl p-8 bg-[#050505]">
-          <h2 className="text-3xl font-bold text-blue-400 mb-6">
+        <div className="mt-14 border border-blue-900 rounded-3xl p-8 bg-[#050505] shadow-[0_0_40px_rgba(37,99,235,0.12)]">
+          <h2 className="text-3xl font-bold text-blue-400 mb-8">
             Questions? We’re Here to Help.
           </h2>
 

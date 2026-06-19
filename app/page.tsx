@@ -714,7 +714,7 @@ alt=""
   </div>
 </section>
 
-        <section className="py-32 px-6 border-t border-blue-950 border-b border-blue-950 bg-black">
+        <section className="py-16 px-6 border-t border-blue-950 border-b border-blue-950 bg-black">
 
   <div className="max-w-6xl mx-auto text-center">
 

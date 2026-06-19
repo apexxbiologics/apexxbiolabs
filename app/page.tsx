@@ -332,23 +332,27 @@ if (accepted === null) {
         </section>
 
 {/* PRODUCTS */}
-<section id="shop" className="py-28 px-6 bg-[#f8fafc] text-black">
+<section id="shop" className="py-28 px-6 md:px-10 bg-gradient-to-b from-black via-[#030712] to-black text-white">
   <div className="max-w-7xl mx-auto">
 
-    <div className="flex items-end justify-between mb-10">
+    <div className="flex items-end justify-between mb-12">
       <div>
-        <h3 className="text-4xl md:text-5xl font-black tracking-tight">
-          Featured Products
+        <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-5">
+          Research Catalog
+        </p>
+
+        <h3 className="text-5xl md:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent">
+          Featured Compounds
         </h3>
 
-        <p className="text-gray-500 mt-3 text-lg">
-          Research peptides, third-party identity tested
+        <p className="text-gray-400 mt-5 text-lg">
+          Research peptides, third-party identity tested, and batch documented.
         </p>
       </div>
 
       <a
-        href="#shop"
-        className="hidden md:inline-flex border border-black rounded-full px-8 py-3 text-sm font-semibold hover:bg-black hover:text-white transition-all"
+        href="/products"
+        className="hidden md:inline-flex border border-blue-700/60 text-blue-300 rounded-full px-8 py-3 text-sm font-semibold uppercase tracking-widest hover:bg-blue-700 hover:text-white hover:shadow-[0_0_25px_rgba(37,99,235,0.35)] transition-all"
       >
         View all
       </a>
@@ -356,20 +360,26 @@ if (accepted === null) {
 
     <div className="relative">
       <button
-        onClick={() =>
+        onMouseEnter={() =>
           productScrollRef.current?.scrollBy({
-            left: -380,
+            left: -360,
             behavior: "smooth",
           })
         }
-        className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full border border-black bg-white items-center justify-center text-2xl hover:bg-black hover:text-white transition-all"
+        onClick={() =>
+          productScrollRef.current?.scrollBy({
+            left: -360,
+            behavior: "smooth",
+          })
+        }
+        className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full border border-blue-700/60 bg-[#020617]/90 backdrop-blur-xl items-center justify-center text-3xl text-blue-300 hover:bg-blue-700 hover:text-white hover:shadow-[0_0_30px_rgba(37,99,235,0.45)] transition-all"
       >
         ‹
       </button>
 
       <div
         ref={productScrollRef}
-        className="flex gap-6 overflow-x-auto scroll-smooth pb-6 px-2 md:px-16 no-scrollbar"
+        className="flex gap-7 overflow-x-auto scroll-smooth pb-6 px-1 md:px-20"
       >
         {[
           {
@@ -409,6 +419,12 @@ if (accepted === null) {
             href: "/products/ghkcu",
           },
           {
+            name: "Pinealon",
+            desc: "10mg Research Peptide",
+            image: "/images/pinealon.PNG",
+            href: "/products/pinealon",
+          },
+          {
             name: "Selank",
             desc: "10mg Research Peptide",
             image: "/images/selank.PNG",
@@ -420,39 +436,69 @@ if (accepted === null) {
             image: "/images/semax.PNG",
             href: "/products/semax",
           },
+          {
+            name: "MOTS-C",
+            desc: "10mg Research Peptide",
+            image: "/images/motsc.PNG",
+            href: "/products/motsc",
+          },
+          {
+            name: "ARA-290",
+            desc: "10mg Research Peptide",
+            image: "/images/ara290.PNG",
+            href: "/products/ara290",
+          },
+          {
+            name: "PE-22-28",
+            desc: "10mg Research Peptide",
+            image: "/images/pe2228.PNG",
+            href: "/products/pe2228",
+          },
+          {
+            name: "ADAMAX",
+            desc: "10mg Research Peptide",
+            image: "/images/adamax.PNG",
+            href: "/products/adamax",
+          },
+          {
+            name: "CJC/IPA Without DAC",
+            desc: "10mg Research Peptide",
+            image: "/images/cjcipa.PNG",
+            href: "/products/cjcipa",
+          },
         ].map((product) => (
           <div
             key={product.name}
-            className="min-w-[290px] md:min-w-[330px] bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-200"
+            className="min-w-[290px] md:min-w-[340px] bg-[#050505] border border-blue-900/60 rounded-3xl overflow-hidden hover:border-blue-400 hover:shadow-[0_0_45px_rgba(37,99,235,0.28)] hover:-translate-y-2 transition-all duration-300"
           >
-            <div className="bg-[#e9eef5] h-[360px] flex items-center justify-center">
+            <div className="bg-gradient-to-b from-[#0B1120] to-black h-[360px] flex items-center justify-center border-b border-blue-950">
               <img
                 src={product.image}
                 alt={product.name}
-                className="h-72 object-contain"
+                className="h-72 object-contain hover:scale-105 transition-all duration-300"
               />
             </div>
 
-            <div className="p-6">
-              <h4 className="text-xl font-black mb-3">
+            <div className="p-7">
+              <h4 className="text-2xl font-black text-white mb-3">
                 {product.name}
               </h4>
 
-              <p className="text-gray-500 mb-8">
+              <p className="text-gray-400 mb-8">
                 {product.desc}
               </p>
 
               <div className="flex gap-3">
                 <a
                   href="/coas"
-                  className="flex-1 border border-black rounded-full py-3 text-center font-semibold hover:bg-black hover:text-white transition-all"
+                  className="flex-1 border border-blue-700/70 text-blue-300 rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:bg-blue-700 hover:text-white transition-all"
                 >
-                  View COA
+                  COA
                 </a>
 
                 <a
                   href={product.href}
-                  className="flex-1 bg-black text-white rounded-full py-3 text-center font-semibold hover:bg-blue-700 transition-all"
+                  className="flex-1 bg-blue-600 text-white rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:bg-blue-500 hover:shadow-[0_0_25px_rgba(37,99,235,0.45)] transition-all"
                 >
                   View
                 </a>
@@ -463,13 +509,19 @@ if (accepted === null) {
       </div>
 
       <button
-        onClick={() =>
+        onMouseEnter={() =>
           productScrollRef.current?.scrollBy({
-            left: 380,
+            left: 360,
             behavior: "smooth",
           })
         }
-        className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full border border-black bg-white items-center justify-center text-2xl hover:bg-black hover:text-white transition-all"
+        onClick={() =>
+          productScrollRef.current?.scrollBy({
+            left: 360,
+            behavior: "smooth",
+          })
+        }
+        className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full border border-blue-700/60 bg-[#020617]/90 backdrop-blur-xl items-center justify-center text-3xl text-blue-300 hover:bg-blue-700 hover:text-white hover:shadow-[0_0_30px_rgba(37,99,235,0.45)] transition-all"
       >
         ›
       </button>

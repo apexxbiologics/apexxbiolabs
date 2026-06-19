@@ -285,10 +285,8 @@ if (accepted === null) {
     </div>
 
     <div className="relative">
-      <div className="absolute inset-0 rounded-full bg-blue-600/20 blur-3xl" />
 
-      <div className="relative border border-blue-900/70 bg-black/40 rounded-[2rem] p-8 overflow-hidden">
-      <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#2563eb_1px,transparent_1px),linear-gradient(to_bottom,#2563eb_1px,transparent_1px)] bg-[size:40px_40px]" />
+<div className="relative border border-blue-900/70 bg-[#081427] rounded-[2rem] p-8 overflow-hidden">      <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#2563eb_1px,transparent_1px),linear-gradient(to_bottom,#2563eb_1px,transparent_1px)] bg-[size:40px_40px]" />
         <img
           src="/images/retatrutide.PNG"
           alt=""

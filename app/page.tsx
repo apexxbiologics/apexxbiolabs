@@ -774,10 +774,10 @@ alt=""
 
 </section>
 
-<footer className="bg-[#071426] border-t border-blue-900 px-6 pt-20 pb-8">
+<footer className="bg-black border-t border-blue-950 px-6 pt-20 pb-8">
   <div className="max-w-7xl mx-auto">
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-20">
-      <div className="md:col-span-1">
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-16">
+      <div>
         <img
           src="/images/logo.png"
           alt="Apexx Biolabs"
@@ -791,128 +791,80 @@ alt=""
 
         <div className="flex gap-3">
           <a
-            href="https://instagram.com/apexxbiolabs"
+            href="https://www.tiktok.com/@apexxbiolabs"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-11 h-11 rounded-full bg-blue-950/60 border border-blue-900 flex items-center justify-center text-blue-300 hover:bg-blue-700 hover:text-white transition-all"
+            className="w-11 h-11 rounded-full border border-blue-800 bg-[#050505] flex items-center justify-center hover:bg-blue-700 transition-all"
           >
-            IG
+            <span className="text-white font-black text-sm">♪</span>
           </a>
 
           <a
             href="mailto:support@apexxbiolabs.com"
-            className="w-11 h-11 rounded-full bg-blue-950/60 border border-blue-900 flex items-center justify-center text-blue-300 hover:bg-blue-700 hover:text-white transition-all"
+            className="w-11 h-11 rounded-full border border-blue-800 bg-[#050505] flex items-center justify-center hover:bg-blue-700 transition-all"
           >
-            ✉
+            <span className="text-white text-lg">✉</span>
           </a>
         </div>
       </div>
 
       <div>
-        <h4 className="text-white text-sm font-bold uppercase tracking-widest mb-6">
+        <h4 className="text-blue-400 text-sm font-bold uppercase tracking-widest mb-6">
           Shop
         </h4>
-
         <div className="space-y-4 text-gray-400">
-          <a href="/products" className="block hover:text-blue-300 transition-all">
-            All Products
-          </a>
-          <a href="/coas" className="block hover:text-blue-300 transition-all">
-            Certificates of Analysis
-          </a>
-          <a href="/process" className="block hover:text-blue-300 transition-all">
-            Our Process
-          </a>
+          <a href="/products" className="block hover:text-blue-300 transition-all">All Products</a>
+          <a href="/coas" className="block hover:text-blue-300 transition-all">Certificates of Analysis</a>
+          <a href="/process" className="block hover:text-blue-300 transition-all">Our Process</a>
         </div>
       </div>
 
       <div>
-        <h4 className="text-white text-sm font-bold uppercase tracking-widest mb-6">
+        <h4 className="text-blue-400 text-sm font-bold uppercase tracking-widest mb-6">
           Research
         </h4>
-
         <div className="space-y-4 text-gray-400">
-          <a href="/peptide-info" className="block hover:text-blue-300 transition-all">
-            Peptide Info
-          </a>
-          <a href="/faq" className="block hover:text-blue-300 transition-all">
-            FAQs
-          </a>
-          <a href="/coas" className="block hover:text-blue-300 transition-all">
-            COAs
-          </a>
+          <a href="/peptide-info" className="block hover:text-blue-300 transition-all">Peptide Info</a>
+          <a href="/faq" className="block hover:text-blue-300 transition-all">FAQs</a>
+          <a href="/coas" className="block hover:text-blue-300 transition-all">COAs</a>
         </div>
       </div>
 
       <div>
-        <h4 className="text-white text-sm font-bold uppercase tracking-widest mb-6">
+        <h4 className="text-blue-400 text-sm font-bold uppercase tracking-widest mb-6">
           Support
         </h4>
-
         <div className="space-y-4 text-gray-400">
-          <a href="/contact" className="block hover:text-blue-300 transition-all">
-            Contact Us
-          </a>
-          <a href="/shipping" className="block hover:text-blue-300 transition-all">
-            Shipping Policy
-          </a>
-          <a href="/refunds" className="block hover:text-blue-300 transition-all">
-            Refund Policy
-          </a>
-          <a
-            href="mailto:support@apexxbiolabs.com"
-            className="block hover:text-blue-300 transition-all"
-          >
+          <a href="/contact" className="block hover:text-blue-300 transition-all">Contact Us</a>
+          <a href="/shipping" className="block hover:text-blue-300 transition-all">Shipping Policy</a>
+          <a href="/refunds" className="block hover:text-blue-300 transition-all">Refund Policy</a>
+          <a href="mailto:support@apexxbiolabs.com" className="block hover:text-blue-300 transition-all">
             support@apexxbiolabs.com
           </a>
         </div>
       </div>
 
       <div>
-        <h4 className="text-white text-sm font-bold uppercase tracking-widest mb-6">
+        <h4 className="text-blue-400 text-sm font-bold uppercase tracking-widest mb-6">
           Legal
         </h4>
-
         <div className="space-y-4 text-gray-400">
-          <a href="/privacy" className="block hover:text-blue-300 transition-all">
-            Privacy Policy
-          </a>
-          <a href="/terms" className="block hover:text-blue-300 transition-all">
-            Terms & Conditions
-          </a>
-          <a href="/refunds" className="block hover:text-blue-300 transition-all">
-            Returns & Refunds
-          </a>
-          <a href="/shipping" className="block hover:text-blue-300 transition-all">
-            Shipping Info
-          </a>
+          <a href="/privacy" className="block hover:text-blue-300 transition-all">Privacy Policy</a>
+          <a href="/terms" className="block hover:text-blue-300 transition-all">Terms & Conditions</a>
+          <a href="/refunds" className="block hover:text-blue-300 transition-all">Returns & Refunds</a>
+          <a href="/shipping" className="block hover:text-blue-300 transition-all">Shipping Info</a>
         </div>
       </div>
     </div>
 
-    <div className="border border-yellow-500/40 bg-yellow-500/10 rounded-xl p-6 mb-10">
-      <div className="flex gap-4">
-        <div className="text-yellow-400 text-2xl">⚠</div>
-
-        <div>
-          <h4 className="text-yellow-400 font-bold uppercase tracking-widest text-sm mb-3">
-            Research Use Disclaimer
-          </h4>
-
-          <p className="text-gray-300 text-sm leading-relaxed">
-            Products sold by Apexx Biolabs are intended strictly for lawful
-            laboratory research use only. They are not intended for human
-            consumption, medical use, veterinary use, diagnosis, treatment,
-            cure, or prevention of disease.
-            <a href="/terms" className="text-yellow-400 hover:text-yellow-300 ml-1">
-              Read the full disclaimer →
-            </a>
-          </p>
-        </div>
-      </div>
+    <div className="border-t border-blue-950 pt-8 mb-8">
+      <p className="max-w-5xl text-gray-500 text-xs uppercase tracking-widest leading-relaxed">
+        FOR LABORATORY RESEARCH USE ONLY. NOT FOR HUMAN CONSUMPTION.
+        NOT FOR MEDICAL, DIAGNOSTIC, THERAPEUTIC, OR VETERINARY USE.
+      </p>
     </div>
 
-    <div className="border-t border-blue-900 pt-8 flex flex-col lg:flex-row items-center justify-between gap-6">
+    <div className="border-t border-blue-950 pt-8 flex flex-col lg:flex-row items-center justify-between gap-6">
       <p className="text-gray-500 text-sm">
         © 2026 Apexx Biolabs. All rights reserved.
       </p>

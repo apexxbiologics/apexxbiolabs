@@ -100,9 +100,14 @@ export default function COAsPage() {
           Quality Assurance
         </p>
 
-        <h1 className="text-6xl font-bold mb-8">
-          Certificates of Analysis
-        </h1>
+<h1 className="text-6xl font-bold mb-8">
+  Certificates of Analysis
+</h1>
+
+<div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-800 bg-blue-950/20 text-sm text-blue-300 mb-8">
+  <span>✓</span>
+  <span>Last Updated: June 18, 2026</span>
+</div>
 
         <p className="text-gray-400 text-lg max-w-4xl mx-auto leading-relaxed">
           Analytical verification and batch documentation intended to support

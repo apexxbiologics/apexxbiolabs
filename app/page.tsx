@@ -183,140 +183,127 @@ if (accepted === null) {
       )}
 
 <main className="min-h-screen bg-[#030712] text-white">
-          <header className="fixed top-0 left-0 w-full z-50 border-b border-blue-900 bg-[#030712]/80 backdrop-blur-md px-4 py-4">
+{/* HEADER */}
+<header className="fixed top-0 left-0 w-full z-50 border-b border-blue-900/70 bg-black/90 backdrop-blur-xl px-4 md:px-8 py-4">
+  <div className="max-w-7xl mx-auto flex items-center justify-between gap-6">
+    <a href="/">
+      <img
+        src="/images/logo.png"
+        alt="Apexx Biolabs"
+        className="h-12 md:h-14 w-auto"
+      />
+    </a>
 
-<div className="flex flex-col md:flex-row items-center justify-between gap-4">    <img
-  src="/images/logo.png"
-  alt="Apexx Biolabs"
-  className="h-12 w-auto shrink-0"
-/>
-<div className="flex justify-center mt-4">
-<div className="relative w-full md:max-w-md">    <input
-      type="text"
-      placeholder="Search products..."
-      value={search}
-      onChange={(e) => setSearch(e.target.value)}
-      className="w-full bg-[#050505] border border-blue-900 focus:border-blue-500 outline-none rounded-xl px-4 py-3 text-white placeholder:text-gray-500 text-sm shadow-[0_0_20px_rgba(37,99,235,0.12)]"
-    />
+    <div className="hidden md:block relative w-full max-w-md">
+      <input
+        type="text"
+        placeholder="Search products..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full bg-[#050505] border border-blue-900 focus:border-blue-500 outline-none rounded-xl px-5 py-3 text-white placeholder:text-gray-500 text-sm"
+      />
 
-    {search && filteredProducts.length > 0 && (
-      <div className="absolute top-full left-0 right-0 mt-3 bg-[#030712] border border-blue-900 rounded-xl shadow-[0_0_30px_rgba(37,99,235,0.25)] overflow-hidden z-[999]">
-        {filteredProducts.map((product) => (
-          <a
-            key={product.name}
-            href={product.href}
-            className="block px-5 py-4 text-sm uppercase tracking-widest hover:bg-blue-900/40 transition-all"
-          >
-            {product.name}
-          </a>
-        ))}
-      </div>
-    )}
-  </div>
-</div>
+      {search && filteredProducts.length > 0 && (
+        <div className="absolute top-full left-0 right-0 mt-3 bg-[#030712] border border-blue-900 rounded-xl overflow-hidden z-[999]">
+          {filteredProducts.map((product) => (
+            <a
+              key={product.name}
+              href={product.href}
+              className="block px-5 py-4 text-sm uppercase tracking-widest hover:bg-blue-900/40 transition-all"
+            >
+              {product.name}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
 
-    <nav className="flex items-center gap-4 text-xs uppercase tracking-widest">
-      <a
-  href="/"
-  className="border border-blue-700 text-blue-400 px-4 py-2 hover:bg-blue-700 hover:text-white hover:shadow-[0_0_20px_rgba(37,99,235,0.35)] transition-all rounded-lg font-semibold tracking-[0.15em] uppercase"
->
-  Home
-</a>
+    <nav className="flex items-center gap-3 text-xs uppercase tracking-widest">
+      <a href="/" className="border border-blue-700 text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-700 hover:text-white transition-all">
+        Home
+      </a>
 
-<div className="relative py-4 group">
-  <button
-    className="border border-blue-700 text-blue-400 px-4 py-2 hover:bg-blue-700 hover:text-white hover:shadow-[0_0_20px_rgba(37,99,235,0.35)] transition-all rounded-lg font-semibold tracking-[0.15em] uppercase"
-  >
-    More
-  </button>
+      <a href="/products" className="border border-blue-700 text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-700 hover:text-white transition-all">
+        Products
+      </a>
 
-  <div className="absolute right-0 top-full hidden group-hover:flex flex-col bg-black border border-blue-900 rounded-xl min-w-[220px] shadow-[0_0_30px_rgba(37,99,235,0.25)] overflow-hidden z-50">
-    <a href="/peptide-info" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Peptide Info</a>
-    <a href="/coas" className="px-5 py-4 hover:bg-blue-900/40 transition-all">COAs</a>
-    <a href="/about" className="px-5 py-4 hover:bg-blue-900/40 transition-all">About Us</a>
-    <a href="/contact" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Contact</a>
-    <a href="/process" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Our Process</a>
-    <a href="/faq" className="px-5 py-4 hover:bg-blue-900/40 transition-all">FAQs</a>
-    <a href="/shipping" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Shipping Policy</a>
-    <a href="/refunds" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Refund Policy</a>
-    <a href="/privacy" className="px-5 py-4 hover:bg-blue-900/40 transition-all">Privacy Policy</a>
-  </div>
-</div>
-
-      <a
-  href="/cart"
-  className="relative flex items-center justify-center w-12 h-12 border border-blue-700 rounded-xl hover:bg-blue-700 hover:shadow-[0_0_20px_rgba(37,99,235,0.35)] transition-all"
->
-  <ShoppingCart size={22} className="text-blue-400" />
-
-  {cartCount > 0 && (
-    <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
-      {cartCount}
-    </span>
-  )}
-</a>
+      <a href="/cart" className="relative flex items-center justify-center w-12 h-12 border border-blue-700 rounded-xl hover:bg-blue-700 transition-all">
+        <ShoppingCart size={22} className="text-blue-400" />
+        {cartCount > 0 && (
+          <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
+            {cartCount}
+          </span>
+        )}
+      </a>
     </nav>
-
   </div>
-
 </header>
 
 {/* HERO */}
-<section className="relative flex flex-col items-center justify-center text-center pt-72 md:pt-40 pb-28 px-6 bg-gradient-to-b from-[#020617] via-[#030712] to-black overflow-hidden">  <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
+<section className="relative min-h-screen pt-36 md:pt-44 pb-24 px-6 bg-gradient-to-br from-black via-[#020617] to-[#03142f] overflow-hidden">
+  <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_75%_30%,rgba(37,99,235,0.35),transparent_35%)]" />
 
-<div className="relative w-full max-w-6xl mx-auto mb-12 overflow-hidden rounded-[2rem] border border-blue-500/20 bg-[#020617] shadow-[0_25px_80px_rgba(0,0,0,0.65)]">  <video
-    ref={videoRef}
-    autoPlay
-    muted
-    playsInline
-    preload="auto"
-    poster="/images/hero.png"
-    className="w-full h-auto block"
-  >
-    <source src="/videos/hero.mp4" type="video/mp4" />
-  </video>
-</div>
+  <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+    <div>
+      <p className="uppercase tracking-[0.4em] text-blue-400 text-sm mb-6">
+        Research. Quality. Confidence.
+      </p>
 
-<div className="mt-10 inline-flex items-center gap-3 px-6 py-3 rounded-full border border-blue-700 bg-blue-950/20 text-blue-300 text-sm uppercase tracking-widest shadow-[0_0_25px_rgba(37,99,235,0.2)]">
-  <span>✓</span>
-  <span>Research Use Only • Precision Tested</span>
-</div>
+      <h1 className="text-6xl md:text-8xl font-black leading-[0.95] tracking-tight">
+        <span className="text-white">Research</span>
+        <br />
+        <span className="bg-gradient-to-r from-blue-300 via-blue-500 to-blue-700 bg-clip-text text-transparent">
+          Without Limits.
+        </span>
+      </h1>
 
-<h2 className="mt-8 text-6xl md:text-8xl font-black leading-tight max-w-6xl bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent tracking-tight">
-  Precision Research
-  <br />
-  Peptides
-</h2>
+      <p className="mt-8 text-gray-300 text-lg md:text-xl leading-relaxed max-w-xl">
+        High-purity research compounds with batch documentation,
+        quality-focused handling, and research-use transparency.
+      </p>
 
-<div className="mt-8 h-[1px] w-72 bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
+      <div className="flex flex-col sm:flex-row gap-5 mt-10">
+        <a href="#shop" className="bg-blue-600 hover:bg-blue-500 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all">
+          Shop Products →
+        </a>
 
-<p className="mt-8 text-gray-300 text-xl max-w-4xl leading-relaxed font-light">
-  High-purity research compounds developed for laboratory applications,
-  analytical consistency, and research-focused quality assurance.
-</p>
+        <a href="/coas" className="border border-blue-700 hover:bg-blue-700 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all">
+          View COAs
+        </a>
+      </div>
 
-<div className="flex flex-col sm:flex-row gap-6 mt-12">
-  <a
-    href="#shop"
-    className="bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] px-9 py-4 text-sm uppercase tracking-widest font-semibold transition-all rounded-xl"
-  >
-    Shop Catalog
-  </a>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mt-14">
+        {["99%+ Purity", "Third-Party Tested", "COA Included", "Fast Shipping"].map((item) => (
+          <div key={item} className="border border-blue-900/70 bg-black/40 rounded-2xl p-4 text-center">
+            <p className="text-blue-400 text-xl mb-2">✓</p>
+            <p className="text-gray-300 text-xs uppercase tracking-widest">
+              {item}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
 
-  <a
-    href="/coas"
-    className="border border-blue-700 hover:bg-blue-700 hover:shadow-[0_0_25px_rgba(37,99,235,0.35)] px-9 py-4 text-sm uppercase tracking-widest font-semibold transition-all rounded-xl"
-  >
-    View COAs
-  </a>
-</div>
+    <div className="relative">
+      <div className="absolute inset-0 rounded-full bg-blue-600/20 blur-3xl" />
 
-<p className="mt-8 text-xs text-gray-600 uppercase tracking-widest">
-  For laboratory research use only. Not for human consumption.
-</p>
+      <div className="relative border border-blue-900/70 bg-black/40 rounded-[2rem] p-8 overflow-hidden">
+        <img
+          src="/images/retatrutide.PNG"
+          alt=""
+          className="mx-auto h-[520px] object-contain drop-shadow-[0_0_40px_rgba(37,99,235,0.45)]"
+        />
+
+        <div className="absolute bottom-8 left-8 right-8 bg-black/80 border border-blue-900 rounded-2xl px-6 py-5 backdrop-blur-xl">
+          <p className="text-white font-bold">Batch Documented</p>
+          <p className="text-gray-400 text-sm">
+            Research-use compounds with COA support.
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
-
         {/* TRUST BAR */}
         <section className="border-t border-b border-blue-900 py-10">
           <div className="flex flex-wrap justify-center gap-16 text-center">
@@ -770,8 +757,6 @@ alt=""
     </div>
 
   </div>
-</section>
-
 </section>
 
 <footer className="bg-black border-t border-blue-950 px-6 pt-20 pb-8">

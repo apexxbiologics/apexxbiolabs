@@ -240,11 +240,19 @@ if (accepted === null) {
 </header>
 
 {/* HERO */}
-<section className="relative min-h-screen pt-36 md:pt-44 pb-24 px-6 bg-gradient-to-br from-black via-[#020617] to-[#03142f] overflow-hidden">
-  <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_75%_30%,rgba(37,99,235,0.35),transparent_35%)]" />
+<section className="relative min-h-screen pt-36 md:pt-44 pb-24 px-6 overflow-hidden bg-black">
+  <div
+    className="absolute inset-0 bg-cover bg-center opacity-70"
+    style={{
+      backgroundImage: "url('/images/hero-bg.jpg')",
+    }}
+  />
 
-  <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-    <div>
+  <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/20" />
+  <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black" />
+
+  <div className="relative z-10 max-w-7xl mx-auto min-h-[700px] flex items-center">
+    <div className="max-w-2xl">
       <p className="uppercase tracking-[0.4em] text-blue-400 text-sm mb-6">
         Research. Quality. Confidence.
       </p>
@@ -263,42 +271,19 @@ if (accepted === null) {
       </p>
 
       <div className="flex flex-col sm:flex-row gap-5 mt-10">
-        <a href="#shop" className="bg-blue-600 hover:bg-blue-500 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all">
+        <a
+          href="#shop"
+          className="bg-blue-600 hover:bg-blue-500 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all"
+        >
           Shop Products →
         </a>
 
-        <a href="/coas" className="border border-blue-700 hover:bg-blue-700 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all">
+        <a
+          href="/coas"
+          className="border border-blue-700 hover:bg-blue-700 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all"
+        >
           View COAs
         </a>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mt-14">
-        {["99%+ Purity", "Third-Party Tested", "COA Included", "Fast Shipping"].map((item) => (
-          <div key={item} className="border border-blue-900/70 bg-black/40 rounded-2xl p-4 text-center">
-            <p className="text-blue-400 text-xl mb-2">✓</p>
-            <p className="text-gray-300 text-xs uppercase tracking-widest">
-              {item}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-
-    <div className="relative">
-
-<div className="relative border border-blue-900/70 bg-[#081427] rounded-[2rem] p-8 overflow-hidden">      <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#2563eb_1px,transparent_1px),linear-gradient(to_bottom,#2563eb_1px,transparent_1px)] bg-[size:40px_40px]" />
-        <img
-          src="/images/retatrutide.PNG"
-          alt=""
-          className="mx-auto h-[520px] object-contain drop-shadow-[0_0_40px_rgba(37,99,235,0.45)]"
-        />
-
-        <div className="absolute bottom-8 left-8 right-8 bg-black/80 border border-blue-900 rounded-2xl px-6 py-5 backdrop-blur-xl">
-          <p className="text-white font-bold">Batch Documented</p>
-          <p className="text-gray-400 text-sm">
-            Research-use compounds with COA support.
-          </p>
-        </div>
       </div>
     </div>
   </div>

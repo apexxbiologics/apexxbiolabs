@@ -37,9 +37,22 @@ export default function COAsPage() {
 { name: "KPV", batch: "Pending", status: "Awaiting Testing" },
     { name: "GHK-Cu", batch: "Pending", status: "Awaiting Testing" },
     { name: "Pinealon", batch: "Pending", status: "Awaiting Testing" },
-    { name: "Selank", batch: "Pending", status: "Awaiting Testing" },
-    { name: "Semax", batch: "Pending", status: "Awaiting Testing" },
-    {
+{
+  name: "Selank",
+  batch: "SEL1005192026-08",
+  status: "Verified",
+  purity: "99.62%",
+  content: "11.36 mg",
+  coa: "/images/coas/selank-10mg-brown-green-coa.pdf",
+},
+{
+  name: "Semax",
+  batch: "SEMX1005182026-10",
+  status: "Verified",
+  purity: "99.33%",
+  content: "11.71 mg",
+  coa: "/images/coas/semax-10mg-coa.pdf",
+},    {
   name: "MOTS-c",
   batch: "Pending",
   status: "Awaiting Testing",
@@ -61,8 +74,11 @@ export default function COAsPage() {
 },
 {
   name: "CJC/IPA without DAC",
-  batch: "Pending",
-  status: "Awaiting Testing",
+  batch: "CJCIPA504292026-09",
+  status: "Verified",
+  purity: "Verified",
+  content: "5mg / 5mg",
+  coa: "/images/coas/cjc-ipa-no-dac-coa.pdf",
 },
   ];
 

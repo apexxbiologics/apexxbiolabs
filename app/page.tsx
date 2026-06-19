@@ -12,6 +12,7 @@ const [disclaimerChecked, setDisclaimerChecked] = useState(false);
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const productScrollRef = useRef<HTMLDivElement | null>(null);
     const autoScrollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+const [activeQuality, setActiveQuality] = useState("potency");
 
 const startProductScroll = (direction: "left" | "right") => {
   stopProductScroll();
@@ -594,6 +595,180 @@ alt=""
         </p>
       </div>
     </div>
+
+    {/* QUALITY VERIFICATION */}
+<section className="py-32 px-6 bg-gradient-to-b from-black via-[#030712] to-black border-b border-blue-950">
+  <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+
+    <div>
+      <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6">
+        Quality Verification
+      </p>
+
+      <h2 className="text-5xl md:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent mb-6">
+        Quality You Can Verify.
+      </h2>
+
+      <p className="text-gray-400 text-lg leading-relaxed mb-10 max-w-2xl">
+        Every batch is supported by documentation and analytical review for
+        research-focused consistency, purity, and transparency.
+      </p>
+
+      <div className="grid grid-cols-3 gap-6 mb-10 border-y border-blue-950 py-8">
+        <div>
+          <p className="text-3xl font-black text-white">99%+</p>
+          <p className="text-gray-500 text-sm mt-1">Purity Target</p>
+        </div>
+
+        <div>
+          <p className="text-3xl font-black text-white">HPLC</p>
+          <p className="text-gray-500 text-sm mt-1">Analysis</p>
+        </div>
+
+        <div>
+          <p className="text-3xl font-black text-white">COA</p>
+          <p className="text-gray-500 text-sm mt-1">Batch Records</p>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-3 mb-8">
+        {[
+          { id: "potency", label: "Potency" },
+          { id: "purity", label: "Purity" },
+          { id: "stability", label: "Stability" },
+          { id: "safety", label: "Safety" },
+          { id: "consistency", label: "Consistency" },
+        ].map((item) => (
+          <button
+            key={item.id}
+            onClick={() => setActiveQuality(item.id)}
+            className={`rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-widest transition-all ${
+              activeQuality === item.id
+                ? "bg-blue-600 text-white shadow-[0_0_25px_rgba(37,99,235,0.45)]"
+                : "bg-[#050505] border border-blue-900 text-gray-400 hover:border-blue-500 hover:text-blue-300"
+            }`}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="border border-blue-900/70 bg-[#050505] rounded-3xl p-8">
+        {activeQuality === "potency" && (
+          <div>
+            <h3 className="text-2xl font-black mb-4 text-white">
+              Verified Potency
+            </h3>
+            <p className="text-gray-400 leading-relaxed mb-6">
+              Analytical testing helps confirm that each batch aligns with the
+              stated research concentration and identity specifications.
+            </p>
+            <div className="border-l-4 border-blue-500 bg-black rounded-xl p-5 text-gray-300">
+              <strong className="text-white">Why it matters:</strong> Supports
+              consistent research preparation and batch-to-batch confidence.
+            </div>
+          </div>
+        )}
+
+        {activeQuality === "purity" && (
+          <div>
+            <h3 className="text-2xl font-black mb-4 text-white">
+              Purity Documentation
+            </h3>
+            <p className="text-gray-400 leading-relaxed mb-6">
+              COAs provide batch-level information so researchers can review
+              purity data before use in laboratory settings.
+            </p>
+            <div className="border-l-4 border-blue-500 bg-black rounded-xl p-5 text-gray-300">
+              <strong className="text-white">Why it matters:</strong> Clear
+              documentation helps support transparency and trust.
+            </div>
+          </div>
+        )}
+
+        {activeQuality === "stability" && (
+          <div>
+            <h3 className="text-2xl font-black mb-4 text-white">
+              Stability-Focused Handling
+            </h3>
+            <p className="text-gray-400 leading-relaxed mb-6">
+              Products are packaged with research storage and handling standards
+              in mind to help preserve batch integrity.
+            </p>
+            <div className="border-l-4 border-blue-500 bg-black rounded-xl p-5 text-gray-300">
+              <strong className="text-white">Why it matters:</strong> Proper
+              handling supports reliable research workflows.
+            </div>
+          </div>
+        )}
+
+        {activeQuality === "safety" && (
+          <div>
+            <h3 className="text-2xl font-black mb-4 text-white">
+              Research-Use Standards
+            </h3>
+            <p className="text-gray-400 leading-relaxed mb-6">
+              Apexx Biolabs products are intended strictly for lawful laboratory
+              research use only and are not for human or veterinary use.
+            </p>
+            <div className="border-l-4 border-blue-500 bg-black rounded-xl p-5 text-gray-300">
+              <strong className="text-white">Why it matters:</strong> Clear
+              use limitations keep the catalog research-focused.
+            </div>
+          </div>
+        )}
+
+        {activeQuality === "consistency" && (
+          <div>
+            <h3 className="text-2xl font-black mb-4 text-white">
+              Batch Consistency
+            </h3>
+            <p className="text-gray-400 leading-relaxed mb-6">
+              Batch records and testing documentation help support consistency
+              across research materials.
+            </p>
+            <div className="border-l-4 border-blue-500 bg-black rounded-xl p-5 text-gray-300">
+              <strong className="text-white">Why it matters:</strong> Consistent
+              records help researchers compare and track batches.
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+
+    <div className="relative">
+      <div className="relative rounded-[2rem] border border-blue-900 bg-[#050505] p-10 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-950/30 via-transparent to-black"></div>
+
+        <div className="relative z-10 flex justify-end mb-6">
+          <div className="bg-black border border-blue-800 rounded-2xl px-5 py-4">
+            <p className="text-white font-black">99%+ Purity</p>
+            <p className="text-gray-500 text-sm">Verified by HPLC</p>
+          </div>
+        </div>
+
+        <img
+          src="/images/tb500.PNG"
+          alt=""
+          className="relative z-10 mx-auto h-[420px] object-contain"
+        />
+
+        <a
+          href="/coas"
+          className="relative z-10 mt-8 flex items-center justify-between bg-black border border-blue-900 rounded-2xl px-6 py-5 hover:border-blue-400 transition-all"
+        >
+          <div>
+            <p className="text-white font-bold">See the Proof</p>
+            <p className="text-gray-500 text-sm">View batch documentation</p>
+          </div>
+
+          <span className="text-blue-400 text-2xl">›</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
 
   </div>
 </section>

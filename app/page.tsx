@@ -242,26 +242,26 @@ if (accepted === null) {
 {/* HERO */}
 <section className="relative min-h-screen pt-36 md:pt-44 pb-24 px-6 overflow-hidden bg-black">
   <div
-    className="absolute inset-0 bg-cover bg-center opacity-70"
+    className="absolute right-0 top-0 bottom-0 w-full lg:w-[58%] bg-cover bg-center opacity-85"
     style={{
       backgroundImage: "url('/images/hero-bg.jpg')",
     }}
   />
 
-  <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/20" />
-  <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black" />
+  <div className="absolute inset-0 bg-gradient-to-r from-black via-black/95 to-black/30" />
+  <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black" />
 
-  <div className="relative z-10 max-w-7xl mx-auto min-h-[700px] flex items-center">
+  <div className="relative z-10 max-w-7xl mx-auto min-h-[680px] flex items-center">
     <div className="max-w-2xl">
       <p className="uppercase tracking-[0.4em] text-blue-400 text-sm mb-6">
         Research. Quality. Confidence.
       </p>
 
       <h1 className="text-6xl md:text-8xl font-black leading-[0.95] tracking-tight">
-        <span className="text-white">Research</span>
+        <span className="text-white">Precision</span>
         <br />
         <span className="bg-gradient-to-r from-blue-300 via-blue-500 to-blue-700 bg-clip-text text-transparent">
-          Without Limits.
+          Research Peptides.
         </span>
       </h1>
 
@@ -288,38 +288,6 @@ if (accepted === null) {
     </div>
   </div>
 </section>
-        {/* TRUST BAR */}
-        <section className="border-t border-b border-blue-900 py-10">
-          <div className="flex flex-wrap justify-center gap-16 text-center">
-            <div>
-              <p className="text-xl font-bold text-blue-400">99%+</p>
-              <p className="text-gray-400 uppercase tracking-widest text-xs mt-2">
-                Purity Verified
-              </p>
-            </div>
-
-            <div>
-              <p className="text-xl font-bold text-blue-400">HPLC</p>
-              <p className="text-gray-400 uppercase tracking-widest text-xs mt-2">
-                Batch Tested
-              </p>
-            </div>
-
-            <div>
-              <p className="text-xl font-bold text-blue-400">USA</p>
-              <p className="text-gray-400 uppercase tracking-widest text-xs mt-2">
-                Fast Shipping
-              </p>
-            </div>
-
-            <div>
-              <p className="text-xl font-bold text-blue-400">RUO</p>
-              <p className="text-gray-400 uppercase tracking-widest text-xs mt-2">
-                Research Use Only
-              </p>
-            </div>
-          </div>
-        </section>
 
 {/* PRODUCTS */}
 <section

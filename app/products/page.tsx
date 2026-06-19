@@ -33,10 +33,11 @@ export default function ProductsPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
           {products.map((product) => (
-            <div
-              key={product.name}
-              className="bg-[#050505] border border-blue-900/60 rounded-3xl overflow-hidden hover:border-blue-400 hover:-translate-y-2 transition-all duration-300"
-            >
+<a
+  key={product.name}
+  href={product.href}
+  className="block bg-[#050505] border border-blue-900/60 rounded-3xl overflow-hidden hover:border-blue-400 hover:-translate-y-2 transition-all duration-300 cursor-pointer"
+>
               <div className="bg-black h-[360px] flex items-center justify-center border-b border-blue-950">
                 <img
                   src={product.image}
@@ -65,7 +66,7 @@ export default function ProductsPage() {
                   </a>
                 </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </div>

@@ -136,15 +136,6 @@ export default function APX3Page() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
 
         <div className="relative z-10 max-w-7xl mx-auto">
-          <div className="text-white/50 text-sm mb-10 flex gap-3 flex-wrap">
-            <a href="/" className="hover:text-blue-300">Home</a>
-            <span>›</span>
-            <a href="/products" className="hover:text-blue-300">Products</a>
-            <span>›</span>
-            <span>Research Peptides</span>
-            <span>›</span>
-            <span className="text-white">{selectedProduct.name}</span>
-          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
             <div className="flex items-center justify-center">

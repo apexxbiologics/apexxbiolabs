@@ -147,8 +147,16 @@ export default function APX3Page() {
                 {selectedProduct.name}
               </h1>
 
-              <p className="text-gray-300 text-lg leading-relaxed max-w-2xl mb-7">
-A high-purity, triple-agonist research peptide studied for its interaction with GIP, GLP-1, and glucagon receptor pathways. Extensively studied in metabolic regulation and body composition research.              </p>
+<p className="text-gray-300 text-lg leading-relaxed max-w-2xl mb-4">
+  A high-purity, triple-agonist research peptide studied for its interaction
+  with GIP, GLP-1, and glucagon receptor pathways. Extensively studied in
+  metabolic regulation and body composition research.
+</p>
+
+<p className="text-xs uppercase tracking-[0.2em] text-gray-500 border-l-2 border-blue-500 pl-4">
+  For Research Use Only. Not for human or veterinary consumption.
+  This product is not intended to diagnose, treat, cure, or prevent any disease.
+</p>
 
               <p className="text-4xl font-black text-blue-400 mb-8">
                 ${selectedProduct.price}.00

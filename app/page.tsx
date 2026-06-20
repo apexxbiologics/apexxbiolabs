@@ -272,7 +272,8 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
         <span className="text-white">Research</span>
         <br />
         <span className="bg-gradient-to-r from-blue-300 via-blue-500 to-blue-700 bg-clip-text text-transparent">
-          Without Limits.
+          Without 
+          Limits.
         </span>
       </h1>
 

@@ -184,9 +184,9 @@ if (accepted === null) {
   </div>
 )}
 
-<main className="min-h-screen bg-[#030712] text-white">
+<main className="min-h-screen bg-[#081526] text-white">
 {/* HEADER */}
-<header className="fixed top-0 left-0 w-full z-50 border-b border-blue-900/70 bg-black/90 backdrop-blur-xl px-4 md:px-8 py-4">
+<header className="fixed top-0 left-0 w-full z-50 border-b border-blue-900/70 bg-[#081526]/95 backdrop-blur-xl px-4 md:px-8 py-4">
   <div className="max-w-7xl mx-auto flex items-center justify-between gap-6">
     <a href="/">
       <img
@@ -252,15 +252,14 @@ if (accepted === null) {
 </header>
 
 {/* HERO */}
-<section className="relative pt-36 pb-0 px-6 bg-black overflow-hidden">
-  <div
+<section className="relative pt-36 pb-0 px-6 bg-[#081526] overflow-hidden">  <div
 className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"style={{
   backgroundImage: "url('/images/hero-vial-right.png')",
   backgroundPosition: "75% center",
 }}
   />
 
-  <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-transparent" />
+  <div className="absolute inset-0 bg-gradient-to-r from-[#081526] via-[#081526]/90 to-transparent" />
   <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black" />
 
 <div className="relative z-10 max-w-7xl mx-auto py-24 flex items-center">    <div className="max-w-2xl">
@@ -320,7 +319,7 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
 {/* PRODUCTS */}
 <section
   id="shop"
-  className="py-28 px-6 md:px-10 bg-gradient-to-b from-black via-[#0f172a] to-black text-white"
+  className="py-28 px-6 md:px-10 bg-gradient-to-b from-[#081526] via-[#0B1F38] to-[#081526] text-white"
 >
   <div className="max-w-7xl mx-auto">
     <div className="flex items-end justify-between mb-12">
@@ -526,7 +525,7 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
 </section>
 
   {/* QUALITY VERIFICATION */}
-<section className="py-32 px-6 bg-gradient-to-b from-black via-[#030712] to-black border-b border-blue-950">
+<section className="py-32 px-6 bg-gradient-to-b from-[#081526] via-[#0B1F38] to-[#081526] border-b border-blue-950">
   <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
 
     <div>
@@ -699,8 +698,7 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
   </div>
 </section>
 
-        <section className="py-16 px-6 border-t border-blue-950 border-b border-blue-950 bg-black">
-
+<section className="py-16 px-6 border-t border-[#1E3A5F] border-b border-[#1E3A5F] bg-[#081526]">
   <div className="max-w-6xl mx-auto text-center">
 
     <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6">
@@ -757,8 +755,7 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
   </div>
 </section>
 
-<footer className="bg-black border-t border-blue-950 px-6 pt-20 pb-8">
-  <div className="max-w-7xl mx-auto">
+<footer className="bg-[#081526] border-t border-[#1E3A5F] px-6 pt-20 pb-8">  <div className="max-w-7xl mx-auto">
     <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-16">
       <div>
         <img

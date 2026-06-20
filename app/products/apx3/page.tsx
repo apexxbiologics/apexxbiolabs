@@ -61,7 +61,7 @@ export default function APX3Page() {
   };
 
   return (
-    <main className="min-h-screen bg-[#23446D] text-white">
+    <main className="min-h-screen bg-[#010C1E] text-white">
       <header className="sticky top-0 z-50 border-b border-blue-900/60 bg-[#04101f]/95 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 md:px-10 py-5 flex items-center justify-between">
           <a href="/">
@@ -76,8 +76,20 @@ export default function APX3Page() {
             <a href="/contact" className="hover:text-blue-400 transition-all">Contact</a>
           </nav>
 
-          <div className="flex items-center gap-5">
-            <Search size={26} className="text-white" />
+<div className="flex items-center gap-3">
+  <div className="relative hidden md:block">
+    <Search
+      size={16}
+      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+    />
+
+    <input
+      type="text"
+      placeholder="Search peptides..."
+      className="w-52 rounded-full bg-[#1B3657] border border-blue-800 pl-10 pr-4 py-2 text-sm text-white placeholder:text-gray-400 focus:outline-none focus:border-blue-400"
+    />
+  </div>
+
             <a href="/cart" className="relative">
               <ShoppingCart size={30} />
               <span className="absolute -top-3 -right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">

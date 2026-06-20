@@ -14,6 +14,8 @@ export default function APX3Page() {
   const [added, setAdded] = useState(false);
   const [selectedMg, setSelectedMg] = useState<"10mg" | "20mg">("10mg");
   const [quantity, setQuantity] = useState(1);
+  const [showSearch, setShowSearch] = useState(false);
+const [searchTerm, setSearchTerm] = useState("");
 
   const productOptions = {
     "10mg": {
@@ -41,6 +43,37 @@ export default function APX3Page() {
       image: selectedProduct.image,
     };
 
+    const products = [
+  { name: "APX-3", path: "/products/apx-3" },
+  { name: "Adamax", path: "/products/adamax" },
+  { name: "ARA-290", path: "/products/ara-290" },
+  { name: "Bacteriostatic Water", path: "/products/bacteriostatic-water" },
+  { name: "BPC-157", path: "/products/bpc-157" },
+  { name: "CJC/IPA", path: "/products/cjc-ipa" },
+  { name: "GHK-Cu", path: "/products/ghk-cu" },
+  { name: "KPV", path: "/products/kpv" },
+  { name: "MOTS-C", path: "/products/mots-c" },
+  { name: "PE-22-28", path: "/products/pe-22-28" },
+  { name: "Pinealon", path: "/products/pinealon" },
+  { name: "Selank", path: "/products/selank" },
+  { name: "Semax", path: "/products/semax" },
+  { name: "TB-500", path: "/products/tb-500" },
+];
+
+const handleSearch = (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const query = searchTerm.toLowerCase().trim();
+
+  const match = products.find(
+    (product) =>
+      product.name.toLowerCase().includes(query)
+  );
+
+  if (match) {
+    window.location.href = match.path;
+  }
+};
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
 
     const existingProduct = existingCart.find(

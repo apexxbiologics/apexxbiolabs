@@ -18,7 +18,7 @@ export default function SelankPage() {
     name: "Selank",
     price: 60,
     quantity,
-    image: "/images/selank.PNG",
+    image: "/images/selankblue.png",
   };
 
   const addToCart = () => {

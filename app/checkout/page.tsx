@@ -679,7 +679,17 @@ export default function CheckoutPage() {
         </p>
 
         <div className="flex gap-8 text-sm text-white/40">
+          <a href="/privacy" className="hover:text-white transition-all">
+            Privacy
+          </a>
 
+          <a href="/terms" className="hover:text-white transition-all">
+            Terms
+          </a>
+
+          <a href="/shipping" className="hover:text-white transition-all">
+            Shipping
+          </a>
         </div>
 
       </div>

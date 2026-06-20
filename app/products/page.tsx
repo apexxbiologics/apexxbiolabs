@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Search } from "lucide-react";
 
 export default function ProductsPage() {
   const [search, setSearch] = useState("");
@@ -131,47 +132,54 @@ export default function ProductsPage() {
   });
 
   return (
-    <main className="min-h-screen bg-black text-white">
-      <header className="border-b border-blue-900 bg-[#030712] px-6 py-6">
+    <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
+      <header className="border-b border-white/10 bg-[#081526]/95 backdrop-blur-xl px-6 py-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <a href="/">
             <img
               src="/images/logo.png"
-              alt=""
+              alt="Apexx Biolabs"
               className="h-12 w-auto"
             />
           </a>
 
           <a
             href="/"
-            className="border border-blue-700 text-blue-400 px-5 py-2 rounded-lg text-xs uppercase tracking-widest hover:bg-blue-700 hover:text-white transition-all"
+            className="border border-white/10 bg-white/[0.04] text-white rounded-full px-6 py-3 text-xs uppercase tracking-widest hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
           >
             Home
           </a>
         </div>
       </header>
 
-      <section className="px-6 py-20 bg-gradient-to-b from-[#030712] via-black to-black">
-        <div className="max-w-7xl mx-auto">
-          <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-5">
+      <section className="relative px-6 py-24 bg-[#081526] border-b border-white/10 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+
+        <div className="relative z-10 max-w-7xl mx-auto">
+          <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
             Research Catalog
           </p>
 
-          <h1 className="text-5xl md:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent mb-5">
+          <h1 className="text-5xl md:text-7xl font-black tracking-tight text-white leading-[0.95] mb-6">
             All Products
           </h1>
 
-          <p className="text-gray-400 text-lg mb-12">
+          <p className="text-white/70 text-lg md:text-xl leading-relaxed mb-12 max-w-2xl">
             Premium research compounds organized by research category.
           </p>
 
           <div className="relative max-w-xl mb-10">
+            <Search
+              size={22}
+              className="absolute left-5 top-1/2 -translate-y-1/2 text-white/50"
+            />
+
             <input
               type="text"
               placeholder="Search products..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-[#050505] border border-blue-900 focus:border-blue-500 outline-none rounded-full px-6 py-4 text-white placeholder:text-gray-500"
+              className="w-full bg-white/[0.04] border border-white/10 focus:border-blue-400/50 outline-none rounded-full pl-14 pr-6 py-4 text-white placeholder:text-white/40 backdrop-blur-sm"
             />
           </div>
 
@@ -182,8 +190,8 @@ export default function ProductsPage() {
                 onClick={() => setActiveCategory(category)}
                 className={`rounded-full px-6 py-3 text-sm font-semibold transition-all ${
                   activeCategory === category
-                    ? "bg-blue-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.35)]"
-                    : "bg-[#050505] border border-blue-900 text-gray-400 hover:border-blue-500 hover:text-blue-300"
+                    ? "bg-white text-[#081526]"
+                    : "bg-white/[0.04] border border-white/10 text-white/60 hover:border-blue-400/50 hover:text-white hover:bg-white/[0.07]"
                 }`}
               >
                 {category}
@@ -196,26 +204,26 @@ export default function ProductsPage() {
               <div
                 key={product.name}
                 onClick={() => (window.location.href = product.href)}
-                className="cursor-pointer bg-[#050505] border border-blue-900/60 rounded-3xl overflow-hidden hover:border-blue-400 hover:-translate-y-2 transition-all duration-300"
+                className="group cursor-pointer rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-3 hover:bg-white/[0.07] hover:border-blue-400/50 hover:-translate-y-2 transition-all duration-300"
               >
-                <div className="bg-black h-[360px] flex items-center justify-center border-b border-blue-950">
+                <div className="h-[360px] flex items-center justify-center rounded-[1.6rem] overflow-hidden">
                   <img
                     src={product.image}
-                    alt=""
-                    className="h-72 object-contain hover:scale-105 transition-all duration-300"
+                    alt={product.name}
+                    className="h-80 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
 
-                <div className="p-7">
-                  <p className="text-blue-400 text-xs uppercase tracking-widest mb-3">
+                <div className="p-5 pt-7">
+                  <p className="text-blue-300 text-xs uppercase tracking-widest mb-3">
                     {product.category}
                   </p>
 
-                  <h2 className="text-2xl font-black mb-3">
+                  <h2 className="text-2xl font-black text-white mb-3">
                     {product.name}
                   </h2>
 
-                  <p className="text-gray-400 mb-8">
+                  <p className="text-white/60 mb-8">
                     {product.desc}
                   </p>
 
@@ -223,7 +231,7 @@ export default function ProductsPage() {
                     <a
                       href="/coas"
                       onClick={(e) => e.stopPropagation()}
-                      className="flex-1 border border-blue-700/70 text-blue-300 rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:bg-blue-700 hover:text-white transition-all"
+                      className="flex-1 border border-white/10 bg-white/[0.04] text-white rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
                     >
                       COA
                     </a>
@@ -231,7 +239,7 @@ export default function ProductsPage() {
                     <a
                       href={product.href}
                       onClick={(e) => e.stopPropagation()}
-                      className="flex-1 bg-blue-600 text-white rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:bg-blue-500 transition-all"
+                      className="flex-1 bg-white text-[#081526] rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:bg-blue-100 transition-all"
                     >
                       View
                     </a>
@@ -242,7 +250,7 @@ export default function ProductsPage() {
           </div>
 
           {filteredProducts.length === 0 && (
-            <p className="text-gray-500 text-center mt-20">
+            <p className="text-white/50 text-center mt-20">
               No products found.
             </p>
           )}

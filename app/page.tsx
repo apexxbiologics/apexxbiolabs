@@ -675,7 +675,6 @@ alt=""
       </div>
     </div>
 
-  </div>
 </section>
 
         <section className="py-16 px-6 border-t border-blue-950 border-b border-blue-950 bg-black">

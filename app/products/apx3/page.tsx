@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ShoppingCart, Search, FlaskConical, ShieldCheck, ClipboardCheck } from "lucide-react";
 
 export default function APX3Page() {
   const [added, setAdded] = useState(false);
@@ -12,14 +13,12 @@ export default function APX3Page() {
       id: "APX-3-10mg",
       name: "APX-3 10mg",
       price: 80,
-      quantityLabel: "10mg",
       image: "/images/retatrutide.PNG",
     },
     "20mg": {
       id: "APX-3-20mg",
       name: "APX-3 20mg",
       price: 150,
-      quantityLabel: "20mg",
       image: "/images/retatrutide20.PNG",
     },
   };
@@ -56,297 +55,325 @@ export default function APX3Page() {
 
   return (
     <main className="min-h-screen bg-[#061426] text-white">
-      <header className="sticky top-0 z-50 flex items-center justify-between px-8 md:px-12 py-6 border-b border-blue-900/70 bg-[#04101f]/95 backdrop-blur-xl">
-        <a href="/">
-          <img
-            src="/images/logo.png"
-            alt="Apexx Biolabs"
-            className="h-14 w-auto"
-          />
-        </a>
-
-        <nav className="flex items-center gap-4 text-sm uppercase tracking-widest">
-          <a
-            href="/"
-            className="border border-blue-700 px-5 py-3 rounded-xl text-blue-300 hover:bg-blue-700 hover:text-white transition-all"
-          >
-            Home
-          </a>
-
-          <a
-            href="/products"
-            className="border border-blue-700 px-5 py-3 rounded-xl text-blue-300 hover:bg-blue-700 hover:text-white transition-all"
-          >
-            Products
-          </a>
-        </nav>
-      </header>
-
-      <section className="px-6 md:px-10 pt-12 pb-20">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-14 items-start">
-          <div className="relative rounded-[2rem] overflow-hidden border border-blue-800/70 bg-[#081b33] shadow-[0_30px_90px_rgba(0,0,0,0.35)]">
-            <div className="relative h-[520px] flex items-center justify-center overflow-hidden">
-              <img
-                src={selectedProduct.image}
-                alt={selectedProduct.name}
-                className="w-full h-full object-contain scale-[0.92]"
-              />
-            </div>
-          </div>
-
-          <div className="rounded-[2rem] border border-blue-800/60 bg-[#081b33]/80 p-8 md:p-10 shadow-[0_30px_90px_rgba(0,0,0,0.25)]">
-            <p className="uppercase tracking-[0.35em] text-blue-400 text-sm mb-5">
-              Research Peptide
-            </p>
-
-            <h1 className="text-5xl md:text-6xl font-black mb-5">
-              {selectedProduct.name}
-            </h1>
-
-            <p className="text-gray-300 text-lg leading-relaxed mb-8">
-              High-purity lyophilized research peptide intended strictly for
-              laboratory research and analytical applications.
-            </p>
-
-            <div className="text-4xl font-black text-blue-400 mb-8">
-              ${selectedProduct.price}.00
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
-              <div>
-                <p className="text-gray-400 uppercase tracking-widest text-sm mb-4">
-                  Select Size
-                </p>
-
-                <div className="flex gap-4">
-                  {(["10mg", "20mg"] as const).map((mg) => (
-                    <button
-                      key={mg}
-                      onClick={() => {
-                        setSelectedMg(mg);
-                        setAdded(false);
-                      }}
-                      className={`px-7 py-4 rounded-xl border uppercase tracking-widest text-sm font-semibold transition-all ${
-                        selectedMg === mg
-                          ? "border-blue-400 bg-blue-600 text-white shadow-[0_0_25px_rgba(37,99,235,0.45)]"
-                          : "border-blue-800 text-blue-300 hover:border-blue-400"
-                      }`}
-                    >
-                      {mg}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <p className="text-gray-400 uppercase tracking-widest text-sm mb-4">
-                  Quantity
-                </p>
-
-                <div className="flex items-center w-fit rounded-xl border border-blue-800 overflow-hidden">
-                  <button
-                    onClick={() => {
-                      setQuantity((prev) => Math.max(1, prev - 1));
-                      setAdded(false);
-                    }}
-                    className="w-14 h-14 text-2xl text-blue-300 hover:bg-blue-900/50"
-                  >
-                    −
-                  </button>
-
-                  <div className="w-16 h-14 flex items-center justify-center text-lg font-bold">
-                    {quantity}
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      setQuantity((prev) => prev + 1);
-                      setAdded(false);
-                    }}
-                    className="w-14 h-14 text-2xl text-blue-300 hover:bg-blue-900/50"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-5 mb-10">
-              {[
-                ["Size", selectedMg],
-                ["Form", "Lyophilized Powder"],
-                ["Purity", "99%+"],
-                ["Storage", "2–8°C"],
-              ].map(([label, value]) => (
-                <div
-                  key={label}
-                  className="flex justify-between border-b border-blue-900/80 pb-4"
-                >
-                  <span className="text-gray-400">{label}</span>
-                  <span>{value}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <button
-                onClick={addToCart}
-                className="bg-blue-600 hover:bg-blue-500 px-8 py-5 uppercase tracking-widest text-sm font-semibold rounded-xl transition-all"
-              >
-                {added ? "Added" : "Add To Cart"}
-              </button>
-
-              <a
-                href="/#shop"
-                className="text-center border border-blue-700 hover:bg-blue-700 px-8 py-5 uppercase tracking-widest text-sm font-semibold rounded-xl transition-all"
-              >
-                Continue
-              </a>
-
-              <a
-                href="/coas"
-                className="text-center border border-blue-700 hover:bg-blue-700 px-8 py-5 uppercase tracking-widest text-sm font-semibold rounded-xl transition-all"
-              >
-                COA
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="px-6 md:px-10 pb-24">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl font-black mb-8">
-            Compound Information
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="rounded-2xl border border-blue-900 bg-[#081b33] p-7">
-              <h3 className="text-blue-300 font-bold uppercase tracking-widest mb-4">
-                Molecular Profile
-              </h3>
-              <p className="text-gray-300 leading-relaxed">
-                APX-3 is supplied as a lyophilized research peptide for lawful
-                laboratory research use only.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-blue-900 bg-[#081b33] p-7">
-              <h3 className="text-blue-300 font-bold uppercase tracking-widest mb-4">
-                Storage Requirements
-              </h3>
-              <p className="text-gray-300 leading-relaxed">
-                Store refrigerated at 2–8°C. Protect from light and avoid
-                repeated freeze-thaw cycles.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-blue-900 bg-[#081b33] p-7">
-              <h3 className="text-blue-300 font-bold uppercase tracking-widest mb-4">
-                Documentation
-              </h3>
-              <p className="text-gray-300 leading-relaxed">
-                Batch documentation and COA access are provided for quality
-                transparency.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <footer className="bg-[#081b33] border-t border-blue-900 px-6 pt-20 pb-10">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 mb-16">
-          <div>
+      {/* HEADER */}
+      <header className="sticky top-0 z-50 border-b border-blue-900/60 bg-[#04101f]/95 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-6 md:px-10 py-5 flex items-center justify-between">
+          <a href="/">
             <img
               src="/images/logo.png"
               alt="Apexx Biolabs"
-              className="h-14 w-auto mb-6"
+              className="h-14 w-auto"
+            />
+          </a>
+
+          <nav className="hidden md:flex items-center gap-10 uppercase tracking-widest text-sm">
+            <a href="/" className="hover:text-blue-400 transition-all">
+              Home
+            </a>
+            <a href="/products" className="text-white border-b border-blue-500 pb-2">
+              Products
+            </a>
+            <a href="/coas" className="hover:text-blue-400 transition-all">
+              COAs
+            </a>
+            <a href="/about" className="hover:text-blue-400 transition-all">
+              About
+            </a>
+            <a href="/contact" className="hover:text-blue-400 transition-all">
+              Contact
+            </a>
+          </nav>
+
+          <div className="flex items-center gap-5">
+            <Search size={26} className="text-white" />
+            <a href="/cart" className="relative">
+              <ShoppingCart size={30} />
+              <span className="absolute -top-3 -right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
+                {quantity}
+              </span>
+            </a>
+          </div>
+        </div>
+      </header>
+
+      {/* PRODUCT TOP */}
+      <section className="px-6 md:px-10 pt-8 pb-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-gray-400 text-sm mb-8 flex gap-3">
+            <a href="/" className="hover:text-blue-300">Home</a>
+            <span>›</span>
+            <a href="/products" className="hover:text-blue-300">Products</a>
+            <span>›</span>
+            <span>Research Peptides</span>
+            <span>›</span>
+            <span>{selectedProduct.name}</span>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-start">
+            {/* IMAGE */}
+            <div className="rounded-[28px] overflow-hidden border border-blue-700/70 bg-[#081b33] shadow-[0_25px_80px_rgba(0,0,0,0.35)]">
+              <img
+                src={selectedProduct.image}
+                alt={selectedProduct.name}
+                className="w-full h-[480px] object-cover object-center"
+              />
+            </div>
+
+            {/* INFO */}
+            <div className="pt-2">
+              <p className="uppercase tracking-[0.35em] text-blue-400 text-sm mb-4">
+                Research Peptide
+              </p>
+
+              <h1 className="text-5xl md:text-6xl font-black mb-5">
+                {selectedProduct.name}
+              </h1>
+
+              <p className="text-gray-300 text-lg leading-relaxed max-w-2xl mb-7">
+                High-purity lyophilized research peptide intended strictly for
+                laboratory research and analytical applications.
+              </p>
+
+              <p className="text-4xl font-black text-blue-400 mb-8">
+                ${selectedProduct.price}.00
+              </p>
+
+              <div className="h-px bg-blue-900/70 mb-7" />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-7">
+                <div>
+                  <p className="uppercase tracking-widest text-gray-400 text-sm mb-4">
+                    Select Quantity (mg)
+                  </p>
+
+                  <div className="flex gap-3">
+                    {(["10mg", "20mg"] as const).map((mg) => (
+                      <button
+                        key={mg}
+                        onClick={() => {
+                          setSelectedMg(mg);
+                          setAdded(false);
+                        }}
+                        className={`px-7 py-4 rounded-xl border uppercase tracking-widest text-sm font-semibold transition-all ${
+                          selectedMg === mg
+                            ? "bg-blue-600 border-blue-400 text-white shadow-[0_0_25px_rgba(37,99,235,0.45)]"
+                            : "border-blue-800 text-blue-300 hover:border-blue-400"
+                        }`}
+                      >
+                        {mg}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="uppercase tracking-widest text-gray-400 text-sm mb-4">
+                    Quantity
+                  </p>
+
+                  <div className="flex items-center w-fit rounded-xl border border-blue-700 overflow-hidden">
+                    <button
+                      onClick={() => {
+                        setQuantity((prev) => Math.max(1, prev - 1));
+                        setAdded(false);
+                      }}
+                      className="w-16 h-14 text-2xl text-blue-300 hover:bg-blue-900/50"
+                    >
+                      −
+                    </button>
+
+                    <div className="w-16 h-14 flex items-center justify-center text-lg font-bold">
+                      {quantity}
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setQuantity((prev) => prev + 1);
+                        setAdded(false);
+                      }}
+                      className="w-16 h-14 text-2xl text-blue-300 hover:bg-blue-900/50"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-7">
+                <button
+                  onClick={addToCart}
+                  className="bg-blue-600 hover:bg-blue-500 rounded-xl py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
+                >
+                  <ShoppingCart size={22} />
+                  {added ? "Added" : "Add To Cart"}
+                </button>
+
+                <a
+                  href="/cart"
+                  className="border border-blue-700 hover:bg-blue-700 rounded-xl py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
+                  Buy Now
+                </a>
+
+                <a
+                  href="/coas"
+                  className="border border-blue-700 hover:bg-blue-700 rounded-xl py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
+                  View COA
+                </a>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 border border-blue-900 rounded-2xl overflow-hidden bg-[#081b33]/60">
+                {[
+                  ["Size", selectedMg],
+                  ["Form", "Lyophilized Powder"],
+                  ["Purity", "99%+"],
+                  ["Storage", "2–8°C"],
+                ].map(([label, value]) => (
+                  <div key={label} className="p-5 border-b md:border-b-0 md:border-r border-blue-900 last:border-r-0">
+                    <p className="uppercase tracking-widest text-gray-400 text-sm mb-2">
+                      {label}
+                    </p>
+                    <p className="text-white">{value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* TRUST BAR */}
+      <section className="px-6 md:px-10 pb-8">
+        <div className="max-w-7xl mx-auto rounded-2xl border border-blue-900 bg-[#081b33]/70 p-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="flex gap-4">
+            <FlaskConical className="text-blue-400" size={34} />
+            <div>
+              <h3 className="text-blue-300 uppercase tracking-widest font-bold text-sm">
+                Research Use Only
+              </h3>
+              <p className="text-gray-400 text-sm mt-1">
+                Strictly for laboratory research.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <ShieldCheck className="text-blue-400" size={34} />
+            <div>
+              <h3 className="text-blue-300 uppercase tracking-widest font-bold text-sm">
+                Third-Party Tested
+              </h3>
+              <p className="text-gray-400 text-sm mt-1">
+                Independent lab verified.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <ClipboardCheck className="text-blue-400" size={34} />
+            <div>
+              <h3 className="text-blue-300 uppercase tracking-widest font-bold text-sm">
+                Batch Documented
+              </h3>
+              <p className="text-gray-400 text-sm mt-1">
+                Full transparency.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <ShieldCheck className="text-blue-400" size={34} />
+            <div>
+              <h3 className="text-blue-300 uppercase tracking-widest font-bold text-sm">
+                Quality Guaranteed
+              </h3>
+              <p className="text-gray-400 text-sm mt-1">
+                99%+ purity target.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="bg-[#04101f] border-t border-blue-900/60 px-6 md:px-10 pt-16 pb-8">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-6 gap-12 mb-14">
+          <div className="md:col-span-1">
+            <img
+              src="/images/logo.png"
+              alt="Apexx Biolabs"
+              className="h-14 w-auto mb-5"
             />
             <p className="text-gray-400 text-sm leading-relaxed">
-              Premium research materials built on science, quality, and
-              transparency. Third-party tested with batch documentation.
+              Premium research-grade peptides built on science, quality, and transparency.
             </p>
           </div>
 
           <div>
-            <h4 className="text-white font-bold uppercase tracking-widest mb-5">
+            <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
               Shop
             </h4>
             <div className="space-y-3 text-gray-400">
-              <a href="/products" className="block hover:text-blue-300">
-                All Products
-              </a>
-              <a href="/coas" className="block hover:text-blue-300">
-                Certificates of Analysis
-              </a>
+              <a href="/products" className="block hover:text-blue-300">All Products</a>
+              <a href="/products" className="block hover:text-blue-300">Research Peptides</a>
+              <a href="/coas" className="block hover:text-blue-300">Certificates of Analysis</a>
             </div>
           </div>
 
           <div>
-            <h4 className="text-white font-bold uppercase tracking-widest mb-5">
+            <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
               Resources
             </h4>
             <div className="space-y-3 text-gray-400">
-              <a href="/peptide-info" className="block hover:text-blue-300">
-                Peptide Info
-              </a>
-              <a href="/faq" className="block hover:text-blue-300">
-                FAQ
-              </a>
+              <a href="/peptide-info" className="block hover:text-blue-300">Research Library</a>
+              <a href="/peptide-info" className="block hover:text-blue-300">Peptide Info</a>
+              <a href="/faq" className="block hover:text-blue-300">FAQ</a>
             </div>
           </div>
 
           <div>
-            <h4 className="text-white font-bold uppercase tracking-widest mb-5">
+            <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
               Support
             </h4>
             <div className="space-y-3 text-gray-400">
-              <a href="/contact" className="block hover:text-blue-300">
-                Contact Us
-              </a>
-              <a href="/shipping" className="block hover:text-blue-300">
-                Shipping Info
-              </a>
-              <a href="/refunds" className="block hover:text-blue-300">
-                Returns & Refunds
-              </a>
+              <a href="/contact" className="block hover:text-blue-300">Contact Us</a>
+              <a href="/shipping" className="block hover:text-blue-300">Shipping Info</a>
+              <a href="/refunds" className="block hover:text-blue-300">Returns & Refunds</a>
             </div>
           </div>
 
           <div>
-            <h4 className="text-white font-bold uppercase tracking-widest mb-5">
+            <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
               Legal
             </h4>
             <div className="space-y-3 text-gray-400">
-              <a href="/privacy" className="block hover:text-blue-300">
-                Privacy Policy
-              </a>
-              <a href="/terms" className="block hover:text-blue-300">
-                Terms & Conditions
-              </a>
-              <a href="/shipping" className="block hover:text-blue-300">
-                Shipping Info
-              </a>
+              <a href="/privacy" className="block hover:text-blue-300">Privacy Policy</a>
+              <a href="/terms" className="block hover:text-blue-300">Terms of Service</a>
+              <a href="/terms" className="block hover:text-blue-300">Research Use Only</a>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
+              Stay Updated
+            </h4>
+            <p className="text-gray-400 text-sm mb-4">
+              Get updates on new products and research insights.
+            </p>
+            <div className="flex border border-blue-900 rounded-lg overflow-hidden">
+              <input
+                placeholder="Email address"
+                className="bg-transparent px-4 py-3 w-full outline-none text-sm text-white placeholder:text-gray-500"
+              />
+              <button className="bg-blue-600 px-4">→</button>
             </div>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto rounded-2xl border border-yellow-500/40 bg-[#1f2937] p-6 mb-10">
-          <h3 className="text-yellow-300 font-bold uppercase tracking-widest text-sm mb-3">
-            FDA Disclaimer
-          </h3>
-          <p className="text-gray-300 text-sm leading-relaxed">
-            These statements have not been evaluated by the U.S. Food and Drug
-            Administration. This product is not intended to diagnose, treat,
-            cure, or prevent any disease. Products sold by Apexx Biolabs are
-            intended strictly for laboratory research use only and are not for
-            human or veterinary consumption.
-          </p>
-        </div>
-
-        <div className="max-w-7xl mx-auto border-t border-blue-900 pt-8 flex flex-col md:flex-row justify-between gap-4 text-gray-500 text-sm">
+        <div className="max-w-7xl mx-auto border-t border-blue-900 pt-6 flex flex-col md:flex-row justify-between gap-4 text-gray-500 text-sm">
           <p>© 2026 Apexx Biolabs. All rights reserved.</p>
-          <p>SSL Secured · 99%+ Purity · Research Use Only</p>
+          <p>SSL Secured · 99%+ Purity · Worldwide Shipping</p>
         </div>
       </footer>
     </main>

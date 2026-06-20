@@ -54,87 +54,240 @@ export default function FAQPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <main className="min-h-screen bg-black text-white px-6 md:px-10 py-24">
-      <a
-        href="/"
-        className="text-blue-400 uppercase tracking-widest text-sm hover:text-blue-300 transition-all"
-      >
-        ← Back to Home
-      </a>
-
-      <section className="max-w-6xl mx-auto mt-20 text-center">
-        <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6">
-          Support Center
-        </p>
-
-        <h1 className="text-5xl md:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent mb-6">
-          Frequently Asked Questions
-        </h1>
-
-        <div className="h-[1px] w-64 mx-auto bg-gradient-to-r from-transparent via-blue-500 to-transparent mb-10"></div>
-
-        <p className="text-gray-300 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-light">
-          Information regarding product availability, shipping, COAs,
-          laboratory standards, and research-use policies.
-        </p>
-
-        <div className="flex flex-wrap justify-center gap-4 mt-10 mb-16">
-          {["Shipping", "COAs", "Products", "Orders"].map((item) => (
-            <span
-              key={item}
-              className="px-5 py-2 rounded-full border border-blue-700 bg-blue-950/20 text-blue-300 text-sm uppercase tracking-widest"
-            >
-              {item}
-            </span>
-          ))}
-        </div>
-
-        <div className="space-y-5 text-left">
-          {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className="border border-blue-900 rounded-3xl bg-[#050505] overflow-hidden hover:border-blue-400 hover:shadow-[0_0_40px_rgba(37,99,235,0.25)] transition-all duration-300"
-            >
-              <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full flex justify-between items-center text-left p-7 gap-6"
-              >
-                <span className="text-xl md:text-2xl font-bold text-white tracking-tight">
-                  {faq.question}
-                </span>
-
-                <span className="text-3xl text-blue-400 shrink-0">
-                  {openIndex === index ? "−" : "+"}
-                </span>
-              </button>
-
-              {openIndex === index && (
-                <div className="px-7 pb-7 text-gray-400 leading-relaxed text-lg border-t border-blue-950 pt-5">
-                  {faq.answer}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-20 border border-blue-900 rounded-3xl p-10 bg-[#050505] text-center shadow-[0_0_40px_rgba(37,99,235,0.12)]">
-          <h2 className="text-3xl font-bold text-blue-400 mb-4">
-            Still Need Assistance?
-          </h2>
-
-          <p className="text-gray-400 max-w-2xl mx-auto mb-8 leading-relaxed">
-            Contact our support team regarding product availability, COAs, order
-            updates, and research-use inquiries.
-          </p>
+    <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
+      <header className="border-b border-white/10 bg-[#081526]/95 backdrop-blur-xl px-6 py-6">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <a href="/">
+            <img
+              src="/images/logo.png"
+              alt="Apexx Biolabs"
+              className="h-12 w-auto"
+            />
+          </a>
 
           <a
-            href="/contact"
-            className="inline-block px-8 py-4 rounded-xl border border-blue-700 hover:bg-blue-700 hover:shadow-[0_0_25px_rgba(37,99,235,0.35)] transition-all uppercase tracking-widest text-sm"
+            href="/"
+            className="border border-white/10 bg-white/[0.04] text-white rounded-full px-6 py-3 text-xs uppercase tracking-widest hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
           >
-            Contact Support
+            Home
           </a>
         </div>
+      </header>
+
+      <section className="relative px-6 py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+
+        <div className="relative z-10 max-w-6xl mx-auto text-center">
+          <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
+            Support Center
+          </p>
+
+          <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.95] mb-8">
+            Frequently Asked
+            <br />
+            Questions
+          </h1>
+
+          <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+            Information regarding product availability, shipping, COAs,
+            laboratory standards, and research-use policies.
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-4 mt-10 mb-16">
+            {["Shipping", "COAs", "Products", "Orders"].map((item) => (
+              <span
+                key={item}
+                className="px-5 py-3 rounded-full border border-white/10 bg-white/[0.04] text-blue-300 text-sm uppercase tracking-widest"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+
+          <div className="space-y-5 text-left">
+            {faqs.map((faq, index) => (
+              <div
+                key={index}
+                className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm overflow-hidden hover:bg-white/[0.07] hover:border-blue-400/50 transition-all duration-300"
+              >
+                <button
+                  onClick={() =>
+                    setOpenIndex(openIndex === index ? null : index)
+                  }
+                  className="w-full flex justify-between items-center text-left p-7 gap-6"
+                >
+                  <span className="text-xl md:text-2xl font-black text-white tracking-tight">
+                    {faq.question}
+                  </span>
+
+                  <span className="text-3xl text-blue-300 shrink-0">
+                    {openIndex === index ? "−" : "+"}
+                  </span>
+                </button>
+
+                {openIndex === index && (
+                  <div className="px-7 pb-7 text-white/60 leading-relaxed text-lg border-t border-white/10 pt-5">
+                    {faq.answer}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-20 rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-10 text-center">
+            <h2 className="text-3xl font-black text-white mb-4">
+              Still Need Assistance?
+            </h2>
+
+            <p className="text-white/60 max-w-2xl mx-auto mb-8 leading-relaxed">
+              Contact our support team regarding product availability, COAs,
+              order updates, and research-use inquiries.
+            </p>
+
+            <a
+              href="/contact"
+              className="inline-block bg-white text-[#081526] px-8 py-4 rounded-full uppercase tracking-widest text-sm font-semibold hover:bg-blue-100 transition-all"
+            >
+              Contact Support
+            </a>
+          </div>
+        </div>
       </section>
+
+                       <footer className="bg-[#081526] border-t border-blue-900/40 px-6 pt-24 pb-10">
+
+  <div className="max-w-7xl mx-auto">
+
+    {/* TOP */}
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
+
+      {/* BRAND */}
+      <div>
+        <img
+          src="/images/logo.png"
+          alt="Apexx Biolabs"
+          className="h-12 w-auto mb-6"
+        />
+
+        <p className="text-white/70 leading-relaxed text-sm">
+          High-purity research compounds supported by batch documentation,
+          analytical testing, and research-use transparency.
+        </p>
+      </div>
+
+      {/* COMPANY */}
+      <div>
+        <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
+          Company
+        </h4>
+
+        <div className="space-y-4">
+          <a href="/" className="block text-white/70 hover:text-white transition-all">
+            Home
+          </a>
+
+          <a href="/products" className="block text-white/70 hover:text-white transition-all">
+            Products
+          </a>
+
+          <a href="/coas" className="block text-white/70 hover:text-white transition-all">
+            COAs
+          </a>
+
+          <a href="/contact" className="block text-white/70 hover:text-white transition-all">
+            Contact
+          </a>
+        </div>
+      </div>
+
+      {/* RESOURCES */}
+      <div>
+        <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
+          Resources
+        </h4>
+
+        <div className="space-y-4">
+          <a href="/peptide-info" className="block text-white/70 hover:text-white transition-all">
+            Peptide Info
+          </a>
+
+          <a href="/faq" className="block text-white/70 hover:text-white transition-all">
+            FAQ
+          </a>
+
+          <a href="/shipping" className="block text-white/70 hover:text-white transition-all">
+            Shipping
+          </a>
+
+          <a href="/refunds" className="block text-white/70 hover:text-white transition-all">
+            Refunds
+          </a>
+        </div>
+      </div>
+
+      {/* CONTACT */}
+      <div>
+        <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
+          Contact
+        </h4>
+
+        <div className="space-y-4">
+          <a
+            href="mailto:support@apexxbiolabs.com"
+            className="block text-white/70 hover:text-white transition-all"
+          >
+            support@apexxbiolabs.com
+          </a>
+
+          <a
+            href="https://www.tiktok.com/@apexx.nyc"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-white/70 hover:text-white transition-all"
+          >
+            TikTok
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    {/* DISCLAIMER */}
+    <div className="border-t border-white/10 pt-10">
+
+      <p className="text-white/40 text-xs uppercase tracking-[0.18em] leading-relaxed max-w-5xl">
+        FOR LABORATORY RESEARCH USE ONLY. NOT FOR HUMAN CONSUMPTION.
+        NOT FOR MEDICAL, DIAGNOSTIC, THERAPEUTIC, OR VETERINARY USE.
+      </p>
+
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6 mt-10">
+
+        <p className="text-white/40 text-sm">
+          © 2026 Apexx Biolabs. All Rights Reserved.
+        </p>
+
+        <div className="flex gap-8 text-sm text-white/40">
+          <a href="/privacy" className="hover:text-white transition-all">
+            Privacy
+          </a>
+
+          <a href="/terms" className="hover:text-white transition-all">
+            Terms
+          </a>
+
+          <a href="/shipping" className="hover:text-white transition-all">
+            Shipping
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</footer>
+
     </main>
   );
 }

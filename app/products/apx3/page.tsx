@@ -58,9 +58,8 @@ export default function APX3Page() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white">
-      <header className="flex items-center justify-between px-10 py-6 border-b border-blue-900 bg-black">
-        <a
+<main className="min-h-screen bg-[#061426] text-white">      
+<header className="flex items-center justify-between px-10 py-6 border-b border-blue-900 bg-[#04101f]">        <a
           href="/"
           className="text-sm uppercase tracking-widest text-blue-400 hover:text-blue-300"
         >
@@ -72,14 +71,15 @@ export default function APX3Page() {
         </p>
       </header>
 
-<section className="px-6 md:px-10 pt-10 md:pt-16 pb-24">        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-          <div className="border border-blue-900 rounded-2xl p-10 bg-[#050505] shadow-[0_0_50px_rgba(37,99,235,0.15)]">
-            <img
-              src={selectedProduct.image}
-              alt={selectedProduct.name}
-              className="w-full h-[500px] object-contain"
-            />
-          </div>
+<section className="px-6 md:px-10 pt-10 md:pt-16 pb-24">        
+  <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+<div className="relative overflow-hidden rounded-[34px] border border-blue-800/70 shadow-[0_0_60px_rgba(37,99,235,0.25)]">
+  <img
+    src={selectedProduct.image}
+    alt={selectedProduct.name}
+    className="w-full h-[640px] object-cover"
+  />
+</div>
 
           <div>
             <p className="uppercase tracking-[0.3em] text-blue-500 text-sm mb-6">

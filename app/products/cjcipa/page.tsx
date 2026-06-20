@@ -148,8 +148,8 @@ export default function APX3Page() {
               </h1>
 
               <p className="text-gray-300 text-lg leading-relaxed max-w-2xl mb-7">
-                High-purity lyophilized research peptide intended strictly for
-                laboratory research and analytical applications.
+                A high-purity, triple-agonist research peptide studied for its interaction with GIP, GLP-1, and glucagon receptor pathways. Extensively studied in metabolic regulation and body composition research.
+
               </p>
 
               <p className="text-4xl font-black text-blue-400 mb-8">

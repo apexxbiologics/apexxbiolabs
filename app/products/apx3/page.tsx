@@ -195,28 +195,30 @@ export default function APX3Page() {
                 </div>
               </div>
 
-<div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-7">
+<div className="space-y-4 mb-7">
   <button
     onClick={addToCart}
-    className="bg-blue-600 hover:bg-blue-500 rounded-xl py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
+    className="w-full bg-gradient-to-r from-blue-700 to-blue-500 hover:from-blue-600 hover:to-blue-400 rounded-2xl py-5 uppercase tracking-[0.25em] text-sm font-bold transition-all flex items-center justify-center gap-3 shadow-[0_0_35px_rgba(37,99,235,0.35)] hover:-translate-y-1"
   >
     <ShoppingCart size={22} />
     {added ? "Added To Cart" : "Add To Cart"}
   </button>
 
-  <a
-    href="/cart"
-    className="border border-blue-700 hover:bg-blue-700 rounded-xl py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
-  >
-    View Cart
-  </a>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <a
+      href="/cart"
+      className="rounded-2xl border border-blue-600/80 bg-[#081b33]/80 hover:bg-blue-700/30 hover:border-blue-400 py-5 uppercase tracking-[0.25em] text-sm font-bold transition-all text-center shadow-[0_0_25px_rgba(37,99,235,0.15)]"
+    >
+      View Cart
+    </a>
 
-  <a
-    href="/coas"
-    className="border border-blue-700 hover:bg-blue-700 rounded-xl py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center sm:col-span-2"
-  >
-    View COA
-  </a>
+    <a
+      href="/coas"
+      className="rounded-2xl border border-blue-600/80 bg-[#081b33]/80 hover:bg-blue-700/30 hover:border-blue-400 py-5 uppercase tracking-[0.25em] text-sm font-bold transition-all text-center shadow-[0_0_25px_rgba(37,99,235,0.15)]"
+    >
+      View COA
+    </a>
+  </div>
 </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

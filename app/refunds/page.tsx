@@ -78,9 +78,7 @@ export default function RefundPolicyPage() {
             </p>
 
             <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.95] mb-8">
-              Refund
-              <br />
-              Policy
+              Refund Policy
             </h1>
 
             <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">

@@ -250,77 +250,50 @@ if (accepted === null) {
 </header>
 
 {/* HERO */}
-<section className="relative pt-36 md:pt-44 pb-24 px-6 bg-gradient-to-b from-black via-[#020617] to-black overflow-hidden">
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(37,99,235,0.18),transparent_35%)]" />
+<section className="relative bg-black overflow-hidden">
+  <div className="relative h-[720px] md:h-[820px]">
+    <img
+      src="/images/apexx-hero.jpg"
+      alt=""
+      className="absolute inset-0 w-full h-full object-cover object-center"
+    />
 
-  <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-12 items-center">
-    <div>
-      <p className="uppercase tracking-[0.4em] text-blue-400 text-sm mb-6">
-        Research. Quality. Confidence.
-      </p>
+    <div className="absolute inset-0 bg-gradient-to-r from-black via-black/75 to-black/10" />
+    <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black" />
 
-      <h1 className="text-6xl md:text-8xl font-black leading-[0.95] tracking-tight">
-        <span className="text-white">Research</span>
-        <br />
-        <span className="bg-gradient-to-r from-blue-300 via-blue-500 to-blue-700 bg-clip-text text-transparent">
-          Without Limits.
-        </span>
-      </h1>
+    <div className="relative z-10 max-w-7xl mx-auto h-full px-6 flex items-center">
+      <div className="max-w-2xl pt-24">
+        <p className="uppercase tracking-[0.4em] text-blue-400 text-sm mb-6">
+          Research. Quality. Confidence.
+        </p>
 
-      <p className="mt-8 text-gray-300 text-lg md:text-xl leading-relaxed max-w-xl">
-        High-purity research compounds with batch documentation,
-        quality-focused handling, and research-use transparency.
-      </p>
+        <h1 className="text-6xl md:text-8xl font-black leading-[0.95] tracking-tight">
+          <span className="text-white">Research</span>
+          <br />
+          <span className="bg-gradient-to-r from-blue-300 via-blue-500 to-blue-700 bg-clip-text text-transparent">
+            Without Limits.
+          </span>
+        </h1>
 
-      <div className="flex flex-col sm:flex-row gap-5 mt-10">
-        <a
-          href="#shop"
-          className="bg-blue-600 hover:bg-blue-500 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all"
-        >
-          Shop Products →
-        </a>
+        <p className="mt-8 text-gray-300 text-lg md:text-xl leading-relaxed max-w-xl">
+          High-purity research compounds with batch documentation,
+          quality-focused handling, and research-use transparency.
+        </p>
 
-        <a
-          href="/coas"
-          className="border border-blue-700 hover:bg-blue-700 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all"
-        >
-          View COAs
-        </a>
-      </div>
+        <div className="flex flex-col sm:flex-row gap-5 mt-10">
+          <a
+            href="#shop"
+            className="bg-blue-600 hover:bg-blue-500 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all"
+          >
+            Shop Products →
+          </a>
 
-      <div className="grid grid-cols-2 gap-4 mt-12">
-        {["99%+ Purity", "Third-Party Tested", "COA Included", "Fast Shipping"].map(
-          (item) => (
-            <div
-              key={item}
-              className="border border-blue-900/70 bg-[#050505] rounded-2xl p-4"
-            >
-              <p className="text-blue-400 text-xl mb-2">✓</p>
-              <p className="text-gray-300 text-xs uppercase tracking-widest">
-                {item}
-              </p>
-            </div>
-          )
-        )}
-      </div>
-    </div>
-
-    <div className="relative">
-      <div className="relative rounded-[2rem] overflow-hidden border border-blue-900 bg-[#050505]">
-        <img
-          src="/images/apexx-hero.jpg"
-          alt=""
-          className="w-full h-auto block"
-        />
-
-        <div className="absolute top-6 right-6 bg-black/85 backdrop-blur-xl border border-blue-800 rounded-2xl px-5 py-4">
-          <p className="text-white font-bold">99%+ Purity</p>
-          <p className="text-gray-400 text-sm">Third-Party Verified</p>
-        </div>
-
-        <div className="absolute bottom-6 left-6 bg-black/85 backdrop-blur-xl border border-blue-800 rounded-2xl px-5 py-4">
-          <p className="text-white font-bold">Batch Documented</p>
-          <p className="text-gray-400 text-sm">COA Included</p>
+          <a
+            href="/coas"
+            className="border border-blue-700 hover:bg-blue-700 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all"
+          >
+            View COAs
+          </a>
         </div>
       </div>
     </div>

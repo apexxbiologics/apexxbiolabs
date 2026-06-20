@@ -453,10 +453,8 @@ className="absolute right-0 top-0 h-full w-full lg:w-[70%] bg-cover opacity-95"s
 <a
   key={product.name}
   href={product.href}
-  className="block min-w-[290px] md:min-w-[340px] bg-[#050505] border border-blue-900/60 rounded-3xl overflow-hidden hover:border-blue-400 hover:-translate-y-2 transition-all duration-300"
->
-            <div className="bg-black h-[360px] flex items-center justify-center border-b border-blue-950">
-              <img
+className="block min-w-[290px] md:min-w-[340px] bg-[#020817] border border-blue-800/60 rounded-3xl overflow-hidden hover:border-blue-400 transition-all duration-300">
+<div className="bg-[#7FA9E8] h-[360px] flex items-center justify-center border-b border-blue-950">              <img
                 src={product.image}
 alt=""
                 className="h-72 object-contain hover:scale-105 transition-all duration-300"
@@ -471,19 +469,19 @@ alt=""
               <p className="text-gray-400 mb-8">{product.desc}</p>
 
               <div className="flex gap-3">
-                <a
-                  href="/coas"
-                  className="flex-1 border border-blue-700/70 text-blue-300 rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:bg-blue-700 hover:text-white transition-all"
-                >
-                  COA
-                </a>
+<a
+  href="/coas"
+  className="flex-1 bg-white text-black rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:bg-gray-200 transition-all"
+>
+  COA
+</a>
 
                 <a
-                  href={product.href}
-                  className="flex-1 bg-blue-600 text-white rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:bg-blue-500 transition-all"
-                >
-                  View
-                </a>
+  href={product.href}
+  className="flex-1 bg-white text-black rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:bg-gray-200 transition-all"
+>
+  View
+</a>
               </div>
             </div>
           </a>

@@ -588,38 +588,40 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
   </div>
 </section>
 
-  {/* QUALITY VERIFICATION */}
-<section className="py-32 px-6 bg-gradient-to-b from-black via-[#030712] to-black border-b border-blue-950">
-  <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+{/* QUALITY VERIFICATION */}
+<section className="relative py-24 px-6 bg-[#081526] border-b border-white/10 overflow-hidden">
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+
+  <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
     <div>
-      <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6">
+      <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
         Quality Verification
       </p>
 
-      <h2 className="text-5xl md:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent mb-6">
+      <h2 className="text-5xl md:text-7xl font-black tracking-tight text-white leading-[0.95] mb-8">
         Quality You Can Verify.
       </h2>
 
-      <p className="text-gray-400 text-lg leading-relaxed mb-10 max-w-2xl">
+      <p className="text-white/70 text-lg md:text-xl leading-relaxed mb-10 max-w-2xl">
         Every batch is supported by documentation and analytical review for
         research-focused consistency, purity, and transparency.
       </p>
 
-      <div className="grid grid-cols-3 gap-6 mb-10 border-y border-blue-950 py-8">
+      <div className="grid grid-cols-3 gap-6 mb-10 border-y border-white/10 py-8">
         <div>
-          <p className="text-3xl font-black text-white">99%+</p>
-          <p className="text-gray-500 text-sm mt-1">Purity Target</p>
+          <p className="text-4xl font-black text-white">99%+</p>
+          <p className="text-white/50 text-sm mt-2">Purity Target</p>
         </div>
 
         <div>
-          <p className="text-3xl font-black text-white">HPLC</p>
-          <p className="text-gray-500 text-sm mt-1">Analysis</p>
+          <p className="text-4xl font-black text-white">HPLC</p>
+          <p className="text-white/50 text-sm mt-2">Analysis</p>
         </div>
 
         <div>
-          <p className="text-3xl font-black text-white">COA</p>
-          <p className="text-gray-500 text-sm mt-1">Batch Records</p>
+          <p className="text-4xl font-black text-white">COA</p>
+          <p className="text-white/50 text-sm mt-2">Batch Records</p>
         </div>
       </div>
 
@@ -636,8 +638,8 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
             onClick={() => setActiveQuality(item.id)}
             className={`rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-widest transition-all ${
               activeQuality === item.id
-                ? "bg-blue-600 text-white shadow-[0_0_25px_rgba(37,99,235,0.45)]"
-                : "bg-[#050505] border border-blue-900 text-gray-400 hover:border-blue-500 hover:text-blue-300"
+                ? "bg-blue-500 text-white shadow-[0_0_25px_rgba(96,165,250,0.35)]"
+                : "bg-white/[0.04] border border-white/10 text-white/60 hover:border-blue-400/50 hover:text-white"
             }`}
           >
             {item.label}
@@ -645,17 +647,19 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
         ))}
       </div>
 
-      <div className="border border-blue-900/70 bg-[#050505] rounded-3xl p-8">
+      <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
         {activeQuality === "potency" && (
           <div>
             <h3 className="text-2xl font-black mb-4 text-white">
               Verified Potency
             </h3>
-            <p className="text-gray-400 leading-relaxed mb-6">
+
+            <p className="text-white/70 leading-relaxed mb-6">
               Analytical testing helps confirm that each batch aligns with the
               stated research concentration and identity specifications.
             </p>
-            <div className="border-l-4 border-blue-500 bg-black rounded-xl p-5 text-gray-300">
+
+            <div className="border-l-4 border-blue-400 bg-[#102A4A] rounded-xl p-5 text-white/70">
               <strong className="text-white">Why it matters:</strong> Supports
               consistent research preparation and batch-to-batch confidence.
             </div>
@@ -667,11 +671,13 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
             <h3 className="text-2xl font-black mb-4 text-white">
               Purity Documentation
             </h3>
-            <p className="text-gray-400 leading-relaxed mb-6">
+
+            <p className="text-white/70 leading-relaxed mb-6">
               COAs provide batch-level information so researchers can review
               purity data before use in laboratory settings.
             </p>
-            <div className="border-l-4 border-blue-500 bg-black rounded-xl p-5 text-gray-300">
+
+            <div className="border-l-4 border-blue-400 bg-[#102A4A] rounded-xl p-5 text-white/70">
               <strong className="text-white">Why it matters:</strong> Clear
               documentation helps support transparency and trust.
             </div>
@@ -683,11 +689,13 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
             <h3 className="text-2xl font-black mb-4 text-white">
               Stability-Focused Handling
             </h3>
-            <p className="text-gray-400 leading-relaxed mb-6">
+
+            <p className="text-white/70 leading-relaxed mb-6">
               Products are packaged with research storage and handling standards
               in mind to help preserve batch integrity.
             </p>
-            <div className="border-l-4 border-blue-500 bg-black rounded-xl p-5 text-gray-300">
+
+            <div className="border-l-4 border-blue-400 bg-[#102A4A] rounded-xl p-5 text-white/70">
               <strong className="text-white">Why it matters:</strong> Proper
               handling supports reliable research workflows.
             </div>
@@ -699,11 +707,13 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
             <h3 className="text-2xl font-black mb-4 text-white">
               Research-Use Standards
             </h3>
-            <p className="text-gray-400 leading-relaxed mb-6">
+
+            <p className="text-white/70 leading-relaxed mb-6">
               Apexx Biolabs products are intended strictly for lawful laboratory
               research use only and are not for human or veterinary use.
             </p>
-            <div className="border-l-4 border-blue-500 bg-black rounded-xl p-5 text-gray-300">
+
+            <div className="border-l-4 border-blue-400 bg-[#102A4A] rounded-xl p-5 text-white/70">
               <strong className="text-white">Why it matters:</strong> Clear
               use limitations keep the catalog research-focused.
             </div>
@@ -715,11 +725,13 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
             <h3 className="text-2xl font-black mb-4 text-white">
               Batch Consistency
             </h3>
-            <p className="text-gray-400 leading-relaxed mb-6">
+
+            <p className="text-white/70 leading-relaxed mb-6">
               Batch records and testing documentation help support consistency
               across research materials.
             </p>
-            <div className="border-l-4 border-blue-500 bg-black rounded-xl p-5 text-gray-300">
+
+            <div className="border-l-4 border-blue-400 bg-[#102A4A] rounded-xl p-5 text-white/70">
               <strong className="text-white">Why it matters:</strong> Consistent
               records help researchers compare and track batches.
             </div>
@@ -729,33 +741,42 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
     </div>
 
     <div className="relative">
-      <div className="relative rounded-[2rem] border border-blue-900 bg-[#050505] p-10 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-950/30 via-transparent to-black"></div>
+      <div className="relative rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-10 overflow-hidden">
 
-        <div className="relative z-10 flex justify-end mb-6">
-          <div className="bg-black border border-blue-800 rounded-2xl px-5 py-4">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.15),transparent_70%)]"></div>
+
+        <div className="relative z-10 flex justify-end mb-8">
+          <div className="bg-[#102A4A] border border-blue-400/30 rounded-2xl px-5 py-4">
             <p className="text-white font-black">99%+ Purity</p>
-            <p className="text-gray-500 text-sm">Verified by HPLC</p>
+            <p className="text-white/50 text-sm">Verified by HPLC</p>
           </div>
         </div>
 
         <img
           src="/images/tb500.PNG"
           alt=""
-          className="relative z-10 mx-auto h-[420px] object-contain"
+          className="relative z-10 mx-auto h-[420px] object-contain drop-shadow-[0_0_40px_rgba(96,165,250,0.25)]"
         />
 
         <a
           href="/coas"
-          className="relative z-10 mt-8 flex items-center justify-between bg-black border border-blue-900 rounded-2xl px-6 py-5 hover:border-blue-400 transition-all"
+          className="relative z-10 mt-10 flex items-center justify-between bg-[#102A4A] border border-white/10 rounded-2xl px-6 py-5 hover:border-blue-400/50 transition-all"
         >
           <div>
-            <p className="text-white font-bold">See the Proof</p>
-            <p className="text-gray-500 text-sm">View batch documentation</p>
+            <p className="text-white font-bold">
+              See the Proof
+            </p>
+
+            <p className="text-white/50 text-sm">
+              View batch documentation
+            </p>
           </div>
 
-          <span className="text-blue-400 text-2xl">›</span>
+          <span className="text-blue-300 text-2xl">
+            ›
+          </span>
         </a>
+
       </div>
     </div>
 

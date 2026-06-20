@@ -93,6 +93,38 @@ const handleSearch = (e: React.FormEvent) => {
     setAdded(true);
   };
 
+  const products = [
+  { name: "APX-3", keywords: ["apx", "apx3", "apx-3"], path: "/products/apx-3" },
+  { name: "Adamax", keywords: ["adamax"], path: "/products/adamax" },
+  { name: "ARA-290", keywords: ["ara", "ara290", "ara-290"], path: "/products/ara-290" },
+  { name: "Bacteriostatic Water", keywords: ["bac water", "water", "bacteriostatic"], path: "/products/bacteriostatic-water" },
+  { name: "BPC-157", keywords: ["bpc", "bpc157", "bpc-157"], path: "/products/bpc-157" },
+  { name: "CJC/IPA", keywords: ["cjc", "ipa", "cjc ipa", "cjc/ipa"], path: "/products/cjc-ipa" },
+  { name: "GHK-Cu", keywords: ["ghk", "ghkcu", "ghk-cu"], path: "/products/ghk-cu" },
+  { name: "KPV", keywords: ["kpv"], path: "/products/kpv" },
+  { name: "MOTS-C", keywords: ["mots", "motsc", "mots-c"], path: "/products/mots-c" },
+  { name: "PE-22-28", keywords: ["pe", "pe2228", "pe-22-28"], path: "/products/pe-22-28" },
+  { name: "Pinealon", keywords: ["pinealon"], path: "/products/pinealon" },
+  { name: "Selank", keywords: ["selank"], path: "/products/selank" },
+  { name: "Semax", keywords: ["semax"], path: "/products/semax" },
+  { name: "TB-500", keywords: ["tb", "tb500", "tb-500"], path: "/products/tb-500" },
+];
+
+const handleSearch = (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const query = searchTerm.toLowerCase().trim();
+
+  const match = products.find((product) =>
+    product.name.toLowerCase().includes(query) ||
+    product.keywords.some((keyword) => keyword.includes(query))
+  );
+
+  if (match) {
+    window.location.href = match.path;
+  }
+};
+
   return (
     <main className="min-h-screen bg-[#010C1E] text-white">
       <header className="sticky top-0 z-50 border-b border-blue-900/60 bg-[#04101f]/95 backdrop-blur-xl">

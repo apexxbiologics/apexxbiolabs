@@ -762,59 +762,78 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
   </div>
 </section>
 
-        <section className="py-16 px-6 border-t border-blue-950 border-b border-blue-950 bg-black">
+<section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_55%)]"></div>
 
-  <div className="max-w-6xl mx-auto text-center">
+  <div className="relative z-10 max-w-7xl mx-auto">
 
-    <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6">
-      About Apexx
-    </p>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center mb-16">
 
-    <h2 className="text-5xl md:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent mb-8">
-      Scientific Precision.
-      <br />
-      Trusted Quality.
-    </h2>
+      <div>
+        <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
+          About Apexx
+        </p>
 
-    <div className="h-[1px] w-64 mx-auto bg-gradient-to-r from-transparent via-blue-500 to-transparent mb-10"></div>
+        <h2 className="text-5xl md:text-7xl font-black tracking-tight text-white leading-[0.95] mb-8">
+          Scientific Precision.
+          <br />
+          Trusted Quality.
+        </h2>
+      </div>
 
-    <p className="text-gray-300 text-xl max-w-4xl mx-auto leading-relaxed mb-16">
-      Apexx Biolabs specializes in high-purity research compounds
-      manufactured under strict analytical standards. Every batch undergoes
-      rigorous verification to support purity, consistency, and reliability
-      for laboratory research applications.
-    </p>
+      <p className="text-white/70 text-lg md:text-xl leading-relaxed max-w-2xl">
+        Apexx Biolabs specializes in high-purity research compounds
+        manufactured under strict analytical standards. Every batch undergoes
+        rigorous verification to support purity, consistency, and reliability
+        for laboratory research applications.
+      </p>
+
+    </div>
 
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div className="border border-blue-900 rounded-2xl p-8 bg-[#050505]">
-        <div className="text-blue-400 text-3xl mb-4">✓</div>
-        <h3 className="text-xl font-bold mb-3">
+
+      <div className="group rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 hover:bg-white/[0.07] hover:border-blue-400/50 transition-all">
+        <div className="w-12 h-12 rounded-full bg-blue-400/10 border border-blue-300/30 flex items-center justify-center text-blue-300 text-2xl mb-8">
+          ✓
+        </div>
+
+        <h3 className="text-2xl font-bold text-white mb-4">
           Third-Party Testing
         </h3>
-        <p className="text-gray-400">
+
+        <p className="text-white/60 leading-relaxed">
           Independent analytical verification supporting transparency and consistency.
         </p>
       </div>
 
-      <div className="border border-blue-900 rounded-2xl p-8 bg-[#050505]">
-        <div className="text-blue-400 text-3xl mb-4">⚗</div>
-        <h3 className="text-xl font-bold mb-3">
+      <div className="group rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 hover:bg-white/[0.07] hover:border-blue-400/50 transition-all">
+        <div className="w-12 h-12 rounded-full bg-blue-400/10 border border-blue-300/30 flex items-center justify-center text-blue-300 text-2xl mb-8">
+          ⚗
+        </div>
+
+        <h3 className="text-2xl font-bold text-white mb-4">
           Research Standards
         </h3>
-        <p className="text-gray-400">
+
+        <p className="text-white/60 leading-relaxed">
           Manufactured and handled according to strict laboratory quality practices.
         </p>
       </div>
 
-      <div className="border border-blue-900 rounded-2xl p-8 bg-[#050505]">
-        <div className="text-blue-400 text-3xl mb-4">🔬</div>
-        <h3 className="text-xl font-bold mb-3">
+      <div className="group rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 hover:bg-white/[0.07] hover:border-blue-400/50 transition-all">
+        <div className="w-12 h-12 rounded-full bg-blue-400/10 border border-blue-300/30 flex items-center justify-center text-blue-300 text-2xl mb-8">
+          🔬
+        </div>
+
+        <h3 className="text-2xl font-bold text-white mb-4">
           Batch Transparency
         </h3>
-        <p className="text-gray-400">
+
+        <p className="text-white/60 leading-relaxed">
           COAs and supporting documentation available for verified batches.
         </p>
       </div>
+
     </div>
 
   </div>

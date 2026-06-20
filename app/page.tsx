@@ -507,9 +507,7 @@ alt=""
 </section>
 
   {/* QUALITY VERIFICATION */}
-<section className="py-32 px-6 bg-gradient-to-b from-black via-[#030712] to-black border-b border-blue-950">
-  <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
-
+<section className="pt-4 pb-32 px-6 bg-gradient-to-b from-black via-[#030712] to-black border-b border-blue-950">
     <div>
       <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6">
         Quality Verification

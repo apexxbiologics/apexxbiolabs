@@ -251,103 +251,41 @@ export default function APX3Page() {
         </div>
       </section>
 
-      {/* COMPOUND INFORMATION */}
+      {/* RESEARCH PROFILE */}
 <section className="px-6 md:px-10 pb-16">
-  <div className="max-w-7xl mx-auto">
-    <div className="flex items-center gap-5 mb-10">
-      <div className="w-12 h-12 rounded-2xl bg-blue-600/15 border border-blue-900/70 flex items-center justify-center">
-        <FlaskConical className="text-blue-400" size={24} />
-      </div>
+  <div className="max-w-7xl mx-auto rounded-[32px] border border-blue-900/70 bg-gradient-to-br from-[#081b33] to-[#04101f] p-8 md:p-10">
+    <p className="uppercase tracking-[0.35em] text-blue-400 text-sm mb-3">
+      Research Profile
+    </p>
 
-      <div>
-        <h2 className="text-3xl md:text-4xl font-black text-white">
-          Compound Information
-        </h2>
-        <p className="text-gray-400 mt-2">
-          Technical specifications and storage guidance
-        </p>
-      </div>
-    </div>
+    <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
+      Triple-Agonist Pathway Overview
+    </h2>
 
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {/* Molecular Profile */}
-      <div className="rounded-3xl border border-blue-900/70 bg-[#081b33]/70 p-7">
-        <p className="uppercase tracking-[0.25em] text-blue-400 text-xs font-bold mb-4">
-          Molecular Profile
-        </p>
+    <p className="text-gray-300 text-lg leading-relaxed max-w-4xl mb-8">
+      APX-3 is studied in laboratory research for its interaction with GIP,
+      GLP-1, and glucagon receptor pathways, which are commonly evaluated in
+      metabolic signaling, energy regulation, and body composition research.
+    </p>
 
-        <h3 className="text-2xl font-black text-white mb-6">
-          What is APX-3?
-        </h3>
-
-        <div className="rounded-2xl border border-blue-900/70 bg-[#061426] p-5 space-y-4">
-          {[
-            ["Type", "Research peptide"],
-            ["Form", "Lyophilized powder"],
-            ["Strength", selectedMg],
-            ["Purity", "99%+"],
-            ["Use", "Laboratory research only"],
-          ].map(([label, value]) => (
-            <div
-              key={label}
-              className="flex items-center justify-between border-b border-blue-900/50 last:border-b-0 pb-3 last:pb-0"
-            >
-              <span className="text-gray-400 text-sm">{label}</span>
-              <span className="text-white font-bold text-sm">{value}</span>
-            </div>
-          ))}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      {[
+        ["GIP Pathway", "Studied for incretin signaling and nutrient-response research."],
+        ["GLP-1 Pathway", "Evaluated in metabolic regulation and glucose-response models."],
+        ["Glucagon Pathway", "Researched for energy expenditure and metabolic balance."]
+      ].map(([title, text]) => (
+        <div
+          key={title}
+          className="rounded-2xl border border-blue-900/70 bg-[#061426]/80 p-6 hover:border-blue-500 transition-all"
+        >
+          <h3 className="text-blue-300 text-lg font-bold mb-3">
+            {title}
+          </h3>
+          <p className="text-gray-400 text-sm leading-relaxed">
+            {text}
+          </p>
         </div>
-      </div>
-
-      {/* Storage Requirements */}
-      <div className="rounded-3xl border border-blue-900/70 bg-[#081b33]/70 p-7">
-        <p className="uppercase tracking-[0.25em] text-blue-400 text-xs font-bold mb-4">
-          Storage Requirements
-        </p>
-
-        <h3 className="text-2xl font-black text-white mb-6">
-          Stability Information
-        </h3>
-
-        <div className="flex flex-wrap gap-3 mb-6">
-          {["Protect from light", "Avoid freeze/thaw cycles", "Keep refrigerated"].map(
-            (item) => (
-              <span
-                key={item}
-                className="rounded-full bg-blue-600/15 border border-blue-900/60 px-4 py-2 text-sm text-blue-200"
-              >
-                {item}
-              </span>
-            )
-          )}
-        </div>
-
-        <div className="space-y-4">
-          <div className="rounded-2xl border border-blue-900/70 bg-[#061426] p-5 flex items-center gap-5">
-            <div className="w-14 h-14 rounded-2xl bg-blue-600/20 flex items-center justify-center text-2xl">
-              ❄️
-            </div>
-
-            <div>
-              <p className="text-gray-400 text-sm">Lyophilized Powder</p>
-              <p className="text-white font-black text-lg">-20°C</p>
-              <p className="text-gray-500 text-sm">Long-term storage</p>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-blue-900/70 bg-[#061426] p-5 flex items-center gap-5">
-            <div className="w-14 h-14 rounded-2xl bg-blue-600/20 flex items-center justify-center text-2xl">
-              🧪
-            </div>
-
-            <div>
-              <p className="text-gray-400 text-sm">Refrigerated</p>
-              <p className="text-white font-black text-lg">2–8°C</p>
-              <p className="text-gray-500 text-sm">Short-term storage</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      ))}
     </div>
   </div>
 </section>

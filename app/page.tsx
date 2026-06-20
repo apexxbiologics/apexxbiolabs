@@ -85,8 +85,7 @@ export default function Home() {
   return (
     <>
 {!accepted && (
-  <div className="fixed inset-0 z-[999] overflow-y-auto">
-
+  <div className="fixed inset-0 z-[999] h-[100dvh] w-full overflow-hidden">
     {/* VIDEO BACKGROUND */}
     <video
       autoPlay
@@ -95,26 +94,22 @@ export default function Home() {
       playsInline
       className="absolute inset-0 w-full h-full object-cover"
     >
-      <source
-        src="/videos/disclaimer-bg.mp4"
-        type="video/mp4"
-      />
+      <source src="/videos/disclaimer-bg.mp4" type="video/mp4" />
     </video>
 
     {/* LIGHT OVERLAY */}
-    <div className="absolute inset-0 bg-[#EAF4FF]/20" />
+    <div className="absolute inset-0 bg-[#EAF4FF]/25" />
 
-    {/* DISCLAIMER CONTENT */}
-    <div className="relative z-10 flex justify-center px-4 py-8 min-h-screen">
-
-      <div className="w-full max-w-2xl my-auto rounded-[32px] bg-[#DDEEFF]/90 border border-blue-200 p-6 md:p-10 shadow-[0_20px_80px_rgba(59,130,246,0.20)]">
-
+    {/* CENTERED MODAL */}
+    <div className="relative z-10 h-[100dvh] w-full overflow-y-auto px-4 py-6 flex items-center justify-center">
+      <div className="w-full max-w-2xl max-h-[92dvh] overflow-y-auto rounded-[32px] bg-[#DDEEFF]/90 border border-blue-200 p-6 md:p-10 shadow-[0_20px_80px_rgba(59,130,246,0.20)]">
+        
         {/* LOGO */}
         <div className="text-center mb-8">
           <img
             src="/images/logo.png"
             alt="Apexx Biolabs"
-            className="h-24 md:h-28 w-auto mx-auto mb-8"
+            className="h-20 md:h-24 w-auto mx-auto mb-6"
           />
 
           <p className="uppercase tracking-[0.4em] text-blue-500 text-xs mb-5">
@@ -131,9 +126,7 @@ export default function Home() {
           </p>
         </div>
 
-        {/* DISCLAIMER BOX */}
-        <div className="border border-blue-200 bg-[#F2F8FF] rounded-2xl p-5 mb-8">
-
+        <div className="border border-blue-200 bg-[#F2F8FF] rounded-2xl p-5 mb-6">
           <p className="text-slate-700 text-sm leading-relaxed mb-5">
             Products sold on this website are intended strictly for lawful
             laboratory research use only and are not for human consumption,
@@ -142,7 +135,6 @@ export default function Home() {
           </p>
 
           <label className="flex items-start gap-3 cursor-pointer border border-blue-200 rounded-xl p-4 bg-white">
-
             <input
               type="checkbox"
               checked={disclaimerChecked}
@@ -155,12 +147,9 @@ export default function Home() {
               that all products sold by Apexx Biolabs are intended strictly
               for lawful laboratory research use only.
             </span>
-
           </label>
-
         </div>
 
-        {/* BUTTON */}
         <button
           type="button"
           onClick={() => setAccepted(true)}
@@ -173,11 +162,8 @@ export default function Home() {
         >
           Enter Site
         </button>
-
       </div>
-
     </div>
-
   </div>
 )}
 

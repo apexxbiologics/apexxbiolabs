@@ -57,7 +57,7 @@ export default function AdamaxPage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-start">
           <div className="border border-blue-900 rounded-2xl p-10 bg-[#050505]">
             <img
-              src="/images/adamax.PNG"
+              src="/images/adamaxblue.PNG"
               alt="ADAMAX"
               className="w-full h-[500px] object-contain"
             />

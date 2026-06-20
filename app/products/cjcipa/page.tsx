@@ -132,7 +132,7 @@ export default function APX3Page() {
     <img
       src={selectedProduct.image}
       alt={selectedProduct.name}
-      className="w-[25%] h-auto object-contain"
+      className="w-[38%] h-auto object-contain"
     />
   </div>
 </div>

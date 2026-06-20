@@ -126,14 +126,13 @@ export default function APX3Page() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-start">
-            {/* IMAGE */}
 {/* IMAGE */}
 <div className="rounded-[28px] overflow-hidden border border-blue-700/70 bg-[#0a2b5c] shadow-[0_25px_80px_rgba(0,0,0,0.35)]">
   <div className="h-[520px] flex items-center justify-center">
     <img
       src={selectedProduct.image}
       alt={selectedProduct.name}
-      className="w-[55%] h-auto object-contain"
+      className="w-[38%] h-auto object-contain"
     />
   </div>
 </div>

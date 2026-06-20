@@ -249,53 +249,51 @@ if (accepted === null) {
   </div>
 </header>
 
-{/* HERO */}
-<section className="relative bg-black overflow-hidden">
-  <div className="relative h-[720px] md:h-[820px]">
+{/* HERO IMAGE */}
+<section className="pt-24 bg-black">
+  <div className="max-w-7xl mx-auto px-6">
     <img
       src="/images/apexx-hero.jpg"
-      alt=""
-      className="absolute inset-0 w-full h-full object-cover object-center"
+      alt="Apexx Biolabs"
+      className="w-full rounded-[2rem] border border-blue-900"
     />
+  </div>
+</section>
 
-    <div className="absolute inset-0 bg-gradient-to-r from-black via-black/75 to-black/10" />
-    <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black" />
+{/* HERO TEXT */}
+<section className="bg-black px-6 pt-16 pb-24">
+  <div className="max-w-5xl mx-auto text-center">
+    <p className="uppercase tracking-[0.4em] text-blue-400 text-sm mb-6">
+      Research. Quality. Confidence.
+    </p>
 
-    <div className="relative z-10 max-w-7xl mx-auto h-full px-6 flex items-center">
-      <div className="max-w-2xl pt-24">
-        <p className="uppercase tracking-[0.4em] text-blue-400 text-sm mb-6">
-          Research. Quality. Confidence.
-        </p>
+    <h1 className="text-6xl md:text-8xl font-black leading-[0.95] tracking-tight mb-8">
+      <span className="text-white">Research</span>
+      <br />
+      <span className="bg-gradient-to-r from-blue-300 via-blue-500 to-blue-700 bg-clip-text text-transparent">
+        Without Limits.
+      </span>
+    </h1>
 
-        <h1 className="text-6xl md:text-8xl font-black leading-[0.95] tracking-tight">
-          <span className="text-white">Research</span>
-          <br />
-          <span className="bg-gradient-to-r from-blue-300 via-blue-500 to-blue-700 bg-clip-text text-transparent">
-            Without Limits.
-          </span>
-        </h1>
+    <p className="text-gray-300 text-xl max-w-3xl mx-auto leading-relaxed mb-10">
+      High-purity research compounds with batch documentation,
+      quality-focused handling, and research-use transparency.
+    </p>
 
-        <p className="mt-8 text-gray-300 text-lg md:text-xl leading-relaxed max-w-xl">
-          High-purity research compounds with batch documentation,
-          quality-focused handling, and research-use transparency.
-        </p>
+    <div className="flex flex-col sm:flex-row justify-center gap-5">
+      <a
+        href="#shop"
+        className="bg-blue-600 hover:bg-blue-500 px-10 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold transition-all"
+      >
+        Shop Products →
+      </a>
 
-        <div className="flex flex-col sm:flex-row gap-5 mt-10">
-          <a
-            href="#shop"
-            className="bg-blue-600 hover:bg-blue-500 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all"
-          >
-            Shop Products →
-          </a>
-
-          <a
-            href="/coas"
-            className="border border-blue-700 hover:bg-blue-700 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all"
-          >
-            View COAs
-          </a>
-        </div>
-      </div>
+      <a
+        href="/coas"
+        className="border border-blue-700 hover:bg-blue-700 px-10 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold transition-all"
+      >
+        View COAs
+      </a>
     </div>
   </div>
 </section>

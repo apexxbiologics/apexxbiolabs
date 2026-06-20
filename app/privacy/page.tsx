@@ -90,9 +90,7 @@ export default function PrivacyPage() {
             </p>
 
             <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.95] mb-8">
-              Privacy
-              <br />
-              Policy
+              Privacy Policy
             </h1>
 
             <div className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-white/10 bg-white/[0.04] text-blue-300 text-sm mb-10">

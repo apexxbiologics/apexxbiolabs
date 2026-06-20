@@ -219,16 +219,26 @@ if (accepted === null) {
     </div>
 
     <nav className="flex items-center gap-3 text-xs uppercase tracking-widest">
-      <a href="/" className="border border-blue-700 text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-700 hover:text-white transition-all">
+      <a
+        href="/"
+        className="border border-blue-700 text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-700 hover:text-white transition-all"
+      >
         Home
       </a>
 
-      <a href="/products" className="border border-blue-700 text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-700 hover:text-white transition-all">
+      <a
+        href="/products"
+        className="border border-blue-700 text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-700 hover:text-white transition-all"
+      >
         Products
       </a>
 
-      <a href="/cart" className="relative flex items-center justify-center w-12 h-12 border border-blue-700 rounded-xl hover:bg-blue-700 transition-all">
+      <a
+        href="/cart"
+        className="relative flex items-center justify-center w-12 h-12 border border-blue-700 rounded-xl hover:bg-blue-700 transition-all"
+      >
         <ShoppingCart size={22} className="text-blue-400" />
+
         {cartCount > 0 && (
           <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
             {cartCount}
@@ -240,28 +250,20 @@ if (accepted === null) {
 </header>
 
 {/* HERO */}
-<section className="relative min-h-screen pt-36 md:pt-44 pb-24 px-6 overflow-hidden bg-black">
-  <div
-    className="absolute right-0 top-0 bottom-0 w-full lg:w-[58%] bg-cover bg-center opacity-85"
-    style={{
-      backgroundImage: "url('/images/hero-bg.jpg')",
-    }}
-  />
+<section className="relative pt-36 md:pt-44 pb-24 px-6 bg-gradient-to-b from-black via-[#020617] to-black overflow-hidden">
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(37,99,235,0.18),transparent_35%)]" />
 
-  <div className="absolute inset-0 bg-gradient-to-r from-black via-black/95 to-black/30" />
-  <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black" />
-
-  <div className="relative z-10 max-w-7xl mx-auto min-h-[680px] flex items-center">
-    <div className="max-w-2xl">
+  <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-12 items-center">
+    <div>
       <p className="uppercase tracking-[0.4em] text-blue-400 text-sm mb-6">
         Research. Quality. Confidence.
       </p>
 
       <h1 className="text-6xl md:text-8xl font-black leading-[0.95] tracking-tight">
-        <span className="text-white">Precision</span>
+        <span className="text-white">Research</span>
         <br />
         <span className="bg-gradient-to-r from-blue-300 via-blue-500 to-blue-700 bg-clip-text text-transparent">
-          Research Peptides.
+          Without Limits.
         </span>
       </h1>
 
@@ -284,6 +286,42 @@ if (accepted === null) {
         >
           View COAs
         </a>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 mt-12">
+        {["99%+ Purity", "Third-Party Tested", "COA Included", "Fast Shipping"].map(
+          (item) => (
+            <div
+              key={item}
+              className="border border-blue-900/70 bg-[#050505] rounded-2xl p-4"
+            >
+              <p className="text-blue-400 text-xl mb-2">✓</p>
+              <p className="text-gray-300 text-xs uppercase tracking-widest">
+                {item}
+              </p>
+            </div>
+          )
+        )}
+      </div>
+    </div>
+
+    <div className="relative">
+      <div className="relative rounded-[2rem] overflow-hidden border border-blue-900 bg-[#050505]">
+        <img
+          src="/images/apexx-hero.jpg"
+          alt=""
+          className="w-full h-auto block"
+        />
+
+        <div className="absolute top-6 right-6 bg-black/85 backdrop-blur-xl border border-blue-800 rounded-2xl px-5 py-4">
+          <p className="text-white font-bold">99%+ Purity</p>
+          <p className="text-gray-400 text-sm">Third-Party Verified</p>
+        </div>
+
+        <div className="absolute bottom-6 left-6 bg-black/85 backdrop-blur-xl border border-blue-800 rounded-2xl px-5 py-4">
+          <p className="text-white font-bold">Batch Documented</p>
+          <p className="text-gray-400 text-sm">COA Included</p>
+        </div>
       </div>
     </div>
   </div>

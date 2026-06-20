@@ -121,66 +121,68 @@ if (accepted === null) {
 
   return (
     <>
-      {!accepted && (
-<div className="fixed inset-0 z-[999] bg-black flex items-start md:items-center justify-center px-4 py-6 overflow-y-auto">          
-<div className="w-full max-w-2xl border border-blue-900 bg-[#050505] p-4 md:p-10 rounded-2xl shadow-[0_0_50px_rgba(37,99,235,0.2)]">            
-  <h1 className="text-2xl md:text-4xl font-bold text-center mb-6">
-              Disclaimer
-            </h1>
+{!accepted && (
+  <div className="fixed inset-0 z-[999] bg-black flex items-start md:items-center justify-center px-4 py-6 overflow-y-auto">
+    <div className="w-full max-w-2xl border border-blue-900 bg-[#050505] p-6 md:p-10 rounded-3xl shadow-[0_0_50px_rgba(37,99,235,0.18)]">
+      
+      <div className="text-center mb-8">
+        <img
+          src="/images/logo.png"
+          alt="Apexx Biolabs"
+          className="h-16 w-auto mx-auto mb-6"
+        />
 
-<div className="space-y-4 text-gray-300 leading-relaxed text-xs md:text-sm">              <p>
-                Apexx Biolabs products are intended strictly for laboratory
-                research purposes only.
-              </p>
+        <p className="uppercase tracking-[0.4em] text-blue-500 text-xs mb-4">
+          Research Use Verification
+        </p>
 
-              <p>
-                Products sold on this website are NOT intended for human
-                consumption, medical use, veterinary use, diagnosis, treatment,
-                cure, or prevention of disease.
-              </p>
+        <h1 className="text-3xl md:text-5xl font-black bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent">
+          Welcome to Apexx Biolabs
+        </h1>
 
-              <p>By entering this website, you acknowledge that:</p>
+        <p className="text-gray-400 mt-4 text-sm md:text-base leading-relaxed">
+          Before entering, please confirm that you understand our products are
+          intended strictly for lawful laboratory research use only.
+        </p>
+      </div>
 
-              <div className="space-y-4 text-gray-400">
+      <div className="border border-blue-950 bg-black/50 rounded-2xl p-5 md:p-6 mb-6">
+        <p className="text-gray-300 text-sm leading-relaxed mb-5">
+          Products sold on this website are NOT intended for human consumption,
+          medical use, veterinary use, diagnosis, treatment, cure, or prevention
+          of disease.
+        </p>
 
-<label className="flex items-start gap-3 cursor-pointer border border-blue-900 rounded-xl p-3 md:p-5 bg-black/40">
-  <input
-    type="checkbox"
-    checked={disclaimerChecked}
-    onChange={(e) => setDisclaimerChecked(e.target.checked)}
-    className="mt-1"
-  />
+        <label className="flex items-start gap-3 cursor-pointer border border-blue-900 rounded-xl p-4 bg-[#030712]">
+          <input
+            type="checkbox"
+            checked={disclaimerChecked}
+            onChange={(e) => setDisclaimerChecked(e.target.checked)}
+            className="mt-1"
+          />
 
-  <span className="text-gray-300 leading-relaxed">
-    I confirm that I am at least 21 years of age and understand that all
-    products sold by Apexx Biolabs are intended strictly for lawful laboratory
-    research use only. I understand these products are not for human
-    consumption, medical use, veterinary use, diagnosis, treatment, cure, or
-    prevention of disease, and I agree to comply with all applicable federal,
-    state, and local laws regarding the purchase, possession, and use of
-    research materials.
-  </span>
-</label>
+          <span className="text-gray-300 text-sm leading-relaxed">
+            I confirm that I am at least 21 years of age and understand that
+            all products sold by Apexx Biolabs are intended strictly for lawful
+            laboratory research use only.
+          </span>
+        </label>
+      </div>
 
-</div>
-            </div>
-
-            <div className="flex justify-center mt-10">
-              <button
-  onClick={handleAccept}
-  disabled={!disclaimerChecked}
-  className={`px-10 py-4 uppercase tracking-widest text-sm font-semibold rounded-xl transition-all ${
-    disclaimerChecked
-      ? "bg-blue-600 hover:bg-blue-500 text-white"
-      : "bg-gray-800 text-gray-500 cursor-not-allowed"
-  }`}
->
-  I Acknowledge & Enter
-</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <button
+        onClick={handleAccept}
+        disabled={!disclaimerChecked}
+        className={`w-full py-4 uppercase tracking-widest text-sm font-semibold rounded-xl transition-all ${
+          disclaimerChecked
+            ? "bg-blue-600 hover:bg-blue-500 text-white"
+            : "bg-gray-800 text-gray-500 cursor-not-allowed"
+        }`}
+      >
+        Enter Apexx Biolabs
+      </button>
+    </div>
+  </div>
+)}
 
 <main className="min-h-screen bg-[#030712] text-white">
 {/* HEADER */}

@@ -169,123 +169,144 @@ export default function Home() {
 
       <main className="min-h-screen bg-[#071A2F] text-white">
         {/* HEADER */}
-        <header className="fixed top-0 left-0 w-full z-50 bg-[#030A13]/95 backdrop-blur-xl border-b border-blue-900/60">
-          <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-            <a href="/">
-              <img src="/images/logo.png" alt="Apexx Biolabs" className="h-14 w-auto" />
-            </a>
+  <div className="flex h-24 items-center justify-between bg-[#f3f9ff] px-10 shadow-sm">
+    <a href="/" className="flex items-center">
+      <img
+        src="/logo.png"
+        alt="APEXX BIOLABS"
+        className="h-16 w-auto"
+      />
+    </a>
 
-            <nav className="hidden md:flex items-center gap-10 uppercase tracking-widest text-sm">
-              <a href="/" className="text-blue-300">Home</a>
-              <a href="/products" className="hover:text-blue-400">Products</a>
-              <a href="/coas" className="hover:text-blue-400">COAs</a>
-              <a href="/about" className="hover:text-blue-400">About</a>
-              <a href="/contact" className="hover:text-blue-400">Contact</a>
-            </nav>
+    <nav className="hidden md:flex items-center gap-12 text-sm font-bold uppercase tracking-[0.22em] text-slate-900">
+      <a href="/" className="border-b-2 border-blue-600 pb-2 text-blue-600">
+        Home
+      </a>
+      <a href="/products" className="hover:text-blue-600 transition">
+        Products
+      </a>
+      <a href="/coas" className="hover:text-blue-600 transition">
+        COAs
+      </a>
+      <a href="/about" className="hover:text-blue-600 transition">
+        About
+      </a>
+      <a href="/contact" className="hover:text-blue-600 transition">
+        Contact
+      </a>
+    </nav>
 
-            <div className="flex items-center gap-5 relative">
-              <button onClick={() => setShowSearch(!showSearch)}>
-                {showSearch ? <X size={26} /> : <Search size={26} />}
-              </button>
+    <div className="flex items-center gap-6 text-slate-900">
+      <button className="text-3xl hover:text-blue-600 transition">
+        ⌕
+      </button>
 
-              {showSearch && (
-                <form onSubmit={handleSearchSubmit} className="absolute right-14 top-12 z-50 w-72">
-                  <input
-                    autoFocus
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search products..."
-                    className="w-full rounded-xl bg-[#0D2746] border border-blue-700 px-5 py-3 outline-none text-sm"
-                  />
+      <a href="/cart" className="relative text-3xl hover:text-blue-600 transition">
+        🛒
+        <span className="absolute -right-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+          10
+        </span>
+      </a>
+    </div>
+  </div>
 
-                  {search && filteredProducts.length > 0 && (
-                    <div className="mt-2 rounded-xl overflow-hidden border border-blue-800 bg-[#071A2F]">
-                      {filteredProducts.map((product) => (
-                        <a
-                          key={product.name}
-                          href={product.href}
-                          className="block px-5 py-3 text-sm hover:bg-blue-900/50"
-                        >
-                          {product.name}
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </form>
-              )}
+<section className="relative overflow-hidden bg-[#061a33]">
+  {/* Background image smaller / better positioned */}
+  <div
+    className="absolute inset-0 bg-cover bg-center"
+    style={{
+      backgroundImage: "url('/hero-bg.png')",
+    }}
+  />
 
-              <a href="/cart" className="relative">
-                <ShoppingCart size={30} />
-                {cartCount > 0 && (
-                  <span className="absolute -top-3 -right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
-              </a>
-            </div>
-          </div>
-        </header>
+  {/* Dark overlay for readability */}
+  <div className="absolute inset-0 bg-gradient-to-r from-[#061a33] via-[#061a33]/85 to-[#061a33]/30" />
 
-        {/* HERO */}
-        <section className="relative min-h-screen pt-32 px-6 overflow-hidden flex items-center">
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-90"
-            style={{ backgroundImage: "url('/images/hero-vial-right.png')" }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#071A2F] via-[#071A2F]/90 to-transparent" />
+  <div className="relative z-10 mx-auto max-w-7xl px-8 pt-20 pb-16">
+    <div className="grid min-h-[640px] items-center gap-10 lg:grid-cols-2">
+      
+      {/* Text */}
+      <div>
+        <h1 className="text-6xl font-extrabold leading-[0.95] tracking-tight text-white md:text-8xl">
+          Science.
+          <br />
+          Quality.
+          <br />
+          <span className="text-blue-400">Results.</span>
+        </h1>
 
-          <div className="relative z-10 max-w-7xl mx-auto w-full">
-            <div className="max-w-2xl">
-              <p className="uppercase tracking-[0.4em] text-blue-300 text-sm mb-6">
-                Advanced Research Solutions
-              </p>
+        <p className="mt-8 max-w-xl text-xl leading-relaxed text-blue-50">
+          High-purity research peptides and solutions,
+          third-party tested and batch documented.
+        </p>
 
-              <h1 className="text-6xl md:text-8xl font-black leading-none">
-                Science.
-                <br />
-                Quality.
-                <br />
-                <span className="text-blue-400">Results.</span>
-              </h1>
+        <div className="mt-10 flex flex-wrap gap-6">
+          <a
+            href="/products"
+            className="rounded-xl bg-blue-600 px-8 py-4 text-sm font-bold uppercase tracking-[0.2em] text-white shadow-lg shadow-blue-900/40 hover:bg-blue-500 transition"
+          >
+            Shop Products →
+          </a>
 
-              <p className="text-gray-300 text-xl leading-relaxed mt-8 max-w-xl">
-                High-purity research peptides and solutions, third-party tested
-                and batch documented.
-              </p>
+          <a
+            href="/coas"
+            className="rounded-xl border border-blue-400 px-8 py-4 text-sm font-bold uppercase tracking-[0.2em] text-white hover:bg-blue-500/20 transition"
+          >
+            View COAs →
+          </a>
+        </div>
+      </div>
 
-              <div className="flex gap-4 mt-10">
-                <a href="#shop" className="bg-blue-600 hover:bg-blue-500 px-8 py-4 rounded-xl uppercase tracking-widest text-sm font-bold">
-                  Shop Products
-                </a>
+      {/* Smaller product image */}
+      <div className="hidden lg:flex justify-center">
+        <img
+          src="/hero-vial.png"
+          alt="APEXX BIOLABS research vial"
+          className="max-h-[520px] w-auto object-contain drop-shadow-2xl"
+        />
+      </div>
+    </div>
 
-                <a href="/coas" className="border border-blue-600 hover:bg-blue-900/40 px-8 py-4 rounded-xl uppercase tracking-widest text-sm font-bold">
-                  View COAs
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
+    {/* Bottom info bar */}
+    <div className="grid gap-0 overflow-hidden rounded-2xl border border-blue-400/20 bg-[#071f3d]/85 backdrop-blur-xl md:grid-cols-3">
+      <div className="flex items-center gap-6 p-8">
+        <div className="text-5xl text-blue-400">♢</div>
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-[0.22em] text-blue-200">
+            Third-Party Tested
+          </h3>
+          <p className="mt-2 text-blue-100/80">
+            Independent lab verified.
+          </p>
+        </div>
+      </div>
 
-        {/* TRUST BAR */}
-        <section className="px-6 -mt-20 relative z-20">
-          <div className="max-w-7xl mx-auto rounded-3xl border border-blue-900/70 bg-[#0D2746]/90 backdrop-blur-xl p-7 grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              [ShieldCheck, "Third-Party Tested", "Independent lab verified."],
-              [FlaskConical, "Research Use Only", "For laboratory research purposes."],
-              [ClipboardCheck, "Batch Documented", "Full transparency with every batch."],
-            ].map(([Icon, title, text]: any) => (
-              <div key={title} className="flex gap-4 items-start">
-                <Icon className="text-blue-400" size={38} />
-                <div>
-                  <h3 className="text-blue-300 uppercase tracking-widest font-bold">
-                    {title}
-                  </h3>
-                  <p className="text-gray-400 mt-2">{text}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+      <div className="flex items-center gap-6 border-blue-400/20 p-8 md:border-l">
+        <div className="text-5xl text-blue-400">⚗</div>
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-[0.22em] text-blue-200">
+            Research Use Only
+          </h3>
+          <p className="mt-2 text-blue-100/80">
+            For laboratory research purposes.
+          </p>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-6 border-blue-400/20 p-8 md:border-l">
+        <div className="text-5xl text-blue-400">☑</div>
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-[0.22em] text-blue-200">
+            Batch Documented
+          </h3>
+          <p className="mt-2 text-blue-100/80">
+            Full transparency with every batch.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
         {/* PRODUCTS */}
         <section id="shop" className="py-28 px-6">

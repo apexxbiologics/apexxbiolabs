@@ -383,33 +383,37 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
 {/* PRODUCTS */}
 <section
   id="shop"
-  className="py-28 px-6 md:px-10 bg-gradient-to-b from-[#081526] via-[#0B1F38] to-[#081526] text-white"
+  className="relative py-24 px-6 bg-[#081526] border-b border-white/10 overflow-hidden"
 >
-  <div className="max-w-7xl mx-auto">
-    <div className="flex items-end justify-between mb-12">
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+
+  <div className="relative z-10 max-w-7xl mx-auto">
+
+    <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-14">
       <div>
-        <p className="uppercase tracking-[0.4em] text-blue-400 text-sm mb-5">
+        <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
           Research Catalog
         </p>
 
-        <h3 className="text-5xl md:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent">
+        <h3 className="text-5xl md:text-7xl font-black tracking-tight text-white leading-[0.95]">
           Featured Compounds
         </h3>
 
-        <p className="text-gray-400 mt-5 text-lg">
+        <p className="text-white/70 text-lg md:text-xl leading-relaxed mt-6 max-w-2xl">
           Research peptides, third-party identity tested, and batch documented.
         </p>
       </div>
 
       <a
         href="/products"
-        className="hidden md:inline-flex border border-slate-500/70 text-slate-200 rounded-full px-8 py-3 text-sm font-semibold uppercase tracking-widest hover:bg-slate-700 hover:text-white transition-all"
+        className="hidden md:inline-flex border border-white/10 bg-white/[0.04] text-white rounded-full px-8 py-3 text-sm font-semibold uppercase tracking-widest hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
       >
         View all
       </a>
     </div>
 
     <div className="relative">
+
       <button
         onMouseEnter={() => startProductScroll("left")}
         onMouseLeave={stopProductScroll}
@@ -419,7 +423,7 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
             behavior: "smooth",
           })
         }
-        className="hidden md:flex absolute left-0 top-[38%] -translate-y-1/2 z-20 w-14 h-14 rounded-full border border-slate-500/70 bg-black/70 backdrop-blur items-center justify-center text-3xl text-slate-200 hover:bg-slate-700 hover:text-white transition-all"
+        className="hidden md:flex absolute left-0 top-[42%] -translate-y-1/2 z-20 w-14 h-14 rounded-full border border-white/10 bg-[#102A4A]/80 backdrop-blur items-center justify-center text-3xl text-white hover:border-blue-400/50 hover:bg-[#16365d] transition-all"
       >
         ‹
       </button>
@@ -434,98 +438,84 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
             desc: "10–20mg Research Peptide",
             image: "/images/retatrutide.PNG",
             href: "/products/apx3",
-            bg: "from-[#56657a] via-[#334155] to-[#111827]",
           },
           {
             name: "BPC-157",
             desc: "10mg Research Peptide",
             image: "/images/bpc157.PNG",
             href: "/products/bpc157",
-            bg: "from-[#4f6f64] via-[#334155] to-[#111827]",
           },
           {
             name: "TB-500",
             desc: "10mg Research Peptide",
             image: "/images/tb500.PNG",
             href: "/products/tb500",
-            bg: "from-[#4e6a7d] via-[#334155] to-[#111827]",
           },
           {
             name: "Bacteriostatic Water",
             desc: "Research Reconstitution Solution",
             image: "/images/bacwater.PNG",
             href: "/products/bacwater",
-            bg: "from-[#5b6475] via-[#334155] to-[#111827]",
           },
           {
             name: "KPV",
             desc: "10mg Research Peptide",
             image: "/images/kpv.PNG",
             href: "/products/kpv",
-            bg: "from-[#536b5c] via-[#334155] to-[#111827]",
           },
           {
             name: "GHK-Cu",
             desc: "100mg Research Peptide",
             image: "/images/ghkcu.PNG",
             href: "/products/ghkcu",
-            bg: "from-[#52718a] via-[#334155] to-[#111827]",
           },
           {
             name: "Pinealon",
             desc: "10mg Research Peptide",
             image: "/images/pinealon.PNG",
             href: "/products/pinealon",
-            bg: "from-[#5f687a] via-[#334155] to-[#111827]",
           },
           {
             name: "Selank",
             desc: "10mg Research Peptide",
             image: "/images/selank.PNG",
             href: "/products/selank",
-            bg: "from-[#56657a] via-[#334155] to-[#111827]",
           },
           {
             name: "Semax",
             desc: "10mg Research Peptide",
             image: "/images/semax.PNG",
             href: "/products/semax",
-            bg: "from-[#56657a] via-[#334155] to-[#111827]",
           },
           {
             name: "MOTS-C",
             desc: "10mg Research Peptide",
             image: "/images/motsc.PNG",
             href: "/products/motsc",
-            bg: "from-[#4e6a7d] via-[#334155] to-[#111827]",
           },
           {
             name: "ARA-290",
             desc: "10mg Research Peptide",
             image: "/images/ara290.PNG",
             href: "/products/ara290",
-            bg: "from-[#536b5c] via-[#334155] to-[#111827]",
           },
           {
             name: "PE-22-28",
             desc: "10mg Research Peptide",
             image: "/images/pe2228.PNG",
             href: "/products/pe2228",
-            bg: "from-[#5f687a] via-[#334155] to-[#111827]",
           },
           {
             name: "ADAMAX",
             desc: "10mg Research Peptide",
             image: "/images/adamax.PNG",
             href: "/products/adamax",
-            bg: "from-[#52718a] via-[#334155] to-[#111827]",
           },
           {
             name: "CJC/IPA Without DAC",
             desc: "10mg Research Peptide",
             image: "/images/cjcipa.PNG",
             href: "/products/cjcipa",
-            bg: "from-[#56657a] via-[#334155] to-[#111827]",
           },
         ].map((product) => (
           <div
@@ -533,13 +523,13 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
             className="min-w-[290px] md:min-w-[340px] group"
           >
             <a href={product.href} className="block">
-<div className="relative overflow-hidden rounded-[34px]">
-  <img
-    src={product.image}
-    alt={product.name}
-    className="w-full h-[430px] object-cover rounded-[34px] transition-transform duration-500 group-hover:scale-105"
-  />
-</div>
+              <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-3 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-[430px] object-cover rounded-[1.6rem] transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
             </a>
 
             <div className="pt-6 px-1">
@@ -547,21 +537,21 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
                 {product.name}
               </h4>
 
-              <p className="text-gray-400 mb-8">
+              <p className="text-white/60 mb-8">
                 {product.desc}
               </p>
 
               <div className="flex gap-3">
                 <a
                   href="/coas"
-                  className="flex-1 border border-slate-500 text-white rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:bg-slate-700 transition-all"
+                  className="flex-1 border border-white/10 bg-white/[0.04] text-white rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
                 >
                   COA
                 </a>
 
                 <a
                   href={product.href}
-                  className="flex-1 bg-white text-black rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:bg-gray-200 transition-all"
+                  className="flex-1 bg-white text-[#081526] rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:bg-blue-100 transition-all"
                 >
                   View
                 </a>
@@ -580,11 +570,13 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
             behavior: "smooth",
           })
         }
-        className="hidden md:flex absolute right-0 top-[38%] -translate-y-1/2 z-20 w-14 h-14 rounded-full border border-slate-500/70 bg-black/70 backdrop-blur items-center justify-center text-3xl text-slate-200 hover:bg-slate-700 hover:text-white transition-all"
+        className="hidden md:flex absolute right-0 top-[42%] -translate-y-1/2 z-20 w-14 h-14 rounded-full border border-white/10 bg-[#102A4A]/80 backdrop-blur items-center justify-center text-3xl text-white hover:border-blue-400/50 hover:bg-[#16365d] transition-all"
       >
         ›
       </button>
+
     </div>
+
   </div>
 </section>
 

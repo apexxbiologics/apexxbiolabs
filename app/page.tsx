@@ -469,18 +469,13 @@ className="absolute right-0 top-0 h-full w-full lg:w-[70%] bg-cover opacity-95"s
             className="min-w-[290px] md:min-w-[340px] group"
           >
             <a href={product.href} className="block">
-              <div
-                className={`relative h-[430px] rounded-[34px] overflow-hidden bg-gradient-to-br ${product.bg} shadow-[0_20px_60px_rgba(0,0,0,0.35)]`}
-              >
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.16),transparent_45%)]" />
-                <div className="absolute inset-x-0 bottom-0 h-24 bg-white/10 blur-2xl" />
-
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="relative z-10 w-full h-full object-contain p-8 transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
+<div className="relative overflow-hidden rounded-[34px]">
+  <img
+    src={product.image}
+    alt={product.name}
+    className="w-full h-[430px] object-cover rounded-[34px] transition-transform duration-500 group-hover:scale-105"
+  />
+</div>
             </a>
 
             <div className="pt-6 px-1">

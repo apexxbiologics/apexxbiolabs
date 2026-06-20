@@ -85,9 +85,8 @@ export default function Home() {
   return (
     <>
 {!accepted && (
-  <div className="fixed inset-0 z-[999] overflow-hidden">
+  <div className="fixed inset-0 z-[999] h-[100dvh] w-full overflow-hidden">
 
-    {/* VIDEO BACKGROUND */}
     <video
       autoPlay
       muted
@@ -95,89 +94,76 @@ export default function Home() {
       playsInline
       className="absolute inset-0 w-full h-full object-cover"
     >
-      <source
-        src="/videos/disclaimer-bg.mp4"
-        type="video/mp4"
-      />
+      <source src="/videos/disclaimer-bg.mp4" type="video/mp4" />
     </video>
 
-    {/* LIGHT OVERLAY */}
     <div className="absolute inset-0 bg-[#EAF4FF]/15" />
 
-    {/* DISCLAIMER CARD */}
-    <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
+    <div className="relative z-10 h-[100dvh] w-full overflow-y-auto px-4 py-6">
+      <div className="min-h-full flex items-start md:items-center justify-center">
+        <div className="w-full max-w-xl rounded-[32px] bg-[#DDEEFF]/98 border border-blue-200 p-6 md:p-8 shadow-[0_20px_80px_rgba(59,130,246,0.15)]">
 
-      <div className="w-full max-w-xl rounded-[32px] bg-[#DDEEFF]/98 border border-blue-200 p-8 shadow-[0_20px_80px_rgba(59,130,246,0.15)]">
-
-        {/* LOGO */}
-        <div className="text-center mb-6">
-          <img
-            src="/images/logo.png"
-            alt="Apexx Biolabs"
-            className="h-16 md:h-20 w-auto mx-auto mb-5"
-          />
-
-          <p className="uppercase tracking-[0.4em] text-blue-500 text-xs mb-4">
-            RESEARCH USE VERIFICATION
-          </p>
-
-          <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-4">
-            Welcome to Apexx Biolabs
-          </h1>
-
-          <p className="text-slate-700 leading-relaxed">
-            Premium research compounds supported by batch documentation,
-            analytical review, and research-use transparency.
-          </p>
-        </div>
-
-        {/* DISCLAIMER BOX */}
-        <div className="border border-blue-200 bg-[#F5FAFF] rounded-2xl p-5 mb-6">
-
-          <p className="text-slate-700 text-sm leading-relaxed mb-5">
-            Products sold on this website are intended strictly for lawful
-            laboratory research use only and are not for human consumption,
-            medical use, veterinary use, diagnosis, treatment, cure, or
-            prevention of disease.
-          </p>
-
-          <label className="flex items-start gap-3 cursor-pointer border border-blue-200 rounded-xl p-4 bg-white">
-
-            <input
-              type="checkbox"
-              checked={disclaimerChecked}
-              onChange={(e) => setDisclaimerChecked(e.target.checked)}
-              className="mt-1 accent-blue-500"
+          <div className="text-center mb-5">
+            <img
+              src="/images/logo.png"
+              alt="Apexx Biolabs"
+              className="h-14 md:h-20 w-auto mx-auto mb-4"
             />
 
-            <span className="text-slate-700 text-sm leading-relaxed">
-              I confirm that I am at least 21 years of age and understand
-              that all products sold by Apexx Biolabs are intended strictly
-              for lawful laboratory research use only.
-            </span>
+            <p className="uppercase tracking-[0.3em] text-blue-500 text-[10px] md:text-xs mb-3">
+              Research Use Verification
+            </p>
 
-          </label>
+            <h1 className="text-2xl md:text-4xl font-black text-slate-900 mb-3">
+              Welcome to Apexx Biolabs
+            </h1>
+
+            <p className="text-slate-700 text-sm md:text-base leading-relaxed">
+              Premium research compounds supported by batch documentation,
+              analytical review, and research-use transparency.
+            </p>
+          </div>
+
+          <div className="border border-blue-200 bg-[#F5FAFF] rounded-2xl p-4 md:p-5 mb-5">
+            <p className="text-slate-700 text-xs md:text-sm leading-relaxed mb-4">
+              Products sold on this website are intended strictly for lawful
+              laboratory research use only and are not for human consumption,
+              medical use, veterinary use, diagnosis, treatment, cure, or
+              prevention of disease.
+            </p>
+
+            <label className="flex items-start gap-3 cursor-pointer border border-blue-200 rounded-xl p-3 md:p-4 bg-white">
+              <input
+                type="checkbox"
+                checked={disclaimerChecked}
+                onChange={(e) => setDisclaimerChecked(e.target.checked)}
+                className="mt-1 accent-blue-500 shrink-0"
+              />
+
+              <span className="text-slate-700 text-xs md:text-sm leading-relaxed">
+                I confirm that I am at least 21 years of age and understand
+                that all products sold by Apexx Biolabs are intended strictly
+                for lawful laboratory research use only.
+              </span>
+            </label>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setAccepted(true)}
+            disabled={!disclaimerChecked}
+            className={`w-full py-3 md:py-4 rounded-xl uppercase tracking-[0.2em] text-xs md:text-sm font-semibold transition-all ${
+              disclaimerChecked
+                ? "bg-[#6FB6FF] hover:bg-[#5AA9FF] text-white shadow-[0_0_25px_rgba(59,130,246,0.35)]"
+                : "bg-slate-300 text-slate-500 cursor-not-allowed"
+            }`}
+          >
+            Enter Site
+          </button>
 
         </div>
-
-        {/* BUTTON */}
-        <button
-          type="button"
-          onClick={() => setAccepted(true)}
-          disabled={!disclaimerChecked}
-          className={`w-full py-4 rounded-xl uppercase tracking-[0.25em] text-sm font-semibold transition-all ${
-            disclaimerChecked
-              ? "bg-[#6FB6FF] hover:bg-[#5AA9FF] text-white shadow-[0_0_25px_rgba(59,130,246,0.35)]"
-              : "bg-slate-300 text-slate-500 cursor-not-allowed"
-          }`}
-        >
-          Enter Site
-        </button>
-
       </div>
-
     </div>
-
   </div>
 )}
 

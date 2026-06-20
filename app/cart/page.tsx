@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ShoppingCart, Trash2, ShieldCheck, PackageCheck } from "lucide-react";
 
 type CartItem = {
   id: string;
@@ -23,168 +24,421 @@ export default function CartPage() {
   const saveCart = (updatedCart: CartItem[]) => {
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
+    window.dispatchEvent(new Event("cartUpdated"));
   };
 
   const increaseQuantity = (id: string) => {
-    const updatedCart = cart.map((item) =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+    saveCart(
+      cart.map((item) =>
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+      )
     );
-
-    saveCart(updatedCart);
   };
 
   const decreaseQuantity = (id: string) => {
-    const updatedCart = cart
-      .map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity - 1 } : item
-      )
-      .filter((item) => item.quantity > 0);
-
-    saveCart(updatedCart);
+    saveCart(
+      cart
+        .map((item) =>
+          item.id === id ? { ...item, quantity: item.quantity - 1 } : item
+        )
+        .filter((item) => item.quantity > 0)
+    );
   };
 
   const removeItem = (id: string) => {
-    const updatedCart = cart.filter((item) => item.id !== id);
-    saveCart(updatedCart);
+    saveCart(cart.filter((item) => item.id !== id));
   };
 
-  const total = cart.reduce(
+  const subtotal = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
   return (
-    <main className="min-h-screen bg-black text-white px-10 py-24">
-      <a href="/" className="text-blue-400 uppercase tracking-widest text-sm">
-        ← Back to Home
-      </a>
+    <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
+      <header className="border-b border-white/10 bg-[#081526]/95 backdrop-blur-xl px-6 py-6">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <a href="/">
+            <img
+              src="/images/logo.png"
+              alt="Apexx Biolabs"
+              className="h-12 w-auto"
+            />
+          </a>
 
-      <section className="max-w-5xl mx-auto mt-20">
-        <h1 className="text-6xl font-bold mb-8">Cart</h1>
+          <a
+            href="/"
+            className="border border-white/10 bg-white/[0.04] text-white rounded-full px-6 py-3 text-xs uppercase tracking-widest hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+          >
+            Home
+          </a>
+        </div>
+      </header>
 
-        <div className="border border-blue-900 rounded-2xl p-10 bg-[#050505]">
+      <section className="relative px-6 py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+
+        <div className="relative z-10 max-w-7xl mx-auto">
+          <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
+            Secure Cart
+          </p>
+
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
+            <div>
+              <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.95] mb-6">
+                Review Your Cart
+              </h1>
+
+              <p className="text-white/70 text-lg md:text-xl leading-relaxed max-w-2xl">
+                Confirm your research materials, review documentation terms, and
+                proceed to checkout securely.
+              </p>
+            </div>
+
+            <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-white/70 w-fit">
+              <ShoppingCart size={20} className="text-blue-300" />
+              <span className="text-sm uppercase tracking-widest">
+                {totalItems} Item{totalItems === 1 ? "" : "s"}
+              </span>
+            </div>
+          </div>
+
           {cart.length === 0 ? (
-            <p className="text-gray-400 text-lg">
-              Your cart is currently empty.
-            </p>
+            <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-10 text-center">
+              <ShoppingCart size={48} className="mx-auto text-blue-300 mb-6" />
+
+              <h2 className="text-3xl font-black text-white mb-4">
+                Your cart is empty.
+              </h2>
+
+              <p className="text-white/60 mb-8">
+                Add research materials to your cart to continue.
+              </p>
+
+              <a
+                href="/products"
+                className="inline-flex bg-white text-[#081526] px-8 py-4 rounded-full text-sm uppercase tracking-widest font-semibold hover:bg-blue-100 transition-all"
+              >
+                Shop Products
+              </a>
+            </div>
           ) : (
-            <div className="space-y-8">
-              {cart.map((item) => (
-                <div
-                  key={item.id}
-                  className="border-b border-blue-950 pb-6"
-                >
-<div className="flex flex-col lg:grid lg:grid-cols-[1fr_260px_120px] items-start lg:items-center gap-6">
-<div className="flex items-center gap-6 min-w-0">                      <img
-                        src={item.image || "/images/logo.PNG"}
-                        alt={item.name}
-                        className="w-24 h-24 object-contain border border-blue-900 rounded-xl p-2 bg-[#050505]"
-                      />
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_390px] gap-8">
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-5 md:p-8">
+                <div className="space-y-6">
+                  {cart.map((item) => (
+                    <div
+                      key={item.id}
+                      className="rounded-[1.6rem] border border-white/10 bg-[#081526]/50 p-5"
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-[120px_1fr_auto] gap-6 items-center">
+                        <div className="flex items-center justify-center">
+                          <img
+                            src={item.image || "/images/logo.png"}
+                            alt={item.name}
+                            className="w-28 h-28 object-contain rounded-[28px]"
+                          />
+                        </div>
 
-                      <div>
-                        <p className="text-2xl font-semibold">
-                          {item.name}
-                        </p>
+                        <div>
+                          <p className="text-2xl font-black text-white mb-2">
+                            {item.name}
+                          </p>
 
-                        <p className="text-gray-400">
-                          ${item.price} each
-                        </p>
+                          <p className="text-white/50 text-sm mb-4">
+                            ${item.price.toFixed(2)} each
+                          </p>
+
+                          <button
+                            onClick={() => removeItem(item.id)}
+                            className="inline-flex items-center gap-2 text-red-300 hover:text-red-200 text-sm transition-all"
+                          >
+                            <Trash2 size={16} />
+                            Remove
+                          </button>
+                        </div>
+
+                        <div className="flex md:flex-col items-center md:items-end justify-between gap-5">
+                          <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.04] p-2">
+                            <button
+                              onClick={() => decreaseQuantity(item.id)}
+                              className="w-9 h-9 rounded-full border border-white/10 hover:bg-white/[0.08] flex items-center justify-center"
+                            >
+                              -
+                            </button>
+
+                            <span className="w-8 text-center text-lg font-bold">
+                              {item.quantity}
+                            </span>
+
+                            <button
+                              onClick={() => increaseQuantity(item.id)}
+                              className="w-9 h-9 rounded-full border border-white/10 hover:bg-white/[0.08] flex items-center justify-center"
+                            >
+                              +
+                            </button>
+                          </div>
+
+                          <p className="text-2xl font-black text-blue-300">
+                            ${(item.price * item.quantity).toFixed(2)}
+                          </p>
+                        </div>
                       </div>
                     </div>
-
-<div className="flex items-center justify-between lg:justify-end gap-4 w-full lg:min-w-[260px]">  <div className="flex items-center justify-center gap-3 w-[130px]">
-    <button
-      onClick={() => decreaseQuantity(item.id)}
-      className="w-10 h-10 border border-blue-700 hover:bg-blue-700 rounded-lg flex items-center justify-center"
-    >
-      -
-    </button>
-
-    <span className="w-8 text-center text-xl font-bold">
-      {item.quantity}
-    </span>
-
-    <button
-      onClick={() => increaseQuantity(item.id)}
-      className="w-10 h-10 border border-blue-700 hover:bg-blue-700 rounded-lg flex items-center justify-center"
-    >
-      +
-    </button>
-  </div>
-
-  <button
-    onClick={() => removeItem(item.id)}
-    className="w-[90px] border border-red-700 text-red-400 px-4 py-2 hover:bg-red-900/40 rounded-lg"
-  >
-    Remove
-  </button>
-</div>
-
-<p className="text-blue-400 font-bold text-xl text-right w-[120px]">
-  ${item.price * item.quantity}
-</p>
-
-                  </div>
+                  ))}
                 </div>
-              ))}
-
-              <div className="flex justify-between text-3xl font-bold pt-6">
-                <span>Total</span>
-                <span className="text-blue-400">${total}</span>
               </div>
-              <div className="border border-blue-900 rounded-xl p-6 bg-[#050505] mt-8">
-  <h3 className="text-lg font-semibold text-blue-400 mb-4">
-    Research Use Disclaimer
-  </h3>
 
-  <p className="text-gray-400 text-sm leading-relaxed mb-4">
-    By placing an order, you acknowledge that all products sold by Apexx
-    Biolabs are intended strictly for laboratory research use only and
-    are not intended for human consumption, medical use, veterinary use,
-    diagnosis, treatment, cure, or prevention of disease.
-  </p>
+              <aside className="space-y-6">
+                <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
+                  <h2 className="text-3xl font-black text-white mb-6">
+                    Order Summary
+                  </h2>
 
-  <label className="flex items-start gap-3 cursor-pointer">
-    <input
-      type="checkbox"
-      checked={agreed}
-      onChange={(e) => setAgreed(e.target.checked)}
-      className="mt-1"
-      
-    />
+                  <div className="space-y-4 text-white/60 mb-6">
+                    <div className="flex justify-between border-b border-white/10 pb-4">
+                      <span>Subtotal</span>
+                      <span className="text-white">
+                        ${subtotal.toFixed(2)}
+                      </span>
+                    </div>
 
-    <span className="text-sm text-gray-300">
-      I certify that I am at least 21 years old and understand these
-      products are purchased solely for lawful research purposes.
-    </span>
-  </label>
-</div>
+                    <div className="flex justify-between border-b border-white/10 pb-4">
+                      <span>Shipping</span>
+                      <span className="text-white/50">
+                        Calculated at checkout
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between border-b border-white/10 pb-4">
+                      <span>Taxes</span>
+                      <span className="text-white/50">
+                        Calculated at checkout
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between text-3xl font-black mb-8">
+                    <span>Total</span>
+                    <span className="text-blue-300">
+                      ${subtotal.toFixed(2)}
+                    </span>
+                  </div>
+
+                  <Link
+                    href="/checkout"
+                    className={`block w-full py-4 rounded-full uppercase tracking-widest text-sm font-semibold text-center transition-all ${
+                      agreed
+                        ? "bg-white text-[#081526] hover:bg-blue-100"
+                        : "bg-white/[0.06] text-white/30 pointer-events-none"
+                    }`}
+                  >
+                    Proceed To Checkout
+                  </Link>
+
+                  {!agreed && (
+                    <p className="text-white/40 text-xs text-center mt-4">
+                      Please confirm the research-use terms before checkout.
+                    </p>
+                  )}
+                </div>
+
+                <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <ShieldCheck className="text-blue-300" size={24} />
+
+                    <h3 className="text-xl font-black text-white">
+                      Research Use Disclaimer
+                    </h3>
+                  </div>
+
+                  <p className="text-white/60 text-sm leading-relaxed mb-5">
+                    By placing an order, you acknowledge that all products sold
+                    by Apexx Biolabs are intended strictly for lawful laboratory
+                    research use only and are not intended for human consumption,
+                    medical use, veterinary use, diagnosis, treatment, cure, or
+                    prevention of disease.
+                  </p>
+
+                  <label className="flex items-start gap-3 cursor-pointer rounded-2xl border border-white/10 bg-[#081526]/50 p-4">
+                    <input
+                      type="checkbox"
+                      checked={agreed}
+                      onChange={(e) => setAgreed(e.target.checked)}
+                      className="mt-1"
+                    />
+
+                    <span className="text-sm text-white/70 leading-relaxed">
+                      I certify that I am at least 21 years old and understand
+                      these products are purchased solely for lawful research
+                      purposes.
+                    </span>
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                    <PackageCheck className="text-blue-300" size={22} />
+
+                    <div>
+                      <p className="text-white font-bold">
+                        Quality Documentation
+                      </p>
+                      <p className="text-white/50 text-sm">
+                        COAs available for verified batches.
+                      </p>
+                    </div>
+                  </div>
+
+                  <a
+                    href="/products"
+                    className="block border border-white/10 bg-white/[0.04] text-white rounded-full px-8 py-4 text-sm uppercase tracking-widest font-semibold text-center hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+                  >
+                    Continue Shopping
+                  </a>
+                </div>
+              </aside>
             </div>
           )}
-
-          <div className="flex flex-col md:flex-row gap-4 mt-8">
-
-  <a
-    href="/#shop"
-    className="bg-blue-600 hover:bg-blue-500 px-8 py-4 uppercase tracking-widest text-sm font-semibold rounded-lg text-center"
-  >
-    Continue Shopping
-  </a>
-
-<Link
-  href="/checkout"
-  className={`px-8 py-4 uppercase tracking-widest text-sm font-semibold rounded-lg transition-all text-center ${
-    agreed
-      ? "bg-green-600 hover:bg-green-500"
-      : "bg-gray-800 text-gray-500 pointer-events-none"
-  }`}
->
-  Proceed To Checkout
-</Link>
-
-</div>
         </div>
       </section>
+
+            <footer className="bg-[#081526] border-t border-blue-900/40 px-6 pt-24 pb-10">
+
+  <div className="max-w-7xl mx-auto">
+
+    {/* TOP */}
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
+
+      {/* BRAND */}
+      <div>
+        <img
+          src="/images/logo.png"
+          alt="Apexx Biolabs"
+          className="h-12 w-auto mb-6"
+        />
+
+        <p className="text-white/70 leading-relaxed text-sm">
+          High-purity research compounds supported by batch documentation,
+          analytical testing, and research-use transparency.
+        </p>
+      </div>
+
+      {/* COMPANY */}
+      <div>
+        <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
+          Company
+        </h4>
+
+        <div className="space-y-4">
+          <a href="/" className="block text-white/70 hover:text-white transition-all">
+            Home
+          </a>
+
+          <a href="/products" className="block text-white/70 hover:text-white transition-all">
+            Products
+          </a>
+
+          <a href="/coas" className="block text-white/70 hover:text-white transition-all">
+            COAs
+          </a>
+
+          <a href="/contact" className="block text-white/70 hover:text-white transition-all">
+            Contact
+          </a>
+        </div>
+      </div>
+
+      {/* RESOURCES */}
+      <div>
+        <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
+          Resources
+        </h4>
+
+        <div className="space-y-4">
+          <a href="/peptide-info" className="block text-white/70 hover:text-white transition-all">
+            Peptide Info
+          </a>
+
+          <a href="/faq" className="block text-white/70 hover:text-white transition-all">
+            FAQ
+          </a>
+
+          <a href="/shipping" className="block text-white/70 hover:text-white transition-all">
+            Shipping
+          </a>
+
+          <a href="/refunds" className="block text-white/70 hover:text-white transition-all">
+            Refunds
+          </a>
+        </div>
+      </div>
+
+      {/* CONTACT */}
+      <div>
+        <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
+          Contact
+        </h4>
+
+        <div className="space-y-4">
+          <a
+            href="mailto:support@apexxbiolabs.com"
+            className="block text-white/70 hover:text-white transition-all"
+          >
+            support@apexxbiolabs.com
+          </a>
+
+          <a
+            href="https://www.tiktok.com/@apexx.nyc"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-white/70 hover:text-white transition-all"
+          >
+            TikTok
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    {/* DISCLAIMER */}
+    <div className="border-t border-white/10 pt-10">
+
+      <p className="text-white/40 text-xs uppercase tracking-[0.18em] leading-relaxed max-w-5xl">
+        FOR LABORATORY RESEARCH USE ONLY. NOT FOR HUMAN CONSUMPTION.
+        NOT FOR MEDICAL, DIAGNOSTIC, THERAPEUTIC, OR VETERINARY USE.
+      </p>
+
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6 mt-10">
+
+        <p className="text-white/40 text-sm">
+          © 2026 Apexx Biolabs. All Rights Reserved.
+        </p>
+
+        <div className="flex gap-8 text-sm text-white/40">
+          <a href="/privacy" className="hover:text-white transition-all">
+            Privacy
+          </a>
+
+          <a href="/terms" className="hover:text-white transition-all">
+            Terms
+          </a>
+
+          <a href="/shipping" className="hover:text-white transition-all">
+            Shipping
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</footer>
+
     </main>
   );
 }

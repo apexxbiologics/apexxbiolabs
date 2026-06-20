@@ -5,6 +5,7 @@ import { useState } from "react";
 export default function APX3Page() {
   const [added, setAdded] = useState(false);
   const [selectedMg, setSelectedMg] = useState<"10mg" | "20mg">("10mg");
+  const [quantity, setQuantity] = useState(1);
 
   const productOptions = {
     "10mg": {
@@ -30,16 +31,21 @@ export default function APX3Page() {
       id: selectedProduct.id,
       name: selectedProduct.name,
       price: selectedProduct.price,
-      quantity: 1,
+      quantity,
       image: selectedProduct.image,
     };
 
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const existingProduct = existingCart.find((item: any) => item.id === product.id);
+
+    const existingProduct = existingCart.find(
+      (item: any) => item.id === product.id
+    );
 
     const updatedCart = existingProduct
       ? existingCart.map((item: any) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
         )
       : [...existingCart, product];
 
@@ -50,37 +56,45 @@ export default function APX3Page() {
 
   return (
     <main className="min-h-screen bg-[#061426] text-white">
-      {/* HEADER */}
       <header className="sticky top-0 z-50 flex items-center justify-between px-8 md:px-12 py-6 border-b border-blue-900/70 bg-[#04101f]/95 backdrop-blur-xl">
         <a href="/">
-          <img src="/images/logo.png" alt="Apexx Biolabs" className="h-14 w-auto" />
+          <img
+            src="/images/logo.png"
+            alt="Apexx Biolabs"
+            className="h-14 w-auto"
+          />
         </a>
 
         <nav className="flex items-center gap-4 text-sm uppercase tracking-widest">
-          <a href="/" className="border border-blue-700 px-5 py-3 rounded-xl text-blue-300 hover:bg-blue-700 hover:text-white">
+          <a
+            href="/"
+            className="border border-blue-700 px-5 py-3 rounded-xl text-blue-300 hover:bg-blue-700 hover:text-white transition-all"
+          >
             Home
           </a>
-          <a href="/products" className="border border-blue-700 px-5 py-3 rounded-xl text-blue-300 hover:bg-blue-700 hover:text-white">
+
+          <a
+            href="/products"
+            className="border border-blue-700 px-5 py-3 rounded-xl text-blue-300 hover:bg-blue-700 hover:text-white transition-all"
+          >
             Products
           </a>
         </nav>
       </header>
 
-      {/* PRODUCT HERO */}
-      <section className="px-6 md:px-10 pt-16 pb-20">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 items-start">
-          
-          {/* Horizontal Product Image */}
+      <section className="px-6 md:px-10 pt-12 pb-20">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-14 items-start">
           <div className="relative rounded-[2rem] overflow-hidden border border-blue-800/70 bg-[#081b33] shadow-[0_30px_90px_rgba(0,0,0,0.35)]">
-            <img
-              src={selectedProduct.image}
-              alt={selectedProduct.name}
-              className="w-full h-[520px] object-cover"
-            />
+            <div className="relative h-[520px] flex items-center justify-center overflow-hidden">
+              <img
+                src={selectedProduct.image}
+                alt={selectedProduct.name}
+                className="w-full h-full object-contain scale-[0.92]"
+              />
+            </div>
           </div>
 
-          {/* Product Info */}
-          <div className="rounded-[2rem] border border-blue-800/60 bg-[#081b33]/70 p-8 md:p-10 shadow-[0_30px_90px_rgba(0,0,0,0.25)]">
+          <div className="rounded-[2rem] border border-blue-800/60 bg-[#081b33]/80 p-8 md:p-10 shadow-[0_30px_90px_rgba(0,0,0,0.25)]">
             <p className="uppercase tracking-[0.35em] text-blue-400 text-sm mb-5">
               Research Peptide
             </p>
@@ -90,36 +104,70 @@ export default function APX3Page() {
             </h1>
 
             <p className="text-gray-300 text-lg leading-relaxed mb-8">
-              High-purity lyophilized research peptide intended strictly for laboratory
-              research and analytical applications.
+              High-purity lyophilized research peptide intended strictly for
+              laboratory research and analytical applications.
             </p>
 
             <div className="text-4xl font-black text-blue-400 mb-8">
               ${selectedProduct.price}.00
             </div>
 
-            <div className="mb-8">
-              <p className="text-gray-400 uppercase tracking-widest text-sm mb-4">
-                Select Quantity
-              </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+              <div>
+                <p className="text-gray-400 uppercase tracking-widest text-sm mb-4">
+                  Select Size
+                </p>
 
-              <div className="flex gap-4">
-                {(["10mg", "20mg"] as const).map((mg) => (
+                <div className="flex gap-4">
+                  {(["10mg", "20mg"] as const).map((mg) => (
+                    <button
+                      key={mg}
+                      onClick={() => {
+                        setSelectedMg(mg);
+                        setAdded(false);
+                      }}
+                      className={`px-7 py-4 rounded-xl border uppercase tracking-widest text-sm font-semibold transition-all ${
+                        selectedMg === mg
+                          ? "border-blue-400 bg-blue-600 text-white shadow-[0_0_25px_rgba(37,99,235,0.45)]"
+                          : "border-blue-800 text-blue-300 hover:border-blue-400"
+                      }`}
+                    >
+                      {mg}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-gray-400 uppercase tracking-widest text-sm mb-4">
+                  Quantity
+                </p>
+
+                <div className="flex items-center w-fit rounded-xl border border-blue-800 overflow-hidden">
                   <button
-                    key={mg}
                     onClick={() => {
-                      setSelectedMg(mg);
+                      setQuantity((prev) => Math.max(1, prev - 1));
                       setAdded(false);
                     }}
-                    className={`px-7 py-4 rounded-xl border uppercase tracking-widest text-sm font-semibold transition-all ${
-                      selectedMg === mg
-                        ? "border-blue-400 bg-blue-600 text-white shadow-[0_0_25px_rgba(37,99,235,0.45)]"
-                        : "border-blue-800 text-blue-300 hover:border-blue-400"
-                    }`}
+                    className="w-14 h-14 text-2xl text-blue-300 hover:bg-blue-900/50"
                   >
-                    {mg}
+                    −
                   </button>
-                ))}
+
+                  <div className="w-16 h-14 flex items-center justify-center text-lg font-bold">
+                    {quantity}
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setQuantity((prev) => prev + 1);
+                      setAdded(false);
+                    }}
+                    className="w-14 h-14 text-2xl text-blue-300 hover:bg-blue-900/50"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -130,7 +178,10 @@ export default function APX3Page() {
                 ["Purity", "99%+"],
                 ["Storage", "2–8°C"],
               ].map(([label, value]) => (
-                <div key={label} className="flex justify-between border-b border-blue-900/80 pb-4">
+                <div
+                  key={label}
+                  className="flex justify-between border-b border-blue-900/80 pb-4"
+                >
                   <span className="text-gray-400">{label}</span>
                   <span>{value}</span>
                 </div>
@@ -140,33 +191,34 @@ export default function APX3Page() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <button
                 onClick={addToCart}
-                className="bg-blue-600 hover:bg-blue-500 px-8 py-5 uppercase tracking-widest text-sm font-semibold rounded-xl"
+                className="bg-blue-600 hover:bg-blue-500 px-8 py-5 uppercase tracking-widest text-sm font-semibold rounded-xl transition-all"
               >
                 {added ? "Added" : "Add To Cart"}
               </button>
 
               <a
                 href="/#shop"
-                className="text-center border border-blue-700 hover:bg-blue-700 px-8 py-5 uppercase tracking-widest text-sm font-semibold rounded-xl"
+                className="text-center border border-blue-700 hover:bg-blue-700 px-8 py-5 uppercase tracking-widest text-sm font-semibold rounded-xl transition-all"
               >
-                Continue Shopping
+                Continue
               </a>
 
               <a
                 href="/coas"
-                className="text-center border border-blue-700 hover:bg-blue-700 px-8 py-5 uppercase tracking-widest text-sm font-semibold rounded-xl"
+                className="text-center border border-blue-700 hover:bg-blue-700 px-8 py-5 uppercase tracking-widest text-sm font-semibold rounded-xl transition-all"
               >
-                View COA
+                COA
               </a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* PRODUCT DETAILS */}
       <section className="px-6 md:px-10 pb-24">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl font-black mb-8">Compound Information</h2>
+          <h2 className="text-4xl font-black mb-8">
+            Compound Information
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="rounded-2xl border border-blue-900 bg-[#081b33] p-7">
@@ -174,7 +226,8 @@ export default function APX3Page() {
                 Molecular Profile
               </h3>
               <p className="text-gray-300 leading-relaxed">
-                APX-3 is supplied as a lyophilized research peptide for laboratory research use only.
+                APX-3 is supplied as a lyophilized research peptide for lawful
+                laboratory research use only.
               </p>
             </div>
 
@@ -183,7 +236,8 @@ export default function APX3Page() {
                 Storage Requirements
               </h3>
               <p className="text-gray-300 leading-relaxed">
-                Store refrigerated at 2–8°C. Protect from light and avoid repeated freeze-thaw cycles.
+                Store refrigerated at 2–8°C. Protect from light and avoid
+                repeated freeze-thaw cycles.
               </p>
             </div>
 
@@ -192,72 +246,102 @@ export default function APX3Page() {
                 Documentation
               </h3>
               <p className="text-gray-300 leading-relaxed">
-                Batch documentation and COA access are provided for quality transparency.
+                Batch documentation and COA access are provided for quality
+                transparency.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* DISCLAIMER */}
-      <section className="px-6 md:px-10 pb-24">
-        <div className="max-w-7xl mx-auto rounded-2xl border border-yellow-500/50 bg-[#1f2937] p-7">
-          <h3 className="text-yellow-300 font-bold uppercase tracking-widest text-sm mb-3">
-            FDA Disclaimer
-          </h3>
-          <p className="text-gray-300 text-sm leading-relaxed">
-            These statements have not been evaluated by the U.S. Food and Drug Administration.
-            This product is not intended to diagnose, treat, cure, or prevent any disease.
-            Products sold by Apexx Biolabs are intended strictly for laboratory research use only
-            and are not for human or veterinary consumption.
-          </p>
-        </div>
-      </section>
-
-      {/* FOOTER */}
       <footer className="bg-[#081b33] border-t border-blue-900 px-6 pt-20 pb-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 mb-16">
           <div>
-            <img src="/images/logo.png" alt="Apexx Biolabs" className="h-14 w-auto mb-6" />
+            <img
+              src="/images/logo.png"
+              alt="Apexx Biolabs"
+              className="h-14 w-auto mb-6"
+            />
             <p className="text-gray-400 text-sm leading-relaxed">
-              Premium research materials built on science, quality, and transparency.
-              Third-party tested with batch documentation.
+              Premium research materials built on science, quality, and
+              transparency. Third-party tested with batch documentation.
             </p>
           </div>
 
           <div>
-            <h4 className="text-white font-bold uppercase tracking-widest mb-5">Shop</h4>
+            <h4 className="text-white font-bold uppercase tracking-widest mb-5">
+              Shop
+            </h4>
             <div className="space-y-3 text-gray-400">
-              <a href="/products" className="block hover:text-blue-300">All Products</a>
-              <a href="/coas" className="block hover:text-blue-300">Certificates of Analysis</a>
+              <a href="/products" className="block hover:text-blue-300">
+                All Products
+              </a>
+              <a href="/coas" className="block hover:text-blue-300">
+                Certificates of Analysis
+              </a>
             </div>
           </div>
 
           <div>
-            <h4 className="text-white font-bold uppercase tracking-widest mb-5">Resources</h4>
+            <h4 className="text-white font-bold uppercase tracking-widest mb-5">
+              Resources
+            </h4>
             <div className="space-y-3 text-gray-400">
-              <a href="/peptide-info" className="block hover:text-blue-300">Peptide Info</a>
-              <a href="/faq" className="block hover:text-blue-300">FAQ</a>
+              <a href="/peptide-info" className="block hover:text-blue-300">
+                Peptide Info
+              </a>
+              <a href="/faq" className="block hover:text-blue-300">
+                FAQ
+              </a>
             </div>
           </div>
 
           <div>
-            <h4 className="text-white font-bold uppercase tracking-widest mb-5">Support</h4>
+            <h4 className="text-white font-bold uppercase tracking-widest mb-5">
+              Support
+            </h4>
             <div className="space-y-3 text-gray-400">
-              <a href="/contact" className="block hover:text-blue-300">Contact Us</a>
-              <a href="/shipping" className="block hover:text-blue-300">Shipping Info</a>
-              <a href="/refunds" className="block hover:text-blue-300">Returns & Refunds</a>
+              <a href="/contact" className="block hover:text-blue-300">
+                Contact Us
+              </a>
+              <a href="/shipping" className="block hover:text-blue-300">
+                Shipping Info
+              </a>
+              <a href="/refunds" className="block hover:text-blue-300">
+                Returns & Refunds
+              </a>
             </div>
           </div>
 
           <div>
-            <h4 className="text-white font-bold uppercase tracking-widest mb-5">Legal</h4>
+            <h4 className="text-white font-bold uppercase tracking-widest mb-5">
+              Legal
+            </h4>
             <div className="space-y-3 text-gray-400">
-              <a href="/privacy" className="block hover:text-blue-300">Privacy Policy</a>
-              <a href="/terms" className="block hover:text-blue-300">Terms & Conditions</a>
-              <a href="/shipping" className="block hover:text-blue-300">Shipping Info</a>
+              <a href="/privacy" className="block hover:text-blue-300">
+                Privacy Policy
+              </a>
+              <a href="/terms" className="block hover:text-blue-300">
+                Terms & Conditions
+              </a>
+              <a href="/shipping" className="block hover:text-blue-300">
+                Shipping Info
+              </a>
             </div>
           </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto rounded-2xl border border-yellow-500/40 bg-[#1f2937] p-6 mb-10">
+          <h3 className="text-yellow-300 font-bold uppercase tracking-widest text-sm mb-3">
+            FDA Disclaimer
+          </h3>
+          <p className="text-gray-300 text-sm leading-relaxed">
+            These statements have not been evaluated by the U.S. Food and Drug
+            Administration. This product is not intended to diagnose, treat,
+            cure, or prevent any disease. Products sold by Apexx Biolabs are
+            intended strictly for laboratory research use only and are not for
+            human or veterinary consumption.
+          </p>
         </div>
 
         <div className="max-w-7xl mx-auto border-t border-blue-900 pt-8 flex flex-col md:flex-row justify-between gap-4 text-gray-500 text-sm">

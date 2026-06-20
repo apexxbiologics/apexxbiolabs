@@ -85,46 +85,55 @@ export default function Home() {
   return (
     <>
 {!accepted && (
-  <div className="fixed inset-0 z-[999] overflow-hidden">
+  <div className="fixed inset-0 z-[999] overflow-y-auto">
+
     {/* VIDEO BACKGROUND */}
     <video
       autoPlay
       muted
       loop
       playsInline
-      className="absolute inset-0 w-full h-full object-cover scale-105"
+      className="absolute inset-0 w-full h-full object-cover"
     >
-      <source src="/videos/disclaimer-bg.mp4" type="video/mp4" />
+      <source
+        src="/videos/disclaimer-bg.mp4"
+        type="video/mp4"
+      />
     </video>
 
-    {/* LIGHT BLUE OVERLAY */}
-    <div className="absolute inset-0 bg-[#EAF4FF]/55 backdrop-blur-[5px]" />
+    {/* LIGHT OVERLAY */}
+    <div className="absolute inset-0 bg-[#EAF4FF]/20" />
 
-    {/* CONTENT */}
-    <div className="relative z-10 flex items-center justify-center min-h-screen px-4 py-6">
-      <div className="w-full max-w-2xl rounded-[32px] bg-white/85 backdrop-blur-xl border border-blue-200 p-6 md:p-10 shadow-[0_20px_80px_rgba(59,130,246,0.20)]">
+    {/* DISCLAIMER CONTENT */}
+    <div className="relative z-10 flex justify-center px-4 py-8 min-h-screen">
+
+      <div className="w-full max-w-2xl my-auto rounded-[32px] bg-[#DDEEFF]/90 border border-blue-200 p-6 md:p-10 shadow-[0_20px_80px_rgba(59,130,246,0.20)]">
+
+        {/* LOGO */}
         <div className="text-center mb-8">
           <img
             src="/images/logo.png"
             alt="Apexx Biolabs"
-            className="h-24 w-auto mx-auto mb-8"
+            className="h-24 md:h-28 w-auto mx-auto mb-8"
           />
 
           <p className="uppercase tracking-[0.4em] text-blue-500 text-xs mb-5">
             Research Use Verification
           </p>
 
-          <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-5">
+          <h1 className="text-3xl md:text-5xl font-black text-slate-900 mb-5">
             Welcome to Apexx Biolabs
           </h1>
 
-          <p className="text-slate-600 text-base md:text-lg leading-relaxed max-w-xl mx-auto">
+          <p className="text-slate-700 text-base md:text-lg leading-relaxed max-w-xl mx-auto">
             Premium research compounds supported by batch documentation,
             analytical review, and research-use transparency.
           </p>
         </div>
 
-        <div className="border border-blue-200 bg-[#EAF4FF]/80 rounded-2xl p-6 mb-8">
+        {/* DISCLAIMER BOX */}
+        <div className="border border-blue-200 bg-[#F2F8FF] rounded-2xl p-5 mb-8">
+
           <p className="text-slate-700 text-sm leading-relaxed mb-5">
             Products sold on this website are intended strictly for lawful
             laboratory research use only and are not for human consumption,
@@ -132,7 +141,8 @@ export default function Home() {
             prevention of disease.
           </p>
 
-          <label className="flex items-start gap-3 cursor-pointer border border-blue-200 rounded-xl p-4 bg-white/90">
+          <label className="flex items-start gap-3 cursor-pointer border border-blue-200 rounded-xl p-4 bg-white">
+
             <input
               type="checkbox"
               checked={disclaimerChecked}
@@ -145,23 +155,29 @@ export default function Home() {
               that all products sold by Apexx Biolabs are intended strictly
               for lawful laboratory research use only.
             </span>
+
           </label>
+
         </div>
 
+        {/* BUTTON */}
         <button
           type="button"
           onClick={() => setAccepted(true)}
           disabled={!disclaimerChecked}
           className={`w-full py-4 rounded-xl uppercase tracking-[0.25em] text-sm font-semibold transition-all ${
             disclaimerChecked
-              ? "bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_30px_rgba(59,130,246,0.35)]"
-              : "bg-slate-200 text-slate-400 cursor-not-allowed"
+              ? "bg-[#6FB6FF] hover:bg-[#5AA9FF] text-white shadow-[0_0_25px_rgba(59,130,246,0.35)]"
+              : "bg-slate-300 text-slate-500 cursor-not-allowed"
           }`}
         >
           Enter Site
         </button>
+
       </div>
+
     </div>
+
   </div>
 )}
 

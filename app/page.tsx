@@ -249,53 +249,70 @@ if (accepted === null) {
   </div>
 </header>
 
-{/* HERO BANNER */}
-<section className="pt-24 bg-black px-6">
-  <div className="max-w-7xl mx-auto overflow-hidden rounded-[2rem] border border-blue-900">
-    <img
-      src="/images/apexx-hero.jpg"
-      alt=""
-      className="w-full h-[260px] md:h-[340px] object-cover object-center"
-    />
-  </div>
-</section>
+{/* HERO */}
+<section className="relative min-h-screen pt-36 md:pt-44 pb-24 px-6 bg-black overflow-hidden">
+  <div className="absolute inset-0 bg-gradient-to-r from-black via-[#020617] to-black" />
 
-{/* YOUR ORIGINAL RESEARCH WITHOUT LIMITS SECTION GOES RIGHT UNDER THIS */}
+  <div
+    className="absolute right-0 top-0 h-full w-full lg:w-[62%] bg-cover bg-center opacity-95"
+    style={{
+      backgroundImage: "url('/images/hero-vial-right.png')",
+    }}
+  />
 
-{/* HERO TEXT */}
-<section className="bg-black px-6 pt-16 pb-24">
-  <div className="max-w-5xl mx-auto text-center">
-    <p className="uppercase tracking-[0.4em] text-blue-400 text-sm mb-6">
-      Research. Quality. Confidence.
-    </p>
+  <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-transparent" />
+  <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black" />
 
-    <h1 className="text-6xl md:text-8xl font-black leading-[0.95] tracking-tight mb-8">
-      <span className="text-white">Research</span>
-      <br />
-      <span className="bg-gradient-to-r from-blue-300 via-blue-500 to-blue-700 bg-clip-text text-transparent">
-        Without Limits.
-      </span>
-    </h1>
+  <div className="relative z-10 max-w-7xl mx-auto min-h-[720px] flex items-center">
+    <div className="max-w-2xl">
+      <p className="uppercase tracking-[0.4em] text-blue-400 text-sm mb-6">
+        Research. Quality. Confidence.
+      </p>
 
-    <p className="text-gray-300 text-xl max-w-3xl mx-auto leading-relaxed mb-10">
-      High-purity research compounds with batch documentation,
-      quality-focused handling, and research-use transparency.
-    </p>
+      <h1 className="text-6xl md:text-8xl font-black leading-[0.95] tracking-tight">
+        <span className="text-white">Research</span>
+        <br />
+        <span className="bg-gradient-to-r from-blue-300 via-blue-500 to-blue-700 bg-clip-text text-transparent">
+          Without Limits.
+        </span>
+      </h1>
 
-    <div className="flex flex-col sm:flex-row justify-center gap-5">
-      <a
-        href="#shop"
-        className="bg-blue-600 hover:bg-blue-500 px-10 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold transition-all"
-      >
-        Shop Products →
-      </a>
+      <p className="mt-8 text-gray-300 text-lg md:text-xl leading-relaxed max-w-xl">
+        High-purity research compounds with batch documentation,
+        quality-focused handling, and research-use transparency.
+      </p>
 
-      <a
-        href="/coas"
-        className="border border-blue-700 hover:bg-blue-700 px-10 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold transition-all"
-      >
-        View COAs
-      </a>
+      <div className="flex flex-col sm:flex-row gap-5 mt-10">
+        <a
+          href="#shop"
+          className="bg-blue-600 hover:bg-blue-500 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all"
+        >
+          Shop Products →
+        </a>
+
+        <a
+          href="/coas"
+          className="border border-blue-700 hover:bg-blue-700 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all"
+        >
+          View COAs
+        </a>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
+        {["99%+ Purity", "Third-Party Tested", "COA Included", "Fast Shipping"].map(
+          (item) => (
+            <div
+              key={item}
+              className="border border-blue-900/70 bg-black/60 backdrop-blur-md rounded-2xl p-4"
+            >
+              <p className="text-blue-400 text-xl mb-2">✓</p>
+              <p className="text-gray-300 text-xs uppercase tracking-widest">
+                {item}
+              </p>
+            </div>
+          )
+        )}
+      </div>
     </div>
   </div>
 </section>

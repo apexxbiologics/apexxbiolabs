@@ -8,7 +8,6 @@ import {
   ShieldCheck,
   ClipboardCheck,
   Mail,
-  Instagram,
 } from "lucide-react";
 
 export default function APX3Page() {
@@ -361,43 +360,35 @@ export default function APX3Page() {
       {/* FOOTER */}
       <footer className="bg-[#04101f] border-t border-blue-900/60 px-6 md:px-10 pt-16 pb-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-6 gap-12 mb-14">
-          <div>
-            <img
-              src="/images/logo.png"
-              alt="Apexx Biolabs"
-              className="h-14 w-auto mb-5"
-            />
+<div>
+  <img
+    src="/images/logo.png"
+    alt="Apexx Biolabs"
+    className="h-14 w-auto mb-5"
+  />
 
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Premium research-grade peptides built on science, quality, and
-              transparency.
-            </p>
+  <p className="text-gray-400 text-sm leading-relaxed">
+    Premium research-grade peptides built on science, quality, and transparency.
+  </p>
 
-            <div className="flex gap-3 mt-6">
-              <a
-                href="https://www.tiktok.com/@apexx.nyc"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full border border-blue-900 flex items-center justify-center hover:bg-blue-900"
-              >
-                ♪
-              </a>
+  <div className="flex gap-3 mt-6">
+    <a
+      href="https://www.tiktok.com/@apexx.nyc"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="w-10 h-10 rounded-full border border-blue-900 flex items-center justify-center hover:bg-blue-900 transition-all"
+    >
+      <span className="text-sm font-bold">♪</span>
+    </a>
 
-              <a
-                href="mailto:support@apexxbiolabs.com"
-                className="w-10 h-10 rounded-full border border-blue-900 flex items-center justify-center hover:bg-blue-900"
-              >
-                <Mail size={18} />
-              </a>
-
-              <a
-                href="/"
-                className="w-10 h-10 rounded-full border border-blue-900 flex items-center justify-center hover:bg-blue-900"
-              >
-                <Instagram size={18} />
-              </a>
-            </div>
-          </div>
+    <a
+      href="mailto:support@apexxbiolabs.com"
+      className="w-10 h-10 rounded-full border border-blue-900 flex items-center justify-center hover:bg-blue-900 transition-all"
+    >
+      <Mail size={18} />
+    </a>
+  </div>
+</div>
 
           <div>
             <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">

@@ -254,10 +254,10 @@ if (accepted === null) {
   <div className="absolute inset-0 bg-gradient-to-r from-black via-[#020617] to-black" />
 
   <div
-    className="absolute right-0 top-0 h-full w-full lg:w-[62%] bg-cover bg-center opacity-95"
-    style={{
-      backgroundImage: "url('/images/hero-vial-right.png')",
-    }}
+className="absolute right-0 top-0 h-full w-full lg:w-[70%] bg-cover opacity-95"style={{
+  backgroundImage: "url('/images/hero-vial-right.png')",
+  backgroundPosition: "75% center",
+}}
   />
 
   <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-transparent" />

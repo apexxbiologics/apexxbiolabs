@@ -250,8 +250,7 @@ if (accepted === null) {
 </header>
 
 {/* HERO */}
-<section className="relative min-h-screen pt-36 pb-24 px-6 bg-black overflow-hidden">  <div className="absolute inset-0 bg-gradient-to-r from-black via-[#020617] to-black" />
-
+<section className="relative pt-36 pb-0 px-6 bg-black overflow-hidden">
   <div
 className="absolute right-0 top-0 h-full w-full lg:w-[70%] bg-cover opacity-95"style={{
   backgroundImage: "url('/images/hero-vial-right.png')",
@@ -318,7 +317,7 @@ className="absolute right-0 top-0 h-full w-full lg:w-[70%] bg-cover opacity-95"s
 {/* PRODUCTS */}
 <section
   id="shop"
-  className="py-28 px-6 md:px-10 bg-gradient-to-b from-black via-[#030712] to-black text-white"
+  className="pt-10 pb-28 px-6 md:px-10 bg-gradient-to-b from-black via-[#030712] to-black text-white"
 >
   <div className="max-w-7xl mx-auto">
     <div className="flex items-end justify-between mb-12">

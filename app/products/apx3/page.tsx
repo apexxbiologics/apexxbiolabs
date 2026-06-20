@@ -61,7 +61,7 @@ export default function APX3Page() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0A1B33]] text-white">
+    <main className="min-h-screen bg-[#112B4A] text-white">
       <header className="sticky top-0 z-50 border-b border-blue-900/60 bg-[#04101f]/95 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 md:px-10 py-5 flex items-center justify-between">
           <a href="/">

@@ -253,8 +253,7 @@ if (accepted === null) {
 
 {/* HERO */}
 <section className="relative pt-36 pb-0 px-6 bg-[#081526] overflow-hidden">  <div
-className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"style={{
-  backgroundImage: "url('/images/hero-vial-right.png')",
+className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95" style={{
   backgroundPosition: "75% center",
 }}
   />
@@ -289,10 +288,10 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
           Shop Products →
         </a>
 
-        <a
-          href="/coas"
-          className="border border-blue-700 hover:bg-blue-700 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all"
-        >
+<a
+  href="/coas"
+  className="relative z-10 mt-8 flex items-center justify-between bg-[#102A4A] border border-blue-700 rounded-2xl px-6 py-5 hover:bg-[#16365d] transition-all"
+>
           View COAs
         </a>
       </div>
@@ -665,12 +664,11 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
     </div>
 
     <div className="relative">
-      <div className="relative rounded-[2rem] border border-blue-900 bg-[#050505] p-10 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-950/30 via-transparent to-black"></div>
-
+      <div className="relative rounded-[2rem] border border-blue-800 bg-[#081526] p-10 overflow-hidden shadow-[0_0_40px_rgba(37,99,235,0.15)]">
+<div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-[#0B1F38]/30 to-[#081526]">
+</div>
         <div className="relative z-10 flex justify-end mb-6">
-          <div className="bg-black border border-blue-800 rounded-2xl px-5 py-4">
-            <p className="text-white font-black">99%+ Purity</p>
+<div className="bg-[#102A4A] border border-blue-700 rounded-2xl px-5 py-4">            <p className="text-white font-black">99%+ Purity</p>
             <p className="text-gray-500 text-sm">Verified by HPLC</p>
           </div>
         </div>
@@ -755,7 +753,8 @@ className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"s
   </div>
 </section>
 
-<footer className="bg-[#081526] border-t border-[#1E3A5F] px-6 pt-20 pb-8">  <div className="max-w-7xl mx-auto">
+<footer className="bg-[#081526] border-t border-[#1E3A5F] px-6 pt-20 pb-8">
+  <div className="max-w-7xl mx-auto">
     <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-16">
       <div>
         <img

@@ -12,7 +12,7 @@ export default function AdamaxPage() {
       name: "ADAMAX",
       price: 85,
       quantity: 1,
-      image: "/images/adamax.PNG",
+      image: "/images/adamaxblue.PNG",
     };
 
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");

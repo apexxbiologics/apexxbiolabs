@@ -102,12 +102,12 @@ export default function APX3Page() {
 
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-start">
 {/* IMAGE */}
-<div className="overflow-hidden">
-  <div className="h-[520px] flex items-center justify-center">
+<div className="flex items-center justify-center">
+  <div className="w-[500px] h-[500px] rounded-[32px] overflow-hidden">
     <img
       src={selectedProduct.image}
       alt={selectedProduct.name}
-      className="w-[35%] h-auto object-contain"
+      className="w-full h-full object-cover rounded-[32px]"
     />
   </div>
 </div>

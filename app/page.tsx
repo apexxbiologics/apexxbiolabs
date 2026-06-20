@@ -78,7 +78,7 @@ export default function Home() {
 
   if (accepted === null) return null;
 
-  function handleAccept(event: MouseEvent<HTMLButtonElement, MouseEvent>): void {
+  function handleAccept(event: React.MouseEvent<HTMLButtonElement>): void {
     throw new Error("Function not implemented.");
   }
 

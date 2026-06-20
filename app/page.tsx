@@ -254,9 +254,9 @@ if (accepted === null) {
 {/* HERO */}
 <section className="relative pt-36 pb-0 px-6 bg-black overflow-hidden">
   <div
-className="absolute right-0 top-0 h-full w-full lg:w-[60%] bg-cover opacity-95"style={{
+className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"style={{
   backgroundImage: "url('/images/hero-vial-right.png')",
-  backgroundPosition: "60% center",
+  backgroundPosition: "75% center",
 }}
   />
 

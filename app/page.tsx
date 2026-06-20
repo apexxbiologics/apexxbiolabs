@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Search, Menu, X } from "lucide-react";
 
 export default function Home() {
   const [search, setSearch] = useState("");
@@ -13,6 +13,8 @@ const [disclaimerChecked, setDisclaimerChecked] = useState(false);
     const productScrollRef = useRef<HTMLDivElement | null>(null);
     const autoScrollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 const [activeQuality, setActiveQuality] = useState("potency");
+const [menuOpen, setMenuOpen] = useState(false);
+const [searchOpen, setSearchOpen] = useState(false);
 
 const startProductScroll = (direction: "left" | "right") => {
   stopProductScroll();
@@ -186,73 +188,135 @@ if (accepted === null) {
 
 <main className="min-h-screen bg-[#081526] text-white">
 {/* HEADER */}
-<header className="fixed top-0 left-0 w-full z-50 border-b border-blue-900/70 bg-[#081526]/95 backdrop-blur-xl px-4 md:px-8 py-4">
-  <div className="max-w-7xl mx-auto flex items-center justify-between gap-6">
-    <a href="/">
-      <img
-        src="/images/logo.png"
-        alt="Apexx Biolabs"
-        className="h-12 md:h-14 w-auto"
-      />
-    </a>
+<header className="fixed top-0 left-0 w-full z-50 border-b border-blue-900/70 bg-[#081526]/95 backdrop-blur-xl px-5 md:px-10 py-5">
+  <div className="max-w-7xl mx-auto flex items-center justify-between">
 
-    <div className="hidden md:block relative w-full max-w-md">
+    {/* LEFT MENU + LOGO */}
+    <div className="flex items-center gap-6">
+      <button
+        onClick={() => setMenuOpen(true)}
+        className="text-white hover:text-blue-400 transition-all"
+      >
+        <Menu size={34} />
+      </button>
+
+      <a href="/">
+        <img
+          src="/images/logo.png"
+          alt="Apexx Biolabs"
+          className="h-10 md:h-12 w-auto"
+        />
+      </a>
+    </div>
+
+    {/* CENTER NAV */}
+    <nav className="hidden md:flex items-center gap-14 text-white text-sm font-bold uppercase tracking-[0.22em]">
+      <a href="/" className="hover:text-blue-400 transition-all border-b-2 border-blue-500 pb-2">
+        Home
+      </a>
+
+      <a href="/products" className="hover:text-blue-400 transition-all pb-2">
+        Products
+      </a>
+
+      <a href="/coas" className="hover:text-blue-400 transition-all pb-2">
+        COAs
+      </a>
+
+      <a href="/contact" className="hover:text-blue-400 transition-all pb-2">
+        Contact
+      </a>
+    </nav>
+
+    {/* RIGHT ICONS */}
+    <div className="flex items-center gap-6">
+      <button
+        onClick={() => setSearchOpen(!searchOpen)}
+        className="text-white hover:text-blue-400 transition-all"
+      >
+        <Search size={34} />
+      </button>
+
+      <a
+        href="/cart"
+        className="relative text-white hover:text-blue-400 transition-all"
+      >
+        <ShoppingCart size={36} />
+
+        {cartCount > 0 && (
+          <span className="absolute -top-3 -right-4 bg-blue-600 text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center">
+            {cartCount}
+          </span>
+        )}
+      </a>
+    </div>
+  </div>
+
+  {/* SEARCH BAR DROPDOWN */}
+  {searchOpen && (
+    <div className="max-w-3xl mx-auto mt-5 relative">
       <input
         type="text"
         placeholder="Search products..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full bg-[#050505] border border-blue-900 focus:border-blue-500 outline-none rounded-xl px-5 py-3 text-white placeholder:text-gray-500 text-sm"
+        className="w-full bg-[#020817] border border-blue-700 focus:border-blue-400 outline-none rounded-2xl px-6 py-4 text-white placeholder:text-gray-400 text-base"
       />
 
       {search && filteredProducts.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-3 bg-[#030712] border border-blue-900 rounded-xl overflow-hidden z-[999]">
+        <div className="absolute top-full left-0 right-0 mt-3 bg-[#081526] border border-blue-800 rounded-2xl overflow-hidden z-[999]">
           {filteredProducts.map((product) => (
-<a
-  key={product.name}
-  href={product.href}
-  className="block min-w-[290px] md:min-w-[340px] group"
->
+            <a
+              key={product.name}
+              href={product.href}
+              className="block px-6 py-4 text-white hover:bg-[#102A4A] transition-all"
+            >
               {product.name}
             </a>
           ))}
         </div>
       )}
     </div>
-
-    <nav className="flex items-center gap-3 text-xs uppercase tracking-widest">
-      <a
-        href="/"
-        className="border border-blue-700 text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-700 hover:text-white transition-all"
-      >
-        Home
-      </a>
-
-      <a
-        href="/products"
-        className="border border-blue-700 text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-700 hover:text-white transition-all"
-      >
-        Products
-      </a>
-
-      <a
-        href="/cart"
-        className="relative flex items-center justify-center w-12 h-12 border border-blue-700 rounded-xl hover:bg-blue-700 transition-all"
-      >
-        <ShoppingCart size={22} className="text-blue-400" />
-
-        {cartCount > 0 && (
-          <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
-            {cartCount}
-          </span>
-        )}
-      </a>
-    </nav>
-  </div>
+  )}
 </header>
 
+{/* SIDE MENU */}
+{menuOpen && (
+  <div className="fixed inset-0 z-[999] bg-black/60 backdrop-blur-sm">
+    <div className="h-full w-[85%] max-w-sm bg-[#081526] border-r border-blue-900 p-8 shadow-2xl">
+      <div className="flex items-center justify-between mb-10">
+        <img
+          src="/images/logo.png"
+          alt="Apexx Biolabs"
+          className="h-12 w-auto"
+        />
+
+        <button
+          onClick={() => setMenuOpen(false)}
+          className="text-white hover:text-blue-400 transition-all"
+        >
+          <X size={30} />
+        </button>
+      </div>
+
+      <div className="flex flex-col gap-6 text-white text-lg font-semibold uppercase tracking-widest">
+        <a href="/" className="hover:text-blue-400 transition-all">Home</a>
+        <a href="/products" className="hover:text-blue-400 transition-all">Products</a>
+        <a href="/coas" className="hover:text-blue-400 transition-all">COAs</a>
+        <a href="/contact" className="hover:text-blue-400 transition-all">Contact</a>
+        <a href="/peptide-info" className="hover:text-blue-400 transition-all">Peptide Info</a>
+        <a href="/faq" className="hover:text-blue-400 transition-all">FAQ</a>
+        <a href="/shipping" className="hover:text-blue-400 transition-all">Shipping</a>
+        <a href="/refunds" className="hover:text-blue-400 transition-all">Refunds</a>
+        <a href="/privacy" className="hover:text-blue-400 transition-all">Privacy Policy</a>
+        <a href="/terms" className="hover:text-blue-400 transition-all">Terms</a>
+      </div>
+    </div>
+  </div>
+)}
+
 {/* HERO */}
-<section className="relative pt-36 pb-0 px-6 bg-[#081526] overflow-hidden">  <div
+<section className="relative pt-44 pb-0 px-6 bg-[#081526] overflow-hidden">  <div
 className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"style={{
   backgroundImage: "url('/images/hero-vial-right.png')",
   backgroundPosition: "75% center",

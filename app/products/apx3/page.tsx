@@ -126,16 +126,6 @@ export default function APX3Page() {
                 metabolic regulation and body composition research.
               </p>
 
-              <div className="mb-8 rounded-xl border border-blue-900/60 bg-[#081b33]/50 p-4">
-                <p className="text-xs text-gray-400 leading-relaxed">
-                  Research Use Only. Products offered by Apexx Biolabs are intended
-                  exclusively for lawful laboratory research and analytical applications.
-                  These statements have not been evaluated by the U.S. Food and Drug
-                  Administration. This product is not intended to diagnose, treat, cure,
-                  or prevent any disease and is not for human or veterinary consumption.
-                </p>
-              </div>
-
               <p className="text-4xl font-black text-blue-400 mb-8">
                 ${selectedProduct.price}.00
               </p>

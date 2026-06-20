@@ -83,9 +83,7 @@ export default function FAQPage() {
           </p>
 
           <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.95] mb-8">
-            Frequently Asked
-            <br />
-            Questions
+            Frequently Asked Questions
           </h1>
 
           <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">

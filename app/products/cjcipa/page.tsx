@@ -128,13 +128,13 @@ export default function APX3Page() {
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-start">
             {/* IMAGE */}
             <div className="rounded-[28px] overflow-hidden border border-blue-700/70 bg-transparent shadow-[0_25px_80px_rgba(0,0,0,0.35)]">
-              <div className="h-[500px] flex items-center justify-center overflow-hidden">
-                <img
-                  src={selectedProduct.image}
-                  alt={selectedProduct.name}
-                  className="w-full h-full object-contain scale-[0.92]"
-                />
-              </div>
+<div className="h-[650px] flex items-center justify-center p-10">
+  <img
+    src={selectedProduct.image}
+    alt={selectedProduct.name}
+    className="max-w-full max-h-full object-contain"
+  />
+</div>
             </div>
 
             {/* INFO */}

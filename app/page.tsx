@@ -249,16 +249,18 @@ if (accepted === null) {
   </div>
 </header>
 
-{/* HERO IMAGE */}
-<section className="pt-24 bg-black">
-  <div className="max-w-7xl mx-auto px-6">
+{/* HERO BANNER */}
+<section className="pt-24 bg-black px-6">
+  <div className="max-w-7xl mx-auto overflow-hidden rounded-[2rem] border border-blue-900">
     <img
       src="/images/apexx-hero.jpg"
-      alt="Apexx Biolabs"
-      className="w-full rounded-[2rem] border border-blue-900"
+      alt=""
+      className="w-full h-[260px] md:h-[340px] object-cover object-center"
     />
   </div>
 </section>
+
+{/* YOUR ORIGINAL RESEARCH WITHOUT LIMITS SECTION GOES RIGHT UNDER THIS */}
 
 {/* HERO TEXT */}
 <section className="bg-black px-6 pt-16 pb-24">

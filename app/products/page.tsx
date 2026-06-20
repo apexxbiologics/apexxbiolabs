@@ -206,13 +206,13 @@ export default function ProductsPage() {
                 onClick={() => (window.location.href = product.href)}
                 className="group cursor-pointer rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-3 hover:bg-white/[0.07] hover:border-blue-400/50 hover:-translate-y-2 transition-all duration-300"
               >
-                <div className="h-[360px] flex items-center justify-center rounded-[1.6rem] overflow-hidden">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="h-80 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
+<div className="h-[360px] flex items-center justify-center">
+  <img
+    src={product.image}
+    alt={product.name}
+    className="h-80 w-auto object-contain rounded-[28px] transition-transform duration-500 group-hover:scale-105"
+  />
+</div>
 
                 <div className="p-5 pt-7">
                   <p className="text-blue-300 text-xs uppercase tracking-widest mb-3">

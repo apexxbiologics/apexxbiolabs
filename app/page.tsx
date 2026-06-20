@@ -317,7 +317,7 @@ className="absolute right-0 top-0 h-full w-full lg:w-[70%] bg-cover opacity-95"s
 {/* PRODUCTS */}
 <section
   id="shop"
-  className="pt-10 pb-28 px-6 md:px-10 bg-gradient-to-b from-black via-[#030712] to-black text-white"
+  className="py-28 px-6 md:px-10 bg-gradient-to-b from-black via-[#030712] to-black text-white"
 >
   <div className="max-w-7xl mx-auto">
     <div className="flex items-end justify-between mb-12">
@@ -507,7 +507,9 @@ alt=""
 </section>
 
   {/* QUALITY VERIFICATION */}
-<section className="pt-4 pb-32 px-6 bg-gradient-to-b from-black via-[#030712] to-black border-b border-blue-950">
+<section className="py-32 px-6 bg-gradient-to-b from-black via-[#030712] to-black border-b border-blue-950">
+  <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+
     <div>
       <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-6">
         Quality Verification
@@ -675,6 +677,7 @@ alt=""
       </div>
     </div>
 
+  </div>
 </section>
 
         <section className="py-16 px-6 border-t border-blue-950 border-b border-blue-950 bg-black">

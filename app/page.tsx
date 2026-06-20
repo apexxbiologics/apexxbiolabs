@@ -316,67 +316,87 @@ if (accepted === null) {
 )}
 
 {/* HERO */}
-<section className="relative pt-44 pb-0 px-6 bg-[#081526] overflow-hidden">  <div
-className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-95"style={{
-  backgroundImage: "url('/images/hero-vial-right.png')",
-  backgroundPosition: "75% center",
-}}
+<section className="relative pt-44 pb-24 px-6 bg-[#081526] overflow-hidden">
+
+  {/* Background Image */}
+  <div
+    className="absolute right-0 top-0 h-full w-full lg:w-[75%] bg-cover opacity-90"
+    style={{
+      backgroundImage: "url('/images/hero-vial-right.png')",
+      backgroundPosition: "75% center",
+    }}
   />
 
-  <div className="absolute inset-0 bg-gradient-to-r from-[#081526] via-[#081526]/90 to-transparent" />
-  <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black" />
+  {/* Navy Overlay */}
+  <div className="absolute inset-0 bg-gradient-to-r from-[#081526] via-[#081526]/92 to-transparent" />
 
-<div className="relative z-10 max-w-7xl mx-auto py-24 flex items-center">    <div className="max-w-2xl">
-      <p className="uppercase tracking-[0.4em] text-blue-400 text-sm mb-6">
+  {/* Luxury Glow */}
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_55%)]"></div>
+
+  <div className="relative z-10 max-w-7xl mx-auto py-20 flex items-center">
+
+    <div className="max-w-3xl">
+
+      <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
         Research. Quality. Confidence.
       </p>
 
-      <h1 className="text-6xl md:text-8xl font-black leading-[0.95] tracking-tight">
-        <span className="text-white">Research</span>
+      <h1 className="text-6xl md:text-8xl font-black tracking-tight leading-[0.9] text-white">
+        Research
         <br />
-        <span className="bg-gradient-to-r from-blue-300 via-blue-500 to-blue-700 bg-clip-text text-transparent">
-          Without 
-          Limits.
+
+        <span className="text-blue-300">
+          Without Limits.
         </span>
       </h1>
 
-      <p className="mt-8 text-gray-300 text-lg md:text-xl leading-relaxed max-w-xl">
-        High-purity research compounds with batch documentation,
-        quality-focused handling, and research-use transparency.
+      <p className="mt-8 text-white/70 text-lg md:text-xl leading-relaxed max-w-2xl">
+        High-purity research compounds supported by analytical verification,
+        batch documentation, and research-use transparency.
       </p>
 
-      <div className="flex flex-col sm:flex-row gap-5 mt-10">
+      <div className="flex flex-col sm:flex-row gap-4 mt-10">
+
         <a
           href="#shop"
-          className="bg-blue-600 hover:bg-blue-500 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all"
+          className="bg-white text-[#081526] px-9 py-4 rounded-full text-sm uppercase tracking-widest font-semibold text-center hover:bg-blue-100 transition-all"
         >
-          Shop Products →
+          Shop Products
         </a>
 
         <a
           href="/coas"
-          className="border border-blue-700 hover:bg-blue-700 px-9 py-4 rounded-xl text-sm uppercase tracking-widest font-semibold text-center transition-all"
+          className="border border-white/10 bg-white/[0.04] backdrop-blur-sm px-9 py-4 rounded-full text-sm uppercase tracking-widest font-semibold text-center hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
         >
           View COAs
         </a>
+
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
-        {["99%+ Purity", "Third-Party Tested", "COA Included", "Fast Shipping"].map(
-          (item) => (
-            <div
-              key={item}
-              className="border border-blue-900/70 bg-black/60 backdrop-blur-md rounded-2xl p-4"
-            >
-              <p className="text-blue-400 text-xl mb-2">✓</p>
-              <p className="text-gray-300 text-xs uppercase tracking-widest">
-                {item}
-              </p>
-            </div>
-          )
-        )}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-14">
+
+        {[
+          "99%+ Purity",
+          "Third-Party Tested",
+          "COA Included",
+          "Fast Shipping",
+        ].map((item) => (
+          <div
+            key={item}
+            className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-5 hover:bg-white/[0.07] hover:border-blue-400/50 transition-all"
+          >
+            <p className="text-blue-300 text-xl mb-3">✓</p>
+
+            <p className="text-white/70 text-xs uppercase tracking-widest leading-relaxed">
+              {item}
+            </p>
+          </div>
+        ))}
+
       </div>
+
     </div>
+
   </div>
 </section>
 

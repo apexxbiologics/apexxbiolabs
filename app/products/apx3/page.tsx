@@ -290,6 +290,109 @@ export default function APX3Page() {
           </p>
         </div>
       </section>
+
+      {/* FOOTER */}
+<footer className="bg-[#04101f] border-t border-blue-900/60 px-6 md:px-10 pt-16 pb-8">
+  <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-6 gap-12 mb-14">
+    <div>
+      <img
+        src="/images/logo.png"
+        alt="Apexx Biolabs"
+        className="h-14 w-auto mb-5"
+      />
+
+      <p className="text-gray-400 text-sm leading-relaxed">
+        Premium research-grade peptides built on science, quality, and transparency.
+      </p>
+
+      <div className="flex gap-3 mt-6">
+        <a
+          href="https://www.tiktok.com/@apexx.nyc"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-10 h-10 rounded-full border border-blue-900 flex items-center justify-center hover:bg-blue-900 transition-all"
+        >
+          <span className="text-sm font-bold">♪</span>
+        </a>
+
+        <a
+          href="mailto:support@apexxbiolabs.com"
+          className="w-10 h-10 rounded-full border border-blue-900 flex items-center justify-center hover:bg-blue-900 transition-all"
+        >
+          <Mail size={18} />
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
+        Shop
+      </h4>
+      <div className="space-y-3 text-gray-400">
+        <a href="/products" className="block hover:text-blue-300">All Products</a>
+        <a href="/products" className="block hover:text-blue-300">Research Peptides</a>
+        <a href="/coas" className="block hover:text-blue-300">Certificates of Analysis</a>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
+        Resources
+      </h4>
+      <div className="space-y-3 text-gray-400">
+        <a href="/peptide-info" className="block hover:text-blue-300">Research Library</a>
+        <a href="/peptide-info" className="block hover:text-blue-300">Peptide Info</a>
+        <a href="/faq" className="block hover:text-blue-300">FAQ</a>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
+        Support
+      </h4>
+      <div className="space-y-3 text-gray-400">
+        <a href="/contact" className="block hover:text-blue-300">Contact Us</a>
+        <a href="/shipping" className="block hover:text-blue-300">Shipping Info</a>
+        <a href="/refunds" className="block hover:text-blue-300">Returns & Refunds</a>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
+        Legal
+      </h4>
+      <div className="space-y-3 text-gray-400">
+        <a href="/privacy" className="block hover:text-blue-300">Privacy Policy</a>
+        <a href="/terms" className="block hover:text-blue-300">Terms of Service</a>
+        <a href="/terms" className="block hover:text-blue-300">Research Use Only</a>
+      </div>
+    </div>
+
+    <div>
+      <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
+        Stay Updated
+      </h4>
+
+      <p className="text-gray-400 text-sm mb-4">
+        Get updates on new products and research insights.
+      </p>
+
+      <div className="flex border border-blue-900 rounded-lg overflow-hidden">
+        <input
+          placeholder="Email address"
+          className="bg-transparent px-4 py-3 w-full outline-none text-sm text-white placeholder:text-gray-500"
+        />
+        <button className="bg-blue-600 px-4">→</button>
+      </div>
+    </div>
+  </div>
+
+  <div className="max-w-7xl mx-auto border-t border-blue-900 pt-6 flex flex-col md:flex-row justify-between gap-4 text-gray-500 text-sm">
+    <p>© 2026 Apexx Biolabs. All rights reserved.</p>
+    <p>SSL Secured · 99%+ Purity · Research Use Only</p>
+  </div>
+</footer>
+
     </main>
   );
 }

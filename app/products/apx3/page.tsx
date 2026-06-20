@@ -76,15 +76,18 @@ export default function APX3Page() {
             <a href="/contact" className="hover:text-blue-400 transition-all">Contact</a>
           </nav>
 
-          <div className="flex items-center gap-5">
-            <Search size={26} className="text-white" />
-            <a href="/cart" className="relative">
-              <ShoppingCart size={30} />
-              <span className="absolute -top-3 -right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
-                {quantity}
-              </span>
-            </a>
-          </div>
+<div className="flex items-center gap-5">
+  <a href="/products">
+    <Search size={26} className="text-white hover:text-blue-400 transition-all" />
+  </a>
+
+  <a href="/cart" className="relative">
+    <ShoppingCart size={30} />
+    <span className="absolute -top-3 -right-3 bg-blue-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
+      {quantity}
+    </span>
+  </a>
+</div>
         </div>
       </header>
 
@@ -192,23 +195,29 @@ export default function APX3Page() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-7">
-                <button
-                  onClick={addToCart}
-                  className="bg-blue-600 hover:bg-blue-500 rounded-xl py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
-                >
-                  <ShoppingCart size={22} />
-                  {added ? "Added" : "Add To Cart"}
-                </button>
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-7">
+  <button
+    onClick={addToCart}
+    className="bg-blue-600 hover:bg-blue-500 rounded-xl py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
+  >
+    <ShoppingCart size={22} />
+    {added ? "Added To Cart" : "Add To Cart"}
+  </button>
 
-                <a href="/cart" className="border border-blue-700 hover:bg-blue-700 rounded-xl py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
-                  Buy Now
-                </a>
+  <a
+    href="/cart"
+    className="border border-blue-700 hover:bg-blue-700 rounded-xl py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+  >
+    View Cart
+  </a>
 
-                <a href="/coas" className="border border-blue-700 hover:bg-blue-700 rounded-xl py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
-                  View COA
-                </a>
-              </div>
+  <a
+    href="/coas"
+    className="border border-blue-700 hover:bg-blue-700 rounded-xl py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center sm:col-span-2"
+  >
+    View COA
+  </a>
+</div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[

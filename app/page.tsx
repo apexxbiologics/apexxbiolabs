@@ -208,11 +208,11 @@ if (accepted === null) {
       {search && filteredProducts.length > 0 && (
         <div className="absolute top-full left-0 right-0 mt-3 bg-[#030712] border border-blue-900 rounded-xl overflow-hidden z-[999]">
           {filteredProducts.map((product) => (
-            <a
-              key={product.name}
-              href={product.href}
-              className="block px-5 py-4 text-sm uppercase tracking-widest hover:bg-blue-900/40 transition-all"
-            >
+<a
+  key={product.name}
+  href={product.href}
+  className="block min-w-[290px] md:min-w-[340px] group"
+>
               {product.name}
             </a>
           ))}
@@ -317,52 +317,31 @@ className="absolute right-0 top-0 h-full w-full lg:w-[70%] bg-cover opacity-95"s
 </section>
 
 {/* PRODUCTS */}
-<section
-  id="shop"
-  className="py-28 px-6 md:px-10 bg-gradient-to-b from-black via-[#030712] to-black text-white"
->
+<section id="shop" className="py-28 px-6 md:px-10 bg-white text-black">
   <div className="max-w-7xl mx-auto">
     <div className="flex items-end justify-between mb-12">
       <div>
-        <p className="uppercase tracking-[0.4em] text-blue-500 text-sm mb-5">
-          Research Catalog
-        </p>
-
-        <h3 className="text-5xl md:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-gray-100 to-blue-300 bg-clip-text text-transparent">
-          Featured Compounds
+        <h3 className="text-5xl md:text-6xl font-black tracking-tight text-black">
+          Featured Products
         </h3>
 
-        <p className="text-gray-400 mt-5 text-lg">
-          Research peptides, third-party identity tested, and batch documented.
+        <p className="text-gray-500 mt-5 text-lg">
+          Research peptides, third-party identity tested
         </p>
       </div>
 
       <a
         href="/products"
-        className="hidden md:inline-flex border border-blue-700/60 text-blue-300 rounded-full px-8 py-3 text-sm font-semibold uppercase tracking-widest hover:bg-blue-700 hover:text-white transition-all"
+        className="hidden md:inline-flex border border-black text-black rounded-full px-8 py-3 text-lg hover:bg-black hover:text-white transition-all"
       >
         View all
       </a>
     </div>
 
     <div className="relative">
-      <button
-        onMouseEnter={() => startProductScroll("left")}
-        onMouseLeave={stopProductScroll}
-        onClick={() =>
-          productScrollRef.current?.scrollBy({
-            left: -360,
-            behavior: "smooth",
-          })
-        }
-        className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full border border-blue-700/60 bg-black items-center justify-center text-3xl text-blue-300 hover:bg-blue-700 hover:text-white transition-all"
-      >
-        ‹
-      </button>
-
       <div
         ref={productScrollRef}
-        className="flex gap-7 overflow-x-auto scroll-smooth pb-6 px-1 md:px-20 no-scrollbar"
+        className="flex gap-7 overflow-x-auto scroll-smooth pb-6 no-scrollbar"
       >
         {[
           {
@@ -450,60 +429,48 @@ className="absolute right-0 top-0 h-full w-full lg:w-[70%] bg-cover opacity-95"s
             href: "/products/cjcipa",
           },
         ].map((product) => (
-<a
-  key={product.name}
-  href={product.href}
-className="block min-w-[290px] md:min-w-[340px] bg-[#020817] border border-blue-800/60 rounded-3xl overflow-hidden hover:border-blue-400 transition-all duration-300">
-<div className="bg-[#7FA9E8] h-[360px] flex items-center justify-center border-b border-blue-950">              <img
+          <div
+            key={product.name}
+            className="min-w-[290px] md:min-w-[340px] group"
+          >
+            <a href={product.href}>
+              <img
                 src={product.image}
-alt=""
-                className="h-72 object-contain hover:scale-105 transition-all duration-300"
+                alt={product.name}
+                className="w-full h-[420px] object-contain rounded-[32px] transition-transform duration-500 group-hover:scale-105"
               />
-            </div>
+            </a>
 
-            <div className="p-7">
-              <h4 className="text-2xl font-black text-white mb-3">
+            <div className="pt-6">
+              <h4 className="text-2xl font-black text-black mb-3">
                 {product.name}
               </h4>
 
-              <p className="text-gray-400 mb-8">{product.desc}</p>
+              <p className="text-gray-500 mb-8">
+                {product.desc}
+              </p>
 
               <div className="flex gap-3">
-<a
-  href="/coas"
-  className="flex-1 bg-white text-black rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:bg-gray-200 transition-all"
->
-  COA
-</a>
+                <a
+                  href="/coas"
+                  className="flex-1 border border-black text-black rounded-full py-3 text-center text-sm font-semibold hover:bg-black hover:text-white transition-all"
+                >
+                  COA
+                </a>
 
                 <a
-  href={product.href}
-  className="flex-1 bg-white text-black rounded-full py-3 text-center text-sm font-semibold uppercase tracking-widest hover:bg-gray-200 transition-all"
->
-  View
-</a>
+                  href={product.href}
+                  className="flex-1 bg-black text-white rounded-full py-3 text-center text-sm font-semibold hover:bg-gray-800 transition-all"
+                >
+                  View
+                </a>
               </div>
             </div>
-          </a>
+          </div>
         ))}
       </div>
-
-      <button
-        onMouseEnter={() => startProductScroll("right")}
-        onMouseLeave={stopProductScroll}
-        onClick={() =>
-          productScrollRef.current?.scrollBy({
-            left: 360,
-            behavior: "smooth",
-          })
-        }
-        className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full border border-blue-700/60 bg-black items-center justify-center text-3xl text-blue-300 hover:bg-blue-700 hover:text-white transition-all"
-      >
-        ›
-      </button>
     </div>
   </div>
-
 </section>
 
   {/* QUALITY VERIFICATION */}

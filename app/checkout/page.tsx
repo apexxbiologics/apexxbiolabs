@@ -687,12 +687,7 @@ export default function CheckoutPage() {
             Terms
           </a>
 
-          <a href="/shipping" className="hover:text-white transition-all">
-            Shipping
-          </a>
-        </div>
 
-      </div>
 
     </div>
 

@@ -32,6 +32,7 @@ export default function APX3Page() {
   };
 
   const selectedProduct = productOptions[selectedMg];
+  const inStock = true;
 
   const products = [
     { name: "APX-3", keywords: ["apx", "apx3", "apx-3"], path: "/products/apx3" },
@@ -229,13 +230,22 @@ export default function APX3Page() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                <button
-                  onClick={addToCart}
-                  className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
-                >
-                  <ShoppingCart size={22} />
-                  {added ? "Added To Cart" : "Add To Cart"}
-                </button>
+                {inStock ? (
+                  <button
+                    onClick={addToCart}
+                    className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
+                  >
+                    <ShoppingCart size={22} />
+                    {added ? "Added To Cart" : "Add To Cart"}
+                  </button>
+                ) : (
+                  <button
+                    disabled
+                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
+                  >
+                    Out of Stock
+                  </button>
+                )}
 
                 <a
                   href="/cart"
@@ -245,8 +255,15 @@ export default function APX3Page() {
                 </a>
 
                 <a
+                  href="/products"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
+                  Continue Shopping
+                </a>
+
+                <a
                   href="/coas"
-                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center sm:col-span-2"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
                 >
                   View COA
                 </a>

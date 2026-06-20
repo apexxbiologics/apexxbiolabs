@@ -250,8 +250,7 @@ if (accepted === null) {
 </header>
 
 {/* HERO */}
-<section className="relative min-h-screen pt-36 md:pt-44 pb-24 px-6 bg-black overflow-hidden">
-  <div className="absolute inset-0 bg-gradient-to-r from-black via-[#020617] to-black" />
+<section className="relative min-h-screen pt-36 pb-24 px-6 bg-black overflow-hidden">  <div className="absolute inset-0 bg-gradient-to-r from-black via-[#020617] to-black" />
 
   <div
 className="absolute right-0 top-0 h-full w-full lg:w-[70%] bg-cover opacity-95"style={{
@@ -263,8 +262,7 @@ className="absolute right-0 top-0 h-full w-full lg:w-[70%] bg-cover opacity-95"s
   <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-transparent" />
   <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black" />
 
-  <div className="relative z-10 max-w-7xl mx-auto min-h-[720px] flex items-center">
-    <div className="max-w-2xl">
+<div className="relative z-10 max-w-7xl mx-auto py-24 flex items-center">    <div className="max-w-2xl">
       <p className="uppercase tracking-[0.4em] text-blue-400 text-sm mb-6">
         Research. Quality. Confidence.
       </p>

@@ -18,7 +18,7 @@ export default function BacWaterPage() {
     name: "Bacteriostatic Water",
     price: 30,
     quantity,
-    image: "/images/bacwaterblue.PNG",
+    image: "/images/bacwaterblue.png",
   };
 
   const addToCart = () => {

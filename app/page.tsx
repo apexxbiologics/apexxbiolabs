@@ -362,9 +362,9 @@ if (accepted === null) {
 )}
 
 {/* Free Shipping Banner */}
-<div className="w-full bg-blue-950/60 border-y border-blue-800 py-3 text-center">
-  <p className="text-sm md:text-base font-semibold text-blue-100 tracking-wide">
-    Free shipping on orders over $200
+<div className="w-full py-4 bg-gradient-to-r from-blue-950 via-blue-900 to-blue-950 border-y border-blue-700">
+  <p className="text-center text-blue-100 font-semibold tracking-[0.2em] uppercase text-xs md:text-sm">
+    Free Shipping On Orders Over $200
   </p>
 </div>
 

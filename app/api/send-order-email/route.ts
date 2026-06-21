@@ -8,20 +8,21 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const {
-      customerEmail,
-      firstName,
-      lastName,
-      address,
-      city,
-      state,
-      zipCode,
-      paymentMethod,
-      cart,
-      subtotal,
-      shipping,
-      total,
-    } = body;
+const {
+  customerEmail,
+  firstName,
+  lastName,
+  address,
+  city,
+  state,
+  zipCode,
+  paymentMethod,
+  cart,
+  subtotal,
+  shipping,
+  total,
+  freeBacWater,
+} = body;
 
     const orderNumber = `APX-${Date.now()}`;
 
@@ -210,6 +211,12 @@ export async function POST(request: Request) {
                     <p style="margin:0;"><strong>Subtotal:</strong> $${Number(subtotal).toFixed(2)}</p>
                     <p style="margin:0;"><strong>Shipping:</strong> $${Number(shipping).toFixed(2)}</p>
 
+                    ${freeBacWater ? `
+<p style="margin:8px 0 0; color:#16a34a; font-weight:bold;">
+✓ Complimentary Bac Water Included
+</p>
+` : ""}
+
                     <p style="margin:12px 0 0; color:#06111f; font-size:19px;">
                       <strong>Total:</strong> $${Number(total).toFixed(2)}
                     </p>
@@ -279,8 +286,13 @@ export async function POST(request: Request) {
 
         <p><strong>Subtotal:</strong> $${Number(subtotal).toFixed(2)}</p>
         <p><strong>Shipping:</strong> $${Number(shipping).toFixed(2)}</p>
-        <p><strong>Total:</strong> $${Number(total).toFixed(2)}</p>
-      `,
+<p><strong>Total:</strong> $${Number(total).toFixed(2)}</p>
+
+${freeBacWater ? `
+<p style="color:green; font-weight:bold;">
+✓ INCLUDE 1 FREE BAC WATER WITH THIS ORDER
+</p>
+` : ""}      `,
     });
 
     console.log("ADMIN EMAIL SENT");
@@ -309,7 +321,7 @@ export async function POST(request: Request) {
     if (orderInsertError) {
       console.error("Supabase order insert error:", orderInsertError);
     }
-    
+
     return NextResponse.json({
       success: true,
       orderNumber,

@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ShoppingCart, Search, Menu, X } from "lucide-react";
+import { FlaskConical, Microscope } from "lucide-react";
+import { Check } from "lucide-react";
 
 export default function Home() {
   const [search, setSearch] = useState("");
@@ -170,9 +172,13 @@ if (accepted === null) {
 
             <div className="flex items-start gap-4">
 
-              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-400/20 flex items-center justify-center shrink-0">
-                <span className="text-blue-300 text-xl">⚗️</span>
-              </div>
+<div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-400/20 flex items-center justify-center shrink-0">
+  <FlaskConical
+    size={24}
+    strokeWidth={2.25}
+    className="text-blue-300"
+  />
+</div>
 
               <div>
                 <h3 className="text-white font-bold text-lg mb-3">
@@ -866,9 +872,13 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
       <div className="group rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 hover:bg-white/[0.07] hover:border-blue-400/50 transition-all">
-        <div className="w-12 h-12 rounded-full bg-blue-400/10 border border-blue-300/30 flex items-center justify-center text-blue-300 text-2xl mb-8">
-          ✓
-        </div>
+<div className="w-12 h-12 rounded-full bg-blue-400/10 border border-blue-300/30 flex items-center justify-center mb-8">
+  <Check
+    size={24}
+    strokeWidth={3}
+    className="text-blue-300"
+  />
+</div>
 
         <h3 className="text-2xl font-bold text-white mb-4">
           Third-Party Testing
@@ -880,9 +890,13 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
       </div>
 
       <div className="group rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 hover:bg-white/[0.07] hover:border-blue-400/50 transition-all">
-        <div className="w-12 h-12 rounded-full bg-blue-400/10 border border-blue-300/30 flex items-center justify-center text-blue-300 text-2xl mb-8">
-          ⚗
-        </div>
+<div className="w-12 h-12 rounded-full bg-blue-400/10 border border-blue-300/30 flex items-center justify-center mb-8">
+  <FlaskConical
+    size={24}
+    strokeWidth={2.25}
+    className="text-blue-300"
+  />
+</div>
 
         <h3 className="text-2xl font-bold text-white mb-4">
           Research Standards
@@ -894,9 +908,13 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
       </div>
 
       <div className="group rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 hover:bg-white/[0.07] hover:border-blue-400/50 transition-all">
-        <div className="w-12 h-12 rounded-full bg-blue-400/10 border border-blue-300/30 flex items-center justify-center text-blue-300 text-2xl mb-8">
-          🔬
-        </div>
+<div className="w-12 h-12 rounded-full bg-blue-400/10 border border-blue-300/30 flex items-center justify-center mb-8">
+  <Microscope
+    size={24}
+    strokeWidth={2.25}
+    className="text-blue-300"
+  />
+</div>
 
         <h3 className="text-2xl font-bold text-white mb-4">
           Batch Transparency

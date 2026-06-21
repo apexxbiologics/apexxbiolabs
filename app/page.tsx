@@ -359,6 +359,7 @@ if (accepted === null) {
         <a href="/peptide-info" className="hover:text-blue-400 transition-all">Peptide Info</a>
         <a href="/faq" className="hover:text-blue-400 transition-all">FAQ</a>
         <a href="/shipping" className="hover:text-blue-400 transition-all">Shipping</a>
+        <a href="/order-status" className="hover:text-blue-400 transition-all">Order Status</a>
         <a href="/refunds" className="hover:text-blue-400 transition-all">Refunds</a>
         <a href="/privacy" className="hover:text-blue-400 transition-all">Privacy Policy</a>
         <a href="/terms" className="hover:text-blue-400 transition-all">Terms</a>

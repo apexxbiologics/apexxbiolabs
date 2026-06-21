@@ -267,8 +267,7 @@ export default function APX3Page() {
     </svg>
 
     <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
-      Complimentary Bac Water Included With Any 4 Vials
-    </p>
+FREE Bacteriostatic Water With Any Purchase of 4 Vials    </p>
 
   </div>
 </div>

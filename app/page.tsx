@@ -376,8 +376,14 @@ if (accepted === null) {
   <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
     Free Shipping On Orders Over $200
   </p>
+</div>
 
       {/* 4th of July Promo Banner */}
+<div className="w-full border-b border-blue-500/20 bg-[#04101f]">
+  <div className="max-w-7xl mx-auto px-6 py-3">
+
+    <div className="flex flex-wrap items-center justify-center gap-4 text-center">
+
       <span className="uppercase tracking-[0.35em] text-blue-300 text-xs font-semibold">
         🇺🇸 4th of July Event
       </span>
@@ -393,6 +399,9 @@ if (accepted === null) {
       </span>
 
     </div>
+
+  </div>
+</div>
     
   {/* Background Image */}
   <div

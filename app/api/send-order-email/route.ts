@@ -57,10 +57,9 @@ if (orderInsertError) {
   console.error("Supabase order insert error:", orderInsertError);
 }
 
-    await resend.emails.send({
-      from: "Apexx Biolabs <orders@apexxbiolabs.com>",
-      to: customerEmail,
-      subject: `Apexx Biolabs Order Confirmation • Payment Awaiting`,
+const adminEmailResult = await resend.emails.send({      from: "Apexx Biolabs <orders@apexxbiolabs.com>",
+      to: "orders@apexxbiolabs.com",
+      subject: `New Order Received • ${orderNumber}`,
       html: `
         <div style="margin:0; padding:0; background:#f8fbff; font-family:Arial, Helvetica, sans-serif;">
           <div style="max-width:720px; margin:0 auto; padding:28px 16px;">
@@ -281,9 +280,9 @@ if (orderInsertError) {
         </div>
       `,
     });
+    console.log("Admin email result:", adminEmailResult);
 
-    await resend.emails.send({
-      from: "Apexx Biolabs <orders@apexxbiolabs.com>",
+const customerEmailResult = await resend.emails.send({      from: "Apexx Biolabs <orders@apexxbiolabs.com>",
       to: "orders@apexxbiolabs.com",
       subject: `New Apexx Order ${orderNumber}`,
       html: `
@@ -309,6 +308,7 @@ if (orderInsertError) {
         <p><strong>Total:</strong> $${Number(total).toFixed(2)}</p>
       `,
     });
+    console.log("Customer email result:", customerEmailResult);
 
     return NextResponse.json({
       success: true,

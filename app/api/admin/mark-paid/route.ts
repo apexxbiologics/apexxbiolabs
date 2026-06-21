@@ -1,0 +1,42 @@
+import { Resend } from "resend";
+import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export async function POST(request: Request) {
+  const { orderId } = await request.json();
+
+  const { data: order, error } = await supabase
+    .from("orders")
+    .update({ status: "paid" })
+    .eq("id", orderId)
+    .select()
+    .single();
+
+  if (error) {
+    return NextResponse.json({ success: false, error }, { status: 500 });
+  }
+
+  await resend.emails.send({
+    from: "Apexx Biolabs <orders@apexxbiolabs.com>",
+    to: order.customer_email,
+    subject: `Payment Received • ${order.order_number}`,
+    html: `
+      <div style="font-family:Arial,sans-serif;background:#f8fbff;padding:30px;">
+        <div style="max-width:680px;margin:auto;background:white;border:1px solid #dbeafe;border-radius:24px;padding:30px;">
+          <h1 style="color:#06111f;">Payment Received</h1>
+          <p>Your payment for order <strong>${order.order_number}</strong> has been verified.</p>
+          <p>Your order is now being prepared for shipment.</p>
+          <p><strong>Total:</strong> $${Number(order.total).toFixed(2)}</p>
+          <hr/>
+          <p style="font-size:12px;color:#64748b;">
+            Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only.
+          </p>
+        </div>
+      </div>
+    `,
+  });
+
+  return NextResponse.json({ success: true, order });
+}

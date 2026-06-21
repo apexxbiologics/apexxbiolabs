@@ -668,7 +668,7 @@ if (accepted === null) {
       </p>
 
       <div className="grid grid-cols-3 gap-6 mb-10 border-y border-white/10 py-8">
-      
+
         <div>
           <p className="tex-4xl font-black text-white">99%+</p>
           <p className="text-white/50 text-sm mt-2">Purity Target</p>
@@ -816,8 +816,7 @@ if (accepted === null) {
 
       <a
         href="/coas"
-        className="absolute bottom-8 left-8 right-8 z-20 flex items-center justify-between bg-[#04111f]/90 rounded-[28px] px-8 py-6 transition-all hover:bg-[#06192d]"
-      >
+className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-between bg-[#04111f]/90 rounded-[28px] px-8 py-6"      >
         <div>
           <p className="text-white text-2xl font-bold">See the Proof</p>
           <p className="text-white/70">View batch documentation</p>

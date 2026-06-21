@@ -379,27 +379,22 @@ if (accepted === null) {
   </p>
 </div>
 
-{/* Promo Bubbles */}
-<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 max-w-5xl mx-auto">
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
 
-  {/* FREEDOM10 */}
-  <div className="rounded-full border border-blue-400/40 bg-[#12345A]/90 px-8 py-4 text-center shadow-[0_0_30px_rgba(59,130,246,0.2)]">
-    <p className="text-blue-50 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
+  <div className="rounded-full border border-blue-400 bg-[#163B68] px-8 py-4 text-center shadow-[0_0_30px_rgba(59,130,246,0.25)]">
+    <p className="text-white font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
       FREEDOM10
     </p>
-
-    <p className="text-blue-100/90 text-xs mt-1">
+    <p className="text-blue-100 text-xs mt-1">
       Save 10% Sitewide
     </p>
   </div>
 
-  {/* FREE BAC WATER */}
-  <div className="rounded-full border border-blue-400/40 bg-[#12345A]/90 px-8 py-4 text-center shadow-[0_0_30px_rgba(59,130,246,0.2)]">
-    <p className="text-blue-50 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
+  <div className="rounded-full border border-blue-400 bg-[#163B68] px-8 py-4 text-center shadow-[0_0_30px_rgba(59,130,246,0.25)]">
+    <p className="text-white font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
       FREE BAC WATER
     </p>
-
-    <p className="text-blue-100/90 text-xs mt-1">
+    <p className="text-blue-100 text-xs mt-1">
       Buy Any 4 Vials & Receive Complimentary Bac Water
     </p>
   </div>

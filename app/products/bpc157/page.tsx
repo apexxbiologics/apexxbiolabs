@@ -219,6 +219,77 @@ export default function BPC157Page() {
         </div>
       </section>
 
+      {/* COA Summary */}
+<section className="px-6 md:px-10 pb-16">
+  <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
+
+    <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
+
+      <div>
+
+        <p className="uppercase tracking-[0.35em] text-blue-300 text-xs mb-2">
+          Freedom Diagnostics
+        </p>
+
+        <h3 className="text-2xl font-black text-white mb-5">
+          Latest Certificate of Analysis
+        </h3>
+
+        <div className="flex flex-wrap gap-3">
+
+          <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
+            <span className="text-green-400 font-semibold">
+              ✓ Identity Confirmed
+            </span>
+          </div>
+
+          <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+            <span className="text-[#A5D8FF] font-semibold">
+              99.33% Purity
+            </span>
+          </div>
+
+          <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+            <span className="text-[#A5D8FF] font-semibold">
+              11.58mg Content
+            </span>
+          </div>
+
+          <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
+            <span className="text-white/70">
+              Lot: Black Cap-1
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div className="flex flex-col items-center md:items-end">
+
+        <div className="text-5xl font-black text-[#A5D8FF]">
+          99.33%
+        </div>
+
+        <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
+          Purity
+        </div>
+
+        <a
+href="/images/coas/bbpc-157-10mg-black-cap-coa.pdf"          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
+        >
+          View Full COA
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
       <section className="px-6 md:px-10 pb-10">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
@@ -307,134 +378,6 @@ export default function BPC157Page() {
           </div>
         </div>
       </section>
-
-      {/* Latest COA Results */}
-<div className="mt-12 rounded-3xl border border-blue-900 bg-[#050505] p-8">
-  <div className="flex items-center justify-between mb-8">
-    <div>
-      <p className="text-xs uppercase tracking-[0.4em] text-blue-400 mb-2">
-        Freedom Diagnostics
-      </p>
-
-      <h2 className="text-3xl font-black text-white">
-        Latest Certificate of Analysis
-      </h2>
-    </div>
-
-    <div className="text-right">
-      <p className="text-5xl font-black text-[#A5D8FF]">
-        99.33%
-      </p>
-
-      <p className="uppercase tracking-widest text-sm text-gray-400">
-        Purity
-      </p>
-    </div>
-  </div>
-
-  <div className="grid md:grid-cols-2 gap-6">
-
-    <div className="rounded-2xl bg-[#071A2F] p-6">
-      <h3 className="font-bold text-[#A5D8FF] mb-4">
-        Sample Summary
-      </h3>
-
-      <div className="space-y-3">
-
-        <div className="flex justify-between">
-          <span className="text-gray-400">Product</span>
-          <span className="text-white font-semibold">
-            BPC-157 10mg
-          </span>
-        </div>
-
-        <div className="flex justify-between">
-          <span className="text-gray-400">Lot</span>
-          <span className="text-white">
-            Black Cap-1
-          </span>
-        </div>
-
-        <div className="flex justify-between">
-          <span className="text-gray-400">Identity</span>
-          <span className="text-green-400">
-            Confirmed ✓
-          </span>
-        </div>
-
-        <div className="flex justify-between">
-          <span className="text-gray-400">Appearance</span>
-          <span className="text-white">
-            White Lyophilized Powder
-          </span>
-        </div>
-
-      </div>
-    </div>
-
-    <div className="rounded-2xl bg-[#071A2F] p-6">
-      <h3 className="font-bold text-[#A5D8FF] mb-4">
-        Analytical Results
-      </h3>
-
-      <div className="space-y-3">
-
-        <div className="flex justify-between">
-          <span className="text-gray-400">
-            Purity (HPLC-UV)
-          </span>
-          <span className="text-green-400 font-bold">
-            99.33%
-          </span>
-        </div>
-
-        <div className="flex justify-between">
-          <span className="text-gray-400">
-            Net Content
-          </span>
-          <span className="text-green-400 font-bold">
-            11.58mg
-          </span>
-        </div>
-
-        <div className="flex justify-between">
-          <span className="text-gray-400">
-            Identity (LC-MS)
-          </span>
-          <span className="text-green-400">
-            BPC-157 ✓
-          </span>
-        </div>
-
-      </div>
-    </div>
-
-  </div>
-
-  <div className="mt-8 flex flex-wrap gap-3">
-
-    <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30 text-green-400 text-sm font-semibold">
-      ✓ Identity Confirmed
-    </div>
-
-    <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 text-[#A5D8FF] text-sm font-semibold">
-      ✓ 99.33% Purity
-    </div>
-
-    <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 text-[#A5D8FF] text-sm font-semibold">
-      ✓ 11.58mg Actual Content
-    </div>
-
-  </div>
-
-  <a
-    href="/coas/bpc-157-10mg-black-cap-coa.pdf"
-    target="_blank"
-    className="mt-8 inline-flex items-center justify-center rounded-full bg-[#A5D8FF] px-8 py-4 text-[#06111F] font-black uppercase tracking-widest hover:bg-white transition"
-  >
-    View Full Laboratory Report
-  </a>
-</div>
 
       {[
         {

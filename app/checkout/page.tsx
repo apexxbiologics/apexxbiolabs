@@ -65,6 +65,13 @@ const discount =
 
 const total = subtotal - discount + shipping;
 
+const vialCount = cart.reduce((total, item) => {
+  const isBacWater = item.name.toLowerCase().includes("bac");
+  return isBacWater ? total : total + item.quantity;
+}, 0);
+
+const qualifiesForFreeBacWater = vialCount >= 4;
+
   const isCheckoutComplete =
     customerEmail.trim() !== "" &&
     firstName.trim() !== "" &&
@@ -130,6 +137,8 @@ const total = subtotal - discount + shipping;
           shipping,
           total,
           freeShipping: qualifiesForFreeShipping,
+          freeBacWater: qualifiesForFreeBacWater,
+vialCount,
         }),
       });
 
@@ -496,6 +505,18 @@ setShowSuccess(true);
                         </p>
                       </div>
                     ))}
+
+{qualifiesForFreeBacWater && (
+  <div className="rounded-2xl border border-green-400/20 bg-green-500/10 p-4">
+    <p className="text-green-300 font-bold text-sm">
+      ✓ Complimentary Bac Water Included
+    </p>
+
+    <p className="text-white/60 text-sm mt-1">
+      Orders with 4 or more vials receive one complimentary bacteriostatic water.
+    </p>
+  </div>
+)}
 
                   <div className="flex justify-between text-2xl font-black text-white pt-4 border-t border-white/10">
                     <span>Total Due</span>

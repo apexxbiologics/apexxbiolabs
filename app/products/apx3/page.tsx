@@ -229,12 +229,6 @@ export default function APX3Page() {
                       }}
                       className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08]"
                     >
-<div className="rounded-2xl border border-green-400/20 bg-green-500/10 p-4 mb-6">
-  <p className="text-green-200 text-sm font-semibold">
-    🎁 Buy Any 4 Vials & Receive FREE Bacteriostatic Water
-  </p>
-</div>
-
                       −
                     </button>
 
@@ -254,6 +248,30 @@ export default function APX3Page() {
                   </div>
                 </div>
               </div>
+
+              <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
+  <div className="flex items-center justify-center gap-2">
+
+    <svg
+      className="w-5 h-5 text-blue-300"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7m16 0H4m16 0V8a1 1 0 00-1-1h-3.5M4 12V8a1 1 0 011-1h3.5m0 0a1.5 1.5 0 113 0m-3 0h3m0 0a1.5 1.5 0 113 0"
+      />
+    </svg>
+
+    <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
+      Complimentary Bac Water Included With Any 4 Vials
+    </p>
+
+  </div>
+</div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {inStock ? (

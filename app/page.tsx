@@ -326,15 +326,6 @@ if (accepted === null) {
   )}
 </header>
 
-{/* Free Shipping Banner */}
-<div className="relative z-20 w-full border-y border-blue-700/40 bg-gradient-to-r from-[#0a1930] via-[#12345a] to-[#0a1930] py-4">
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_70%)]" />
-
-  <p className="relative text-center text-blue-100 font-bold uppercase tracking-[0.35em] text-xs md:text-sm">
-    Free Shipping On Orders Over $200
-  </p>
-</div>
-
 {/* SIDE MENU */}
 {menuOpen && (
   <div className="fixed inset-0 z-[999] bg-black/60 backdrop-blur-sm">
@@ -372,6 +363,13 @@ if (accepted === null) {
 
 {/* HERO */}
 <section className="relative pt-44 pb-24 px-6 bg-[#081526] overflow-hidden">
+
+{/* Free Shipping Banner */}
+<div className="relative z-20 -mt-20 mb-16 rounded-full border border-blue-400/30 bg-blue-500/10 px-6 py-4 text-center backdrop-blur-sm max-w-5xl mx-auto">
+  <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
+    Free Shipping On Orders Over $200
+  </p>
+</div>
 
   {/* Background Image */}
   <div

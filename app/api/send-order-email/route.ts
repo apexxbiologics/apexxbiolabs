@@ -56,6 +56,7 @@ export async function POST(request: Request) {
     if (orderInsertError) {
       console.error("Supabase order insert error:", orderInsertError);
     }
+    console.log("REACHED EMAIL SECTION");
 
     const customerEmailResult = await resend.emails.send({
       from: "Apexx Biolabs <orders@apexxbiolabs.com>",
@@ -270,6 +271,10 @@ export async function POST(request: Request) {
       `,
     });
 
+    console.log("CUSTOMER EMAIL SENT");
+
+    console.log("SENDING ADMIN EMAIL");
+
     console.log("Customer email result:", customerEmailResult);
 
     const adminEmailResult = await resend.emails.send({
@@ -299,6 +304,8 @@ export async function POST(request: Request) {
         <p><strong>Total:</strong> $${Number(total).toFixed(2)}</p>
       `,
     });
+
+    console.log("ADMIN EMAIL SENT");
 
     console.log("Admin email result:", adminEmailResult);
 

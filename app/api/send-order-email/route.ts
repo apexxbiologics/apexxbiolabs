@@ -25,6 +25,18 @@ export async function POST(request: Request) {
 
     const orderNumber = `APX-${Date.now()}`;
 
+    await supabase.from("orders").insert([
+  {
+    order_number: orderNumber,
+    customer_email: customerEmail,
+    first_name: firstName,
+    last_name: lastName,
+    payment_method: paymentMethod,
+    total: total,
+    status: "Awaiting Payment",
+  },
+]);
+
     const itemsHtml = cart
       .map(
         (item: any) =>

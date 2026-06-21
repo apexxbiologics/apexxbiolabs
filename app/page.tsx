@@ -371,51 +371,12 @@ if (accepted === null) {
 {/* HERO */}
 <section className="relative pt-44 pb-24 px-6 bg-[#081526] overflow-hidden">
 
-  {/* Announcement Bubbles */}
-  <div className="relative z-20 -mt-20 mb-16 max-w-6xl mx-auto px-4">
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-      {/* Free Shipping */}
-      <div className="rounded-[40px] border border-blue-400/20 bg-[#102743]/60 backdrop-blur-xl px-6 py-5 text-center shadow-[0_0_25px_rgba(59,130,246,0.08)]">
-        <p className="text-blue-100 font-bold uppercase tracking-[0.2em] text-xs">
-          Free Shipping
-        </p>
-
-        <p className="text-white/70 text-xs mt-2 uppercase tracking-[0.15em]">
-          Orders Over $200
-        </p>
-      </div>
-
-      {/* Freedom10 */}
-      <div className="rounded-[40px] border border-blue-400/20 bg-[#102743]/60 backdrop-blur-xl px-6 py-5 text-center shadow-[0_0_25px_rgba(59,130,246,0.08)]">
-        <p className="text-blue-100 font-bold uppercase tracking-[0.2em] text-xs">
-          🇺🇸 4th Of July
-        </p>
-
-        <div className="mt-2 inline-flex px-4 py-1 rounded-full border border-blue-400/30 bg-blue-500/10">
-          <span className="text-blue-200 font-black tracking-[0.2em] text-xs">
-            FREEDOM10
-          </span>
-        </div>
-
-        <p className="text-white/70 text-xs mt-2 uppercase tracking-[0.15em]">
-          Save 10% Sitewide
-        </p>
-      </div>
-
-      {/* Free Bac Water */}
-      <div className="rounded-[40px] border border-blue-400/20 bg-[#102743]/60 backdrop-blur-xl px-6 py-5 text-center shadow-[0_0_25px_rgba(59,130,246,0.08)]">
-        <p className="text-blue-100 font-bold uppercase tracking-[0.2em] text-xs">
-          🎁 Free Bac Water
-        </p>
-
-        <p className="text-white/70 text-xs mt-2 uppercase tracking-[0.15em]">
-          With Any 4 Vials
-        </p>
-      </div>
-
-    </div>
-  </div>
+{/* Free Shipping Banner */}
+<div className="relative z-20 -mt-20 mb-16 rounded-full border border-blue-400/30 bg-blue-500/10 px-6 py-4 text-center backdrop-blur-sm max-w-5xl mx-auto">
+  <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
+    Free Shipping On Orders Over $200
+  </p>
+</div>
     
   {/* Background Image */}
   <div
@@ -471,16 +432,6 @@ if (accepted === null) {
         </a>
 
       </div>
-
-      <div className="mt-8 max-w-xl rounded-3xl border border-blue-400/20 bg-[#102743]/50 backdrop-blur-xl p-5">
-  <p className="text-blue-300 uppercase tracking-[0.25em] text-xs font-bold mb-2">
-    Limited Time Promotion
-  </p>
-
-  <p className="text-white font-semibold">
-    Receive 1 FREE Bacteriostatic Water with any purchase of 4 or more vials.
-  </p>
-</div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-14">
 

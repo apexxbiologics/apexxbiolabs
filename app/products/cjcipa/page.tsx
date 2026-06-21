@@ -18,7 +18,7 @@ export default function CJCIPAPage() {
     name: "CJC/IPA Without DAC",
     price: 75,
     quantity,
-    image: "/images/cjcipa.png",
+    image: "/images/cjcipablue.png",
   };
 
   const addToCart = () => {

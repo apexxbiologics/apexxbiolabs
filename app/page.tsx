@@ -800,61 +800,47 @@ if (accepted === null) {
 
 <div className="relative min-h-[760px] flex items-center justify-center">
 
-  {/* Purity Badge */}
-  <div className="absolute top-8 right-8 z-20">
-    <div className="bg-white/85 backdrop-blur-xl rounded-2xl px-6 py-4 shadow-xl">
-      <p className="text-[#0B1D3A] text-3xl font-bold">
-        99%+ Purity
-      </p>
+<div className="relative">
 
-      <p className="text-[#475569] text-sm mt-1">
-        Verified by HPLC
-      </p>
-    </div>
-  </div>
-
-  {/* Vial + Hex Background */}
-  <div className="relative">
-
-    <img
-      src="/images/hexbg.png"
-      alt=""
-      className="w-[650px] h-auto"
-    />
+  <div className="relative rounded-[40px] overflow-hidden min-h-[700px]">
 
     <img
       src="/images/tb500hex.png"
       alt="TB-500"
-      className="absolute inset-0 m-auto w-[72%] h-full object-contain"
+      className="absolute inset-0 w-full h-full object-cover"
     />
+
+    <div className="absolute top-8 right-8 z-20 text-right">
+      <p className="text-white text-3xl font-black">
+        99%+ Purity
+      </p>
+
+      <p className="text-white/80 text-lg">
+        Verified by HPLC
+      </p>
+    </div>
+
+    <a
+      href="/coas"
+      className="absolute bottom-8 left-8 right-8 z-20 flex items-center justify-between bg-[#04111f]/90 rounded-[28px] px-8 py-6 transition-all hover:bg-[#06192d]"
+    >
+      <div>
+        <p className="text-white text-2xl font-bold">
+          See the Proof
+        </p>
+
+        <p className="text-white/70">
+          View batch documentation
+        </p>
+      </div>
+
+      <span className="text-blue-300 text-4xl">
+        ›
+      </span>
+    </a>
 
   </div>
 
-  {/* Proof Card */}
-  <a
-    href="/coas"
-    className="absolute bottom-8 left-8 right-8 z-20"
-  >
-    <div className="bg-white/85 backdrop-blur-xl rounded-3xl p-6 shadow-xl">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-[#0B1D3A] text-2xl font-bold">
-            See the Proof
-          </h3>
-
-          <p className="text-[#475569]">
-            View batch documentation
-          </p>
-        </div>
-
-        <div className="text-[#2563EB] text-4xl">
-          →
-        </div>
-      </div>
-    </div>
-  </a>
-
-</div>
 </div>
 
 </section>

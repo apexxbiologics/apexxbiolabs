@@ -797,7 +797,9 @@ if (accepted === null) {
         )}
       </div>
     </div>
-    </div>
+  </div>
+</section>
+    
     <section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_55%)]"></div>
 

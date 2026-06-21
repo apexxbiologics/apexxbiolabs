@@ -798,28 +798,36 @@ if (accepted === null) {
       </div>
     </div>
 
-<div className="relative border border-blue-900 rounded-[40px] overflow-hidden bg-[#8AB3E6] min-h-[760px] flex items-center justify-center">
+<div className="relative min-h-[760px] flex items-center justify-center">
 
   {/* Purity Badge */}
   <div className="absolute top-8 right-8 z-20">
-    <div className="bg-white/80 backdrop-blur-xl rounded-2xl px-6 py-4 border border-white/40 shadow-xl">
+    <div className="bg-white/85 backdrop-blur-xl rounded-2xl px-6 py-4 shadow-xl">
       <p className="text-[#0B1D3A] text-3xl font-bold">
         99%+ Purity
       </p>
 
-      <p className="text-[#334155] text-sm mt-1">
+      <p className="text-[#475569] text-sm mt-1">
         Verified by HPLC
       </p>
     </div>
   </div>
 
-  {/* Product Image */}
-  <div className="flex items-center justify-center pt-10 pb-40 w-full">
+  {/* Vial + Hex Background */}
+  <div className="relative">
+
+    <img
+      src="/images/hexbg.png"
+      alt=""
+      className="w-[650px] h-auto"
+    />
+
     <img
       src="/images/tb500hex.png"
       alt="TB-500"
-      className="w-[78%] max-w-[520px] object-contain relative z-10"
+      className="absolute inset-0 m-auto w-[72%] h-full object-contain"
     />
+
   </div>
 
   {/* Proof Card */}
@@ -827,16 +835,14 @@ if (accepted === null) {
     href="/coas"
     className="absolute bottom-8 left-8 right-8 z-20"
   >
-    <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white/40 p-6 shadow-xl hover:scale-[1.02] transition-all duration-300">
-
+    <div className="bg-white/85 backdrop-blur-xl rounded-3xl p-6 shadow-xl">
       <div className="flex items-center justify-between">
-
         <div>
           <h3 className="text-[#0B1D3A] text-2xl font-bold">
             See the Proof
           </h3>
 
-          <p className="text-[#475569] mt-1">
+          <p className="text-[#475569]">
             View batch documentation
           </p>
         </div>
@@ -844,9 +850,7 @@ if (accepted === null) {
         <div className="text-[#2563EB] text-4xl">
           →
         </div>
-
       </div>
-
     </div>
   </a>
 

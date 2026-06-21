@@ -16,7 +16,7 @@ export default function BacWaterPage() {
   const product = {
     id: "bacwater",
     name: "Bacteriostatic Water",
-    price: 30,
+    price: 20,
     quantity,
     image: "/images/bacwaterblue.png",
   };
@@ -46,35 +46,17 @@ export default function BacWaterPage() {
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#081526]/95 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 md:px-10 py-5 flex items-center justify-between">
           <a href="/">
-            <img
-              src="/images/logo.png"
-              alt="Apexx Biolabs"
-              className="h-12 w-auto"
-            />
+            <img src="/images/logo.png" alt="Apexx Biolabs" className="h-12 w-auto" />
           </a>
 
           <nav className="hidden md:flex items-center gap-10 uppercase tracking-widest text-sm text-white">
-            <a href="/" className="hover:text-blue-300 transition-all">
-              Home
-            </a>
-            <a
-              href="/products"
-              className="text-blue-300 border-b border-blue-300 pb-2"
-            >
-              Products
-            </a>
-            <a href="/coas" className="hover:text-blue-300 transition-all">
-              COAs
-            </a>
-            <a href="/contact" className="hover:text-blue-300 transition-all">
-              Contact
-            </a>
+            <a href="/" className="hover:text-blue-300 transition-all">Home</a>
+            <a href="/products" className="text-blue-300 border-b border-blue-300 pb-2">Products</a>
+            <a href="/coas" className="hover:text-blue-300 transition-all">COAs</a>
+            <a href="/contact" className="hover:text-blue-300 transition-all">Contact</a>
           </nav>
 
-          <a
-            href="/cart"
-            className="relative text-white hover:text-blue-300 transition-all"
-          >
+          <a href="/cart" className="relative text-white hover:text-blue-300 transition-all">
             <ShoppingCart size={30} />
           </a>
         </div>
@@ -85,19 +67,15 @@ export default function BacWaterPage() {
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
-<div className="flex items-center justify-center">
-  <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
-    <img
-      src={product.image}
-      alt={product.name}
-      className="w-full h-full object-cover"
-    />
-  </div>
-</div>
+            <div className="flex items-center justify-center">
+              <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+              </div>
+            </div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
               <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
-                Research Supply
+                Research Reconstitution Solution
               </p>
 
               <h1 className="text-5xl md:text-6xl font-black mb-5 text-white">
@@ -105,8 +83,7 @@ export default function BacWaterPage() {
               </h1>
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                Sterile diluent intended strictly for laboratory research and
-                analytical purposes.
+                30mL bacteriostatic reconstitution solution intended strictly for laboratory research applications and analytical preparation use.
               </p>
 
               <p className="text-5xl font-black text-white mb-8">
@@ -118,7 +95,7 @@ export default function BacWaterPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
                 <div>
                   <p className="uppercase tracking-widest text-white/50 text-sm mb-4">
-                    Size
+                    Volume
                   </p>
 
                   <div className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-7 py-4 text-sm font-semibold uppercase tracking-widest text-white">
@@ -159,7 +136,7 @@ export default function BacWaterPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <button
                   onClick={addToCart}
                   className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
@@ -168,49 +145,85 @@ export default function BacWaterPage() {
                   {added ? "Added To Cart" : "Add To Cart"}
                 </button>
 
-                <a
-                  href="/cart"
-                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
-                >
+                <a href="/cart" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
                   View Cart
                 </a>
 
-                <a
-                  href="/products"
-                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
-                >
+                <a href="/products" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
                   Continue Shopping
                 </a>
 
                 <a
-                  href="/coas"
+                  href="/images/coas/bacwater-coa.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
                 >
                   View COA
                 </a>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                  ["Size", "30mL"],
-                  ["Form", "Sterile Solution"],
-                  ["Purity", "99%+"],
-                  ["Storage", "2–25°C"],
-                ].map(([label, value]) => (
-                  <div
-                    key={label}
-                    className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-5"
-                  >
-                    <p className="uppercase tracking-widest text-white/40 text-xs mb-2">
-                      {label}
-                    </p>
+      {/* COA Summary */}
+      <section className="px-6 md:px-10 pb-16">
+        <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
+          <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
+            <div>
+              <p className="uppercase tracking-[0.35em] text-blue-300 text-xs mb-2">
+                Parrox
+              </p>
 
-                    <p className="text-white text-base font-semibold">
-                      {value}
-                    </p>
-                  </div>
-                ))}
+              <h3 className="text-2xl font-black text-white mb-5">
+                Latest Certificate of Analysis
+              </h3>
+
+              <div className="flex flex-wrap gap-3">
+                <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
+                  <span className="text-green-400 font-semibold">
+                    ✓ pH Pass
+                  </span>
+                </div>
+
+                <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+                  <span className="text-[#A5D8FF] font-semibold">
+                    0.85% Benzyl Alcohol
+                  </span>
+                </div>
+
+                <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+                  <span className="text-[#A5D8FF] font-semibold">
+                    99.10% Recovery
+                  </span>
+                </div>
+
+                <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
+                  <span className="text-white/70">
+                    Lot: PRX-2026-04-A
+                  </span>
+                </div>
               </div>
+            </div>
+
+            <div className="flex flex-col items-center md:items-end">
+              <div className="text-5xl font-black text-[#A5D8FF]">
+                Pass
+              </div>
+
+              <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
+                QC Status
+              </div>
+
+              <a
+                href="/images/coas/bacwater-coa.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
+              >
+                View Full COA
+              </a>
             </div>
           </div>
         </div>
@@ -219,38 +232,18 @@ export default function BacWaterPage() {
       <section className="px-6 md:px-10 pb-10">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            [
-              FlaskConical,
-              "Research Use Only",
-              "Strictly for laboratory research.",
-            ],
-            [
-              ShieldCheck,
-              "Sterile Supply",
-              "Prepared for research handling.",
-            ],
-            [
-              ClipboardCheck,
-              "Batch Documented",
-              "Documentation available for verified lots.",
-            ],
-            [
-              ShieldCheck,
-              "Secure Packaging",
-              "Packed carefully for shipping.",
-            ],
+            [FlaskConical, "Research Use Only", "Strictly for laboratory research."],
+            [ShieldCheck, "Third-Party Tested", "Analytical documentation available."],
+            [ClipboardCheck, "Batch Documented", "Lot PRX-2026-04-A verified."],
+            [ShieldCheck, "QC Status", "pH, BA content, and recovery passed."],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
               <Icon className="text-blue-300" size={34} />
-
               <div>
                 <h3 className="text-white uppercase tracking-widest font-bold text-sm">
                   {title}
                 </h3>
-
-                <p className="text-white/50 text-sm mt-1">
-                  {text}
-                </p>
+                <p className="text-white/50 text-sm mt-1">{text}</p>
               </div>
             </div>
           ))}
@@ -260,45 +253,27 @@ export default function BacWaterPage() {
       <section className="px-6 md:px-10 pb-16">
         <div className="max-w-7xl mx-auto rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
           <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-3">
-            Research Supply Profile
+            Research Profile
           </p>
 
           <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
-            Laboratory Reconstitution Support
+            Reconstitution Solution Overview
           </h2>
 
           <p className="text-white/70 text-lg leading-relaxed max-w-4xl mb-8">
-            Bacteriostatic Water is used as a sterile laboratory diluent in
-            research settings where reconstitution support and controlled
-            preparation workflows are required.
+            Bacteriostatic water is used in laboratory research workflows as a sterile reconstitution solution for research preparation and analytical handling.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
             {[
-              [
-                "Sterile Solution",
-                "Intended for controlled laboratory preparation workflows.",
-              ],
-              [
-                "Research Handling",
-                "Designed for analytical and laboratory-use applications.",
-              ],
-              [
-                "Storage Support",
-                "Maintained according to appropriate research storage practices.",
-              ],
+              ["Volume", "30mL research-use reconstitution solution."],
+              ["pH Testing", "pH result of 7.0 within specification range."],
+              ["Benzyl Alcohol", "0.85% benzyl alcohol content verified by testing."],
+              ["Storage", "Store as directed on product label. Keep sealed and protected from contamination."],
             ].map(([title, text]) => (
-              <div
-                key={title}
-                className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
-              >
-                <h3 className="text-white text-lg font-bold mb-3">
-                  {title}
-                </h3>
-
-                <p className="text-white/60 text-sm leading-relaxed">
-                  {text}
-                </p>
+              <div key={title} className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all">
+                <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
+                <p className="text-white/60 text-sm leading-relaxed">{text}</p>
               </div>
             ))}
           </div>
@@ -322,74 +297,17 @@ export default function BacWaterPage() {
             <h3 className="text-blue-300 font-bold uppercase tracking-[0.25em] text-sm mb-4">
               {section.title}
             </h3>
-
-            <p className="text-white/60 text-sm leading-relaxed">
-              {section.text}
-            </p>
+            <p className="text-white/60 text-sm leading-relaxed">{section.text}</p>
           </div>
         </section>
       ))}
 
-                  <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 mb-14">
-          <div>
-            <img
-              src="/images/logo.png"
-              alt="Apexx Biolabs"
-              className="h-12 w-auto mb-5"
-            />
-
-            <p className="text-white/60 text-sm leading-relaxed">
-              Premium research-grade peptides built on science, quality, and transparency.
-            </p>
-
-            <div className="flex gap-3 mt-6">
-              <a
-                href="https://www.tiktok.com/@apexx.nyc"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/[0.07] transition-all"
-              >
-                <span className="text-sm font-bold">♪</span>
-              </a>
-
-              <a
-                href="mailto:support@apexxbiolabs.com"
-                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/[0.07] transition-all"
-              >
-                <Mail size={18} />
-              </a>
-            </div>
-          </div>
-
-          {[
-            ["Shop", [["All Products", "/products"], ["Certificates of Analysis", "/coas"]]],
-            ["Resources", [["Research Library", "/peptide-info"], ["FAQ", "/faq"]]],
-            ["Support", [["Contact Us", "/contact"], ["Shipping Info", "/shipping"], ["Returns & Refunds", "/refunds"]]],
-            ["Legal", [["Privacy Policy", "/privacy"], ["Terms of Service", "/terms"]]],
-          ].map(([title, links]: any) => (
-            <div key={title}>
-              <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
-                {title}
-              </h4>
-
-              <div className="space-y-3 text-white/50">
-                {links.map(([label, href]: any) => (
-                  <a key={label} href={href} className="block hover:text-blue-300">
-                    {label}
-                  </a>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
+      <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
         <div className="max-w-7xl mx-auto border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between gap-4 text-white/40 text-sm">
           <p>© 2026 Apexx Biolabs. All rights reserved.</p>
-          <p>SSL Secured · 99%+ Purity · Research Use Only</p>
+          <p>SSL Secured · Research Use Only</p>
         </div>
       </footer>
-      
     </main>
   );
 }

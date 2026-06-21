@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -32,6 +33,34 @@ export async function POST(request: Request) {
           ).toFixed(2)}</li>`
       )
       .join("");
+
+      const { error: orderInsertError } = await supabase.from("orders").insert([
+  {
+    order_number: orderNumber,
+    customer_email: customerEmail,
+    first_name: firstName,
+    last_name: lastName,
+    address,
+    city,
+    state,
+    zip_code: zipCode,
+    payment_method: paymentMethod,
+    cart,
+    subtotal,
+    shipping,
+    total,
+    status: "awaiting_payment",
+  },
+]);
+
+if (orderInsertError) {
+  console.error("Supabase order insert error:", orderInsertError);
+
+  return NextResponse.json(
+    { success: false, error: "Failed to save order" },
+    { status: 500 }
+  );
+}
 
     await resend.emails.send({
       from: "Apexx Biolabs <orders@apexxbiolabs.com>",

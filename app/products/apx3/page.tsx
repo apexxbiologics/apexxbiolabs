@@ -267,7 +267,7 @@ export default function APX3Page() {
     </svg>
 
     <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
-FREE Bacteriostatic Water With Any Purchase of 4 Vials    </p>
+FREE Bacteriostatic Water With Purchase of Any 4 Vials    </p>
 
   </div>
 </div>

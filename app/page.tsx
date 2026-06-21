@@ -232,7 +232,7 @@ if (accepted === null) {
   </div>
 )}
 
-<main className="min-h-screen bg-[#081526] text-white">
+<div className="min-h-screen bg-[#081526] text-white">
 {/* HEADER */}
 <header className="fixed top-0 left-0 w-full z-50 border-b border-blue-900/70 bg-[#081526]/95 backdrop-blur-xl px-5 md:px-10 py-5">
   <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -797,7 +797,8 @@ if (accepted === null) {
         )}
       </div>
     </div>
-<section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
+    </div>
+    <section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_55%)]"></div>
 
   <div className="relative z-10 max-w-7xl mx-auto">
@@ -1008,7 +1009,7 @@ if (accepted === null) {
 
 </footer>
 
-</main>
+</div>
 </>
 );
 }

@@ -44,7 +44,17 @@ export default function CheckoutPage() {
     0
   );
 
-  const shipping = subtotal > 0 ? 5.99 : 0;
+  const freeShippingThreshold = 200;
+  const standardShipping = 5.99;
+  const qualifiesForFreeShipping = subtotal >= freeShippingThreshold;
+  const amountLeftForFreeShipping = Math.max(
+    0,
+    freeShippingThreshold - subtotal
+  );
+
+  const shipping =
+    subtotal > 0 && !qualifiesForFreeShipping ? standardShipping : 0;
+
   const total = subtotal + shipping;
 
   const isCheckoutComplete =
@@ -72,25 +82,12 @@ export default function CheckoutPage() {
     place.address_components.forEach((component) => {
       const types = component.types;
 
-      if (types.includes("street_number")) {
-        streetNumber = component.long_name;
-      }
-
-      if (types.includes("route")) {
-        route = component.long_name;
-      }
-
-      if (types.includes("locality")) {
-        cityName = component.long_name;
-      }
-
-      if (types.includes("administrative_area_level_1")) {
+      if (types.includes("street_number")) streetNumber = component.long_name;
+      if (types.includes("route")) route = component.long_name;
+      if (types.includes("locality")) cityName = component.long_name;
+      if (types.includes("administrative_area_level_1"))
         stateCode = component.short_name;
-      }
-
-      if (types.includes("postal_code")) {
-        zip = component.long_name;
-      }
+      if (types.includes("postal_code")) zip = component.long_name;
     });
 
     setAddress(`${streetNumber} ${route}`.trim());
@@ -124,6 +121,7 @@ export default function CheckoutPage() {
           subtotal,
           shipping,
           total,
+          freeShipping: qualifiesForFreeShipping,
         }),
       });
 
@@ -193,7 +191,7 @@ export default function CheckoutPage() {
             <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-white/70 w-fit">
               <ShoppingCart size={20} className="text-blue-300" />
               <span className="text-sm uppercase tracking-widest">
-                ${total.toFixed(2)}
+                Total Due: ${total.toFixed(2)}
               </span>
             </div>
           </div>
@@ -219,9 +217,7 @@ export default function CheckoutPage() {
                   Delivery
                 </h2>
 
-                <p className="text-white/50 mb-6">
-                  Shipping address
-                </p>
+                <p className="text-white/50 mb-6">Shipping address</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <input
@@ -350,7 +346,8 @@ export default function CheckoutPage() {
                 </div>
 
                 <p className="mt-4 text-xs text-white/40">
-                  ZIP code must be 5 digits. State must be selected from the dropdown.
+                  ZIP code must be 5 digits. State must be selected from the
+                  dropdown.
                 </p>
               </section>
 
@@ -416,6 +413,7 @@ export default function CheckoutPage() {
                           <h3 className="font-black text-white">
                             {item.name}
                           </h3>
+
                           <p className="text-white/50 text-sm">
                             Quantity: {item.quantity}
                           </p>
@@ -437,11 +435,33 @@ export default function CheckoutPage() {
 
                   <div className="flex justify-between text-white/60">
                     <span>Shipping</span>
-                    <span>${shipping.toFixed(2)}</span>
+                    {qualifiesForFreeShipping ? (
+                      <span className="text-green-300 font-semibold">
+                        FREE
+                      </span>
+                    ) : (
+                      <span>${shipping.toFixed(2)}</span>
+                    )}
                   </div>
 
+                  {cart.length > 0 &&
+                    (qualifiesForFreeShipping ? (
+                      <div className="rounded-2xl border border-green-400/20 bg-green-500/10 p-4">
+                        <p className="text-green-200 text-sm font-semibold">
+                          🎉 Free shipping unlocked.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4">
+                        <p className="text-blue-100 text-sm">
+                          Add ${amountLeftForFreeShipping.toFixed(2)} more to
+                          receive free shipping.
+                        </p>
+                      </div>
+                    ))}
+
                   <div className="flex justify-between text-2xl font-black text-white pt-4 border-t border-white/10">
-                    <span>Total</span>
+                    <span>Total Due</span>
                     <span className="text-blue-300">${total.toFixed(2)}</span>
                   </div>
                 </div>
@@ -479,14 +499,33 @@ export default function CheckoutPage() {
                   ))}
                 </div>
 
+                <div className="rounded-[2rem] border border-blue-400/20 bg-blue-500/10 p-6 mb-6">
+                  <p className="text-blue-100 font-bold uppercase tracking-widest mb-3 text-sm">
+                    Payment Amount
+                  </p>
+
+                  <p className="text-4xl font-black text-white mb-2">
+                    ${total.toFixed(2)}
+                  </p>
+
+                  <p className="text-blue-100/70 text-sm">
+                    Please send exactly this amount via{" "}
+                    {paymentMethod === "venmo" ? "Venmo" : "Zelle"} after your
+                    order is submitted.
+                  </p>
+                </div>
+
                 <div className="rounded-[1.5rem] border border-white/10 bg-[#081526]/50 p-6">
                   <h3 className="text-blue-300 font-bold uppercase tracking-widest text-sm mb-4">
                     Payment Instructions
                   </h3>
 
                   <ul className="list-disc pl-5 space-y-3 text-white/60 text-sm leading-relaxed">
-                    <li>Payment instructions will be sent to your email after checkout.</li>
-                    <li>Submit the exact payment amount.</li>
+                    <li>
+                      Payment instructions will be sent to your email after
+                      checkout.
+                    </li>
+                    <li>Submit the exact payment amount shown above.</li>
                     <li>Include ONLY your order number in the payment notes.</li>
                     <li>Do not include product names or descriptions.</li>
                     <li>Orders not paid within 24 hours may be cancelled.</li>
@@ -566,141 +605,147 @@ export default function CheckoutPage() {
         }
       `}</style>
 
-            <footer className="bg-[#081526] border-t border-blue-900/40 px-6 pt-24 pb-10">
+      <footer className="bg-[#081526] border-t border-blue-900/40 px-6 pt-24 pb-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
+            <div>
+              <img
+                src="/images/logo.png"
+                alt="Apexx Biolabs"
+                className="h-12 w-auto mb-6"
+              />
 
-  <div className="max-w-7xl mx-auto">
+              <p className="text-white/70 leading-relaxed text-sm">
+                High-purity research compounds supported by batch documentation,
+                analytical testing, and research-use transparency.
+              </p>
+            </div>
 
-    {/* TOP */}
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
+            <div>
+              <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
+                Company
+              </h4>
 
-      {/* BRAND */}
-      <div>
-        <img
-          src="/images/logo.png"
-          alt="Apexx Biolabs"
-          className="h-12 w-auto mb-6"
-        />
+              <div className="space-y-4">
+                <a
+                  href="/"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  Home
+                </a>
 
-        <p className="text-white/70 leading-relaxed text-sm">
-          High-purity research compounds supported by batch documentation,
-          analytical testing, and research-use transparency.
-        </p>
-      </div>
+                <a
+                  href="/products"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  Products
+                </a>
 
-      {/* COMPANY */}
-      <div>
-        <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
-          Company
-        </h4>
+                <a
+                  href="/coas"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  COAs
+                </a>
 
-        <div className="space-y-4">
-          <a href="/" className="block text-white/70 hover:text-white transition-all">
-            Home
-          </a>
+                <a
+                  href="/contact"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  Contact
+                </a>
+              </div>
+            </div>
 
-          <a href="/products" className="block text-white/70 hover:text-white transition-all">
-            Products
-          </a>
+            <div>
+              <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
+                Resources
+              </h4>
 
-          <a href="/coas" className="block text-white/70 hover:text-white transition-all">
-            COAs
-          </a>
+              <div className="space-y-4">
+                <a
+                  href="/peptide-info"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  Peptide Info
+                </a>
 
-          <a href="/contact" className="block text-white/70 hover:text-white transition-all">
-            Contact
-          </a>
+                <a
+                  href="/faq"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  FAQ
+                </a>
+
+                <a
+                  href="/shipping"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  Shipping
+                </a>
+
+                <a
+                  href="/refunds"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  Refunds
+                </a>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
+                Contact
+              </h4>
+
+              <div className="space-y-4">
+                <a
+                  href="mailto:support@apexxbiolabs.com"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  support@apexxbiolabs.com
+                </a>
+
+                <a
+                  href="https://www.tiktok.com/@apexx.nyc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  TikTok
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-white/10 pt-10">
+            <p className="text-white/40 text-xs uppercase tracking-[0.18em] leading-relaxed max-w-5xl">
+              FOR LABORATORY RESEARCH USE ONLY. NOT FOR HUMAN CONSUMPTION. NOT
+              FOR MEDICAL, DIAGNOSTIC, THERAPEUTIC, OR VETERINARY USE.
+            </p>
+
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6 mt-10">
+              <p className="text-white/40 text-sm">
+                © 2026 Apexx Biolabs. All Rights Reserved.
+              </p>
+
+              <div className="flex gap-8 text-sm text-white/40">
+                <a href="/privacy" className="hover:text-white transition-all">
+                  Privacy
+                </a>
+
+                <a href="/terms" className="hover:text-white transition-all">
+                  Terms
+                </a>
+
+                <a href="/shipping" className="hover:text-white transition-all">
+                  Shipping
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* RESOURCES */}
-      <div>
-        <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
-          Resources
-        </h4>
-
-        <div className="space-y-4">
-          <a href="/peptide-info" className="block text-white/70 hover:text-white transition-all">
-            Peptide Info
-          </a>
-
-          <a href="/faq" className="block text-white/70 hover:text-white transition-all">
-            FAQ
-          </a>
-
-          <a href="/shipping" className="block text-white/70 hover:text-white transition-all">
-            Shipping
-          </a>
-
-          <a href="/refunds" className="block text-white/70 hover:text-white transition-all">
-            Refunds
-          </a>
-        </div>
-      </div>
-
-      {/* CONTACT */}
-      <div>
-        <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
-          Contact
-        </h4>
-
-        <div className="space-y-4">
-          <a
-            href="mailto:support@apexxbiolabs.com"
-            className="block text-white/70 hover:text-white transition-all"
-          >
-            support@apexxbiolabs.com
-          </a>
-
-          <a
-            href="https://www.tiktok.com/@apexx.nyc"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block text-white/70 hover:text-white transition-all"
-          >
-            TikTok
-          </a>
-        </div>
-      </div>
-
-    </div>
-
-    {/* DISCLAIMER */}
-    <div className="border-t border-white/10 pt-10">
-
-      <p className="text-white/40 text-xs uppercase tracking-[0.18em] leading-relaxed max-w-5xl">
-        FOR LABORATORY RESEARCH USE ONLY. NOT FOR HUMAN CONSUMPTION.
-        NOT FOR MEDICAL, DIAGNOSTIC, THERAPEUTIC, OR VETERINARY USE.
-      </p>
-
-      <div className="flex flex-col md:flex-row justify-between items-center gap-6 mt-10">
-
-        <p className="text-white/40 text-sm">
-          © 2026 Apexx Biolabs. All Rights Reserved.
-        </p>
-
-        <div className="flex gap-8 text-sm text-white/40">
-          <a href="/privacy" className="hover:text-white transition-all">
-            Privacy
-          </a>
-
-          <a href="/terms" className="hover:text-white transition-all">
-            Terms
-          </a>
-
-          <a href="/shipping" className="hover:text-white transition-all">
-            Shipping
-          </a>
-        </div>
-
-      </div>
-
-    </div>
-
-
-  </div>
-
-</footer>
-
+      </footer>
     </main>
   );
 }

@@ -123,8 +123,9 @@ const [unlocked, setUnlocked] = useState(false);
                     <th className="p-5">Payment</th>
                     <th className="p-5">Total</th>
                     <th className="p-5">Status</th>
-                    <th className="p-5">Created</th>
-                  </tr>
+<th className="p-5">Created</th>
+<th className="p-5">Actions</th>                  
+</tr>
                 </thead>
 
                 <tbody>
@@ -163,6 +164,34 @@ const [unlocked, setUnlocked] = useState(false);
                       <td className="p-5 text-white/50 text-sm">
                         {new Date(order.created_at).toLocaleString()}
                       </td>
+
+                      <td className="p-5">
+  {order.status !== "paid" ? (
+    <button
+      onClick={async () => {
+        await fetch("/api/admin/mark-paid", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            orderId: order.id,
+          }),
+        });
+
+        fetchOrders();
+      }}
+      className="rounded-full bg-blue-400 px-5 py-2 text-sm font-black text-[#081526] hover:bg-blue-300 transition-all"
+    >
+      Mark Paid
+    </button>
+  ) : (
+    <span className="text-green-400 font-bold">
+      Paid
+    </span>
+  )}
+</td>
+
                     </tr>
                   ))}
                 </tbody>

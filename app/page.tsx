@@ -374,41 +374,51 @@ if (accepted === null) {
 <div className="relative z-20 -mt-20 mb-16 max-w-5xl mx-auto px-4">
   <div className="flex flex-col md:flex-row justify-center gap-4">
 
+{/* Announcement Bubbles */}
+<div className="relative z-20 -mt-20 mb-16 max-w-6xl mx-auto px-4">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
     {/* Free Shipping */}
-    <div className="flex-1 rounded-full border border-blue-400/20 bg-[#102743]/60 backdrop-blur-xl px-8 py-5 text-center shadow-[0_0_25px_rgba(59,130,246,0.08)]">
-      <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
-        Free Shipping On Orders Over $200
+    <div className="rounded-[40px] border border-blue-400/20 bg-[#102743]/60 backdrop-blur-xl px-6 py-5 text-center shadow-[0_0_25px_rgba(59,130,246,0.08)]">
+      <p className="text-blue-100 font-bold uppercase tracking-[0.2em] text-xs">
+        Free Shipping
+      </p>
+
+      <p className="text-white/70 text-xs mt-2 uppercase tracking-[0.15em]">
+        Orders Over $200
       </p>
     </div>
 
     {/* Freedom10 */}
-    <div className="flex-1 rounded-full border border-blue-400/20 bg-[#102743]/60 backdrop-blur-xl px-8 py-5 text-center shadow-[0_0_25px_rgba(59,130,246,0.08)]">
-      <div className="flex items-center justify-center gap-3 flex-wrap">
+    <div className="rounded-[40px] border border-blue-400/20 bg-[#102743]/60 backdrop-blur-xl px-6 py-5 text-center shadow-[0_0_25px_rgba(59,130,246,0.08)]">
+      <p className="text-blue-100 font-bold uppercase tracking-[0.2em] text-xs">
+        🇺🇸 4th Of July
+      </p>
 
-        <span className="text-blue-200 uppercase tracking-[0.15em] text-xs font-bold">
-          🇺🇸 4th Of July
-        </span>
-
-        <span className="hidden md:block w-px h-4 bg-blue-400/20" />
-
-        <span className="text-white/70 uppercase tracking-[0.15em] text-xs">
-          Save 10%
-        </span>
-
-        <span className="px-4 py-1 rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-200 font-black tracking-[0.2em] text-xs">
+      <div className="mt-2 inline-flex px-4 py-1 rounded-full border border-blue-400/30 bg-blue-500/10">
+        <span className="text-blue-200 font-black tracking-[0.2em] text-xs">
           FREEDOM10
         </span>
-
-        <div className="flex-1 rounded-full border border-blue-400/20 bg-[#102743]/60 backdrop-blur-xl px-8 py-5 text-center">
-  <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
-    FREE BAC WATER WITH ANY 4 VIALS
-  </p>
-</div>
-
       </div>
+
+      <p className="text-white/70 text-xs mt-2 uppercase tracking-[0.15em]">
+        Save 10% Sitewide
+      </p>
+    </div>
+
+    {/* Free Bac Water */}
+    <div className="rounded-[40px] border border-blue-400/20 bg-[#102743]/60 backdrop-blur-xl px-6 py-5 text-center shadow-[0_0_25px_rgba(59,130,246,0.08)]">
+      <p className="text-blue-100 font-bold uppercase tracking-[0.2em] text-xs">
+        🎁 Free Bac Water
+      </p>
+
+      <p className="text-white/70 text-xs mt-2 uppercase tracking-[0.15em]">
+        With Any 4 Vials
+      </p>
     </div>
 
   </div>
+</div>
 </div>
     
   {/* Background Image */}

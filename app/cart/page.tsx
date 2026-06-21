@@ -54,6 +54,13 @@ export default function CartPage() {
     0
   );
 
+  const freeShippingThreshold = 200;
+  const amountLeftForFreeShipping = Math.max(
+    0,
+    freeShippingThreshold - subtotal
+  );
+  const qualifiesForFreeShipping = subtotal >= freeShippingThreshold;
+
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
@@ -207,10 +214,29 @@ export default function CartPage() {
 
                     <div className="flex justify-between border-b border-white/10 pb-4">
                       <span>Shipping</span>
-                      <span className="text-white/50">
-                        Calculated at checkout
+                      <span
+                        className={
+                          qualifiesForFreeShipping
+                            ? "text-green-300 font-semibold"
+                            : "text-white/50"
+                        }
+                      >
+                        {qualifiesForFreeShipping
+                          ? "Free"
+                          : "Calculated at checkout"}
                       </span>
                     </div>
+
+                    {qualifiesForFreeShipping ? (
+                      <div className="rounded-2xl border border-green-400/30 bg-green-400/10 px-4 py-3 text-sm text-green-200">
+                        🎉 You qualify for free shipping.
+                      </div>
+                    ) : (
+                      <div className="rounded-2xl border border-blue-400/30 bg-blue-400/10 px-4 py-3 text-sm text-blue-100">
+                        You are ${amountLeftForFreeShipping.toFixed(2)} away
+                        from free shipping.
+                      </div>
+                    )}
 
                     <div className="flex justify-between border-b border-white/10 pb-4">
                       <span>Taxes</span>
@@ -305,140 +331,147 @@ export default function CartPage() {
         </div>
       </section>
 
-            <footer className="bg-[#081526] border-t border-blue-900/40 px-6 pt-24 pb-10">
+      <footer className="bg-[#081526] border-t border-blue-900/40 px-6 pt-24 pb-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
+            <div>
+              <img
+                src="/images/logo.png"
+                alt="Apexx Biolabs"
+                className="h-12 w-auto mb-6"
+              />
 
-  <div className="max-w-7xl mx-auto">
+              <p className="text-white/70 leading-relaxed text-sm">
+                High-purity research compounds supported by batch documentation,
+                analytical testing, and research-use transparency.
+              </p>
+            </div>
 
-    {/* TOP */}
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
+            <div>
+              <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
+                Company
+              </h4>
 
-      {/* BRAND */}
-      <div>
-        <img
-          src="/images/logo.png"
-          alt="Apexx Biolabs"
-          className="h-12 w-auto mb-6"
-        />
+              <div className="space-y-4">
+                <a
+                  href="/"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  Home
+                </a>
 
-        <p className="text-white/70 leading-relaxed text-sm">
-          High-purity research compounds supported by batch documentation,
-          analytical testing, and research-use transparency.
-        </p>
-      </div>
+                <a
+                  href="/products"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  Products
+                </a>
 
-      {/* COMPANY */}
-      <div>
-        <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
-          Company
-        </h4>
+                <a
+                  href="/coas"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  COAs
+                </a>
 
-        <div className="space-y-4">
-          <a href="/" className="block text-white/70 hover:text-white transition-all">
-            Home
-          </a>
+                <a
+                  href="/contact"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  Contact
+                </a>
+              </div>
+            </div>
 
-          <a href="/products" className="block text-white/70 hover:text-white transition-all">
-            Products
-          </a>
+            <div>
+              <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
+                Resources
+              </h4>
 
-          <a href="/coas" className="block text-white/70 hover:text-white transition-all">
-            COAs
-          </a>
+              <div className="space-y-4">
+                <a
+                  href="/peptide-info"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  Peptide Info
+                </a>
 
-          <a href="/contact" className="block text-white/70 hover:text-white transition-all">
-            Contact
-          </a>
+                <a
+                  href="/faq"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  FAQ
+                </a>
+
+                <a
+                  href="/shipping"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  Shipping
+                </a>
+
+                <a
+                  href="/refunds"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  Refunds
+                </a>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
+                Contact
+              </h4>
+
+              <div className="space-y-4">
+                <a
+                  href="mailto:support@apexxbiolabs.com"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  support@apexxbiolabs.com
+                </a>
+
+                <a
+                  href="https://www.tiktok.com/@apexx.nyc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
+                  TikTok
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-white/10 pt-10">
+            <p className="text-white/40 text-xs uppercase tracking-[0.18em] leading-relaxed max-w-5xl">
+              FOR LABORATORY RESEARCH USE ONLY. NOT FOR HUMAN CONSUMPTION. NOT
+              FOR MEDICAL, DIAGNOSTIC, THERAPEUTIC, OR VETERINARY USE.
+            </p>
+
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6 mt-10">
+              <p className="text-white/40 text-sm">
+                © 2026 Apexx Biolabs. All Rights Reserved.
+              </p>
+
+              <div className="flex gap-8 text-sm text-white/40">
+                <a href="/privacy" className="hover:text-white transition-all">
+                  Privacy
+                </a>
+
+                <a href="/terms" className="hover:text-white transition-all">
+                  Terms
+                </a>
+
+                <a href="/shipping" className="hover:text-white transition-all">
+                  Shipping
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* RESOURCES */}
-      <div>
-        <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
-          Resources
-        </h4>
-
-        <div className="space-y-4">
-          <a href="/peptide-info" className="block text-white/70 hover:text-white transition-all">
-            Peptide Info
-          </a>
-
-          <a href="/faq" className="block text-white/70 hover:text-white transition-all">
-            FAQ
-          </a>
-
-          <a href="/shipping" className="block text-white/70 hover:text-white transition-all">
-            Shipping
-          </a>
-
-          <a href="/refunds" className="block text-white/70 hover:text-white transition-all">
-            Refunds
-          </a>
-        </div>
-      </div>
-
-      {/* CONTACT */}
-      <div>
-        <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
-          Contact
-        </h4>
-
-        <div className="space-y-4">
-          <a
-            href="mailto:support@apexxbiolabs.com"
-            className="block text-white/70 hover:text-white transition-all"
-          >
-            support@apexxbiolabs.com
-          </a>
-
-          <a
-            href="https://www.tiktok.com/@apexx.nyc"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block text-white/70 hover:text-white transition-all"
-          >
-            TikTok
-          </a>
-        </div>
-      </div>
-
-    </div>
-
-    {/* DISCLAIMER */}
-    <div className="border-t border-white/10 pt-10">
-
-      <p className="text-white/40 text-xs uppercase tracking-[0.18em] leading-relaxed max-w-5xl">
-        FOR LABORATORY RESEARCH USE ONLY. NOT FOR HUMAN CONSUMPTION.
-        NOT FOR MEDICAL, DIAGNOSTIC, THERAPEUTIC, OR VETERINARY USE.
-      </p>
-
-      <div className="flex flex-col md:flex-row justify-between items-center gap-6 mt-10">
-
-        <p className="text-white/40 text-sm">
-          © 2026 Apexx Biolabs. All Rights Reserved.
-        </p>
-
-        <div className="flex gap-8 text-sm text-white/40">
-          <a href="/privacy" className="hover:text-white transition-all">
-            Privacy
-          </a>
-
-          <a href="/terms" className="hover:text-white transition-all">
-            Terms
-          </a>
-
-          <a href="/shipping" className="hover:text-white transition-all">
-            Shipping
-          </a>
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</footer>
-
+      </footer>
     </main>
   );
 }

@@ -365,8 +365,8 @@ if (accepted === null) {
 <section className="relative pt-44 pb-24 px-6 bg-[#081526] overflow-hidden">
 
 {/* Free Shipping Banner */}
-<div className="relative z-20 -mt-20 mb-16 rounded-full border border-blue-400/30 bg-blue-500/10 px-6 py-4 text-center backdrop-blur-sm max-w-5xl mx-auto">
-  <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
+<div className="w-full py-4 bg-gradient-to-r from-blue-950 via-blue-900 to-blue-950 border-y border-blue-700">
+  <p className="text-center text-blue-100 font-semibold tracking-[0.2em] uppercase text-xs md:text-sm">
     Free Shipping On Orders Over $200
   </p>
 </div>

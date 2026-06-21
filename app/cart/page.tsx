@@ -238,14 +238,6 @@ export default function CartPage() {
                       </div>
                     )}
 
-                    <div className="flex justify-between border-b border-white/10 pb-4">
-                      <span>Taxes</span>
-                      <span className="text-white/50">
-                        Calculated at checkout
-                      </span>
-                    </div>
-                  </div>
-
                   <div className="flex justify-between text-3xl font-black mb-8">
                     <span>Total</span>
                     <span className="text-blue-300">

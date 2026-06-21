@@ -193,27 +193,6 @@ export default function BPC157Page() {
                 </a>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                  ["Size", "10mg"],
-                  ["Form", "Lyophilized"],
-                  ["Purity", "99.33+"],
-                  ["Storage", "2–8°C"],
-                ].map(([label, value]) => (
-                  <div
-                    key={label}
-                    className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-5"
-                  >
-                    <p className="uppercase tracking-widest text-white/40 text-xs mb-2">
-                      {label}
-                    </p>
-
-                    <p className="text-white text-base font-semibold">
-                      {value}
-                    </p>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
@@ -276,7 +255,7 @@ export default function BPC157Page() {
         </div>
 
         <a
-href="/images/coas/bbpc-157-10mg-black-cap-coa.pdf"          target="_blank"
+href="/images/coas/bpc-157-10mg-black-cap-coa.pdf"          target="_blank"
           rel="noopener noreferrer"
           className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
         >
@@ -347,7 +326,7 @@ href="/images/coas/bbpc-157-10mg-black-cap-coa.pdf"          target="_blank"
             and cellular response mechanisms.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
             {[
               [
                 "Tissue Research",
@@ -361,6 +340,10 @@ href="/images/coas/bbpc-157-10mg-black-cap-coa.pdf"          target="_blank"
                 "Vascular Pathways",
                 "Researched in relation to angiogenesis and nitric oxide signaling.",
               ],
+              [
+  "Storage",
+  "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
+],
             ].map(([title, text]) => (
               <div
                 key={title}

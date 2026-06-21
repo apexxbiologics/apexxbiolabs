@@ -18,7 +18,7 @@ export default function MOTSCPage() {
     name: "MOTS-C",
     price: 60,
     quantity,
-    image: "/images/motsc.PNG",
+    image: "/images/motscblue.png",
   };
 
   const addToCart = () => {

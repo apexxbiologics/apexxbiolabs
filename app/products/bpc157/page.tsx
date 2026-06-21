@@ -184,13 +184,20 @@ export default function BPC157Page() {
                 >
                   Continue Shopping
                 </a>
+
+                <a
+                  href="/coas"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
+                  View COA
+                </a>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
                   ["Size", "10mg"],
                   ["Form", "Lyophilized"],
-                  ["Purity", "99%+"],
+                  ["Purity", "99.33+"],
                   ["Storage", "2–8°C"],
                 ].map(([label, value]) => (
                   <div
@@ -268,14 +275,13 @@ export default function BPC157Page() {
           Purity
         </div>
 
-<a
-  href="/images/coas/bpc-157-10mg-black-cap-coa.pdf"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="relative z-50 rounded-full border border-blue-400/20 bg-blue-400/10 px-4 py-2 text-xs font-semibold text-blue-300 hover:bg-blue-400/20 transition-all"
->
-  Full COA
-</a>
+        <a
+href="/images/coas/bbpc-157-10mg-black-cap-coa.pdf"          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
+        >
+          View Full COA
+        </a>
 
       </div>
 

@@ -75,7 +75,7 @@ export default function COAsPage() {
       name: "CJC/IPA without DAC",
       batch: "CJCIPA504292026-09",
       status: "Verified",
-      purity: "Verified",
+      purity: "99.42%",
       content: "5mg / 5mg",
       coa: "/images/coas/cjc-ipa-no-dac-coa.pdf",
     },

@@ -25,18 +25,6 @@ export async function POST(request: Request) {
 
     const orderNumber = `APX-${Date.now()}`;
 
-    await supabase.from("orders").insert([
-  {
-    order_number: orderNumber,
-    customer_email: customerEmail,
-    first_name: firstName,
-    last_name: lastName,
-    payment_method: paymentMethod,
-    total: total,
-    status: "Awaiting Payment",
-  },
-]);
-
     const itemsHtml = cart
       .map(
         (item: any) =>
@@ -46,33 +34,33 @@ export async function POST(request: Request) {
       )
       .join("");
 
-      const { error: orderInsertError } = await supabase.from("orders").insert([
-  {
-    order_number: orderNumber,
-    customer_email: customerEmail,
-    first_name: firstName,
-    last_name: lastName,
-    address,
-    city,
-    state,
-    zip_code: zipCode,
-    payment_method: paymentMethod,
-    cart,
-    subtotal,
-    shipping,
-    total,
-    status: "awaiting_payment",
-  },
-]);
+    const { error: orderInsertError } = await supabase.from("orders").insert([
+      {
+        order_number: orderNumber,
+        customer_email: customerEmail,
+        first_name: firstName,
+        last_name: lastName,
+        address,
+        city,
+        state,
+        zip_code: zipCode,
+        payment_method: paymentMethod,
+        cart,
+        subtotal,
+        shipping,
+        total,
+        status: "awaiting_payment",
+      },
+    ]);
 
-if (orderInsertError) {
-  console.error("Supabase order insert error:", orderInsertError);
+    if (orderInsertError) {
+      console.error("Supabase order insert error:", orderInsertError);
 
-  return NextResponse.json(
-    { success: false, error: "Failed to save order" },
-    { status: 500 }
-  );
-}
+      return NextResponse.json(
+        { success: false, error: "Failed to save order" },
+        { status: 500 }
+      );
+    }
 
     await resend.emails.send({
       from: "Apexx Biolabs <orders@apexxbiolabs.com>",
@@ -81,7 +69,6 @@ if (orderInsertError) {
       html: `
         <div style="margin:0; padding:0; background:#f8fbff; font-family:Arial, Helvetica, sans-serif;">
           <div style="max-width:720px; margin:0 auto; padding:28px 16px;">
-
             <div style="background:#ffffff; border:1px solid #dbeafe; border-radius:28px; overflow:hidden; box-shadow:0 18px 45px rgba(30,58,138,0.12);">
 
               <div style="background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff); padding:38px 24px; text-align:center; border-bottom:1px solid #dbeafe;">
@@ -99,7 +86,6 @@ if (orderInsertError) {
               </div>
 
               <div style="padding:32px 24px; color:#0f172a;">
-
                 <div style="background:#ffffff; border:1px solid #bfdbfe; border-radius:22px; padding:32px 24px; text-align:center; margin-bottom:30px; box-shadow:0 12px 30px rgba(59,130,246,0.10);">
                   <p style="margin:0 0 14px; color:#3b82f6; font-size:13px; letter-spacing:4px; text-transform:uppercase;">
                     Order Received
@@ -173,25 +159,14 @@ if (orderInsertError) {
                               Scan Zelle QR Code
                             </h4>
 
-<div style="text-align:center; max-width:100%; overflow:hidden;">
-  <img 
-    src="https://apexxbiolabs.com/images/zelle-qr.png"
-    alt="Apexx Biolabs Zelle QR Code"
-    width="200"
-    style="
-      width:200px;
-      max-width:85%;
-      height:auto;
-      border-radius:14px;
-      background:#ffffff;
-      padding:10px;
-      margin:8px auto 14px;
-      display:block;
-      border:1px solid #e5e7eb;
-      box-sizing:border-box;
-    "
-  />
-</div>
+                            <div style="text-align:center; max-width:100%; overflow:hidden;">
+                              <img 
+                                src="https://apexxbiolabs.com/images/zelle-qr.png"
+                                alt="Apexx Biolabs Zelle QR Code"
+                                width="200"
+                                style="width:200px; max-width:85%; height:auto; border-radius:14px; background:#ffffff; padding:10px; margin:8px auto 14px; display:block; border:1px solid #e5e7eb; box-sizing:border-box;"
+                              />
+                            </div>
 
                             <p style="margin:0; color:#64748b; font-size:13px; line-height:1.5;">
                               Recipient should show as <strong style="color:#06111f;">APEXX BIOLABS LLC</strong>.
@@ -291,7 +266,6 @@ if (orderInsertError) {
                     apexxbiolabs.com
                   </p>
                 </div>
-
               </div>
             </div>
           </div>

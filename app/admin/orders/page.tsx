@@ -19,8 +19,6 @@ type Order = {
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [enteredPassword, setEnteredPassword] = useState("");
-const [unlocked, setUnlocked] = useState(false);
 const [trackingInputs, setTrackingInputs] = useState<Record<string, string>>({});
 
   const fetchOrders = async () => {
@@ -41,47 +39,6 @@ const [trackingInputs, setTrackingInputs] = useState<Record<string, string>>({})
   useEffect(() => {
     fetchOrders();
   }, []);
-
-  if (!unlocked) {
-  return (
-    <main className="min-h-screen bg-[#081526] text-white flex items-center justify-center px-6">
-      <div className="w-full max-w-md rounded-[32px] border border-blue-400/20 bg-white/[0.04] p-8 shadow-[0_0_50px_rgba(59,130,246,0.18)]">
-        <p className="uppercase tracking-[0.35em] text-blue-300 text-xs mb-4">
-          Apexx Admin
-        </p>
-
-        <h1 className="text-4xl font-black mb-4">
-          Admin Access
-        </h1>
-
-        <p className="text-white/60 mb-6">
-          Enter your admin password to view orders.
-        </p>
-
-        <input
-          type="password"
-          value={enteredPassword}
-          onChange={(e) => setEnteredPassword(e.target.value)}
-          placeholder="Admin password"
-          className="w-full rounded-full bg-white/[0.06] border border-white/10 px-5 py-4 text-white outline-none mb-5"
-        />
-
-        <button
-          onClick={() => {
-            if (enteredPassword === process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
-              setUnlocked(true);
-            } else {
-              alert("Incorrect password");
-            }
-          }}
-          className="w-full rounded-full bg-blue-400 text-[#081526] font-black py-4 uppercase tracking-widest"
-        >
-          Enter Dashboard
-        </button>
-      </div>
-    </main>
-  );
-}
 
   return (
     <main className="min-h-screen bg-[#081526] text-white px-6 py-10">

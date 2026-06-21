@@ -647,6 +647,7 @@ if (accepted === null) {
 </section>
 
 {/* QUALITY VERIFICATION */}
+
 <section className="relative py-24 px-6 bg-[#081526] border-b border-white/10 overflow-hidden">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
 
@@ -668,7 +669,7 @@ if (accepted === null) {
 
       <div className="grid grid-cols-3 gap-6 mb-10 border-y border-white/10 py-8">
         <div>
-          <p className="text-4xl font-black text-white">99%+</p>
+          <p className="tex-4xl font-black text-white">99%+</p>
           <p className="text-white/50 text-sm mt-2">Purity Target</p>
         </div>
 
@@ -794,9 +795,37 @@ if (accepted === null) {
               records help researchers compare and track batches.
             </div>
           </div>
+          
         )}
+        
       </div>
     </div>
+
+    <div className="relative rounded-[40px] overflow-hidden min-h-[650px]">
+      <img
+        src="/images/tb500hex.png"
+        alt="TB-500"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+
+      <div className="absolute top-8 right-8 z-20 text-right">
+        <p className="text-white text-3xl font-black">99%+ Purity</p>
+        <p className="text-white/80 text-lg">Verified by HPLC</p>
+      </div>
+
+      <a
+        href="/coas"
+        className="absolute bottom-8 left-8 right-8 z-20 flex items-center justify-between bg-[#04111f]/90 rounded-[28px] px-8 py-6 transition-all hover:bg-[#06192d]"
+      >
+        <div>
+          <p className="text-white text-2xl font-bold">See the Proof</p>
+          <p className="text-white/70">View batch documentation</p>
+        </div>
+
+        <span className="text-blue-300 text-4xl">›</span>
+      </a>
+    </div>
+
   </div>
 </section>
     

@@ -798,46 +798,61 @@ if (accepted === null) {
       </div>
     </div>
 
-<div className="relative">
-  <div className="relative rounded-[2.5rem] overflow-hidden min-h-[620px] bg-[#081526]">
+<div className="relative border border-blue-900 rounded-[40px] overflow-hidden bg-[#8AB3E6] min-h-[760px] flex items-center justify-center">
 
-    <img
-      src="/images/tb500hex.png"
-      alt="TB-500"
-      className="absolute inset-0 w-full h-full object-cover"
-    />
-
-    <div className="absolute top-8 right-8 z-20 text-right">
-      <p className="text-white text-2xl font-black">
+  {/* Purity Badge */}
+  <div className="absolute top-8 right-8 z-20">
+    <div className="bg-white/80 backdrop-blur-xl rounded-2xl px-6 py-4 border border-white/40 shadow-xl">
+      <p className="text-[#0B1D3A] text-3xl font-bold">
         99%+ Purity
       </p>
-      <p className="text-white/80 text-lg">
+
+      <p className="text-[#334155] text-sm mt-1">
         Verified by HPLC
       </p>
     </div>
+  </div>
 
-    <a
-      href="/coas"
-      className="absolute bottom-8 left-8 right-8 z-20 flex items-center justify-between bg-[#06111f]/90 border border-white/10 rounded-2xl px-6 py-5 hover:border-blue-400/50 transition-all"
-    >
-      <div>
-        <p className="text-white font-bold">
-          See the Proof
-        </p>
-        <p className="text-white/60 text-sm">
-          View batch documentation
-        </p>
+  {/* Product Image */}
+  <div className="flex items-center justify-center pt-10 pb-40 w-full">
+    <img
+      src="/images/tb500hex.png"
+      alt="TB-500"
+      className="w-[78%] max-w-[520px] object-contain relative z-10"
+    />
+  </div>
+
+  {/* Proof Card */}
+  <a
+    href="/coas"
+    className="absolute bottom-8 left-8 right-8 z-20"
+  >
+    <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white/40 p-6 shadow-xl hover:scale-[1.02] transition-all duration-300">
+
+      <div className="flex items-center justify-between">
+
+        <div>
+          <h3 className="text-[#0B1D3A] text-2xl font-bold">
+            See the Proof
+          </h3>
+
+          <p className="text-[#475569] mt-1">
+            View batch documentation
+          </p>
+        </div>
+
+        <div className="text-[#2563EB] text-4xl">
+          →
+        </div>
+
       </div>
 
-      <span className="text-blue-300 text-3xl">
-        ›
-      </span>
-    </a>
+    </div>
+  </a>
 
-  </div>
+</div>
 </div>
 
-  </div>
 </section>
 
 <section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">

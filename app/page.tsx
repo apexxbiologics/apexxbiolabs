@@ -376,9 +376,8 @@ if (accepted === null) {
   <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
     Free Shipping On Orders Over $200
   </p>
-</div>
 
-    {/* 4th of July Promo Banner */}
+      {/* 4th of July Promo Banner */}
     <div className="w-full bg-gradient-to-r from-[#B22234] via-white to-[#3C3B6E] text-center py-3">
       <p className="font-semibold text-black text-sm md:text-base tracking-[0.15em] uppercase">
         🇺🇸 Fourth of July Event • Save 10% Sitewide With Code
@@ -387,6 +386,8 @@ if (accepted === null) {
         </span>
       </p>
     </div>
+    
+</div>
     
   {/* Background Image */}
   <div

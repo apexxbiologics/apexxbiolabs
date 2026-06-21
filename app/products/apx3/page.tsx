@@ -229,6 +229,13 @@ export default function APX3Page() {
                       }}
                       className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08]"
                     >
+
+                      <div className="rounded-2xl border border-green-400/20 bg-green-500/10 p-4 mb-6">
+  <p className="text-green-200 text-sm font-semibold">
+    🎁 Buy Any 4 Vials & Receive FREE Bacteriostatic Water
+  </p>
+</div>
+
                       −
                     </button>
 

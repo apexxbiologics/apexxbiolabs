@@ -132,11 +132,25 @@ export async function POST(request: Request) {
                               Scan Zelle QR Code
                             </h4>
 
-                            <img 
-                              src="https://apexxbiolabs.com/images/zelle-qr.png"
-                              alt="Apexx Biolabs Zelle QR Code"
-                              style="width:240px; max-width:100%; border-radius:16px; background:#ffffff; padding:12px; margin:8px auto 14px; display:block; border:1px solid #e5e7eb;"
-                            />
+<div style="text-align:center; max-width:100%; overflow:hidden;">
+  <img 
+    src="https://apexxbiolabs.com/images/zelle-qr.png"
+    alt="Apexx Biolabs Zelle QR Code"
+    width="200"
+    style="
+      width:200px;
+      max-width:85%;
+      height:auto;
+      border-radius:14px;
+      background:#ffffff;
+      padding:10px;
+      margin:8px auto 14px;
+      display:block;
+      border:1px solid #e5e7eb;
+      box-sizing:border-box;
+    "
+  />
+</div>
 
                             <p style="margin:0; color:#64748b; font-size:13px; line-height:1.5;">
                               Recipient should show as <strong style="color:#06111f;">APEXX BIOLABS LLC</strong>.

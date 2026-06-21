@@ -25,8 +25,6 @@ export async function POST(request: Request) {
 
     const orderNumber = `APX-${Date.now()}`;
 
-    
-
     const itemsHtml = cart
       .map(
         (item: any) =>
@@ -57,11 +55,6 @@ export async function POST(request: Request) {
 
 if (orderInsertError) {
   console.error("Supabase order insert error:", orderInsertError);
-
-  return NextResponse.json(
-    { success: false, error: "Failed to save order" },
-    { status: 500 }
-  );
 }
 
     await resend.emails.send({

@@ -371,36 +371,35 @@ if (accepted === null) {
 {/* HERO */}
 <section className="relative pt-44 pb-24 px-6 bg-[#081526] overflow-hidden">
 
-{/* Free Shipping Banner */}
-<div className="relative z-20 -mt-20 mb-16 rounded-full border border-blue-400/30 bg-blue-500/10 px-6 py-4 text-center backdrop-blur-sm max-w-5xl mx-auto">
-  <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
-    Free Shipping On Orders Over $200
-  </p>
-</div>
+{/* Announcement Bars */}
+<div className="relative z-30 flex flex-col md:flex-row items-center justify-center gap-4 -mt-20 mb-16">
 
-      {/* 4th of July Promo Banner */}
-<div className="w-full border-b border-blue-500/20 bg-[#04101f]">
-  <div className="max-w-7xl mx-auto px-6 py-3">
+  {/* Free Shipping */}
+  <div className="px-8 py-4 rounded-full border border-blue-400/30 bg-[#081526]/90 backdrop-blur-xl shadow-[0_0_30px_rgba(59,130,246,0.15)]">
+    <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm whitespace-nowrap">
+      Free Shipping On Orders Over $200
+    </p>
+  </div>
 
-    <div className="flex flex-wrap items-center justify-center gap-4 text-center">
-
-      <span className="uppercase tracking-[0.35em] text-blue-300 text-xs font-semibold">
+  {/* Freedom10 Promo */}
+  <div className="px-8 py-4 rounded-full border border-blue-400/30 bg-[#081526]/90 backdrop-blur-xl shadow-[0_0_30px_rgba(59,130,246,0.15)]">
+    <div className="flex items-center gap-3">
+      <span className="text-blue-300 uppercase tracking-[0.25em] text-xs font-bold">
         🇺🇸 4th of July Event
       </span>
 
       <span className="hidden md:block w-px h-4 bg-blue-400/30" />
 
-      <span className="text-white/80 uppercase tracking-[0.2em] text-xs">
-        Save 10% Sitewide With Code
+      <span className="text-white/80 uppercase tracking-[0.15em] text-xs">
+        Save 10%
       </span>
 
-      <span className="px-4 py-1 rounded-full border border-blue-400/40 bg-blue-500/10 text-blue-300 font-black tracking-[0.25em] text-sm">
+      <span className="px-3 py-1 rounded-full border border-blue-400/40 bg-blue-500/15 text-blue-200 font-black tracking-[0.2em] text-xs">
         FREEDOM10
       </span>
-
     </div>
-
   </div>
+
 </div>
     
   {/* Background Image */}

@@ -269,12 +269,13 @@ export default function BPC157Page() {
         </div>
 
         <a
-href="/images/coas/bpc-157-10mg-black-cap-coa.pdf"          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
-        >
-          View Full COA
-        </a>
+  href="/images/coas/bpc-157-10mg-blue-cap-6-15-26-coa.pdf"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="rounded-full border border-blue-400/20 bg-blue-400/10 px-4 py-2 text-xs font-semibold text-blue-300 hover:bg-blue-400/20 transition-all"
+>
+  Full COA
+</a>
 
       </div>
 

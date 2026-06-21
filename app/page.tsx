@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ShoppingCart, Search, Menu, X } from "lucide-react";
 import { FlaskConical, Microscope } from "lucide-react";
 import { Check } from "lucide-react";
+import { Gift, BadgePercent } from "lucide-react";
 
 export default function Home() {
   const [search, setSearch] = useState("");
@@ -376,6 +377,38 @@ if (accepted === null) {
   <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
     Free Shipping On Orders Over $200
   </p>
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+  {/* Freedom10 */}
+  <div className="rounded-[40px] border border-blue-400/20 bg-[#102743]/60 backdrop-blur-xl px-6 py-5 text-center shadow-[0_0_25px_rgba(59,130,246,0.08)]">
+    
+    <BadgePercent className="w-7 h-7 text-blue-300 mx-auto mb-3" />
+
+    <p className="text-white font-bold uppercase tracking-widest text-sm">
+      FREEDOM10
+    </p>
+
+    <p className="text-white/70 text-sm mt-1">
+      Save 10% Sitewide
+    </p>
+  </div>
+
+  {/* Free Bac Water */}
+  <div className="rounded-[40px] border border-blue-400/20 bg-[#102743]/60 backdrop-blur-xl px-6 py-5 text-center shadow-[0_0_25px_rgba(59,130,246,0.08)]">
+    
+    <Gift className="w-7 h-7 text-blue-300 mx-auto mb-3" />
+
+    <p className="text-white font-bold uppercase tracking-widest text-sm">
+      FREE BAC WATER
+    </p>
+
+    <p className="text-white/70 text-sm mt-1">
+      Buy Any 4 Vials & Receive Complimentary Bac Water
+    </p>
+  </div>
+
 </div>
     
   {/* Background Image */}

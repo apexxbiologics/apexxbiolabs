@@ -49,6 +49,21 @@ const [searchTerm, setSearchTerm] = useState("");
   const filteredOrders = orders.filter((order) => {
   const search = searchTerm.toLowerCase();
 
+  const filteredOrders = orders.filter((order) => {
+  const search = searchTerm.trim().toLowerCase();
+
+  if (!search) return true;
+
+  return (
+    order.order_number?.toLowerCase().includes(search) ||
+    order.customer_email?.toLowerCase().includes(search) ||
+    order.first_name?.toLowerCase().includes(search) ||
+    order.last_name?.toLowerCase().includes(search) ||
+    order.payment_method?.toLowerCase().includes(search) ||
+    order.status?.toLowerCase().includes(search)
+  );
+});
+
   return (
     order.order_number?.toLowerCase().includes(search) ||
     order.customer_email?.toLowerCase().includes(search) ||
@@ -213,8 +228,8 @@ const totalRevenue = orders.reduce((sum, order) => sum + Number(order.total || 0
         <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] overflow-hidden">
           {loading ? (
             <div className="p-10 text-white/60">Loading orders...</div>
-          ) : orders.length === 0 ? (
-            <div className="p-10 text-white/60">No orders yet.</div>
+          ) : filteredOrders.length === 0 ? (
+            <div className="p-10 text-white/60">No orders found.</div>
           ) : (
             <div className="overflow-x-auto">
 <table className="min-w-[1300px] w-full text-left">
@@ -233,7 +248,7 @@ const totalRevenue = orders.reduce((sum, order) => sum + Number(order.total || 0
 
                 <tbody>
 {filteredOrders.map((order) => (
-                        <tr
+                            <tr
                       key={order.id}
                       className="border-t border-white/10 hover:bg-white/[0.03]"
                     >

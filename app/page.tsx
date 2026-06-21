@@ -797,54 +797,6 @@ if (accepted === null) {
         )}
       </div>
     </div>
-
-<div className="relative min-h-[760px] flex items-center justify-center">
-
-<div className="relative">
-
-  <div className="relative rounded-[40px] overflow-hidden min-h-[700px]">
-
-    <img
-      src="/images/tb500hex.png"
-      alt="TB-500"
-      className="absolute inset-0 w-full h-full object-cover"
-    />
-
-    <div className="absolute top-8 right-8 z-20 text-right">
-      <p className="text-white text-3xl font-black">
-        99%+ Purity
-      </p>
-
-      <p className="text-white/80 text-lg">
-        Verified by HPLC
-      </p>
-    </div>
-
-    <a
-      href="/coas"
-      className="absolute bottom-8 left-8 right-8 z-20 flex items-center justify-between bg-[#04111f]/90 rounded-[28px] px-8 py-6 transition-all hover:bg-[#06192d]"
-    >
-      <div>
-        <p className="text-white text-2xl font-bold">
-          See the Proof
-        </p>
-
-        <p className="text-white/70">
-          View batch documentation
-        </p>
-      </div>
-
-      <span className="text-blue-300 text-4xl">
-        ›
-      </span>
-    </a>
-
-  </div>
-
-</div>
-
-</section>
-
 <section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_55%)]"></div>
 

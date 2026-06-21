@@ -998,6 +998,14 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
           <a href="/refunds" className="block text-white/70 hover:text-white transition-all">
             Refunds
           </a>
+
+          <a
+  href="/order-status"
+  className="text-white/60 hover:text-blue-300 transition-all"
+>
+  Order Status
+</a>
+
         </div>
       </div>
 

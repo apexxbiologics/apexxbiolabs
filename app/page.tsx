@@ -361,6 +361,13 @@ if (accepted === null) {
   </div>
 )}
 
+{/* Free Shipping Banner */}
+<div className="w-full bg-blue-950/60 border-y border-blue-800 py-3 text-center">
+  <p className="text-sm md:text-base font-semibold text-blue-100 tracking-wide">
+    Free shipping on orders over $200
+  </p>
+</div>
+
 {/* HERO */}
 <section className="relative pt-44 pb-24 px-6 bg-[#081526] overflow-hidden">
 

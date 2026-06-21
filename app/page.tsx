@@ -803,22 +803,13 @@ if (accepted === null) {
 
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.15),transparent_70%)]"></div>
 
-        <div className="relative z-10 flex justify-end mb-8">
-          <div className="bg-[#102A4A] border border-blue-400/30 rounded-2xl px-5 py-4">
-            <p className="text-white font-black">99%+ Purity</p>
-            <p className="text-white/50 text-sm">Verified by HPLC</p>
-          </div>
-        </div>
-
 <div className="relative z-10 flex justify-center">
-  <div className="w-[380px] h-[380px] rounded-[36px] overflow-hidden shadow-[0_0_50px_rgba(96,165,250,0.25)]">
-<div className="relative z-10 rounded-[40px] overflow-hidden mx-auto w-full max-w-[520px]">
-  <img
-    src="/images/tb500hex.png"
-    alt="TB-500"
-    className="w-full h-auto object-cover"
-  />
-</div>
+  <div className="w-full max-w-[640px] rounded-[42px] overflow-hidden shadow-[0_0_80px_rgba(96,165,250,0.25)]">
+    <img
+      src="/images/tb500hex.png"
+      alt="TB-500"
+      className="w-full h-auto object-cover"
+    />
   </div>
 </div>
 

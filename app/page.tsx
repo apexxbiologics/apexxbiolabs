@@ -798,42 +798,44 @@ if (accepted === null) {
       </div>
     </div>
 
-    <div className="relative">
-      <div className="relative rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-10 overflow-hidden">
+<div className="relative">
+  <div className="relative rounded-[2.5rem] overflow-hidden min-h-[620px] bg-[#081526]">
 
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.15),transparent_70%)]"></div>
-
-<div className="relative z-10 flex justify-center">
-  <div className="w-full max-w-[640px] rounded-[42px] overflow-hidden shadow-[0_0_80px_rgba(96,165,250,0.25)]">
     <img
       src="/images/tb500hex.png"
       alt="TB-500"
-      className="w-full h-auto object-cover"
+      className="absolute inset-0 w-full h-full object-cover"
     />
+
+    <div className="absolute top-8 right-8 z-20 text-right">
+      <p className="text-white text-2xl font-black">
+        99%+ Purity
+      </p>
+      <p className="text-white/80 text-lg">
+        Verified by HPLC
+      </p>
+    </div>
+
+    <a
+      href="/coas"
+      className="absolute bottom-8 left-8 right-8 z-20 flex items-center justify-between bg-[#06111f]/90 border border-white/10 rounded-2xl px-6 py-5 hover:border-blue-400/50 transition-all"
+    >
+      <div>
+        <p className="text-white font-bold">
+          See the Proof
+        </p>
+        <p className="text-white/60 text-sm">
+          View batch documentation
+        </p>
+      </div>
+
+      <span className="text-blue-300 text-3xl">
+        ›
+      </span>
+    </a>
+
   </div>
 </div>
-
-        <a
-          href="/coas"
-          className="relative z-10 mt-10 flex items-center justify-between bg-[#102A4A] border border-white/10 rounded-2xl px-6 py-5 hover:border-blue-400/50 transition-all"
-        >
-          <div>
-            <p className="text-white font-bold">
-              See the Proof
-            </p>
-
-            <p className="text-white/50 text-sm">
-              View batch documentation
-            </p>
-          </div>
-
-          <span className="text-blue-300 text-2xl">
-            ›
-          </span>
-        </a>
-
-      </div>
-    </div>
 
   </div>
 </section>

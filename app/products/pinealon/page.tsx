@@ -18,7 +18,7 @@ export default function PinealonPage() {
     name: "Pinealon",
     price: 60,
     quantity,
-    image: "/images/pinealon.PNG",
+    image: "/images/pinealonblue.png",
   };
 
   const addToCart = () => {

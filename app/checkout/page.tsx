@@ -55,10 +55,15 @@ const [promoCode, setPromoCode] = useState("");
     freeShippingThreshold - subtotal
   );
 
-  const shipping =
-    subtotal > 0 && !qualifiesForFreeShipping ? standardShipping : 0;
+const shipping =
+  subtotal > 0 && !qualifiesForFreeShipping ? standardShipping : 0;
 
-  const total = subtotal + shipping;
+const discount =
+  promoCode.trim().toUpperCase() === "FREEDOM10"
+    ? subtotal * 0.1
+    : 0;
+
+const total = subtotal - discount + shipping;
 
   const isCheckoutComplete =
     customerEmail.trim() !== "" &&
@@ -432,10 +437,38 @@ setShowSuccess(true);
                 </div>
 
                 <div className="border-t border-white/10 pt-6 space-y-4 mb-8">
+
+                <div>
+  <label className="block text-sm text-white/60 mb-2">
+    Promo Code
+  </label>
+
+  <input
+    type="text"
+    value={promoCode}
+    onChange={(e) => setPromoCode(e.target.value)}
+    placeholder="Enter promo code"
+    className="checkout-input"
+  />
+
+  {promoCode.trim().toUpperCase() === "FREEDOM10" && (
+    <p className="text-green-300 text-sm mt-2 font-semibold">
+      ✓ FREEDOM10 Applied (10% Off)
+    </p>
+  )}
+</div>
+
                   <div className="flex justify-between text-white/60">
                     <span>Subtotal</span>
                     <span>${subtotal.toFixed(2)}</span>
                   </div>
+
+{discount > 0 && (
+  <div className="flex justify-between text-green-300 font-semibold">
+    <span>FREEDOM10</span>
+    <span>-${discount.toFixed(2)}</span>
+  </div>
+)}
 
                   <div className="flex justify-between text-white/60">
                     <span>Shipping</span>

@@ -378,16 +378,21 @@ if (accepted === null) {
   </p>
 
       {/* 4th of July Promo Banner */}
-    <div className="w-full bg-gradient-to-r from-[#B22234] via-white to-[#3C3B6E] text-center py-3">
-      <p className="font-semibold text-black text-sm md:text-base tracking-[0.15em] uppercase">
-        🇺🇸 Fourth of July Event • Save 10% Sitewide With Code
-        <span className="ml-2 bg-black text-white px-3 py-1 rounded-full">
-          FREEDOM10
-        </span>
-      </p>
+      <span className="uppercase tracking-[0.35em] text-blue-300 text-xs font-semibold">
+        🇺🇸 4th of July Event
+      </span>
+
+      <span className="hidden md:block w-px h-4 bg-blue-400/30" />
+
+      <span className="text-white/80 uppercase tracking-[0.2em] text-xs">
+        Save 10% Sitewide With Code
+      </span>
+
+      <span className="px-4 py-1 rounded-full border border-blue-400/40 bg-blue-500/10 text-blue-300 font-black tracking-[0.25em] text-sm">
+        FREEDOM10
+      </span>
+
     </div>
-    
-</div>
     
   {/* Background Image */}
   <div

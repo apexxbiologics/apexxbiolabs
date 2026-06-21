@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-const [enteredPassword, setEnteredPassword] = useState("");
-const [unlocked, setUnlocked] = useState(false);
 
 type Order = {
   id: string;
@@ -21,6 +19,8 @@ type Order = {
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [enteredPassword, setEnteredPassword] = useState("");
+const [unlocked, setUnlocked] = useState(false);
 
   const fetchOrders = async () => {
     const { data, error } = await supabase

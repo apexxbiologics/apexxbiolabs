@@ -238,6 +238,8 @@ export default function CartPage() {
                       </div>
                     )}
 
+                  </div>
+
                   <div className="flex justify-between text-3xl font-black mb-8">
                     <span>Total</span>
                     <span className="text-blue-300">

@@ -88,11 +88,11 @@ export default function MOTSCPage() {
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
-<div className="relative z-10 flex justify-center">
-  <div className="w-[380px] h-[380px] rounded-[36px] overflow-hidden shadow-[0_0_50px_rgba(96,165,250,0.25)]">
+<div className="flex items-center justify-center">
+  <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
     <img
-      src="/images/motscblue.png"
-      alt="MOTS-C"
+      src={product.image}
+      alt={product.name}
       className="w-full h-full object-cover"
     />
   </div>

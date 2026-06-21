@@ -124,15 +124,16 @@ if (accepted === null) {
   return (
     <>
 {!accepted && (
-  <div className="fixed inset-0 z-[9999] overflow-y-auto bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.20),transparent_60%),#020817] px-4 py-8">
-    
-    <div className="min-h-screen flex items-start md:items-center justify-center">
-      
-      <div className="w-full max-w-3xl rounded-[36px] border border-blue-400/20 bg-gradient-to-b from-[#0f1d33] to-[#081526] backdrop-blur-xl shadow-[0_0_80px_rgba(59,130,246,0.18)] overflow-hidden">
+  <div className="fixed inset-0 z-[9999] bg-[#020817] overflow-y-auto px-4 py-8">
+
+    <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.18),transparent_55%)]" />
+
+    <div className="relative min-h-screen flex items-start md:items-center justify-center">
+
+      <div className="w-full max-w-3xl rounded-[36px] border border-blue-400/20 bg-gradient-to-b from-[#0f1d33] to-[#081526] shadow-[0_0_80px_rgba(59,130,246,0.22)] overflow-hidden">
 
         {/* Glow */}
-        <div className="absolute pointer-events-none"></div>
-
+<div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.18),transparent_55%)]" />
         {/* Header */}
         <div className="text-center px-8 md:px-14 pt-12 pb-8">
 

@@ -88,15 +88,15 @@ export default function MOTSCPage() {
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
-            <div className="flex items-center justify-center">
-              <div className="w-full max-w-[520px] h-[520px] rounded-[36px] border border-white/10 bg-white/[0.03] backdrop-blur-sm flex items-center justify-center">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-[90%] h-[90%] object-contain"
-                />
-              </div>
-            </div>
+<div className="relative z-10 flex justify-center">
+  <div className="w-[380px] h-[380px] rounded-[36px] overflow-hidden shadow-[0_0_50px_rgba(96,165,250,0.25)]">
+    <img
+      src="/images/tb500blue.png"
+      alt="TB-500"
+      className="w-full h-full object-cover"
+    />
+  </div>
+</div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
               <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-4">

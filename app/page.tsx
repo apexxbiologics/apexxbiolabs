@@ -373,15 +373,16 @@ if (accepted === null) {
 <section className="relative pt-44 pb-24 px-6 bg-[#081526] overflow-hidden">
 
 {/* Free Shipping Banner */}
-<div className="relative z-20 -mt-20 mb-16 rounded-full border border-blue-400/30 bg-blue-500/10 px-6 py-4 text-center backdrop-blur-sm max-w-5xl mx-auto">
+<div className="relative z-20 -mt-20 mb-4 rounded-full border border-blue-400/30 bg-blue-500/10 px-6 py-4 text-center backdrop-blur-sm max-w-5xl mx-auto">
   <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
     Free Shipping On Orders Over $200
   </p>
 </div>
 
-<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+{/* Promo Banners */}
+<div className="relative z-20 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
 
-  <div className="rounded-full border border-blue-400 bg-[#163B68] px-8 py-4 text-center shadow-[0_0_30px_rgba(59,130,246,0.25)]">
+  <div className="rounded-full border border-blue-400/40 bg-[#163B68] px-8 py-5 text-center">
     <p className="text-white font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
       FREEDOM10
     </p>
@@ -390,7 +391,7 @@ if (accepted === null) {
     </p>
   </div>
 
-  <div className="rounded-full border border-blue-400 bg-[#163B68] px-8 py-4 text-center shadow-[0_0_30px_rgba(59,130,246,0.25)]">
+  <div className="rounded-full border border-blue-400/40 bg-[#163B68] px-8 py-5 text-center">
     <p className="text-white font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
       FREE BAC WATER
     </p>
@@ -411,8 +412,7 @@ if (accepted === null) {
   />
 
   {/* Navy Overlay */}
-  <div className="absolute inset-0 bg-gradient-to-r from-[#081526] via-[#081526]/92 to-transparent" />
-
+<div className="absolute inset-0 z-[1] bg-gradient-to-r from-[#081526] via-[#081526]/92 to-transparent" />
   {/* Luxury Glow */}
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_55%)]"></div>
 

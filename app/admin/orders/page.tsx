@@ -25,6 +25,7 @@ const [enteredPassword, setEnteredPassword] = useState("");
 const [unlocked, setUnlocked] = useState(false);
 const [lockedOut, setLockedOut] = useState(false);
 const [loginError, setLoginError] = useState("");
+const [searchTerm, setSearchTerm] = useState("");
 
   const fetchOrders = async () => {
     const { data, error } = await supabase
@@ -44,6 +45,24 @@ const [loginError, setLoginError] = useState("");
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  const filteredOrders = orders.filter((order) => {
+  const search = searchTerm.toLowerCase();
+
+  return (
+    order.order_number?.toLowerCase().includes(search) ||
+    order.customer_email?.toLowerCase().includes(search) ||
+    order.first_name?.toLowerCase().includes(search) ||
+    order.last_name?.toLowerCase().includes(search) ||
+    order.status?.toLowerCase().includes(search)
+  );
+});
+
+const totalOrders = orders.length;
+const awaitingPayment = orders.filter((o) => o.status === "awaiting_payment").length;
+const paidOrders = orders.filter((o) => o.status === "paid").length;
+const shippedOrders = orders.filter((o) => o.status === "shipped").length;
+const totalRevenue = orders.reduce((sum, order) => sum + Number(order.total || 0), 0);
 
   if (!unlocked) {
   return (
@@ -141,6 +160,36 @@ const [loginError, setLoginError] = useState("");
             <p className="text-white/60 mt-4">
               View customer orders, payment status, and shipment progress.
             </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-8">
+  <div className="rounded-2xl border border-blue-300/20 bg-white/[0.04] p-5">
+    <p className="text-white/50 text-xs uppercase tracking-widest">Total Orders</p>
+    <p className="text-3xl font-black text-white mt-2">{totalOrders}</p>
+  </div>
+
+  <div className="rounded-2xl border border-yellow-300/20 bg-white/[0.04] p-5">
+    <p className="text-white/50 text-xs uppercase tracking-widest">Awaiting</p>
+    <p className="text-3xl font-black text-yellow-300 mt-2">{awaitingPayment}</p>
+  </div>
+
+  <div className="rounded-2xl border border-green-300/20 bg-white/[0.04] p-5">
+    <p className="text-white/50 text-xs uppercase tracking-widest">Paid</p>
+    <p className="text-3xl font-black text-green-300 mt-2">{paidOrders}</p>
+  </div>
+
+  <div className="rounded-2xl border border-blue-300/20 bg-white/[0.04] p-5">
+    <p className="text-white/50 text-xs uppercase tracking-widest">Shipped</p>
+    <p className="text-3xl font-black text-blue-300 mt-2">{shippedOrders}</p>
+  </div>
+
+  <div className="rounded-2xl border border-blue-300/20 bg-white/[0.04] p-5">
+    <p className="text-white/50 text-xs uppercase tracking-widest">Revenue</p>
+    <p className="text-3xl font-black text-blue-300 mt-2">
+      ${totalRevenue.toFixed(2)}
+    </p>
+  </div>
+</div>
+
           </div>
 
           <a
@@ -150,6 +199,16 @@ const [loginError, setLoginError] = useState("");
             Back to Site
           </a>
         </div>
+
+<div className="mb-6">
+  <input
+    type="text"
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    placeholder="Search by order number, name, email, or status..."
+    className="w-full rounded-full border border-blue-300/20 bg-white/[0.06] px-6 py-4 text-white placeholder:text-white/40 outline-none focus:border-blue-300/50"
+  />
+</div>
 
         <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] overflow-hidden">
           {loading ? (
@@ -173,8 +232,8 @@ const [loginError, setLoginError] = useState("");
                 </thead>
 
                 <tbody>
-                  {orders.map((order) => (
-                    <tr
+{filteredOrders.map((order) => (
+                        <tr
                       key={order.id}
                       className="border-t border-white/10 hover:bg-white/[0.03]"
                     >

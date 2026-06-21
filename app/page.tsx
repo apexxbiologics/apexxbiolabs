@@ -668,6 +668,7 @@ if (accepted === null) {
       </p>
 
       <div className="grid grid-cols-3 gap-6 mb-10 border-y border-white/10 py-8">
+      
         <div>
           <p className="tex-4xl font-black text-white">99%+</p>
           <p className="text-white/50 text-sm mt-2">Purity Target</p>

@@ -137,11 +137,11 @@ if (accepted === null) {
         {/* Header */}
         <div className="text-center px-8 md:px-14 pt-12 pb-8">
 
-          <img
-            src="/images/logo.png"
-            alt="Apexx Biolabs"
-            className="h-20 w-auto mx-auto mb-8"
-          />
+<img
+  src="/images/logo.png"
+  alt="Apexx Biolabs"
+  className="h-20 md:h-24 w-auto object-contain"
+/>
 
           <p className="uppercase tracking-[0.45em] text-blue-300 text-xs mb-5">
             Research Use Verification

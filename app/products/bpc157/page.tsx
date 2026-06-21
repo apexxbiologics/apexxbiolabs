@@ -18,7 +18,7 @@ export default function BPC157Page() {
     name: "BPC-157",
     price: 50,
     quantity,
-    image: "/images/bpc157blue.PNG",
+    image: "/images/bpc157blue.png",
   };
 
   const addToCart = () => {

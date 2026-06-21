@@ -399,6 +399,12 @@ if (accepted === null) {
           FREEDOM10
         </span>
 
+        <div className="flex-1 rounded-full border border-blue-400/20 bg-[#102743]/60 backdrop-blur-xl px-8 py-5 text-center">
+  <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
+    FREE BAC WATER WITH ANY 4 VIALS
+  </p>
+</div>
+
       </div>
     </div>
 
@@ -459,6 +465,16 @@ if (accepted === null) {
         </a>
 
       </div>
+
+      <div className="mt-8 max-w-xl rounded-3xl border border-blue-400/20 bg-[#102743]/50 backdrop-blur-xl p-5">
+  <p className="text-blue-300 uppercase tracking-[0.25em] text-xs font-bold mb-2">
+    Limited Time Promotion
+  </p>
+
+  <p className="text-white font-semibold">
+    Receive 1 FREE Bacteriostatic Water with any purchase of 4 or more vials.
+  </p>
+</div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-14">
 

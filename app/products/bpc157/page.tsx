@@ -184,13 +184,6 @@ export default function BPC157Page() {
                 >
                   Continue Shopping
                 </a>
-
-                <a
-                  href="/coas"
-                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
-                >
-                  View COA
-                </a>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

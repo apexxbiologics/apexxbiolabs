@@ -268,11 +268,11 @@ export default function BPC157Page() {
           Purity
         </div>
 
-        <a
-  href="/images/coas/bpc-157-10mg-blue-cap-6-15-26-coa.pdf"
+<a
+  href="/images/coas/bpc-157-10mg-black-cap-coa.pdf"
   target="_blank"
   rel="noopener noreferrer"
-  className="rounded-full border border-blue-400/20 bg-blue-400/10 px-4 py-2 text-xs font-semibold text-blue-300 hover:bg-blue-400/20 transition-all"
+  className="relative z-50 rounded-full border border-blue-400/20 bg-blue-400/10 px-4 py-2 text-xs font-semibold text-blue-300 hover:bg-blue-400/20 transition-all"
 >
   Full COA
 </a>

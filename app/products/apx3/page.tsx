@@ -16,20 +16,20 @@ export default function APX3Page() {
   const [quantity, setQuantity] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
 
-const productOptions = {
-  "10mg": {
-    id: "APX-3-10mg",
-    name: "APX-3 10mg",
-    price: 80,
-    image: "/images/apx310blue.png",
-  },
-  "20mg": {
-    id: "APX-3-20mg",
-    name: "APX-3 20mg",
-    price: 150,
-    image: "/images/apx320.png",
-  },
-};
+  const productOptions = {
+    "10mg": {
+      id: "APX-3-10mg",
+      name: "APX-3 10mg",
+      price: 80,
+      image: "/images/apx310blue.png",
+    },
+    "20mg": {
+      id: "APX-3-20mg",
+      name: "APX-3 20mg",
+      price: 150,
+      image: "/images/apx320.png",
+    },
+  };
 
   const selectedProduct = productOptions[selectedMg];
   const inStock = true;
@@ -100,14 +100,32 @@ const productOptions = {
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#081526]/95 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 md:px-10 py-5 flex items-center justify-between">
           <a href="/">
-            <img src="/images/logo.png" alt="Apexx Biolabs" className="h-12 w-auto" />
+            <img
+              src="/images/logo.png"
+              alt="Apexx Biolabs"
+              className="h-12 w-auto"
+            />
           </a>
 
           <nav className="hidden md:flex items-center gap-10 uppercase tracking-widest text-sm text-white">
-            <a href="/" className="hover:text-blue-300 transition-all">Home</a>
-            <a href="/products" className="text-blue-300 border-b border-blue-300 pb-2">Products</a>
-            <a href="/coas" className="hover:text-blue-300 transition-all">COAs</a>
-            <a href="/contact" className="hover:text-blue-300 transition-all">Contact</a>
+            <a href="/" className="hover:text-blue-300 transition-all">
+              Home
+            </a>
+
+            <a
+              href="/products"
+              className="text-blue-300 border-b border-blue-300 pb-2"
+            >
+              Products
+            </a>
+
+            <a href="/coas" className="hover:text-blue-300 transition-all">
+              COAs
+            </a>
+
+            <a href="/contact" className="hover:text-blue-300 transition-all">
+              Contact
+            </a>
           </nav>
 
           <div className="flex items-center gap-4">
@@ -126,7 +144,10 @@ const productOptions = {
               />
             </form>
 
-            <a href="/cart" className="relative text-white hover:text-blue-300 transition-all">
+            <a
+              href="/cart"
+              className="relative text-white hover:text-blue-300 transition-all"
+            >
               <ShoppingCart size={30} />
             </a>
           </div>
@@ -137,17 +158,16 @@ const productOptions = {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
 
         <div className="relative z-10 max-w-7xl mx-auto">
-
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
-<div className="flex items-center justify-center">
-  <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
-    <img
-      src={selectedProduct.image}
-      alt={selectedProduct.name}
-      className="w-full h-full object-cover"
-    />
-  </div>
-</div>
+            <div className="flex items-center justify-center">
+              <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <img
+                  src={selectedProduct.image}
+                  alt={selectedProduct.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
               <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
@@ -229,7 +249,7 @@ const productOptions = {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {inStock ? (
                   <button
                     onClick={addToCart}
@@ -262,35 +282,85 @@ const productOptions = {
                 </a>
 
                 <a
-                  href="/coas"
+                  href={
+                    selectedMg === "20mg"
+                      ? "/images/coas/apx3-20mg-blue-cap-coa.pdf"
+                      : "/coas"
+                  }
+                  target={selectedMg === "20mg" ? "_blank" : undefined}
+                  rel={selectedMg === "20mg" ? "noopener noreferrer" : undefined}
                   className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
                 >
                   View COA
                 </a>
               </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                  ["Size", selectedMg],
-                  ["Form", "Lyophilized"],
-                  ["Purity", "99%+"],
-                  ["Storage", "2–8°C"],
-                ].map(([label, value]) => (
-                  <div
-                    key={label}
-                    className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-5"
-                  >
-                    <p className="uppercase tracking-widest text-white/40 text-xs mb-2">
-                      {label}
-                    </p>
-                    <p className="text-white text-base font-semibold">{value}</p>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
       </section>
+
+      {selectedMg === "20mg" && (
+        <section className="px-6 md:px-10 pb-16">
+          <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
+            <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
+              <div>
+                <p className="uppercase tracking-[0.35em] text-blue-300 text-xs mb-2">
+                  Freedom Diagnostics
+                </p>
+
+                <h3 className="text-2xl font-black text-white mb-5">
+                  Latest Certificate of Analysis
+                </h3>
+
+                <div className="flex flex-wrap gap-3">
+                  <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
+                    <span className="text-green-400 font-semibold">
+                      ✓ Identity Confirmed
+                    </span>
+                  </div>
+
+                  <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+                    <span className="text-[#A5D8FF] font-semibold">
+                      99.92% Purity
+                    </span>
+                  </div>
+
+                  <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+                    <span className="text-[#A5D8FF] font-semibold">
+                      23.89mg Content
+                    </span>
+                  </div>
+
+                  <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
+                    <span className="text-white/70">
+                      Lot: Blue Cap-1
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center md:items-end">
+                <div className="text-5xl font-black text-[#A5D8FF]">
+                  99.92%
+                </div>
+
+                <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
+                  Purity
+                </div>
+
+                <a
+                  href="/images/coas/apx3-20mg-blue-cap-coa.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
+                >
+                  View Full COA
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="px-6 md:px-10 pb-10">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -302,11 +372,15 @@ const productOptions = {
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
               <Icon className="text-blue-300" size={34} />
+
               <div>
                 <h3 className="text-white uppercase tracking-widest font-bold text-sm">
                   {title}
                 </h3>
-                <p className="text-white/50 text-sm mt-1">{text}</p>
+
+                <p className="text-white/50 text-sm mt-1">
+                  {text}
+                </p>
               </div>
             </div>
           ))}
@@ -329,18 +403,24 @@ const productOptions = {
             metabolic signaling, energy regulation, and body composition research.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
             {[
               ["GIP Pathway", "Studied for incretin signaling and nutrient-response research."],
               ["GLP-1 Pathway", "Evaluated in metabolic regulation and glucose-response models."],
               ["Glucagon Pathway", "Researched for energy expenditure and metabolic balance."],
+              ["Storage", "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use."],
             ].map(([title, text]) => (
               <div
                 key={title}
                 className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
               >
-                <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
-                <p className="text-white/60 text-sm leading-relaxed">{text}</p>
+                <h3 className="text-white text-lg font-bold mb-3">
+                  {title}
+                </h3>
+
+                <p className="text-white/60 text-sm leading-relaxed">
+                  {text}
+                </p>
               </div>
             ))}
           </div>

@@ -17,6 +17,8 @@ export default function CheckoutPage() {
   const [agreed, setAgreed] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("venmo");
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+const [successOrderNumber, setSuccessOrderNumber] = useState("");
 
   const [customerEmail, setCustomerEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -131,10 +133,11 @@ export default function CheckoutPage() {
         throw new Error("Order submission failed");
       }
 
-      localStorage.removeItem("cart");
-      window.dispatchEvent(new Event("cartUpdated"));
-      alert(`Order submitted successfully. Order Number: ${data.orderNumber}`);
-      window.location.href = "/";
+localStorage.removeItem("cart");
+window.dispatchEvent(new Event("cartUpdated"));
+setCart([]);
+setSuccessOrderNumber(data.orderNumber);
+setShowSuccess(true);
     } catch (error) {
       alert("Something went wrong submitting your order. Please try again.");
     } finally {
@@ -579,6 +582,73 @@ export default function CheckoutPage() {
           </div>
         </div>
       </section>
+
+      {showSuccess && (
+  <div className="fixed inset-0 z-[9999] bg-[#020817]/80 backdrop-blur-md flex items-center justify-center px-4">
+    <div className="w-full max-w-lg rounded-[36px] border border-blue-300/30 bg-gradient-to-br from-[#eef7ff] via-white to-[#dbeafe] shadow-[0_0_70px_rgba(96,165,250,0.35)] overflow-hidden">
+      
+      <div className="p-8 md:p-10 text-center">
+
+        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-blue-500/10 border border-blue-400/30 flex items-center justify-center">
+          <svg
+            className="w-10 h-10 text-blue-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={3}
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+        </div>
+
+        <p className="uppercase tracking-[0.35em] text-blue-500 text-xs mb-4">
+          Order Received
+        </p>
+
+        <h2 className="text-4xl font-black text-[#081526] mb-4">
+          Thank You
+        </h2>
+
+        <p className="text-slate-600 leading-relaxed mb-7">
+          Your order has been successfully submitted. Payment instructions have
+          been sent to your email.
+        </p>
+
+        <div className="rounded-[24px] border border-blue-200 bg-white/80 p-5 mb-7">
+          <p className="text-blue-500 text-xs uppercase tracking-[0.25em] mb-2 font-bold">
+            Order Number
+          </p>
+
+          <p className="text-[#081526] font-black text-lg break-all">
+            {successOrderNumber}
+          </p>
+        </div>
+
+        <div className="rounded-[24px] bg-[#081526] p-5 mb-7">
+          <p className="text-blue-200 text-sm leading-relaxed">
+            Please check your email for your payment instructions. Include only
+            your order number in the payment note.
+          </p>
+        </div>
+
+        <button
+          onClick={() => {
+            setShowSuccess(false);
+            window.location.href = "/";
+          }}
+          className="w-full rounded-full bg-[#081526] text-white font-bold py-4 uppercase tracking-widest hover:bg-blue-900 transition-all"
+        >
+          Continue
+        </button>
+
+      </div>
+    </div>
+  </div>
+)}
 
       <style jsx>{`
         .checkout-input {

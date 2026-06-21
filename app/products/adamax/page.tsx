@@ -98,6 +98,7 @@ export default function AdamaxPage() {
   </div>
 </div>
 
+
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
               <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-4">
                 Research Peptide Blend
@@ -162,70 +163,36 @@ export default function AdamaxPage() {
                 </div>
               </div>
 
-<div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
-  <div>
-    <p className="uppercase tracking-widest text-white/50 text-sm mb-4">
-      Quantity
-    </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                <button
+                  onClick={addToCart}
+                  className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
+                >
+                  <ShoppingCart size={22} />
+                  {added ? "Added To Cart" : "Add To Cart"}
+                </button>
 
-    <div className="flex items-center w-fit rounded-full border border-[#8EB6E8]/30 bg-[#8EB6E8]/10 p-2 backdrop-blur-sm">
-      <button
-        onClick={() => {
-          setQuantity((prev) => Math.max(1, prev - 1));
-          setAdded(false);
-        }}
-        className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-[#8EB6E8]/20 transition-all"
-      >
-        −
-      </button>
+                <a
+                  href="/cart"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
+                  View Cart
+                </a>
 
-      <div className="w-12 h-11 flex items-center justify-center text-lg font-bold text-white">
-        {quantity}
-      </div>
+                <a
+                  href="/products"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
+                  Continue Shopping
+                </a>
 
-      <button
-        onClick={() => {
-          setQuantity((prev) => prev + 1);
-          setAdded(false);
-        }}
-        className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-[#8EB6E8]/20 transition-all"
-      >
-        +
-      </button>
-    </div>
-  </div>
-</div>
-
-<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-  <button
-    onClick={addToCart}
-    className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
-  >
-    <ShoppingCart size={22} />
-    {added ? "Added To Cart" : "Add To Cart"}
-  </button>
-
-  <a
-    href="/cart"
-    className="border border-[#8EB6E8]/30 bg-[#8EB6E8]/10 hover:bg-[#8EB6E8]/20 hover:border-[#8EB6E8]/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center text-white"
-  >
-    View Cart
-  </a>
-
-  <a
-    href="/products"
-    className="border border-[#8EB6E8]/30 bg-[#8EB6E8]/10 hover:bg-[#8EB6E8]/20 hover:border-[#8EB6E8]/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center text-white"
-  >
-    Continue Shopping
-  </a>
-
-  <a
-    href="/coas"
-    className="border border-[#8EB6E8]/30 bg-[#8EB6E8]/10 hover:bg-[#8EB6E8]/20 hover:border-[#8EB6E8]/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center text-white"
-  >
-    View COA
-  </a>
-</div>
+                <a
+                  href="/coas"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
+                  View COA
+                </a>
+              </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[

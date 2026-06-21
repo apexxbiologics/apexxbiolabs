@@ -308,6 +308,134 @@ export default function BPC157Page() {
         </div>
       </section>
 
+      {/* Latest COA Results */}
+<div className="mt-12 rounded-3xl border border-blue-900 bg-[#050505] p-8">
+  <div className="flex items-center justify-between mb-8">
+    <div>
+      <p className="text-xs uppercase tracking-[0.4em] text-blue-400 mb-2">
+        Freedom Diagnostics
+      </p>
+
+      <h2 className="text-3xl font-black text-white">
+        Latest Certificate of Analysis
+      </h2>
+    </div>
+
+    <div className="text-right">
+      <p className="text-5xl font-black text-[#A5D8FF]">
+        99.33%
+      </p>
+
+      <p className="uppercase tracking-widest text-sm text-gray-400">
+        Purity
+      </p>
+    </div>
+  </div>
+
+  <div className="grid md:grid-cols-2 gap-6">
+
+    <div className="rounded-2xl bg-[#071A2F] p-6">
+      <h3 className="font-bold text-[#A5D8FF] mb-4">
+        Sample Summary
+      </h3>
+
+      <div className="space-y-3">
+
+        <div className="flex justify-between">
+          <span className="text-gray-400">Product</span>
+          <span className="text-white font-semibold">
+            BPC-157 10mg
+          </span>
+        </div>
+
+        <div className="flex justify-between">
+          <span className="text-gray-400">Lot</span>
+          <span className="text-white">
+            Black Cap-1
+          </span>
+        </div>
+
+        <div className="flex justify-between">
+          <span className="text-gray-400">Identity</span>
+          <span className="text-green-400">
+            Confirmed ✓
+          </span>
+        </div>
+
+        <div className="flex justify-between">
+          <span className="text-gray-400">Appearance</span>
+          <span className="text-white">
+            White Lyophilized Powder
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+    <div className="rounded-2xl bg-[#071A2F] p-6">
+      <h3 className="font-bold text-[#A5D8FF] mb-4">
+        Analytical Results
+      </h3>
+
+      <div className="space-y-3">
+
+        <div className="flex justify-between">
+          <span className="text-gray-400">
+            Purity (HPLC-UV)
+          </span>
+          <span className="text-green-400 font-bold">
+            99.33%
+          </span>
+        </div>
+
+        <div className="flex justify-between">
+          <span className="text-gray-400">
+            Net Content
+          </span>
+          <span className="text-green-400 font-bold">
+            11.58mg
+          </span>
+        </div>
+
+        <div className="flex justify-between">
+          <span className="text-gray-400">
+            Identity (LC-MS)
+          </span>
+          <span className="text-green-400">
+            BPC-157 ✓
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div className="mt-8 flex flex-wrap gap-3">
+
+    <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30 text-green-400 text-sm font-semibold">
+      ✓ Identity Confirmed
+    </div>
+
+    <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 text-[#A5D8FF] text-sm font-semibold">
+      ✓ 99.33% Purity
+    </div>
+
+    <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 text-[#A5D8FF] text-sm font-semibold">
+      ✓ 11.58mg Actual Content
+    </div>
+
+  </div>
+
+  <a
+    href="/coas/bpc-157-10mg-black-cap-coa.pdf"
+    target="_blank"
+    className="mt-8 inline-flex items-center justify-center rounded-full bg-[#A5D8FF] px-8 py-4 text-[#06111F] font-black uppercase tracking-widest hover:bg-white transition"
+  >
+    View Full Laboratory Report
+  </a>
+</div>
+
       {[
         {
           title: "FDA Disclaimer",

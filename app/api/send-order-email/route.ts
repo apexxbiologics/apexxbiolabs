@@ -34,32 +34,33 @@ export async function POST(request: Request) {
       )
       .join("");
 
-      const { error: orderInsertError } = await supabase.from("orders").insert([
-  {
-    order_number: orderNumber,
-    customer_email: customerEmail,
-    first_name: firstName,
-    last_name: lastName,
-    address,
-    city,
-    state,
-    zip_code: zipCode,
-    payment_method: paymentMethod,
-    cart,
-    subtotal,
-    shipping,
-    total,
-    status: "awaiting_payment",
-  },
-]);
+    const { error: orderInsertError } = await supabase.from("orders").insert([
+      {
+        order_number: orderNumber,
+        customer_email: customerEmail,
+        first_name: firstName,
+        last_name: lastName,
+        address,
+        city,
+        state,
+        zip_code: zipCode,
+        payment_method: paymentMethod,
+        cart,
+        subtotal,
+        shipping,
+        total,
+        status: "awaiting_payment",
+      },
+    ]);
 
-if (orderInsertError) {
-  console.error("Supabase order insert error:", orderInsertError);
-}
+    if (orderInsertError) {
+      console.error("Supabase order insert error:", orderInsertError);
+    }
 
-const adminEmailResult = await resend.emails.send({      from: "Apexx Biolabs <orders@apexxbiolabs.com>",
-      to: "orders@apexxbiolabs.com",
-      subject: `New Order Received • ${orderNumber}`,
+    const customerEmailResult = await resend.emails.send({
+      from: "Apexx Biolabs <orders@apexxbiolabs.com>",
+      to: customerEmail,
+      subject: `Apexx Biolabs Order Confirmation • Payment Awaiting`,
       html: `
         <div style="margin:0; padding:0; background:#f8fbff; font-family:Arial, Helvetica, sans-serif;">
           <div style="max-width:720px; margin:0 auto; padding:28px 16px;">
@@ -155,25 +156,14 @@ const adminEmailResult = await resend.emails.send({      from: "Apexx Biolabs <o
                               Scan Zelle QR Code
                             </h4>
 
-<div style="text-align:center; max-width:100%; overflow:hidden;">
-  <img 
-    src="https://apexxbiolabs.com/images/zelle-qr.png"
-    alt="Apexx Biolabs Zelle QR Code"
-    width="200"
-    style="
-      width:200px;
-      max-width:85%;
-      height:auto;
-      border-radius:14px;
-      background:#ffffff;
-      padding:10px;
-      margin:8px auto 14px;
-      display:block;
-      border:1px solid #e5e7eb;
-      box-sizing:border-box;
-    "
-  />
-</div>
+                            <div style="text-align:center; max-width:100%; overflow:hidden;">
+                              <img 
+                                src="https://apexxbiolabs.com/images/zelle-qr.png"
+                                alt="Apexx Biolabs Zelle QR Code"
+                                width="200"
+                                style="width:200px; max-width:85%; height:auto; border-radius:14px; background:#ffffff; padding:10px; margin:8px auto 14px; display:block; border:1px solid #e5e7eb; box-sizing:border-box;"
+                              />
+                            </div>
 
                             <p style="margin:0; color:#64748b; font-size:13px; line-height:1.5;">
                               Recipient should show as <strong style="color:#06111f;">APEXX BIOLABS LLC</strong>.
@@ -273,16 +263,17 @@ const adminEmailResult = await resend.emails.send({      from: "Apexx Biolabs <o
                     apexxbiolabs.com
                   </p>
                 </div>
-
               </div>
             </div>
           </div>
         </div>
       `,
     });
-    console.log("Admin email result:", adminEmailResult);
 
-const customerEmailResult = await resend.emails.send({      from: "Apexx Biolabs <orders@apexxbiolabs.com>",
+    console.log("Customer email result:", customerEmailResult);
+
+    const adminEmailResult = await resend.emails.send({
+      from: "Apexx Biolabs <orders@apexxbiolabs.com>",
       to: "orders@apexxbiolabs.com",
       subject: `New Apexx Order ${orderNumber}`,
       html: `
@@ -308,7 +299,8 @@ const customerEmailResult = await resend.emails.send({      from: "Apexx Biolabs
         <p><strong>Total:</strong> $${Number(total).toFixed(2)}</p>
       `,
     });
-    console.log("Customer email result:", customerEmailResult);
+
+    console.log("Admin email result:", adminEmailResult);
 
     return NextResponse.json({
       success: true,

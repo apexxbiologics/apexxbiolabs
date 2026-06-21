@@ -91,8 +91,8 @@ export default function MOTSCPage() {
 <div className="relative z-10 flex justify-center">
   <div className="w-[380px] h-[380px] rounded-[36px] overflow-hidden shadow-[0_0_50px_rgba(96,165,250,0.25)]">
     <img
-      src="/images/tb500blue.png"
-      alt="TB-500"
+      src="/images/motscblue.png"
+      alt="MOTS-C"
       className="w-full h-full object-cover"
     />
   </div>

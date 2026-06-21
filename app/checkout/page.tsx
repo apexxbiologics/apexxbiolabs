@@ -19,6 +19,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 const [successOrderNumber, setSuccessOrderNumber] = useState("");
+const [promoCode, setPromoCode] = useState("");
 
   const [customerEmail, setCustomerEmail] = useState("");
   const [firstName, setFirstName] = useState("");

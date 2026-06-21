@@ -16,7 +16,7 @@ export default function TB500Page() {
   const product = {
     id: "tb500",
     name: "TB-500",
-    price: 65,
+    price: 50,
     quantity,
     image: "/images/tb500blue.png",
   };
@@ -46,38 +46,17 @@ export default function TB500Page() {
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#081526]/95 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 md:px-10 py-5 flex items-center justify-between">
           <a href="/">
-            <img
-              src="/images/logo.png"
-              alt="Apexx Biolabs"
-              className="h-12 w-auto"
-            />
+            <img src="/images/logo.png" alt="Apexx Biolabs" className="h-12 w-auto" />
           </a>
 
           <nav className="hidden md:flex items-center gap-10 uppercase tracking-widest text-sm text-white">
-            <a href="/" className="hover:text-blue-300 transition-all">
-              Home
-            </a>
-
-            <a
-              href="/products"
-              className="text-blue-300 border-b border-blue-300 pb-2"
-            >
-              Products
-            </a>
-
-            <a href="/coas" className="hover:text-blue-300 transition-all">
-              COAs
-            </a>
-
-            <a href="/contact" className="hover:text-blue-300 transition-all">
-              Contact
-            </a>
+            <a href="/" className="hover:text-blue-300 transition-all">Home</a>
+            <a href="/products" className="text-blue-300 border-b border-blue-300 pb-2">Products</a>
+            <a href="/coas" className="hover:text-blue-300 transition-all">COAs</a>
+            <a href="/contact" className="hover:text-blue-300 transition-all">Contact</a>
           </nav>
 
-          <a
-            href="/cart"
-            className="relative text-white hover:text-blue-300 transition-all"
-          >
+          <a href="/cart" className="relative text-white hover:text-blue-300 transition-all">
             <ShoppingCart size={30} />
           </a>
         </div>
@@ -88,17 +67,14 @@ export default function TB500Page() {
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
- <div className="flex items-center justify-center">
-  <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
-    <img
-      src={product.image}
-      alt={product.name}
-      className="w-full h-full object-cover"
-    />
-  </div>
-</div>
+            <div className="flex items-center justify-center">
+              <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+              </div>
+            </div>
+
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-              <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-4">
+              <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
                 Research Peptide
               </p>
 
@@ -107,8 +83,7 @@ export default function TB500Page() {
               </h1>
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                High-purity TB-500 research peptide intended strictly for
-                laboratory research applications and analytical use.
+                High-purity TB-500 research peptide intended strictly for laboratory research applications and analytical use.
               </p>
 
               <p className="text-5xl font-black text-white mb-8">
@@ -119,19 +94,14 @@ export default function TB500Page() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
                 <div>
-                  <p className="uppercase tracking-widest text-white/50 text-sm mb-4">
-                    Size
-                  </p>
-
+                  <p className="uppercase tracking-widest text-white/50 text-sm mb-4">Size</p>
                   <div className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-7 py-4 text-sm font-semibold uppercase tracking-widest text-white">
                     10mg
                   </div>
                 </div>
 
                 <div>
-                  <p className="uppercase tracking-widest text-white/50 text-sm mb-4">
-                    Quantity
-                  </p>
+                  <p className="uppercase tracking-widest text-white/50 text-sm mb-4">Quantity</p>
 
                   <div className="flex items-center w-fit rounded-full border border-white/10 bg-white/[0.04] p-2">
                     <button
@@ -139,7 +109,7 @@ export default function TB500Page() {
                         setQuantity((prev) => Math.max(1, prev - 1));
                         setAdded(false);
                       }}
-                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08]"
+                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08]"
                     >
                       −
                     </button>
@@ -153,7 +123,7 @@ export default function TB500Page() {
                         setQuantity((prev) => prev + 1);
                         setAdded(false);
                       }}
-                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08]"
+                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08]"
                     >
                       +
                     </button>
@@ -170,49 +140,77 @@ export default function TB500Page() {
                   {added ? "Added To Cart" : "Add To Cart"}
                 </button>
 
-                <a
-                  href="/cart"
-                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
-                >
+                <a href="/cart" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
                   View Cart
                 </a>
 
-                <a
-                  href="/products"
-                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
-                >
+                <a href="/products" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
                   Continue Shopping
                 </a>
 
                 <a
-                  href="/coas"
+                  href="/images/coas/tb500-10mg-blue-cap-coa.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
                 >
                   View COA
                 </a>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                  ["Size", "10mg"],
-                  ["Form", "Lyophilized"],
-                  ["Purity", "99%+"],
-                  ["Storage", "2–8°C"],
-                ].map(([label, value]) => (
-                  <div
-                    key={label}
-                    className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-5"
-                  >
-                    <p className="uppercase tracking-widest text-white/40 text-xs mb-2">
-                      {label}
-                    </p>
+      {/* COA Summary */}
+      <section className="px-6 md:px-10 pb-16">
+        <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
+          <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
+            <div>
+              <p className="uppercase tracking-[0.35em] text-blue-300 text-xs mb-2">
+                Freedom Diagnostics
+              </p>
 
-                    <p className="text-white text-base font-semibold">
-                      {value}
-                    </p>
-                  </div>
-                ))}
+              <h3 className="text-2xl font-black text-white mb-5">
+                Latest Certificate of Analysis
+              </h3>
+
+              <div className="flex flex-wrap gap-3">
+                <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
+                  <span className="text-green-400 font-semibold">✓ Identity Confirmed</span>
+                </div>
+
+                <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+                  <span className="text-[#A5D8FF] font-semibold">99.47% Purity</span>
+                </div>
+
+                <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+                  <span className="text-[#A5D8FF] font-semibold">11.83mg Content</span>
+                </div>
+
+                <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
+                  <span className="text-white/70">Lot: Blue Cap-1</span>
+                </div>
               </div>
+            </div>
+
+            <div className="flex flex-col items-center md:items-end">
+              <div className="text-5xl font-black text-[#A5D8FF]">
+                99.47%
+              </div>
+
+              <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
+                Purity
+              </div>
+
+              <a
+                href="/images/coas/tb500-10mg-blue-cap-coa.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
+              >
+                View Full COA
+              </a>
             </div>
           </div>
         </div>
@@ -221,35 +219,15 @@ export default function TB500Page() {
       <section className="px-6 md:px-10 pb-10">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            [
-              FlaskConical,
-              "Research Use Only",
-              "Strictly for laboratory research.",
-            ],
-            [
-              ShieldCheck,
-              "Third-Party Tested",
-              "Independent lab verified when available.",
-            ],
-            [
-              ClipboardCheck,
-              "Batch Documented",
-              "Documentation available for verified lots.",
-            ],
-            [
-              ShieldCheck,
-              "Quality Target",
-              "99%+ purity target.",
-            ],
+            [FlaskConical, "Research Use Only", "Strictly for laboratory research."],
+            [ShieldCheck, "Third-Party Tested", "Independent lab verified when available."],
+            [ClipboardCheck, "Batch Documented", "Documentation available for verified lots."],
+            [ShieldCheck, "Quality Target", "99%+ purity target."],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
-              <Icon className="text-[#A5D8FF]" size={34} />
-
+              <Icon className="text-blue-300" size={34} />
               <div>
-                <h3 className="text-white uppercase tracking-widest font-bold text-sm">
-                  {title}
-                </h3>
-
+                <h3 className="text-white uppercase tracking-widest font-bold text-sm">{title}</h3>
                 <p className="text-white/50 text-sm mt-1">{text}</p>
               </div>
             </div>
@@ -259,46 +237,28 @@ export default function TB500Page() {
 
       <section className="px-6 md:px-10 pb-16">
         <div className="max-w-7xl mx-auto rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-          <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
+          <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-3">
             Research Profile
           </p>
 
           <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
-            Tissue Repair Research Overview
+            Cellular Migration Research Overview
           </h2>
 
           <p className="text-white/70 text-lg leading-relaxed max-w-4xl mb-8">
-            TB-500 is studied in laboratory research involving tissue repair
-            pathways, actin regulation, cellular migration, and wound-healing
-            research models.
+            TB-500 is studied in laboratory research models involving cellular migration, actin regulation, tissue response pathways, and repair-related signaling.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
             {[
-              [
-                "Tissue Repair",
-                "Studied in models involving repair signaling and cellular response pathways.",
-              ],
-              [
-                "Cell Migration",
-                "Evaluated in laboratory studies involving actin dynamics and cellular movement.",
-              ],
-              [
-                "Regenerative Models",
-                "Research focuses on tissue remodeling and regenerative biological pathways.",
-              ],
+              ["Cellular Migration", "Studied in models involving cellular movement and migration pathways."],
+              ["Actin Research", "Evaluated in laboratory investigations involving actin regulation and cell structure."],
+              ["Tissue Response", "Researched in relation to repair-associated signaling and cellular response models."],
+              ["Storage", "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use."],
             ].map(([title, text]) => (
-              <div
-                key={title}
-                className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
-              >
-                <h3 className="text-white text-lg font-bold mb-3">
-                  {title}
-                </h3>
-
-                <p className="text-white/60 text-sm leading-relaxed">
-                  {text}
-                </p>
+              <div key={title} className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all">
+                <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
+                <p className="text-white/60 text-sm leading-relaxed">{text}</p>
               </div>
             ))}
           </div>
@@ -319,101 +279,15 @@ export default function TB500Page() {
       ].map((section) => (
         <section key={section.title} className="px-6 md:px-10 pb-16">
           <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
-            <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-sm mb-4">
+            <h3 className="text-blue-300 font-bold uppercase tracking-[0.25em] text-sm mb-4">
               {section.title}
             </h3>
-
-            <p className="text-white/60 text-sm leading-relaxed">
-              {section.text}
-            </p>
+            <p className="text-white/60 text-sm leading-relaxed">{section.text}</p>
           </div>
         </section>
       ))}
 
       <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 mb-14">
-          <div>
-            <img
-              src="/images/logo.png"
-              alt="Apexx Biolabs"
-              className="h-12 w-auto mb-5"
-            />
-
-            <p className="text-white/60 text-sm leading-relaxed">
-              Premium research-grade peptides built on science, quality, and
-              transparency.
-            </p>
-
-            <div className="flex gap-3 mt-6">
-              <a
-                href="https://www.tiktok.com/@apexx.nyc"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/[0.07] transition-all"
-              >
-                <span className="text-sm font-bold">♪</span>
-              </a>
-
-              <a
-                href="mailto:support@apexxbiolabs.com"
-                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/[0.07] transition-all"
-              >
-                <Mail size={18} />
-              </a>
-            </div>
-          </div>
-
-          {[
-            [
-              "Shop",
-              [
-                ["All Products", "/products"],
-                ["Certificates of Analysis", "/coas"],
-              ],
-            ],
-            [
-              "Resources",
-              [
-                ["Research Library", "/peptide-info"],
-                ["FAQ", "/faq"],
-              ],
-            ],
-            [
-              "Support",
-              [
-                ["Contact Us", "/contact"],
-                ["Shipping Info", "/shipping"],
-                ["Returns & Refunds", "/refunds"],
-              ],
-            ],
-            [
-              "Legal",
-              [
-                ["Privacy Policy", "/privacy"],
-                ["Terms of Service", "/terms"],
-              ],
-            ],
-          ].map(([title, links]: any) => (
-            <div key={title}>
-              <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
-                {title}
-              </h4>
-
-              <div className="space-y-3 text-white/50">
-                {links.map(([label, href]: any) => (
-                  <a
-                    key={label}
-                    href={href}
-                    className="block hover:text-[#A5D8FF]"
-                  >
-                    {label}
-                  </a>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
         <div className="max-w-7xl mx-auto border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between gap-4 text-white/40 text-sm">
           <p>© 2026 Apexx Biolabs. All rights reserved.</p>
           <p>SSL Secured · 99%+ Purity · Research Use Only</p>

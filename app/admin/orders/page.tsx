@@ -167,55 +167,8 @@ const [trackingInputs, setTrackingInputs] = useState<Record<string, string>>({})
                         {new Date(order.created_at).toLocaleString()}
                       </td>
 
-                      <td className="p-5">
-  {order.status === "paid" ? (
-    <div className="flex gap-2">
-      <input
-        value={trackingInputs[order.id] || ""}
-        onChange={(e) =>
-          setTrackingInputs({
-            ...trackingInputs,
-            [order.id]: e.target.value,
-          })
-        }
-        placeholder="Tracking #"
-        className="rounded-full bg-white/10 border border-white/10 px-4 py-2 text-sm text-white outline-none"
-      />
-
-      <button
-        onClick={async () => {
-          await fetch("/api/admin/send-tracking", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              orderId: order.id,
-              trackingNumber: trackingInputs[order.id],
-              carrier: "USPS",
-            }),
-          });
-
-          fetchOrders();
-        }}
-        className="rounded-full bg-blue-400 px-5 py-2 text-sm font-black text-[#081526]"
-      >
-        Send
-      </button>
-    </div>
-  ) : order.status === "shipped" ? (
-    <span className="text-blue-300 font-bold">
-      Shipped
-    </span>
-  ) : (
-    <span className="text-white/40 text-sm">
-      Mark paid first
-    </span>
-  )}
-</td>
-
-                      <td className="p-5">
-  {order.status !== "paid" ? (
+<td className="p-5">
+  {order.status === "awaiting_payment" ? (
     <button
       onClick={async () => {
         await fetch("/api/admin/mark-paid", {
@@ -234,9 +187,13 @@ const [trackingInputs, setTrackingInputs] = useState<Record<string, string>>({})
     >
       Mark Paid
     </button>
-  ) : (
+  ) : order.status === "paid" ? (
     <span className="text-green-400 font-bold">
       Paid
+    </span>
+  ) : (
+    <span className="text-blue-300 font-bold">
+      Shipped
     </span>
   )}
 </td>

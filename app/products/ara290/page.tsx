@@ -289,27 +289,6 @@ export default function ARA290Page() {
                 </a>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                  ["Size", "10mg"],
-                  ["Form", "Lyophilized"],
-                  ["Purity", "99%+"],
-                  ["Storage", "2–8°C"],
-                ].map(([label, value]) => (
-                  <div
-                    key={label}
-                    className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-5"
-                  >
-                    <p className="uppercase tracking-widest text-white/40 text-xs mb-2">
-                      {label}
-                    </p>
-
-                    <p className="text-white text-base font-semibold">
-                      {value}
-                    </p>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
@@ -337,6 +316,60 @@ export default function ARA290Page() {
           ))}
         </div>
       </section>
+
+      <section className="px-6 md:px-10 pb-16">
+  <div className="max-w-7xl mx-auto rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
+    <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-3">
+      Research Profile
+    </p>
+
+    <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
+      Cytoprotective Pathway Overview
+    </h2>
+
+    <p className="text-white/70 text-lg leading-relaxed max-w-4xl mb-8">
+      ARA-290 is a synthetic peptide derived from the tissue-protective region
+      of erythropoietin (EPO). In laboratory research it is studied for its
+      interaction with innate repair receptor pathways involved in cellular
+      protection, inflammatory signaling, tissue response, and nerve-related
+      research models.
+    </p>
+
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+      {[
+        [
+          "Innate Repair Receptor",
+          "Studied for activation of tissue-protective signaling pathways involved in cellular resilience and recovery research."
+        ],
+        [
+          "Inflammatory Signaling",
+          "Evaluated in laboratory models examining cytokine activity, inflammatory regulation, and cellular stress responses."
+        ],
+        [
+          "Neural Research",
+          "Investigated in studies involving nerve function, neurobiology, and peripheral signaling pathways."
+        ],
+        [
+          "Storage",
+          "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use."
+        ],
+      ].map(([title, text]) => (
+        <div
+          key={title}
+          className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
+        >
+          <h3 className="text-white text-lg font-bold mb-3">
+            {title}
+          </h3>
+
+          <p className="text-white/60 text-sm leading-relaxed">
+            {text}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
 
       <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 mb-14">

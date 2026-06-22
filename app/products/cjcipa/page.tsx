@@ -18,7 +18,7 @@ export default function CJCIPAPage() {
     id: "cjcipa",
     name: "CJC/IPA",
     price: 60,
-    image: "/images/cjcblue.png",
+    image: "/images/cjcipablue.png",
   };
 
   const isOutOfStock = inventory !== null && inventory <= 0;
@@ -465,7 +465,7 @@ export default function CJCIPAPage() {
           <p>SSL Secured · 99%+ Purity · Research Use Only</p>
         </div>
       </footer>
-      
+
     </main>
   );
 }

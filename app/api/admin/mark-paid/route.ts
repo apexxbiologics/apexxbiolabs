@@ -18,29 +18,58 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, error }, { status: 500 });
   }
 
-  const orderCart = order.cart || order.items || [];
+const orderCart = order.cart || order.items || [];
 
-  if (Array.isArray(orderCart)) {
-    for (const item of orderCart) {
-      const { data: product } = await supabase
-        .from("products")
-        .select("inventory")
-        .eq("slug", item.id)
-        .single();
+if (Array.isArray(orderCart)) {
+  for (const item of orderCart) {
+    const { data: product } = await supabase
+      .from("products")
+      .select("inventory")
+      .eq("slug", item.id)
+      .single();
 
-      if (!product) continue;
+    if (!product) continue;
 
-      const newInventory = Math.max(
+    const newInventory = Math.max(
+      0,
+      Number(product.inventory || 0) - Number(item.quantity || 0)
+    );
+
+    await supabase
+      .from("products")
+      .update({ inventory: newInventory })
+      .eq("slug", item.id);
+  }
+
+  const vialCount = orderCart.reduce((total: number, item: any) => {
+    const isBacWater =
+      item.id === "bacwater" ||
+      item.id === "bac-water" ||
+      item.name?.toLowerCase().includes("bac");
+
+    return isBacWater ? total : total + Number(item.quantity || 0);
+  }, 0);
+
+  if (vialCount >= 4) {
+    const { data: bacWater } = await supabase
+      .from("products")
+      .select("inventory")
+      .eq("slug", "bacwater")
+      .single();
+
+    if (bacWater) {
+      const newBacWaterInventory = Math.max(
         0,
-        Number(product.inventory || 0) - Number(item.quantity || 0)
+        Number(bacWater.inventory || 0) - 1
       );
 
       await supabase
         .from("products")
-        .update({ inventory: newInventory })
-        .eq("slug", item.id);
+        .update({ inventory: newBacWaterInventory })
+        .eq("slug", "bacwater");
     }
   }
+}
 
   await resend.emails.send({
     from: "Apexx Biolabs <orders@apexxbiolabs.com>",

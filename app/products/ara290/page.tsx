@@ -370,6 +370,30 @@ export default function ARA290Page() {
     </div>
   </div>
 </section>
+      {[
+        {
+          title: "FDA Disclaimer",
+          text:
+            "These statements have not been evaluated by the U.S. Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only and are not for human or veterinary consumption.",
+        },
+        {
+          title: "Customer Acknowledgment",
+          text:
+            "By purchasing this product, the customer acknowledges that this material is intended solely for lawful laboratory research purposes and will not be used for human consumption, veterinary use, medical use, diagnosis, treatment, cure, or prevention of disease. Apexx Biolabs does not provide dosing instructions, treatment recommendations, medical advice, or guidance regarding human use of any product.",
+        },
+      ].map((section) => (
+        <section key={section.title} className="px-6 md:px-10 pb-16">
+          <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
+            <h3 className="text-blue-300 font-bold uppercase tracking-[0.25em] text-sm mb-4">
+              {section.title}
+            </h3>
+
+            <p className="text-white/60 text-sm leading-relaxed">
+              {section.text}
+            </p>
+          </div>
+        </section>
+      ))}
 
       <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 mb-14">

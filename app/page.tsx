@@ -135,22 +135,26 @@ const handlePromoSignup = async (e: React.FormEvent) => {
 
   if (!promoEmail.trim()) return;
 
-  const response = await fetch("/api/promo-signup", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: promoEmail,
-    }),
-  });
+  const { error } = await supabase
+    .from("promo_subscribers")
+    .insert([
+      {
+        email: promoEmail.trim().toLowerCase(),
+      },
+    ]);
 
-  const data = await response.json();
+  if (error?.code === "23505") {
+    setPromoStatus("You're already subscribed.");
+    return;
+  }
 
-  setPromoStatus(data.message);
+  if (error) {
+    setPromoStatus("Something went wrong. Please try again.");
+    return;
+  }
 
-  if (data.success) {
-    setPromoEmail("");
+  setPromoEmail("");
+  setPromoStatus("✓ Welcome to the Apexx List.");
 };
 
   return (

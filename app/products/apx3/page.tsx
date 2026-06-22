@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";import {
+import { useEffect, useState } from "react";
+import {
   ShoppingCart,
   Search,
   FlaskConical,
@@ -16,9 +17,9 @@ export default function APX3Page() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [inventory, setInventory] = useState({
-  "10mg": 0,
-  "20mg": 0,
-});
+    "10mg": 0,
+    "20mg": 0,
+  });
 
   const productOptions = {
     "10mg": {
@@ -35,9 +36,9 @@ export default function APX3Page() {
     },
   };
 
-const selectedProduct = productOptions[selectedMg];
-const selectedInventory = inventory[selectedMg];
-const inStock = selectedInventory > 0;
+  const selectedProduct = productOptions[selectedMg];
+  const selectedInventory = inventory[selectedMg];
+  const inStock = selectedInventory > 0;
 
   const products = [
     { name: "APX-3", keywords: ["apx", "apx3", "apx-3"], path: "/products/apx3" },
@@ -57,28 +58,32 @@ const inStock = selectedInventory > 0;
   ];
 
   useEffect(() => {
-  const fetchInventory = async () => {
-    const response = await fetch("/api/products");
-    const data = await response.json();
+    const fetchInventory = async () => {
+      try {
+        const response = await fetch("/api/products");
+        const data = await response.json();
 
-    if (!data.success) return;
+        if (!data.success) return;
 
-    const apx10 = data.products.find(
-      (product: any) => product.slug === "apx3-10mg"
-    );
+        const apx10 = data.products.find(
+          (product: any) => product.slug === "apx3-10mg"
+        );
 
-    const apx20 = data.products.find(
-      (product: any) => product.slug === "apx3-20mg"
-    );
+        const apx20 = data.products.find(
+          (product: any) => product.slug === "apx3-20mg"
+        );
 
-    setInventory({
-      "10mg": apx10?.inventory ?? 0,
-      "20mg": apx20?.inventory ?? 0,
-    });
-  };
+        setInventory({
+          "10mg": apx10?.inventory ?? 0,
+          "20mg": apx20?.inventory ?? 0,
+        });
+      } catch (error) {
+        console.error("Failed to fetch inventory:", error);
+      }
+    };
 
-  fetchInventory();
-}, []);
+    fetchInventory();
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,6 +102,8 @@ const inStock = selectedInventory > 0;
   };
 
   const addToCart = () => {
+    if (!inStock) return;
+
     const product = {
       id: selectedProduct.id,
       name: selectedProduct.name,
@@ -213,15 +220,19 @@ const inStock = selectedInventory > 0;
                 metabolic regulation and body composition research.
               </p>
 
-              <p className="text-5xl font-black text-white mb-8">
+              <p className="text-5xl font-black text-white mb-3">
                 ${selectedProduct.price}.00
               </p>
 
-              <p className="text-blue-300 font-semibold mb-8">
-  {inStock
-    ? `${selectedInventory} units available`
-    : "Out of Stock"}
-</p>
+              <p
+                className={`font-semibold mb-8 ${
+                  inStock ? "text-blue-300" : "text-red-300"
+                }`}
+              >
+                {inStock
+                  ? `${selectedInventory} units available`
+                  : "Out of Stock"}
+              </p>
 
               <div className="h-px bg-white/10 mb-8" />
 
@@ -273,10 +284,13 @@ const inStock = selectedInventory > 0;
 
                     <button
                       onClick={() => {
-                        setQuantity((prev) => prev + 1);
+                        setQuantity((prev) =>
+                          Math.min(selectedInventory || 1, prev + 1)
+                        );
                         setAdded(false);
                       }}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08]"
+                      disabled={!inStock}
+                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08] disabled:opacity-40"
                     >
                       +
                     </button>
@@ -285,27 +299,26 @@ const inStock = selectedInventory > 0;
               </div>
 
               <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
-  <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2">
+                  <svg
+                    className="w-5 h-5 text-blue-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7m16 0H4m16 0V8a1 1 0 00-1-1h-3.5M4 12V8a1 1 0 011-1h3.5m0 0a1.5 1.5 0 113 0m-3 0h3m0 0a1.5 1.5 0 113 0"
+                    />
+                  </svg>
 
-    <svg
-      className="w-5 h-5 text-blue-300"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7m16 0H4m16 0V8a1 1 0 00-1-1h-3.5M4 12V8a1 1 0 011-1h3.5m0 0a1.5 1.5 0 113 0m-3 0h3m0 0a1.5 1.5 0 113 0"
-      />
-    </svg>
-
-    <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
-FREE Bacteriostatic Water With Purchase of Any 4 Vials    </p>
-
-  </div>
-</div>
+                  <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
+                    FREE Bacteriostatic Water With Purchase of Any 4 Vials
+                  </p>
+                </div>
+              </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {inStock ? (
@@ -390,9 +403,7 @@ FREE Bacteriostatic Water With Purchase of Any 4 Vials    </p>
                   </div>
 
                   <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
-                    <span className="text-white/70">
-                      Lot: Blue Cap-1
-                    </span>
+                    <span className="text-white/70">Lot: Blue Cap-1</span>
                   </div>
                 </div>
               </div>
@@ -436,9 +447,7 @@ FREE Bacteriostatic Water With Purchase of Any 4 Vials    </p>
                   {title}
                 </h3>
 
-                <p className="text-white/50 text-sm mt-1">
-                  {text}
-                </p>
+                <p className="text-white/50 text-sm mt-1">{text}</p>
               </div>
             </div>
           ))}
@@ -472,13 +481,9 @@ FREE Bacteriostatic Water With Purchase of Any 4 Vials    </p>
                 key={title}
                 className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
               >
-                <h3 className="text-white text-lg font-bold mb-3">
-                  {title}
-                </h3>
+                <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
 
-                <p className="text-white/60 text-sm leading-relaxed">
-                  {text}
-                </p>
+                <p className="text-white/60 text-sm leading-relaxed">{text}</p>
               </div>
             ))}
           </div>

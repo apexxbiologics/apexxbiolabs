@@ -269,67 +269,50 @@ const handlePromoSignup = async (e: React.FormEvent) => {
   </div>
 )}
 
-<div className="min-h-screen bg-[#081526] text-white">
-{/* HEADER */}
-<header className="fixed top-0 left-0 right-0 z-50 py-6">  <div className="max-w-7xl mx-auto flex items-center justify-between">
+<header className="fixed top-0 left-0 right-0 z-50 bg-[#081526] border-b border-blue-500/30">
+  <div className="max-w-7xl mx-auto px-8 h-32 flex items-center justify-between">
+    {/* LEFT MENU + LOGO */}
+    <div className="flex items-center gap-8">
+      <button
+        onClick={() => setMenuOpen(true)}
+        className="text-white hover:text-blue-400 transition-all"
+      >
+        <Menu size={36} />
+      </button>
 
-{/* LEFT MENU + LOGO */}
-<div className="flex items-center gap-8">
-  <button
-    onClick={() => setMenuOpen(true)}
-    className="text-white hover:text-blue-400 transition-all"
-  >
-    <Menu size={34} />
-  </button>
+      <a href="/" className="flex items-center">
+        <img
+          src="/images/logo.png"
+          alt="Apexx Biolabs"
+          className="h-24 w-auto object-contain"
+        />
+      </a>
+    </div>
 
-  <a href="/" className="flex items-center">
-    <img
-      src="/images/logo.png"
-      alt="Apexx Biolabs"
-      className="h-16 md:h-20 w-auto"
-    />
-  </a>
-</div>
-
-    {/* CENTER NAV */}
-    <nav className="hidden md:flex items-center gap-14 text-white text-sm font-bold uppercase tracking-[0.22em]">
-      <a href="/" className="hover:text-blue-400 transition-all border-b-2 border-blue-500 pb-2">
+    {/* NAV */}
+    <nav className="hidden md:flex items-center gap-16 uppercase tracking-[0.35em] text-sm font-bold text-white">
+      <a href="/" className="text-white border-b-2 border-blue-400 pb-3">
         Home
       </a>
-
-      <a href="/products" className="hover:text-blue-400 transition-all pb-2">
+      <a href="/products" className="hover:text-blue-300 transition-all">
         Products
       </a>
-
-      <a href="/coas" className="hover:text-blue-400 transition-all pb-2">
+      <a href="/coas" className="hover:text-blue-300 transition-all">
         COAs
       </a>
-
-      <a href="/contact" className="hover:text-blue-400 transition-all pb-2">
+      <a href="/contact" className="hover:text-blue-300 transition-all">
         Contact
       </a>
     </nav>
 
     {/* RIGHT ICONS */}
-    <div className="flex items-center gap-6">
-      <button
-        onClick={() => setSearchOpen(!searchOpen)}
-        className="text-white hover:text-blue-400 transition-all"
-      >
+    <div className="flex items-center gap-8 text-white">
+      <a href="/search" className="hover:text-blue-300 transition-all">
         <Search size={34} />
-      </button>
+      </a>
 
-      <a
-        href="/cart"
-        className="relative text-white hover:text-blue-400 transition-all"
-      >
+      <a href="/cart" className="hover:text-blue-300 transition-all">
         <ShoppingCart size={36} />
-
-        {cartCount > 0 && (
-          <span className="absolute -top-3 -right-4 bg-blue-600 text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center">
-            {cartCount}
-          </span>
-        )}
       </a>
     </div>
   </div>

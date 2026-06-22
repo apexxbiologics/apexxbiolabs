@@ -608,8 +608,7 @@ setShowSuccess(true);
     />
 
     <span className="text-sm text-white/70 leading-relaxed">
-      Yes, I’d like to receive product updates, restock alerts, and exclusive
-      promo codes from Apexx Biolabs. I can unsubscribe at any time.
+     Yes, I'd like to receive early access to new releases, restock alerts, and exclusive offers from Apexx Biolabs.
     </span>
   </label>
 </div>

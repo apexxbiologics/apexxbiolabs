@@ -955,6 +955,56 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
   </div>
 </section>
 
+<section className="px-6 md:px-10 py-24">
+  <div className="max-w-6xl mx-auto rounded-[40px] border border-blue-400/20 bg-white/[0.04] backdrop-blur-sm p-10 md:p-14">
+
+    <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
+      Exclusive Access
+    </p>
+
+    <h2 className="text-4xl md:text-5xl font-black text-white mb-5">
+      Join The Apexx List
+    </h2>
+
+    <p className="text-white/60 text-lg max-w-2xl mb-10">
+      Receive exclusive promo codes, product launches, restock alerts, and research updates.
+    </p>
+
+    <div className="flex flex-col md:flex-row gap-4">
+      <input
+        type="email"
+        placeholder="Enter your email address"
+        className="flex-1 rounded-full bg-[#081526] border border-white/10 px-7 py-5 text-white placeholder:text-white/40 focus:border-blue-400/50 outline-none"
+      />
+
+      <button
+        className="rounded-full bg-white text-[#081526] px-10 py-5 font-bold uppercase tracking-widest hover:bg-blue-100 transition-all"
+      >
+        Join List
+      </button>
+    </div>
+
+    <div className="flex flex-wrap gap-3 mt-8">
+      <div className="rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-blue-200 text-sm">
+        Promo Codes
+      </div>
+
+      <div className="rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-blue-200 text-sm">
+        Restock Alerts
+      </div>
+
+      <div className="rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-blue-200 text-sm">
+        New Releases
+      </div>
+
+      <div className="rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-blue-200 text-sm">
+        Research Updates
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <footer className="bg-[#081526] border-t border-blue-900/40 px-6 pt-24 pb-10">
 
   <div className="max-w-7xl mx-auto">

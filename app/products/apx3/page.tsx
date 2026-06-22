@@ -224,15 +224,21 @@ export default function APX3Page() {
                 ${selectedProduct.price}.00
               </p>
 
-              <p
+              <div
                 className={`font-semibold mb-8 ${
                   inStock ? "text-blue-300" : "text-red-300"
                 }`}
               >
-                {inStock
-                  ? `${selectedInventory} units available`
-                  : "Out of Stock"}
-              </p>
+                {selectedInventory <= 5 && (
+                  <div
+                    className={`font-semibold mb-8 ${
+                      selectedInventory <= 0 ? "text-red-300" : "text-yellow-300"
+                    }`}
+                  >
+                    {selectedInventory <= 0 ? "Out of Stock" : "Limited Stock"}
+                  </div>
+                )}
+              </div>
 
               <div className="h-px bg-white/10 mb-8" />
 

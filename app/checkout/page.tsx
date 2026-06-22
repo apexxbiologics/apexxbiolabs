@@ -112,65 +112,56 @@ const qualifiesForFreeBacWater = vialCount >= 4;
     setZipCode(zip);
   };
 
-  const handlePlaceOrder = async () => {
-    if (!isCheckoutComplete || loading) return;
+const handlePlaceOrder = async () => {
+  if (!isCheckoutComplete || loading) return;
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      const response = await fetch("/api/send-order-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-body: JSON.stringify({
-  customerEmail,
-  firstName,
-  lastName,
-  address,
-  apartment,
-  city,
-  state: stateValue,
-  zipCode,
-  paymentMethod,
-  cart,
-  subtotal,
-  shipping,
-  total,
-  freeShipping: qualifiesForFreeShipping,
-  freeBacWater: qualifiesForFreeBacWater,
-  vialCount,
-  marketingConsent,
-}),
-      });
+  try {
+    const response = await fetch("/api/send-order-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        customerEmail,
+        firstName,
+        lastName,
+        address,
+        apartment,
+        city,
+        state: stateValue,
+        zipCode,
+        paymentMethod,
+        cart,
+        subtotal,
+        shipping,
+        total,
+        freeShipping: qualifiesForFreeShipping,
+        freeBacWater: qualifiesForFreeBacWater,
+        vialCount,
+        marketingConsent,
+      }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-if (!response.ok || !data.success) {
-  throw new Error(data.error || "Order submission failed");
-}
+    if (!response.ok || !data.success) {
+      throw new Error(data.error || "Order submission failed");
+    }
 
-await fetch("/api/update-inventory", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    cart,
-  }),
-});
-
-localStorage.removeItem("cart");
-window.dispatchEvent(new Event("cartUpdated"));
-setCart([]);
-setSuccessOrderNumber(data.orderNumber);
-setShowSuccess(true);
-} catch (error: any) {
-  console.error("Checkout error:", error);
-  alert(error.message || "Something went wrong submitting your order.");
-} finally {
-  setLoading(false);
-}
+    localStorage.removeItem("cart");
+    window.dispatchEvent(new Event("cartUpdated"));
+    setCart([]);
+    setSuccessOrderNumber(data.orderNumber);
+    setShowSuccess(true);
+  } catch (error: any) {
+    console.error("Checkout error:", error);
+    alert(error.message || "Something went wrong submitting your order.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">

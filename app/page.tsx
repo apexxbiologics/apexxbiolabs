@@ -271,26 +271,25 @@ const handlePromoSignup = async (e: React.FormEvent) => {
 
 <div className="min-h-screen bg-[#081526] text-white">
 {/* HEADER */}
-<header className="fixed top-0 left-0 w-full z-50 border-b border-blue-900/70 bg-[#081526]/95 backdrop-blur-xl px-5 md:px-10 py-5">
-  <div className="max-w-7xl mx-auto flex items-center justify-between">
+<header className="fixed top-0 left-0 right-0 z-50 py-6">  <div className="max-w-7xl mx-auto flex items-center justify-between">
 
-    {/* LEFT MENU + LOGO */}
-    <div className="flex items-center gap-6">
-      <button
-        onClick={() => setMenuOpen(true)}
-        className="text-white hover:text-blue-400 transition-all"
-      >
-        <Menu size={34} />
-      </button>
+{/* LEFT MENU + LOGO */}
+<div className="flex items-center gap-8">
+  <button
+    onClick={() => setMenuOpen(true)}
+    className="text-white hover:text-blue-400 transition-all"
+  >
+    <Menu size={34} />
+  </button>
 
-      <a href="/">
-<img
-  src="/images/logo.png"
-  alt="Apexx Biolabs"
-  className="h-25 md:h-30 w-auto"
- />
-      </a>
-    </div>
+  <a href="/" className="flex items-center">
+    <img
+      src="/images/logo.png"
+      alt="Apexx Biolabs"
+      className="h-16 md:h-20 w-auto"
+    />
+  </a>
+</div>
 
     {/* CENTER NAV */}
     <nav className="hidden md:flex items-center gap-14 text-white text-sm font-bold uppercase tracking-[0.22em]">
@@ -400,7 +399,7 @@ const handlePromoSignup = async (e: React.FormEvent) => {
 )}
 
 {/* HERO */}
-<section className="relative pt-44 pb-24 px-6 bg-[#081526] overflow-hidden">
+<section className="relative pt-52 pb-26 px-6 bg-[#081526] overflow-hidden">
 
 {/* Free Shipping Banner */}
 <div className="relative z-20 -mt-20 mb-4 rounded-full border border-blue-400/30 bg-blue-500/10 px-6 py-4 text-center backdrop-blur-sm max-w-5xl mx-auto">

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ShoppingCart, Search, Menu, X } from "lucide-react";
 import { FlaskConical, Microscope } from "lucide-react";
 import { Check } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 import { Gift, BadgePercent } from "lucide-react";
 
 export default function Home() {
@@ -18,6 +19,11 @@ const [disclaimerChecked, setDisclaimerChecked] = useState(false);
 const [activeQuality, setActiveQuality] = useState("potency");
 const [menuOpen, setMenuOpen] = useState(false);
 const [searchOpen, setSearchOpen] = useState(false);
+const [added, setAdded] = useState(false);
+const [quantity, setQuantity] = useState(1);
+const [searchTerm, setSearchTerm] = useState("");
+const [promoEmail, setPromoEmail] = useState("");
+const [promoStatus, setPromoStatus] = useState("");
 
 const startProductScroll = (direction: "left" | "right") => {
   stopProductScroll();
@@ -123,6 +129,33 @@ const handleAccept = () => {
 if (accepted === null) {
   return null;
 }
+
+const handlePromoSignup = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (!promoEmail.trim()) return;
+
+  const { error } = await supabase
+    .from("promo_subscribers")
+    .insert([
+      {
+        email: promoEmail.trim().toLowerCase(),
+      },
+    ]);
+
+  if (error?.code === "23505") {
+    setPromoStatus("You're already subscribed.");
+    return;
+  }
+
+  if (error) {
+    setPromoStatus("Something went wrong. Please try again.");
+    return;
+  }
+
+  setPromoEmail("");
+  setPromoStatus("✓ Welcome to the Apexx List.");
+};
 
   return (
     <>
@@ -974,13 +1007,14 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
       </p>
     </div>
 
-    <form className="max-w-2xl mx-auto">
-      <div className="flex flex-col sm:flex-row gap-3 rounded-full sm:bg-[#081526]/70 sm:border sm:border-blue-300/15 sm:p-2">
-        <input
-          type="email"
-          placeholder="Enter your email address"
-          className="flex-1 rounded-full bg-[#081526]/70 sm:bg-transparent border border-blue-300/15 sm:border-0 px-6 py-4 text-white placeholder:text-blue-100/35 outline-none"
-        />
+<form onSubmit={handlePromoSignup} className="max-w-2xl mx-auto">      <div className="flex flex-col sm:flex-row gap-3 rounded-full sm:bg-[#081526]/70 sm:border sm:border-blue-300/15 sm:p-2">
+<input
+  type="email"
+  value={promoEmail}
+  onChange={(e) => setPromoEmail(e.target.value)}
+  placeholder="Enter your email address"
+  className="flex-1 rounded-full bg-[#081526]/70 sm:bg-transparent border border-blue-300/15 sm:border-0 px-6 py-4 text-white placeholder:text-blue-100/35 outline-none"
+/>
 
         <button
           type="submit"
@@ -994,6 +1028,14 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
         Promo updates only. No spam.
       </p>
     </form>
+
+    {promoStatus && (
+  <div className="max-w-md mx-auto mt-5 rounded-full border border-green-400/20 bg-green-500/10 px-5 py-3">
+    <p className="text-center text-green-300 text-sm font-semibold">
+      {promoStatus}
+    </p>
+  </div>
+)}
 
   </div>
 </section>

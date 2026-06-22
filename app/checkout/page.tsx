@@ -146,9 +146,9 @@ body: JSON.stringify({
 
       const data = await response.json();
 
-      if (!response.ok || !data.success) {
-        throw new Error("Order submission failed");
-      }
+if (!response.ok || !data.success) {
+  throw new Error(data.error || "Order submission failed");
+}
 
 await fetch("/api/update-inventory", {
   method: "POST",
@@ -165,12 +165,12 @@ window.dispatchEvent(new Event("cartUpdated"));
 setCart([]);
 setSuccessOrderNumber(data.orderNumber);
 setShowSuccess(true);
-    } catch (error) {
-      alert("Something went wrong submitting your order. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+} catch (error: any) {
+  console.error("Checkout error:", error);
+  alert(error.message || "Something went wrong submitting your order.");
+} finally {
+  setLoading(false);
+}
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">

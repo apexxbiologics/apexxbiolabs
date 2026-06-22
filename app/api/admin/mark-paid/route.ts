@@ -75,20 +75,108 @@ if (Array.isArray(orderCart)) {
     from: "Apexx Biolabs <orders@apexxbiolabs.com>",
     to: order.customer_email,
     subject: `Payment Received • ${order.order_number}`,
-    html: `
-      <div style="font-family:Arial,sans-serif;background:#f8fbff;padding:30px;">
-        <div style="max-width:680px;margin:auto;background:white;border:1px solid #dbeafe;border-radius:24px;padding:30px;">
-          <h1 style="color:#06111f;">Payment Received</h1>
-          <p>Your payment for order <strong>${order.order_number}</strong> has been verified.</p>
-          <p>Your order is now being prepared for shipment.</p>
-          <p><strong>Total:</strong> $${Number(order.total).toFixed(2)}</p>
-          <hr/>
-          <p style="font-size:12px;color:#64748b;">
-            Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only.
+    html:`
+  <div style="margin:0;padding:0;background:#f8fbff;font-family:Arial,Helvetica,sans-serif;">
+    <div style="max-width:720px;margin:0 auto;padding:28px 16px;">
+      <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:28px;overflow:hidden;box-shadow:0 18px 45px rgba(30,58,138,0.12);">
+
+        <div style="background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff);padding:38px 24px;text-align:center;border-bottom:1px solid #dbeafe;">
+          <p style="margin:0 0 14px;color:#3b82f6;font-size:13px;letter-spacing:4px;text-transform:uppercase;">
+            Research. Quality. Confidence.
+          </p>
+
+          <h1 style="margin:0;color:#06111f;font-size:34px;letter-spacing:3px;">
+            APEXX BIOLABS
+          </h1>
+
+          <p style="margin:12px 0 0;color:#475569;font-size:13px;letter-spacing:2px;text-transform:uppercase;">
+            Premium Research Materials
           </p>
         </div>
+
+        <div style="padding:32px 24px;">
+          <div style="background:#ffffff;border:1px solid #bfdbfe;border-radius:22px;padding:32px 24px;text-align:center;margin-bottom:30px;box-shadow:0 12px 30px rgba(59,130,246,0.10);">
+            <p style="margin:0 0 14px;color:#3b82f6;font-size:13px;letter-spacing:4px;text-transform:uppercase;">
+              Payment Verified
+            </p>
+
+            <h2 style="margin:0;color:#06111f;font-size:34px;font-weight:800;line-height:1.1;">
+              Payment Received
+            </h2>
+
+            <p style="margin:14px 0 0;color:#16a34a;font-size:18px;font-weight:700;">
+              Your Order Is Now Processing
+            </p>
+
+            <p style="margin:18px auto 0;max-width:500px;color:#475569;font-size:15px;line-height:1.7;">
+              Thank you. We have successfully received and verified your payment.
+              Your order is now being prepared for shipment.
+            </p>
+          </div>
+
+          <div style="background:linear-gradient(135deg,#eaf4ff,#f8fbff);border:1px solid #bfdbfe;border-radius:22px;padding:28px;text-align:center;margin-bottom:30px;">
+            <p style="margin:0 0 8px;color:#1e3a8a;font-size:13px;text-transform:uppercase;letter-spacing:2px;font-weight:bold;">
+              Order Number
+            </p>
+
+            <p style="margin:0;color:#06111f;font-size:28px;font-weight:900;">
+              ${order.order_number}
+            </p>
+          </div>
+
+          <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:20px;padding:22px;margin-bottom:30px;">
+            <h3 style="margin:0 0 16px;color:#06111f;font-size:22px;">
+              Payment Details
+            </h3>
+
+            <p style="margin:0 0 10px;color:#334155;">
+              <strong>Total Paid:</strong> $${Number(order.total).toFixed(2)}
+            </p>
+
+            <p style="margin:0;color:#334155;">
+              <strong>Status:</strong>
+              <span style="color:#16a34a;font-weight:bold;">
+                Payment Confirmed
+              </span>
+            </p>
+          </div>
+
+          <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:20px;padding:22px;margin-bottom:30px;">
+            <h3 style="margin:0 0 12px;color:#06111f;font-size:18px;">
+              What Happens Next?
+            </h3>
+
+            <p style="margin:0;color:#475569;line-height:1.8;">
+              Your order is now in our fulfillment queue. Once your package
+              ships, you will automatically receive a shipment confirmation email
+              with tracking information.
+            </p>
+          </div>
+
+          <p style="margin:0 0 24px;color:#2563eb;font-size:14px;line-height:1.6;">
+            Thank you for choosing Apexx Biolabs.
+          </p>
+
+          <div style="border-top:1px solid #dbeafe;padding-top:24px;">
+            <p style="font-size:12px;color:#64748b;line-height:1.6;margin:0;">
+              Products sold by Apexx Biolabs are intended strictly for lawful
+              laboratory research use only. Not for human consumption, medical
+              use, veterinary use, diagnosis, treatment, cure, or prevention of
+              disease.
+            </p>
+
+            <p style="margin:24px 0 0;color:#334155;line-height:1.6;">
+              Apexx Biolabs<br/>
+              orders@apexxbiolabs.com<br/>
+              apexxbiolabs.com
+            </p>
+          </div>
+        </div>
+
       </div>
-    `,
+    </div>
+  </div>
+`,
   });
 
   return NextResponse.json({ success: true, order });

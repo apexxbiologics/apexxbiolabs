@@ -29,6 +29,7 @@ const [promoCode, setPromoCode] = useState("");
   const [city, setCity] = useState("");
   const [stateValue, setStateValue] = useState("");
   const [zipCode, setZipCode] = useState("");
+const [marketingConsent, setMarketingConsent] = useState(true);
 
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
@@ -122,24 +123,25 @@ const qualifiesForFreeBacWater = vialCount >= 4;
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          customerEmail,
-          firstName,
-          lastName,
-          address,
-          apartment,
-          city,
-          state: stateValue,
-          zipCode,
-          paymentMethod,
-          cart,
-          subtotal,
-          shipping,
-          total,
-          freeShipping: qualifiesForFreeShipping,
-          freeBacWater: qualifiesForFreeBacWater,
-vialCount,
-        }),
+body: JSON.stringify({
+  customerEmail,
+  firstName,
+  lastName,
+  address,
+  apartment,
+  city,
+  state: stateValue,
+  zipCode,
+  paymentMethod,
+  cart,
+  subtotal,
+  shipping,
+  total,
+  freeShipping: qualifiesForFreeShipping,
+  freeBacWater: qualifiesForFreeBacWater,
+  vialCount,
+  marketingConsent,
+}),
       });
 
       const data = await response.json();
@@ -595,6 +597,22 @@ setShowSuccess(true);
                   </ul>
                 </div>
               </section>
+
+<div className="mb-6 rounded-2xl border border-blue-300/20 bg-blue-500/10 p-5">
+  <label className="flex items-start gap-3 cursor-pointer">
+    <input
+      type="checkbox"
+      checked={marketingConsent}
+      onChange={(e) => setMarketingConsent(e.target.checked)}
+      className="mt-1 h-4 w-4"
+    />
+
+    <span className="text-sm text-white/70 leading-relaxed">
+      Yes, I’d like to receive product updates, restock alerts, and exclusive
+      promo codes from Apexx Biolabs. I can unsubscribe at any time.
+    </span>
+  </label>
+</div>
 
               <button
                 onClick={handlePlaceOrder}

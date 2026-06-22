@@ -1,24 +1,21 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const basicAuth = request.headers.get("authorization");
+  const isAdminPage = request.nextUrl.pathname.startsWith("/admin");
 
-  if (basicAuth) {
-    const authValue = basicAuth.split(" ")[1];
-    const [user, password] = atob(authValue).split(":");
+  const isMasterAuthed =
+    request.cookies.get("apexx_master_admin_auth")?.value === "true";
 
-    if (
-      user === process.env.ADMIN_USERNAME &&
-      password === process.env.ADMIN_PASSWORD
-    ) {
-      return NextResponse.next();
-    }
+  if (isAdminPage && !isMasterAuthed) {
+    return NextResponse.redirect(
+      new URL("/master-admin-login", request.url)
+    );
   }
 
-return NextResponse.redirect(
-  new URL("/master-admin-login", request.url)
-);
+  return NextResponse.next();
+}
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*"],
+  matcher: ["/admin/:path*"],
 };

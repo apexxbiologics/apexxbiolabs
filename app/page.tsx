@@ -955,53 +955,51 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
   </div>
 </section>
 
-<section className="px-6 md:px-10 py-20 bg-[#081526]">
-  <div className="max-w-6xl mx-auto rounded-[36px] border border-blue-400/20 bg-[#0B1B30] p-8 md:p-12 shadow-[0_0_45px_rgba(59,130,246,0.08)]">
+<section className="px-6 md:px-10 py-20 bg-[#f4f9ff]">
+  <div className="max-w-6xl mx-auto rounded-[36px] border border-blue-100 bg-white p-8 md:p-12 shadow-[0_20px_60px_rgba(30,64,175,0.10)]">
 
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-10 items-center">
 
       <div>
-        <p className="uppercase tracking-[0.35em] text-blue-300 text-xs mb-4">
+        <p className="uppercase tracking-[0.35em] text-blue-500 text-xs mb-4 font-bold">
           Exclusive Access
         </p>
 
-        <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+        <h2 className="text-4xl md:text-5xl font-black text-[#081526] mb-4">
           Join The Apexx List
         </h2>
 
-        <p className="text-white/60 text-base md:text-lg leading-relaxed max-w-xl">
+        <p className="text-slate-600 text-base md:text-lg leading-relaxed max-w-xl">
           Get promo codes, restock alerts, product launches, and research updates.
         </p>
       </div>
 
-      <div className="w-full lg:w-[520px]">
+      <div className="w-full lg:w-[500px]">
         <div className="flex flex-col sm:flex-row gap-3">
           <input
             type="email"
             placeholder="Email address"
-            className="flex-1 rounded-full bg-[#06111f] border border-white/10 px-6 py-4 text-white placeholder:text-white/35 outline-none focus:border-blue-400/60"
+            className="flex-1 rounded-full bg-[#f8fbff] border border-blue-100 px-6 py-4 text-[#081526] placeholder:text-slate-400 outline-none focus:border-blue-400"
           />
 
-          <button className="rounded-full bg-white text-[#081526] px-8 py-4 font-bold uppercase tracking-widest hover:bg-blue-100 transition-all">
+          <button className="rounded-full bg-[#081526] text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-blue-900 transition-all">
             Join
           </button>
         </div>
 
-        <p className="text-white/35 text-xs mt-4">
+        <p className="text-slate-400 text-xs mt-4">
           Promo updates only. No spam.
         </p>
       </div>
 
     </div>
 
-    <div className="h-px bg-white/10 my-8" />
-
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div className="flex flex-wrap gap-3 mt-8">
       {["Promo Codes", "Restock Alerts", "New Releases", "Research Updates"].map(
         (item) => (
           <div
             key={item}
-            className="rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-3 text-center text-blue-100 text-sm"
+            className="rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-blue-700 text-sm font-medium"
           >
             {item}
           </div>

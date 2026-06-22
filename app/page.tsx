@@ -1029,9 +1029,9 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
       </p>
     </form>
 
-    {promoStatus && (
-  <div className="max-w-md mx-auto mt-5 rounded-full border border-green-400/20 bg-green-500/10 px-5 py-3">
-    <p className="text-center text-green-300 text-sm font-semibold">
+{promoStatus && (
+  <div className="max-w-md mx-auto mt-5 rounded-full border border-blue-300/20 bg-blue-500/10 px-5 py-3">
+    <p className="text-center text-blue-100 text-sm font-semibold">
       {promoStatus}
     </p>
   </div>

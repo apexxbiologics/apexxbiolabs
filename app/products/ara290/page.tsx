@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ShoppingCart,
   FlaskConical,
@@ -12,31 +12,75 @@ import {
 export default function ARA290Page() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
-
-  const inStock = true;
+  const [inventory, setInventory] = useState<number | null>(null);
 
   const product = {
     id: "ara290",
     name: "ARA-290",
     price: 50,
-    quantity,
     image: "/images/ara290blue.png",
   };
 
+  const isOutOfStock = inventory !== null && inventory <= 0;
+  const isLimitedStock = inventory !== null && inventory > 0 && inventory <= 5;
+
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        const response = await fetch("/api/products");
+        const data = await response.json();
+
+        if (!data.success) return;
+
+        const ara290 = data.products.find(
+          (product: any) =>
+            product.slug === "ara290" ||
+            product.slug === "ara-290" ||
+            product.slug === "ara290-10mg" ||
+            product.slug === "ara-290-10mg" ||
+            product.id === "ara290" ||
+            product.id === "ara-290" ||
+            product.name?.toLowerCase().includes("ara")
+        );
+
+        if (ara290) {
+          setInventory(ara290.inventory ?? 0);
+        } else {
+          setInventory(null);
+        }
+      } catch (error) {
+        console.error("Failed to fetch inventory:", error);
+        setInventory(null);
+      }
+    };
+
+    fetchInventory();
+  }, []);
+
   const addToCart = () => {
+    if (isOutOfStock) return;
+
+    const cartProduct = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity,
+      image: product.image,
+    };
+
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
 
     const existingProduct = existingCart.find(
-      (item: any) => item.id === product.id
+      (item: any) => item.id === cartProduct.id
     );
 
     const updatedCart = existingProduct
       ? existingCart.map((item: any) =>
-          item.id === product.id
+          item.id === cartProduct.id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         )
-      : [...existingCart, product];
+      : [...existingCart, cartProduct];
 
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     window.dispatchEvent(new Event("cartUpdated"));
@@ -59,15 +103,18 @@ export default function ARA290Page() {
             <a href="/" className="hover:text-blue-300 transition-all">
               Home
             </a>
+
             <a
               href="/products"
               className="text-blue-300 border-b border-blue-300 pb-2"
             >
               Products
             </a>
+
             <a href="/coas" className="hover:text-blue-300 transition-all">
               COAs
             </a>
+
             <a href="/contact" className="hover:text-blue-300 transition-all">
               Contact
             </a>
@@ -87,15 +134,15 @@ export default function ARA290Page() {
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
-<div className="flex items-center justify-center">
-  <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
-    <img
-      src={product.image}
-      alt={product.name}
-      className="w-full h-full object-cover"
-    />
-  </div>
-</div>
+            <div className="flex items-center justify-center">
+              <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
               <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
@@ -111,9 +158,23 @@ export default function ARA290Page() {
                 laboratory research applications and analytical use.
               </p>
 
-              <p className="text-5xl font-black text-white mb-8">
+              <p className="text-5xl font-black text-white mb-3">
                 ${product.price}.00
               </p>
+
+              {isLimitedStock && (
+                <div className="font-semibold mb-8 text-yellow-300">
+                  Limited Stock
+                </div>
+              )}
+
+              {isOutOfStock && (
+                <div className="font-semibold mb-8 text-red-300">
+                  Out of Stock
+                </div>
+              )}
+
+              {!isLimitedStock && !isOutOfStock && <div className="mb-8" />}
 
               <div className="h-px bg-white/10 mb-8" />
 
@@ -150,10 +211,15 @@ export default function ARA290Page() {
 
                     <button
                       onClick={() => {
-                        setQuantity((prev) => prev + 1);
+                        setQuantity((prev) =>
+                          inventory === null
+                            ? prev + 1
+                            : Math.min(inventory, prev + 1)
+                        );
                         setAdded(false);
                       }}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08]"
+                      disabled={isOutOfStock}
+                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08] disabled:opacity-40"
                     >
                       +
                     </button>
@@ -162,44 +228,42 @@ export default function ARA290Page() {
               </div>
 
               <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
-  <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2">
+                  <svg
+                    className="w-5 h-5 text-blue-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7m16 0H4m16 0V8a1 1 0 00-1-1h-3.5M4 12V8a1 1 0 011-1h3.5m0 0a1.5 1.5 0 113 0m-3 0h3m0 0a1.5 1.5 0 113 0"
+                    />
+                  </svg>
 
-    <svg
-      className="w-5 h-5 text-blue-300"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7m16 0H4m16 0V8a1 1 0 00-1-1h-3.5M4 12V8a1 1 0 011-1h3.5m0 0a1.5 1.5 0 113 0m-3 0h3m0 0a1.5 1.5 0 113 0"
-      />
-    </svg>
-
-    <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
-      FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
-    </p>
-
-  </div>
-</div>
+                  <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
+                    FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
+                  </p>
+                </div>
+              </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                {inStock ? (
+                {isOutOfStock ? (
+                  <button
+                    disabled
+                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
+                  >
+                    Out of Stock
+                  </button>
+                ) : (
                   <button
                     onClick={addToCart}
                     className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
                   >
                     <ShoppingCart size={22} />
                     {added ? "Added To Cart" : "Add To Cart"}
-                  </button>
-                ) : (
-                  <button
-                    disabled
-                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
-                  >
-                    Out of Stock
                   </button>
                 )}
 
@@ -254,26 +318,10 @@ export default function ARA290Page() {
       <section className="px-6 md:px-10 pb-10">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            [
-              FlaskConical,
-              "Research Use Only",
-              "Strictly for laboratory research.",
-            ],
-            [
-              ShieldCheck,
-              "Third-Party Tested",
-              "Independent lab verified when available.",
-            ],
-            [
-              ClipboardCheck,
-              "Batch Documented",
-              "Documentation available for verified lots.",
-            ],
-            [
-              ShieldCheck,
-              "Quality Target",
-              "99%+ purity target.",
-            ],
+            [FlaskConical, "Research Use Only", "Strictly for laboratory research."],
+            [ShieldCheck, "Third-Party Tested", "Independent lab verified when available."],
+            [ClipboardCheck, "Batch Documented", "Documentation available for verified lots."],
+            [ShieldCheck, "Quality Target", "99%+ purity target."],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
               <Icon className="text-blue-300" size={34} />
@@ -283,91 +331,14 @@ export default function ARA290Page() {
                   {title}
                 </h3>
 
-                <p className="text-white/50 text-sm mt-1">
-                  {text}
-                </p>
+                <p className="text-white/50 text-sm mt-1">{text}</p>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="px-6 md:px-10 pb-16">
-        <div className="max-w-7xl mx-auto rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-          <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-3">
-            Research Profile
-          </p>
-
-          <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
-            Cytoprotective Research Overview
-          </h2>
-
-          <p className="text-white/70 text-lg leading-relaxed max-w-4xl mb-8">
-            ARA-290 is studied in laboratory research models involving
-            cytoprotective signaling, inflammatory pathway regulation,
-            tissue-response mechanisms, and neurobiology-related research
-            pathways.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {[
-              [
-                "Cellular Protection",
-                "Studied in models involving cellular stress-response signaling.",
-              ],
-              [
-                "Inflammatory Pathways",
-                "Evaluated in research related to cytokine and inflammatory signaling.",
-              ],
-              [
-                "Tissue Response",
-                "Investigated for tissue-response and repair-associated pathways.",
-              ],
-            ].map(([title, text]) => (
-              <div
-                key={title}
-                className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
-              >
-                <h3 className="text-white text-lg font-bold mb-3">
-                  {title}
-                </h3>
-
-                <p className="text-white/60 text-sm leading-relaxed">
-                  {text}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {[
-        {
-          title: "FDA Disclaimer",
-          text:
-            "These statements have not been evaluated by the U.S. Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only and are not for human or veterinary consumption.",
-        },
-        {
-          title: "Customer Acknowledgment",
-          text:
-            "By purchasing this product, the customer acknowledges that this material is intended solely for lawful laboratory research purposes and will not be used for human consumption, veterinary use, medical use, diagnosis, treatment, cure, or prevention of disease. Apexx Biolabs does not provide dosing instructions, treatment recommendations, medical advice, or guidance regarding human use of any product.",
-        },
-      ].map((section) => (
-        <section key={section.title} className="px-6 md:px-10 pb-16">
-          <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
-            <h3 className="text-blue-300 font-bold uppercase tracking-[0.25em] text-sm mb-4">
-              {section.title}
-            </h3>
-
-            <p className="text-white/60 text-sm leading-relaxed">
-              {section.text}
-            </p>
-          </div>
-        </section>
-
-      ))}
-
-            <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
+      <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 mb-14">
           <div>
             <img
@@ -377,7 +348,8 @@ export default function ARA290Page() {
             />
 
             <p className="text-white/60 text-sm leading-relaxed">
-              Premium research-grade peptides built on science, quality, and transparency.
+              Premium research-grade peptides built on science, quality, and
+              transparency.
             </p>
 
             <div className="flex gap-3 mt-6">
@@ -398,32 +370,6 @@ export default function ARA290Page() {
               </a>
             </div>
           </div>
-
-          {[
-            ["Shop", [["All Products", "/products"], ["Certificates of Analysis", "/coas"]]],
-            ["Resources", [["Research Library", "/peptide-info"], ["FAQ", "/faq"]]],
-            ["Support", [["Contact Us", "/contact"], ["Shipping Info", "/shipping"], ["Returns & Refunds", "/refunds"]]],
-            ["Legal", [["Privacy Policy", "/privacy"], ["Terms of Service", "/terms"]]],
-          ].map(([title, links]: any) => (
-            <div key={title}>
-              <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
-                {title}
-              </h4>
-
-              <div className="space-y-3 text-white/50">
-                {links.map(([label, href]: any) => (
-                  <a key={label} href={href} className="block hover:text-blue-300">
-                    {label}
-                  </a>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="max-w-7xl mx-auto border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between gap-4 text-white/40 text-sm">
-          <p>© 2026 Apexx Biolabs. All rights reserved.</p>
-          <p>SSL Secured · 99%+ Purity · Research Use Only</p>
         </div>
       </footer>
     </main>

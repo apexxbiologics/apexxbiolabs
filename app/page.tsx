@@ -955,57 +955,45 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
   </div>
 </section>
 
-<section className="px-6 md:px-10 py-20 bg-[#f4f9ff]">
-  <div className="max-w-6xl mx-auto rounded-[36px] border border-blue-100 bg-white p-8 md:p-12 shadow-[0_20px_60px_rgba(30,64,175,0.10)]">
+<section className="relative px-6 md:px-10 py-24 bg-[#081526] overflow-hidden">
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-10 items-center">
+  <div className="relative z-10 max-w-5xl mx-auto rounded-[42px] border border-blue-300/20 bg-gradient-to-br from-[#102743] via-[#12345A] to-[#0B1B30] p-8 md:p-12 shadow-[0_0_60px_rgba(96,165,250,0.12)]">
 
-      <div>
-        <p className="uppercase tracking-[0.35em] text-blue-500 text-xs mb-4 font-bold">
-          Exclusive Access
-        </p>
+    <div className="text-center max-w-3xl mx-auto">
+      <p className="uppercase tracking-[0.35em] text-blue-300 text-xs mb-5">
+        Exclusive Access
+      </p>
 
-        <h2 className="text-4xl md:text-5xl font-black text-[#081526] mb-4">
-          Join The Apexx List
-        </h2>
+      <h2 className="text-4xl md:text-5xl font-black text-white mb-5">
+        Join The Apexx List
+      </h2>
 
-        <p className="text-slate-600 text-base md:text-lg leading-relaxed max-w-xl">
-          Get promo codes, restock alerts, product launches, and research updates.
-        </p>
-      </div>
-
-      <div className="w-full lg:w-[500px]">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <input
-            type="email"
-            placeholder="Email address"
-            className="flex-1 rounded-full bg-[#f8fbff] border border-blue-100 px-6 py-4 text-[#081526] placeholder:text-slate-400 outline-none focus:border-blue-400"
-          />
-
-          <button className="rounded-full bg-[#081526] text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-blue-900 transition-all">
-            Join
-          </button>
-        </div>
-
-        <p className="text-slate-400 text-xs mt-4">
-          Promo updates only. No spam.
-        </p>
-      </div>
-
+      <p className="text-blue-100/70 text-base md:text-lg leading-relaxed mb-9">
+        Get first access to promo codes, product launches, restock alerts, and Apexx updates.
+      </p>
     </div>
 
-    <div className="flex flex-wrap gap-3 mt-8">
-      {["Promo Codes", "Restock Alerts", "New Releases", "Research Updates"].map(
-        (item) => (
-          <div
-            key={item}
-            className="rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-blue-700 text-sm font-medium"
-          >
-            {item}
-          </div>
-        )
-      )}
-    </div>
+    <form className="max-w-2xl mx-auto">
+      <div className="flex flex-col sm:flex-row gap-3 rounded-full sm:bg-[#081526]/70 sm:border sm:border-blue-300/15 sm:p-2">
+        <input
+          type="email"
+          placeholder="Enter your email address"
+          className="flex-1 rounded-full bg-[#081526]/70 sm:bg-transparent border border-blue-300/15 sm:border-0 px-6 py-4 text-white placeholder:text-blue-100/35 outline-none"
+        />
+
+        <button
+          type="submit"
+          className="rounded-full bg-white text-[#081526] px-9 py-4 font-bold uppercase tracking-widest hover:bg-blue-100 transition-all"
+        >
+          Join List
+        </button>
+      </div>
+
+      <p className="text-center text-blue-100/40 text-xs mt-5">
+        Promo updates only. No spam.
+      </p>
+    </form>
 
   </div>
 </section>

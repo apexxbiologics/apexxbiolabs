@@ -111,11 +111,37 @@ export default function ARA290Page() {
                 laboratory research applications and analytical use.
               </p>
 
-              <p className="text-5xl font-black text-white mb-8">
-                ${product.price}.00
-              </p>
+<p className="text-5xl font-black text-white mb-6">
+  ${product.price}.00
+</p>
 
-              <div className="h-px bg-white/10 mb-8" />
+<div className="rounded-[24px] border border-blue-400/20 bg-blue-500/10 backdrop-blur-sm p-4 mb-8">
+
+  <div className="flex items-center justify-center gap-3">
+
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.8}
+      stroke="currentColor"
+      className="w-6 h-6 text-blue-300"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 3v18m9-9H3"
+      />
+    </svg>
+
+    <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
+      FREE Bacteriostatic Water With Purchase Of Any 4 Vials
+    </p>
+
+  </div>
+</div>
+
+<div className="h-px bg-white/10 mb-8" />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
                 <div>

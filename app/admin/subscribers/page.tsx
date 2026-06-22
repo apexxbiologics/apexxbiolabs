@@ -17,6 +17,12 @@ export default async function SubscribersPage() {
   return (
     <main className="min-h-screen bg-[#081526] text-white px-6 py-12">
       <div className="max-w-5xl mx-auto">
+        <a
+          href="/admin"
+          className="inline-flex mb-8 text-blue-300 hover:text-white text-sm uppercase tracking-widest transition-all"
+        >
+          ← Back to Dashboard
+        </a>
         <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
           Admin
         </p>

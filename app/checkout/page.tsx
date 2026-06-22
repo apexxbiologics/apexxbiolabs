@@ -150,6 +150,16 @@ body: JSON.stringify({
         throw new Error("Order submission failed");
       }
 
+await fetch("/api/update-inventory", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    cart,
+  }),
+});
+
 localStorage.removeItem("cart");
 window.dispatchEvent(new Event("cartUpdated"));
 setCart([]);

@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import {
+import { useEffect, useState } from "react";import {
   ShoppingCart,
   Search,
   FlaskConical,
@@ -15,6 +14,11 @@ export default function APX3Page() {
   const [selectedMg, setSelectedMg] = useState<"10mg" | "20mg">("10mg");
   const [quantity, setQuantity] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const [inventory, setInventory] = useState({
+  "10mg": 0,
+  "20mg": 0,
+});
 
   const productOptions = {
     "10mg": {
@@ -31,8 +35,9 @@ export default function APX3Page() {
     },
   };
 
-  const selectedProduct = productOptions[selectedMg];
-  const inStock = true;
+const selectedProduct = productOptions[selectedMg];
+const selectedInventory = inventory[selectedMg];
+const inStock = selectedInventory > 0;
 
   const products = [
     { name: "APX-3", keywords: ["apx", "apx3", "apx-3"], path: "/products/apx3" },
@@ -50,6 +55,30 @@ export default function APX3Page() {
     { name: "Semax", keywords: ["semax"], path: "/products/semax" },
     { name: "TB-500", keywords: ["tb", "tb500", "tb-500"], path: "/products/tb500" },
   ];
+
+  useEffect(() => {
+  const fetchInventory = async () => {
+    const response = await fetch("/api/products");
+    const data = await response.json();
+
+    if (!data.success) return;
+
+    const apx10 = data.products.find(
+      (product: any) => product.slug === "apx3-10mg"
+    );
+
+    const apx20 = data.products.find(
+      (product: any) => product.slug === "apx3-20mg"
+    );
+
+    setInventory({
+      "10mg": apx10?.inventory ?? 0,
+      "20mg": apx20?.inventory ?? 0,
+    });
+  };
+
+  fetchInventory();
+}, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -187,6 +216,12 @@ export default function APX3Page() {
               <p className="text-5xl font-black text-white mb-8">
                 ${selectedProduct.price}.00
               </p>
+
+              <p className="text-blue-300 font-semibold mb-8">
+  {inStock
+    ? `${selectedInventory} units available`
+    : "Out of Stock"}
+</p>
 
               <div className="h-px bg-white/10 mb-8" />
 

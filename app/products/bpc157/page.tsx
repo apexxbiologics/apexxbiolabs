@@ -162,6 +162,30 @@ export default function BPC157Page() {
                 </div>
               </div>
 
+              <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
+  <div className="flex items-center justify-center gap-2">
+
+    <svg
+      className="w-5 h-5 text-blue-300"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7m16 0H4m16 0V8a1 1 0 00-1-1h-3.5M4 12V8a1 1 0 011-1h3.5m0 0a1.5 1.5 0 113 0m-3 0h3m0 0a1.5 1.5 0 113 0"
+      />
+    </svg>
+
+    <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
+      FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
+    </p>
+
+  </div>
+</div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                 <button
                   onClick={addToCart}

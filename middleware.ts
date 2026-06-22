@@ -15,13 +15,9 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  return new NextResponse("Admin authentication required", {
-    status: 401,
-    headers: {
-      "WWW-Authenticate": 'Basic realm="Apexx Admin"',
-    },
-  });
-}
+return NextResponse.redirect(
+  new URL("/master-admin-login", request.url)
+);
 
 export const config = {
   matcher: ["/admin/:path*", "/api/admin/:path*"],

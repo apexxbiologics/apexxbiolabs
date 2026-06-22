@@ -287,7 +287,7 @@ const handlePromoSignup = async (e: React.FormEvent) => {
 <img
   src="/images/logo.png"
   alt="Apexx Biolabs"
-  className="h-16 md:h-20 w-auto"
+  className="h-25 md:h-30 w-auto"
  />
       </a>
     </div>

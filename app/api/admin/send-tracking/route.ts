@@ -57,42 +57,76 @@ export async function POST(request: Request) {
 
               <div style="padding:32px 24px; color:#0f172a;">
                 <div style="background:#ffffff; border:1px solid #bfdbfe; border-radius:22px; padding:30px 24px; text-align:center; margin-bottom:28px;">
-                  <p style="margin:0 0 12px; color:#3b82f6; font-size:13px; letter-spacing:4px; text-transform:uppercase;">
-                    Order Shipped
-                  </p>
+<p style="margin:0 0 14px;color:#3b82f6;font-size:13px;letter-spacing:4px;text-transform:uppercase;">
+  Shipment Confirmation
+</p>
 
-                  <h2 style="margin:0; color:#06111f; font-size:32px; font-weight:900;">
-                    Your Order Is On The Way
-                  </h2>
+<h2 style="margin:0;color:#06111f;font-size:34px;font-weight:800;line-height:1.1;">
+  Your Order Has Shipped
+</h2>
 
-                  <p style="margin:16px auto 0; max-width:500px; color:#475569; font-size:15px; line-height:1.7;">
-                    Your Apexx Biolabs order has been dispatched. Tracking information is listed below.
-                  </p>
+<p style="margin:14px 0 0;color:#16a34a;font-size:18px;font-weight:700;">
+  Package In Transit
+</p>
+
+<p style="margin:18px auto 0;max-width:500px;color:#475569;font-size:15px;line-height:1.7;">
+  Great news. Your Apexx Biolabs order has been packaged, shipped, and is now in transit.
+  Tracking information is provided below.
+</p>
                 </div>
 
-                <div style="background:linear-gradient(135deg,#eaf4ff,#ffffff); border:1px solid #bfdbfe; border-radius:22px; padding:26px; text-align:center; margin-bottom:28px;">
-                  <p style="margin:0 0 8px; color:#2563eb; font-size:13px; text-transform:uppercase; letter-spacing:2px; font-weight:bold;">
-                    Tracking Number
-                  </p>
+<div style="background:linear-gradient(135deg,#eaf4ff,#f8fbff);border:1px solid #bfdbfe;border-radius:22px;padding:28px;text-align:center;margin-bottom:30px;">
 
-                  <p style="margin:0; color:#06111f; font-size:24px; font-weight:900; word-break:break-all;">
-                    ${trackingNumber}
-                  </p>
+  <p style="margin:0 0 8px;color:#1e3a8a;font-size:13px;text-transform:uppercase;letter-spacing:2px;font-weight:bold;">
+    Tracking Number
+  </p>
 
-                  <p style="margin:12px 0 0; color:#64748b;">
-                    Carrier: <strong>${carrier}</strong>
-                  </p>
+  <p style="margin:0;color:#06111f;font-size:28px;font-weight:900;word-break:break-all;">
+    ${trackingNumber}
+  </p>
 
-                  ${
-                    trackingUrl
-                      ? `
-                        <a href="${trackingUrl}" style="display:inline-block; margin-top:20px; background:#06111f; color:#ffffff; padding:15px 28px; border-radius:999px; text-decoration:none; font-weight:900; letter-spacing:1px; text-transform:uppercase;">
-                          Track Package
-                        </a>
-                      `
-                      : ""
-                  }
-                </div>
+  <p style="margin:12px 0 0;color:#64748b;">
+    Carrier: <strong>${carrier}</strong>
+  </p>
+
+  ${
+    trackingUrl
+      ? `
+        <a
+          href="${trackingUrl}"
+          style="
+            display:inline-block;
+            margin-top:22px;
+            background:#06111f;
+            color:#ffffff;
+            padding:16px 30px;
+            border-radius:999px;
+            text-decoration:none;
+            font-weight:900;
+            letter-spacing:1px;
+            text-transform:uppercase;
+          "
+        >
+          Track Package
+        </a>
+      `
+      : ""
+  }
+
+</div>
+
+<div style="background:#ffffff;border:1px solid #dbeafe;border-radius:20px;padding:22px;margin-bottom:30px;">
+
+  <h3 style="margin:0 0 12px;color:#06111f;font-size:18px;">
+    What Happens Next?
+  </h3>
+
+  <p style="margin:0;color:#475569;line-height:1.8;">
+    Your package has been handed off to the carrier and is currently making its way to you.
+    Please allow up to 24 hours for tracking updates to appear after label creation.
+  </p>
+
+</div>
 
                 <div style="background:#eef7ff; border:1px solid #dbeafe; border-radius:18px; padding:22px; margin-bottom:28px;">
                   <p style="margin:0; color:#475569; line-height:1.7;">

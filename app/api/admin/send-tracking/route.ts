@@ -46,13 +46,17 @@ export async function POST(request: Request) {
             <div style="background:#ffffff; border:1px solid #dbeafe; border-radius:28px; overflow:hidden; box-shadow:0 18px 45px rgba(30,58,138,0.12);">
 
               <div style="background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff); padding:36px 24px; text-align:center; border-bottom:1px solid #dbeafe;">
-                <p style="margin:0 0 14px; color:#3b82f6; font-size:13px; letter-spacing:4px; text-transform:uppercase;">
-                  Shipment Confirmation
-                </p>
+<p style="margin:0 0 14px; color:#3b82f6; font-size:13px; letter-spacing:4px; text-transform:uppercase;">
+  Research. Quality. Confidence.
+</p>
 
-                <h1 style="margin:0; color:#06111f; font-size:32px; letter-spacing:2px;">
-                  APEXX BIOLABS
-                </h1>
+<h1 style="margin:0; color:#06111f; font-size:34px; letter-spacing:3px;">
+  APEXX BIOLABS
+</h1>
+
+<p style="margin:12px 0 0; color:#475569; font-size:13px; letter-spacing:2px; text-transform:uppercase;">
+  Premium Research Materials
+</p>
               </div>
 
               <div style="padding:32px 24px; color:#0f172a;">
@@ -127,12 +131,6 @@ export async function POST(request: Request) {
   </p>
 
 </div>
-
-                <div style="background:#eef7ff; border:1px solid #dbeafe; border-radius:18px; padding:22px; margin-bottom:28px;">
-                  <p style="margin:0; color:#475569; line-height:1.7;">
-                    Please allow time for the carrier to update tracking details after label creation.
-                  </p>
-                </div>
 
                 <div style="border-top:1px solid #dbeafe; padding-top:22px;">
                   <p style="font-size:12px; color:#64748b; line-height:1.6; margin:0;">

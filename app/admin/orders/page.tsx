@@ -160,7 +160,16 @@ const totalRevenue = orders.reduce((sum, order) => sum + Number(order.total || 0
 }
 
   return (
+
     <main className="min-h-screen bg-[#081526] text-white px-6 py-10">
+      <div className="max-w-7xl mx-auto">
+        <a
+          href="/admin"
+          className="inline-flex mb-8 text-blue-300 hover:text-white text-sm uppercase tracking-widest transition-all"
+        >
+          ← Back to Dashboard
+        </a>
+      </div>
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-10">
           <div>

@@ -45,7 +45,6 @@ export async function POST(request: Request) {
           subtotal,
           shipping,
           total,
-          free_bac_water: freeBacWater,
           marketing_consent: marketingConsent,
           status: "awaiting_payment",
         },

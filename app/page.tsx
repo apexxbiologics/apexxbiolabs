@@ -151,7 +151,6 @@ const handlePromoSignup = async (e: React.FormEvent) => {
 
   if (data.success) {
     setPromoEmail("");
-  }
 };
 
   return (
@@ -271,7 +270,8 @@ const handlePromoSignup = async (e: React.FormEvent) => {
 
 <div className="min-h-screen bg-[#081526] text-white">
 {/* HEADER */}
-<header className="fixed top-0 left-0 w-full z-50 border-b border-blue-900/70 bg-[#081526]/95 backdrop-blur-xl px-5 md:px-10 py-7">  <div className="max-w-7xl mx-auto flex items-center justify-between">
+<header className="fixed top-0 left-0 w-full z-50 border-b border-blue-900/70 bg-[#081526]/95 backdrop-blur-xl px-5 md:px-10 py-5">
+  <div className="max-w-7xl mx-auto flex items-center justify-between">
 
     {/* LEFT MENU + LOGO */}
     <div className="flex items-center gap-6">
@@ -282,13 +282,13 @@ const handlePromoSignup = async (e: React.FormEvent) => {
         <Menu size={34} />
       </button>
 
-<a href="/" className="flex items-center">
-  <img
-    src="/images/logo.png"
-    alt="Apexx Biolabs"
-    className="h-24 md:h-32 w-auto object-contain"
-  />
-</a>
+      <a href="/">
+        <img
+          src="/images/logo.png"
+          alt="Apexx Biolabs"
+          className="h-10 md:h-12 w-auto"
+        />
+      </a>
     </div>
 
     {/* CENTER NAV */}
@@ -399,7 +399,8 @@ const handlePromoSignup = async (e: React.FormEvent) => {
 )}
 
 {/* HERO */}
-<section className="relative pt-56 pb-24 px-6 bg-[#081526] overflow-hidden">
+<section className="relative pt-44 pb-24 px-6 bg-[#081526] overflow-hidden">
+
 {/* Free Shipping Banner */}
 <div className="relative z-20 -mt-20 mb-4 rounded-full border border-blue-400/30 bg-blue-500/10 px-6 py-4 text-center backdrop-blur-sm max-w-5xl mx-auto">
   <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">

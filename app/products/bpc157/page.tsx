@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ShoppingCart,
   FlaskConical,
@@ -12,29 +12,75 @@ import {
 export default function BPC157Page() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [inventory, setInventory] = useState<number | null>(null);
 
   const product = {
     id: "bpc157",
     name: "BPC-157",
     price: 50,
-    quantity,
     image: "/images/bpc157blue.png",
   };
 
+  const isOutOfStock = inventory !== null && inventory <= 0;
+  const isLimitedStock = inventory !== null && inventory > 0 && inventory <= 5;
+
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        const response = await fetch("/api/products");
+        const data = await response.json();
+
+        if (!data.success) return;
+
+        const bpc157 = data.products.find(
+          (product: any) =>
+            product.slug === "bpc157" ||
+            product.slug === "bpc-157" ||
+            product.slug === "bpc157-10mg" ||
+            product.slug === "bpc-157-10mg" ||
+            product.id === "bpc157" ||
+            product.id === "bpc-157" ||
+            product.name?.toLowerCase().includes("bpc")
+        );
+
+        if (bpc157) {
+          setInventory(bpc157.inventory ?? 0);
+        } else {
+          setInventory(null);
+        }
+      } catch (error) {
+        console.error("Failed to fetch inventory:", error);
+        setInventory(null);
+      }
+    };
+
+    fetchInventory();
+  }, []);
+
   const addToCart = () => {
+    if (isOutOfStock) return;
+
+    const cartProduct = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity,
+      image: product.image,
+    };
+
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
 
     const existingProduct = existingCart.find(
-      (item: any) => item.id === product.id
+      (item: any) => item.id === cartProduct.id
     );
 
     const updatedCart = existingProduct
       ? existingCart.map((item: any) =>
-          item.id === product.id
+          item.id === cartProduct.id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         )
-      : [...existingCart, product];
+      : [...existingCart, cartProduct];
 
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     window.dispatchEvent(new Event("cartUpdated"));
@@ -88,15 +134,15 @@ export default function BPC157Page() {
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
-<div className="flex items-center justify-center">
-  <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
-    <img
-      src={product.image}
-      alt={product.name}
-      className="w-full h-full object-cover"
-    />
-  </div>
-</div>
+            <div className="flex items-center justify-center">
+              <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
               <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
@@ -112,9 +158,23 @@ export default function BPC157Page() {
                 laboratory research applications and analytical use.
               </p>
 
-              <p className="text-5xl font-black text-white mb-8">
+              <p className="text-5xl font-black text-white mb-3">
                 ${product.price}.00
               </p>
+
+              {isLimitedStock && (
+                <div className="font-semibold mb-8 text-yellow-300">
+                  Limited Stock
+                </div>
+              )}
+
+              {isOutOfStock && (
+                <div className="font-semibold mb-8 text-red-300">
+                  Out of Stock
+                </div>
+              )}
+
+              {!isLimitedStock && !isOutOfStock && <div className="mb-8" />}
 
               <div className="h-px bg-white/10 mb-8" />
 
@@ -151,10 +211,15 @@ export default function BPC157Page() {
 
                     <button
                       onClick={() => {
-                        setQuantity((prev) => prev + 1);
+                        setQuantity((prev) =>
+                          inventory === null
+                            ? prev + 1
+                            : Math.min(inventory, prev + 1)
+                        );
                         setAdded(false);
                       }}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08]"
+                      disabled={isOutOfStock}
+                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08] disabled:opacity-40"
                     >
                       +
                     </button>
@@ -163,37 +228,44 @@ export default function BPC157Page() {
               </div>
 
               <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
-  <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2">
+                  <svg
+                    className="w-5 h-5 text-blue-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7m16 0H4m16 0V8a1 1 0 00-1-1h-3.5M4 12V8a1 1 0 011-1h3.5m0 0a1.5 1.5 0 113 0m-3 0h3m0 0a1.5 1.5 0 113 0"
+                    />
+                  </svg>
 
-    <svg
-      className="w-5 h-5 text-blue-300"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7m16 0H4m16 0V8a1 1 0 00-1-1h-3.5M4 12V8a1 1 0 011-1h3.5m0 0a1.5 1.5 0 113 0m-3 0h3m0 0a1.5 1.5 0 113 0"
-      />
-    </svg>
-
-    <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
-      FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
-    </p>
-
-  </div>
-</div>
+                  <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
+                    FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
+                  </p>
+                </div>
+              </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                <button
-                  onClick={addToCart}
-                  className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
-                >
-                  <ShoppingCart size={22} />
-                  {added ? "Added To Cart" : "Add To Cart"}
-                </button>
+                {isOutOfStock ? (
+                  <button
+                    disabled
+                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
+                  >
+                    Out of Stock
+                  </button>
+                ) : (
+                  <button
+                    onClick={addToCart}
+                    className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
+                  >
+                    <ShoppingCart size={22} />
+                    {added ? "Added To Cart" : "Add To Cart"}
+                  </button>
+                )}
 
                 <a
                   href="/cart"
@@ -216,106 +288,80 @@ export default function BPC157Page() {
                   View COA
                 </a>
               </div>
-
             </div>
           </div>
         </div>
       </section>
 
       {/* COA Summary */}
-<section className="px-6 md:px-10 pb-16">
-  <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
+      <section className="px-6 md:px-10 pb-16">
+        <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
+          <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
+            <div>
+              <p className="uppercase tracking-[0.35em] text-blue-300 text-xs mb-2">
+                Freedom Diagnostics
+              </p>
 
-    <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
+              <h3 className="text-2xl font-black text-white mb-5">
+                Latest Certificate of Analysis
+              </h3>
 
-      <div>
+              <div className="flex flex-wrap gap-3">
+                <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
+                  <span className="text-green-400 font-semibold">
+                    ✓ Identity Confirmed
+                  </span>
+                </div>
 
-        <p className="uppercase tracking-[0.35em] text-blue-300 text-xs mb-2">
-          Freedom Diagnostics
-        </p>
+                <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+                  <span className="text-[#A5D8FF] font-semibold">
+                    99.33% Purity
+                  </span>
+                </div>
 
-        <h3 className="text-2xl font-black text-white mb-5">
-          Latest Certificate of Analysis
-        </h3>
+                <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+                  <span className="text-[#A5D8FF] font-semibold">
+                    11.58mg Content
+                  </span>
+                </div>
 
-        <div className="flex flex-wrap gap-3">
+                <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
+                  <span className="text-white/70">
+                    Lot: Black Cap-1
+                  </span>
+                </div>
+              </div>
+            </div>
 
-          <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
-            <span className="text-green-400 font-semibold">
-              ✓ Identity Confirmed
-            </span>
+            <div className="flex flex-col items-center md:items-end">
+              <div className="text-5xl font-black text-[#A5D8FF]">
+                99.33%
+              </div>
+
+              <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
+                Purity
+              </div>
+
+              <a
+                href="/images/coas/bpc-157-10mg-black-cap-coa.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
+              >
+                View Full COA
+              </a>
+            </div>
           </div>
-
-          <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
-            <span className="text-[#A5D8FF] font-semibold">
-              99.33% Purity
-            </span>
-          </div>
-
-          <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
-            <span className="text-[#A5D8FF] font-semibold">
-              11.58mg Content
-            </span>
-          </div>
-
-          <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
-            <span className="text-white/70">
-              Lot: Black Cap-1
-            </span>
-          </div>
-
         </div>
-
-      </div>
-
-      <div className="flex flex-col items-center md:items-end">
-
-        <div className="text-5xl font-black text-[#A5D8FF]">
-          99.33%
-        </div>
-
-        <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
-          Purity
-        </div>
-
-        <a
-href="/images/coas/bpc-157-10mg-black-cap-coa.pdf"          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
-        >
-          View Full COA
-        </a>
-
-      </div>
-
-    </div>
-
-  </div>
-</section>
+      </section>
 
       <section className="px-6 md:px-10 pb-10">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            [
-              FlaskConical,
-              "Research Use Only",
-              "Strictly for laboratory research.",
-            ],
-            [
-              ShieldCheck,
-              "Third-Party Tested",
-              "Independent lab verified when available.",
-            ],
-            [
-              ClipboardCheck,
-              "Batch Documented",
-              "Documentation available for verified lots.",
-            ],
-            [
-              ShieldCheck,
-              "Quality Target",
-              "99%+ purity target.",
-            ],
+            [FlaskConical, "Research Use Only", "Strictly for laboratory research."],
+            [ShieldCheck, "Third-Party Tested", "Independent lab verified when available."],
+            [ClipboardCheck, "Batch Documented", "Documentation available for verified lots."],
+            [ShieldCheck, "Quality Target", "99%+ purity target."],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
               <Icon className="text-blue-300" size={34} />
@@ -325,9 +371,7 @@ href="/images/coas/bpc-157-10mg-black-cap-coa.pdf"          target="_blank"
                   {title}
                 </h3>
 
-                <p className="text-white/50 text-sm mt-1">
-                  {text}
-                </p>
+                <p className="text-white/50 text-sm mt-1">{text}</p>
               </div>
             </div>
           ))}
@@ -352,22 +396,10 @@ href="/images/coas/bpc-157-10mg-black-cap-coa.pdf"          target="_blank"
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
             {[
-              [
-                "Tissue Research",
-                "Studied in models involving cellular repair and response pathways.",
-              ],
-              [
-                "GI Research Models",
-                "Evaluated in laboratory investigations involving mucosal integrity.",
-              ],
-              [
-                "Vascular Pathways",
-                "Researched in relation to angiogenesis and nitric oxide signaling.",
-              ],
-              [
-  "Storage",
-  "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
-],
+              ["Tissue Research", "Studied in models involving cellular repair and response pathways."],
+              ["GI Research Models", "Evaluated in laboratory investigations involving mucosal integrity."],
+              ["Vascular Pathways", "Researched in relation to angiogenesis and nitric oxide signaling."],
+              ["Storage", "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use."],
             ].map(([title, text]) => (
               <div
                 key={title}
@@ -445,35 +477,10 @@ href="/images/coas/bpc-157-10mg-black-cap-coa.pdf"          target="_blank"
           </div>
 
           {[
-            [
-              "Shop",
-              [
-                ["All Products", "/products"],
-                ["Certificates of Analysis", "/coas"],
-              ],
-            ],
-            [
-              "Resources",
-              [
-                ["Research Library", "/peptide-info"],
-                ["FAQ", "/faq"],
-              ],
-            ],
-            [
-              "Support",
-              [
-                ["Contact Us", "/contact"],
-                ["Shipping Info", "/shipping"],
-                ["Returns & Refunds", "/refunds"],
-              ],
-            ],
-            [
-              "Legal",
-              [
-                ["Privacy Policy", "/privacy"],
-                ["Terms of Service", "/terms"],
-              ],
-            ],
+            ["Shop", [["All Products", "/products"], ["Certificates of Analysis", "/coas"]]],
+            ["Resources", [["Research Library", "/peptide-info"], ["FAQ", "/faq"]]],
+            ["Support", [["Contact Us", "/contact"], ["Shipping Info", "/shipping"], ["Returns & Refunds", "/refunds"]]],
+            ["Legal", [["Privacy Policy", "/privacy"], ["Terms of Service", "/terms"]]],
           ].map(([title, links]: any) => (
             <div key={title}>
               <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">

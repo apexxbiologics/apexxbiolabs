@@ -126,9 +126,13 @@ export default function CampaignsPage() {
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder={"Example:\nUse code FREEDOM10 for 10% off sitewide.\nBuy any 4 vials and receive complimentary Bac Water."}
-              rows={8}
-              className="admin-input rounded-[28px]"
+              placeholder={`Example:
+
+Use code FREEDOM10 for 10% off sitewide.
+
+Buy any 4 vials and receive complimentary Bac Water.`}
+              rows={10}
+              className="admin-textarea"
             />
           </div>
 
@@ -188,14 +192,32 @@ export default function CampaignsPage() {
           padding: 1rem 1.25rem;
           color: white;
           outline: none;
+          transition: all 0.2s ease;
         }
 
-        .admin-input::placeholder {
+        .admin-textarea {
+          width: 100%;
+          min-height: 260px;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 24px;
+          padding: 1.5rem;
+          color: white;
+          outline: none;
+          resize: vertical;
+          line-height: 1.7;
+          transition: all 0.2s ease;
+        }
+
+        .admin-input::placeholder,
+        .admin-textarea::placeholder {
           color: rgba(255, 255, 255, 0.35);
         }
 
-        .admin-input:focus {
+        .admin-input:focus,
+        .admin-textarea:focus {
           border-color: rgba(96, 165, 250, 0.6);
+          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
       `}</style>
     </main>

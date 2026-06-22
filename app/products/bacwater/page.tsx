@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ShoppingCart,
   FlaskConical,
@@ -12,29 +12,75 @@ import {
 export default function BacWaterPage() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [inventory, setInventory] = useState<number | null>(null);
 
   const product = {
     id: "bacwater",
     name: "Bacteriostatic Water",
     price: 20,
-    quantity,
     image: "/images/bacwaterblue.png",
   };
 
+  const isOutOfStock = inventory !== null && inventory <= 0;
+  const isLimitedStock = inventory !== null && inventory > 0 && inventory <= 5;
+
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        const response = await fetch("/api/products");
+        const data = await response.json();
+
+        if (!data.success) return;
+
+        const bacwater = data.products.find(
+          (product: any) =>
+            product.slug === "bacwater" ||
+            product.slug === "bac-water" ||
+            product.slug === "bacteriostatic-water" ||
+            product.id === "bacwater" ||
+            product.id === "bac-water" ||
+            product.name?.toLowerCase().includes("bacteriostatic") ||
+            product.name?.toLowerCase().includes("bac water")
+        );
+
+        if (bacwater) {
+          setInventory(bacwater.inventory ?? 0);
+        } else {
+          setInventory(null);
+        }
+      } catch (error) {
+        console.error("Failed to fetch inventory:", error);
+        setInventory(null);
+      }
+    };
+
+    fetchInventory();
+  }, []);
+
   const addToCart = () => {
+    if (isOutOfStock) return;
+
+    const cartProduct = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity,
+      image: product.image,
+    };
+
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
 
     const existingProduct = existingCart.find(
-      (item: any) => item.id === product.id
+      (item: any) => item.id === cartProduct.id
     );
 
     const updatedCart = existingProduct
       ? existingCart.map((item: any) =>
-          item.id === product.id
+          item.id === cartProduct.id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         )
-      : [...existingCart, product];
+      : [...existingCart, cartProduct];
 
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     window.dispatchEvent(new Event("cartUpdated"));
@@ -46,17 +92,38 @@ export default function BacWaterPage() {
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#081526]/95 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 md:px-10 py-5 flex items-center justify-between">
           <a href="/">
-            <img src="/images/logo.png" alt="Apexx Biolabs" className="h-12 w-auto" />
+            <img
+              src="/images/logo.png"
+              alt="Apexx Biolabs"
+              className="h-12 w-auto"
+            />
           </a>
 
           <nav className="hidden md:flex items-center gap-10 uppercase tracking-widest text-sm text-white">
-            <a href="/" className="hover:text-blue-300 transition-all">Home</a>
-            <a href="/products" className="text-blue-300 border-b border-blue-300 pb-2">Products</a>
-            <a href="/coas" className="hover:text-blue-300 transition-all">COAs</a>
-            <a href="/contact" className="hover:text-blue-300 transition-all">Contact</a>
+            <a href="/" className="hover:text-blue-300 transition-all">
+              Home
+            </a>
+
+            <a
+              href="/products"
+              className="text-blue-300 border-b border-blue-300 pb-2"
+            >
+              Products
+            </a>
+
+            <a href="/coas" className="hover:text-blue-300 transition-all">
+              COAs
+            </a>
+
+            <a href="/contact" className="hover:text-blue-300 transition-all">
+              Contact
+            </a>
           </nav>
 
-          <a href="/cart" className="relative text-white hover:text-blue-300 transition-all">
+          <a
+            href="/cart"
+            className="relative text-white hover:text-blue-300 transition-all"
+          >
             <ShoppingCart size={30} />
           </a>
         </div>
@@ -69,7 +136,11 @@ export default function BacWaterPage() {
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
             <div className="flex items-center justify-center">
               <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
-                <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
 
@@ -83,12 +154,28 @@ export default function BacWaterPage() {
               </h1>
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                30mL bacteriostatic reconstitution solution intended strictly for laboratory research applications and analytical preparation use.
+                30mL bacteriostatic reconstitution solution intended strictly
+                for laboratory research applications and analytical preparation
+                use.
               </p>
 
-              <p className="text-5xl font-black text-white mb-8">
+              <p className="text-5xl font-black text-white mb-3">
                 ${product.price}.00
               </p>
+
+              {isLimitedStock && (
+                <div className="font-semibold mb-8 text-yellow-300">
+                  Limited Stock
+                </div>
+              )}
+
+              {isOutOfStock && (
+                <div className="font-semibold mb-8 text-red-300">
+                  Out of Stock
+                </div>
+              )}
+
+              {!isLimitedStock && !isOutOfStock && <div className="mb-8" />}
 
               <div className="h-px bg-white/10 mb-8" />
 
@@ -125,10 +212,15 @@ export default function BacWaterPage() {
 
                     <button
                       onClick={() => {
-                        setQuantity((prev) => prev + 1);
+                        setQuantity((prev) =>
+                          inventory === null
+                            ? prev + 1
+                            : Math.min(inventory, prev + 1)
+                        );
                         setAdded(false);
                       }}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08]"
+                      disabled={isOutOfStock}
+                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08] disabled:opacity-40"
                     >
                       +
                     </button>
@@ -137,19 +229,34 @@ export default function BacWaterPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <button
-                  onClick={addToCart}
-                  className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
-                >
-                  <ShoppingCart size={22} />
-                  {added ? "Added To Cart" : "Add To Cart"}
-                </button>
+                {isOutOfStock ? (
+                  <button
+                    disabled
+                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
+                  >
+                    Out of Stock
+                  </button>
+                ) : (
+                  <button
+                    onClick={addToCart}
+                    className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
+                  >
+                    <ShoppingCart size={22} />
+                    {added ? "Added To Cart" : "Add To Cart"}
+                  </button>
+                )}
 
-                <a href="/cart" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
+                <a
+                  href="/cart"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
                   View Cart
                 </a>
 
-                <a href="/products" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
+                <a
+                  href="/products"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
                   Continue Shopping
                 </a>
 
@@ -167,7 +274,6 @@ export default function BacWaterPage() {
         </div>
       </section>
 
-      {/* COA Summary */}
       <section className="px-6 md:px-10 pb-16">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
           <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
@@ -208,9 +314,7 @@ export default function BacWaterPage() {
             </div>
 
             <div className="flex flex-col items-center md:items-end">
-              <div className="text-5xl font-black text-[#A5D8FF]">
-                Pass
-              </div>
+              <div className="text-5xl font-black text-[#A5D8FF]">Pass</div>
 
               <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
                 QC Status
@@ -239,10 +343,12 @@ export default function BacWaterPage() {
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
               <Icon className="text-blue-300" size={34} />
+
               <div>
                 <h3 className="text-white uppercase tracking-widest font-bold text-sm">
                   {title}
                 </h3>
+
                 <p className="text-white/50 text-sm mt-1">{text}</p>
               </div>
             </div>
@@ -261,7 +367,9 @@ export default function BacWaterPage() {
           </h2>
 
           <p className="text-white/70 text-lg leading-relaxed max-w-4xl mb-8">
-            Bacteriostatic water is used in laboratory research workflows as a sterile reconstitution solution for research preparation and analytical handling.
+            Bacteriostatic water is used in laboratory research workflows as a
+            sterile reconstitution solution for research preparation and
+            analytical handling.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
@@ -271,7 +379,10 @@ export default function BacWaterPage() {
               ["Benzyl Alcohol", "0.85% benzyl alcohol content verified by testing."],
               ["Storage", "Store as directed on product label. Keep sealed and protected from contamination."],
             ].map(([title, text]) => (
-              <div key={title} className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all">
+              <div
+                key={title}
+                className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
+              >
                 <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
                 <p className="text-white/60 text-sm leading-relaxed">{text}</p>
               </div>
@@ -297,15 +408,71 @@ export default function BacWaterPage() {
             <h3 className="text-blue-300 font-bold uppercase tracking-[0.25em] text-sm mb-4">
               {section.title}
             </h3>
-            <p className="text-white/60 text-sm leading-relaxed">{section.text}</p>
+
+            <p className="text-white/60 text-sm leading-relaxed">
+              {section.text}
+            </p>
           </div>
         </section>
       ))}
 
       <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 mb-14">
+          <div>
+            <img
+              src="/images/logo.png"
+              alt="Apexx Biolabs"
+              className="h-12 w-auto mb-5"
+            />
+
+            <p className="text-white/60 text-sm leading-relaxed">
+              Premium research-grade peptides built on science, quality, and transparency.
+            </p>
+
+            <div className="flex gap-3 mt-6">
+              <a
+                href="https://www.tiktok.com/@apexx.nyc"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/[0.07] transition-all"
+              >
+                <span className="text-sm font-bold">♪</span>
+              </a>
+
+              <a
+                href="mailto:support@apexxbiolabs.com"
+                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/[0.07] transition-all"
+              >
+                <Mail size={18} />
+              </a>
+            </div>
+          </div>
+
+          {[
+            ["Shop", [["All Products", "/products"], ["Certificates of Analysis", "/coas"]]],
+            ["Resources", [["Research Library", "/peptide-info"], ["FAQ", "/faq"]]],
+            ["Support", [["Contact Us", "/contact"], ["Shipping Info", "/shipping"], ["Returns & Refunds", "/refunds"]]],
+            ["Legal", [["Privacy Policy", "/privacy"], ["Terms of Service", "/terms"]]],
+          ].map(([title, links]: any) => (
+            <div key={title}>
+              <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
+                {title}
+              </h4>
+
+              <div className="space-y-3 text-white/50">
+                {links.map(([label, href]: any) => (
+                  <a key={label} href={href} className="block hover:text-blue-300">
+                    {label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
         <div className="max-w-7xl mx-auto border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between gap-4 text-white/40 text-sm">
           <p>© 2026 Apexx Biolabs. All rights reserved.</p>
-          <p>SSL Secured · Research Use Only</p>
+          <p>SSL Secured · 99%+ Purity · Research Use Only</p>
         </div>
       </footer>
     </main>

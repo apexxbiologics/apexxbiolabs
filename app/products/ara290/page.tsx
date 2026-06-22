@@ -348,8 +348,7 @@ export default function ARA290Page() {
             />
 
             <p className="text-white/60 text-sm leading-relaxed">
-              Premium research-grade peptides built on science, quality, and
-              transparency.
+              Premium research-grade peptides built on science, quality, and transparency.
             </p>
 
             <div className="flex gap-3 mt-6">
@@ -370,6 +369,32 @@ export default function ARA290Page() {
               </a>
             </div>
           </div>
+
+          {[
+            ["Shop", [["All Products", "/products"], ["Certificates of Analysis", "/coas"]]],
+            ["Resources", [["Research Library", "/peptide-info"], ["FAQ", "/faq"]]],
+            ["Support", [["Contact Us", "/contact"], ["Shipping Info", "/shipping"], ["Returns & Refunds", "/refunds"]]],
+            ["Legal", [["Privacy Policy", "/privacy"], ["Terms of Service", "/terms"]]],
+          ].map(([title, links]: any) => (
+            <div key={title}>
+              <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
+                {title}
+              </h4>
+
+              <div className="space-y-3 text-white/50">
+                {links.map(([label, href]: any) => (
+                  <a key={label} href={href} className="block hover:text-blue-300">
+                    {label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="max-w-7xl mx-auto border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between gap-4 text-white/40 text-sm">
+          <p>© 2026 Apexx Biolabs. All rights reserved.</p>
+          <p>SSL Secured · 99%+ Purity · Research Use Only</p>
         </div>
       </footer>
     </main>

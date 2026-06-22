@@ -382,7 +382,7 @@ if (accepted === null) {
 {/* Promo Banners */}
 <div className="relative z-20 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
 
-  <div className="rounded-full border border-blue-400/40 bg-[#163B68] px-8 py-5 text-center">
+<div className="rounded-full border border-blue-400/30 bg-blue-500/10 backdrop-blur-sm px-8 py-5 text-center">
     <p className="text-white font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
       FREEDOM10
     </p>
@@ -391,7 +391,7 @@ if (accepted === null) {
     </p>
   </div>
 
-  <div className="rounded-full border border-blue-400/40 bg-[#163B68] px-8 py-5 text-center">
+  <div className="rounded-full border border-blue-400/30 bg-blue-500/10 backdrop-blur-sm px-8 py-5 text-center">
     <p className="text-white font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
       FREE BAC WATER
     </p>

@@ -23,9 +23,22 @@ export async function POST(request: Request) {
       );
     }
 
+    const storedUsername = process.env.MASTER_ADMIN_USERNAME;
+    const storedPassword = process.env.MASTER_ADMIN_PASSWORD;
+
+    if (!storedUsername || !storedPassword) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Master admin credentials are not configured.",
+        },
+        { status: 500 }
+      );
+    }
+
     const isValid =
-      username === process.env.MASTER_ADMIN_USERNAME &&
-      password === process.env.MASTER_ADMIN_PASSWORD;
+      username?.trim() === storedUsername.trim() &&
+      password === storedPassword;
 
     if (!isValid) {
       const nextAttempts = currentAttempts + 1;
@@ -55,7 +68,7 @@ export async function POST(request: Request) {
           success: false,
           locked: false,
           attemptsLeft: 5 - nextAttempts,
-          error: "Invalid username or password.",
+          error: `Invalid username or password. ${5 - nextAttempts} attempts left.`,
         },
         { status: 401 }
       );
@@ -63,11 +76,13 @@ export async function POST(request: Request) {
 
     failedAttempts.delete(ip);
 
-    const response = NextResponse.json({ success: true });
+    const response = NextResponse.json({
+      success: true,
+    });
 
     response.cookies.set("apexx_master_admin_auth", "true", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 8,

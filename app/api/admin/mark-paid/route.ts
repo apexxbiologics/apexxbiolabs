@@ -14,8 +14,32 @@ export async function POST(request: Request) {
     .select()
     .single();
 
-  if (error) {
+  if (error || !order) {
     return NextResponse.json({ success: false, error }, { status: 500 });
+  }
+
+  const orderCart = order.cart || order.items || [];
+
+  if (Array.isArray(orderCart)) {
+    for (const item of orderCart) {
+      const { data: product } = await supabase
+        .from("products")
+        .select("inventory")
+        .eq("slug", item.id)
+        .single();
+
+      if (!product) continue;
+
+      const newInventory = Math.max(
+        0,
+        Number(product.inventory || 0) - Number(item.quantity || 0)
+      );
+
+      await supabase
+        .from("products")
+        .update({ inventory: newInventory })
+        .eq("slug", item.id);
+    }
   }
 
   await resend.emails.send({

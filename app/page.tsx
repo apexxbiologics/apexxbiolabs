@@ -1049,7 +1049,7 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
         <img
           src="/images/logo.png"
           alt="Apexx Biolabs"
-          className="h-12 w-auto mb-6"
+          className="h-20 md:h-30 w-auto mb-6"
         />
 
         <p className="text-white/70 leading-relaxed text-sm">

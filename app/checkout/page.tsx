@@ -63,7 +63,7 @@ const discount =
     ? subtotal * 0.1
     : 0;
 
-const total = subtotal - discount + shipping;
+const total = Number((subtotal - discount + shipping).toFixed(2));
 
 const vialCount = cart.reduce((total, item) => {
   const isBacWater = item.name.toLowerCase().includes("bac");
@@ -557,21 +557,26 @@ setShowSuccess(true);
                   ))}
                 </div>
 
-                <div className="rounded-[2rem] border border-blue-400/20 bg-blue-500/10 p-6 mb-6">
-                  <p className="text-blue-100 font-bold uppercase tracking-widest mb-3 text-sm">
-                    Payment Amount
-                  </p>
+<div className="rounded-[2rem] border border-blue-400/20 bg-blue-500/10 p-6 mb-6">
+  <p className="text-blue-100 font-bold uppercase tracking-widest mb-3 text-sm">
+    Payment Amount
+  </p>
 
-                  <p className="text-4xl font-black text-white mb-2">
-                    ${total.toFixed(2)}
-                  </p>
+  <p className="text-4xl font-black text-white mb-2">
+    ${total.toFixed(2)}
+  </p>
 
-                  <p className="text-blue-100/70 text-sm">
-                    Please send exactly this amount via{" "}
-                    {paymentMethod === "venmo" ? "Venmo" : "Zelle"} after your
-                    order is submitted.
-                  </p>
-                </div>
+  {discount > 0 && (
+    <p className="text-green-300 text-sm font-semibold mb-2">
+      FREEDOM10 applied — ${discount.toFixed(2)} off
+    </p>
+  )}
+
+  <p className="text-blue-100/70 text-sm">
+    Please send exactly ${total.toFixed(2)} via{" "}
+    {paymentMethod === "venmo" ? "Venmo" : "Zelle"} after your order is submitted.
+  </p>
+</div>
 
                 <div className="rounded-[1.5rem] border border-white/10 bg-[#081526]/50 p-6">
                   <h3 className="text-blue-300 font-bold uppercase tracking-widest text-sm mb-4">

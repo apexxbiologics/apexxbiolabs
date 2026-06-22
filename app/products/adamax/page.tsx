@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ShoppingCart,
   FlaskConical,
@@ -12,29 +12,62 @@ import {
 export default function AdamaxPage() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [inventory, setInventory] = useState(0);
 
   const product = {
-    id: "adamax",
+    id: "adamax-10mg",
     name: "ADAMAX",
     price: 75,
-    quantity,
     image: "/images/adamaxblue.PNG",
   };
 
+  const inStock = inventory > 0;
+
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        const response = await fetch("/api/products");
+        const data = await response.json();
+
+        if (!data.success) return;
+
+        const adamax = data.products.find(
+          (product: any) => product.slug === "adamax"
+        );
+
+        setInventory(adamax?.inventory ?? 0);
+      } catch (error) {
+        console.error("Failed to fetch inventory:", error);
+      }
+    };
+
+    fetchInventory();
+  }, []);
+
   const addToCart = () => {
+    if (!inStock) return;
+
+    const cartProduct = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity,
+      image: product.image,
+    };
+
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
 
     const existingProduct = existingCart.find(
-      (item: any) => item.id === product.id
+      (item: any) => item.id === cartProduct.id
     );
 
     const updatedCart = existingProduct
       ? existingCart.map((item: any) =>
-          item.id === product.id
+          item.id === cartProduct.id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         )
-      : [...existingCart, product];
+      : [...existingCart, cartProduct];
 
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     window.dispatchEvent(new Event("cartUpdated"));
@@ -88,16 +121,15 @@ export default function AdamaxPage() {
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
-<div className="flex items-center justify-center">
-  <div className="w-full max-w-[520px] h-[520px] rounded-[40px] border border-white/10 bg-white/[0.03] backdrop-blur-sm flex items-center justify-center overflow-hidden">
-    <img
-      src={product.image}
-      alt={product.name}
-      className="w-full h-full object-cover rounded-[32px]"
-    />
-  </div>
-</div>
-
+            <div className="flex items-center justify-center">
+              <div className="w-full max-w-[520px] h-[520px] rounded-[40px] border border-white/10 bg-white/[0.03] backdrop-blur-sm flex items-center justify-center overflow-hidden">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover rounded-[32px]"
+                />
+              </div>
+            </div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
               <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-4">
@@ -113,9 +145,21 @@ export default function AdamaxPage() {
                 laboratory research applications and analytical use.
               </p>
 
-              <p className="text-5xl font-black text-white mb-8">
+              <p className="text-5xl font-black text-white mb-3">
                 ${product.price}.00
               </p>
+
+              {inventory <= 5 && (
+                <div
+                  className={`font-semibold mb-8 ${
+                    inventory <= 0 ? "text-red-300" : "text-yellow-300"
+                  }`}
+                >
+                  {inventory <= 0 ? "Out of Stock" : "Limited Stock"}
+                </div>
+              )}
+
+              {inventory > 5 && <div className="mb-8" />}
 
               <div className="h-px bg-white/10 mb-8" />
 
@@ -152,10 +196,13 @@ export default function AdamaxPage() {
 
                     <button
                       onClick={() => {
-                        setQuantity((prev) => prev + 1);
+                        setQuantity((prev) =>
+                          Math.min(inventory || 1, prev + 1)
+                        );
                         setAdded(false);
                       }}
-                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08]"
+                      disabled={!inStock}
+                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08] disabled:opacity-40"
                     >
                       +
                     </button>
@@ -164,37 +211,44 @@ export default function AdamaxPage() {
               </div>
 
               <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
-  <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2">
+                  <svg
+                    className="w-5 h-5 text-blue-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7m16 0H4m16 0V8a1 1 0 00-1-1h-3.5M4 12V8a1 1 0 011-1h3.5m0 0a1.5 1.5 0 113 0m-3 0h3m0 0a1.5 1.5 0 113 0"
+                    />
+                  </svg>
 
-    <svg
-      className="w-5 h-5 text-blue-300"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7m16 0H4m16 0V8a1 1 0 00-1-1h-3.5M4 12V8a1 1 0 011-1h3.5m0 0a1.5 1.5 0 113 0m-3 0h3m0 0a1.5 1.5 0 113 0"
-      />
-    </svg>
-
-    <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
-      FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
-    </p>
-
-  </div>
-</div>
+                  <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
+                    FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
+                  </p>
+                </div>
+              </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                <button
-                  onClick={addToCart}
-                  className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
-                >
-                  <ShoppingCart size={22} />
-                  {added ? "Added To Cart" : "Add To Cart"}
-                </button>
+                {inStock ? (
+                  <button
+                    onClick={addToCart}
+                    className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
+                  >
+                    <ShoppingCart size={22} />
+                    {added ? "Added To Cart" : "Add To Cart"}
+                  </button>
+                ) : (
+                  <button
+                    disabled
+                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
+                  >
+                    Out of Stock
+                  </button>
+                )}
 
                 <a
                   href="/cart"

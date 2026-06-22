@@ -289,27 +289,6 @@ export default function GHKCUPage() {
                 </a>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                  ["Size", "100mg"],
-                  ["Form", "Lyophilized"],
-                  ["Purity", "99%+"],
-                  ["Storage", "2–8°C"],
-                ].map(([label, value]) => (
-                  <div
-                    key={label}
-                    className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-5"
-                  >
-                    <p className="uppercase tracking-widest text-white/40 text-xs mb-2">
-                      {label}
-                    </p>
-
-                    <p className="text-white text-base font-semibold">
-                      {value}
-                    </p>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>

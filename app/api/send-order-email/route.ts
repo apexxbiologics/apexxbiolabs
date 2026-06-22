@@ -22,6 +22,7 @@ const {
   shipping,
   total,
   freeBacWater,
+  marketingConsent,
 } = body;
 
     const orderNumber = `APX-${Date.now()}`;
@@ -299,39 +300,59 @@ ${freeBacWater ? `
 
     console.log("Admin email result:", adminEmailResult);
 
-        const { error: orderInsertError } = await supabase.from("orders").insert([
+const { error: orderInsertError } = await supabase.from("orders").insert([
+  {
+    order_number: orderNumber,
+    customer_email: customerEmail,
+    first_name: firstName,
+    last_name: lastName,
+    address,
+    city,
+    state,
+    zip_code: zipCode,
+    payment_method: paymentMethod,
+    cart,
+    subtotal,
+    shipping,
+    total,
+    status: "awaiting_payment",
+  },
+]);
+
+if (orderInsertError) {
+  console.error("Supabase order insert error:", orderInsertError);
+}
+
+if (marketingConsent) {
+  const { error: subscriberError } = await supabase
+    .from("promo_subscribers")
+    .upsert(
       {
-        order_number: orderNumber,
-        customer_email: customerEmail,
+        email: customerEmail,
         first_name: firstName,
         last_name: lastName,
-        address,
-        city,
-        state,
-        zip_code: zipCode,
-        payment_method: paymentMethod,
-        cart,
-        subtotal,
-        shipping,
-        total,
-        status: "awaiting_payment",
+        source: "checkout",
+        marketing_consent: true,
       },
-    ]);
-
-    if (orderInsertError) {
-      console.error("Supabase order insert error:", orderInsertError);
-    }
-
-    return NextResponse.json({
-      success: true,
-      orderNumber,
-    });
-  } catch (error) {
-    console.error("Order email error:", error);
-
-    return NextResponse.json(
-      { success: false, error: "Failed to send order email" },
-      { status: 500 }
+      {
+        onConflict: "email",
+      }
     );
+
+  if (subscriberError) {
+    console.error("Promo subscriber insert error:", subscriberError);
   }
+}
+
+return NextResponse.json({
+  success: true,
+  orderNumber,
+});
+} catch (error) {
+  console.error("Error processing order:", error);
+  return NextResponse.json(
+    { success: false, error: "Failed to process order" },
+    { status: 500 }
+  );
+}
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ShoppingCart,
   FlaskConical,
@@ -12,29 +12,77 @@ import {
 export default function CJCIPAPage() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [inventory, setInventory] = useState<number | null>(null);
 
   const product = {
     id: "cjcipa",
-    name: "CJC/IPA Without DAC",
-    price: 75,
-    quantity,
-    image: "/images/cjcipablue.png",
+    name: "CJC/IPA",
+    price: 60,
+    image: "/images/cjcblue.png",
   };
 
+  const isOutOfStock = inventory !== null && inventory <= 0;
+  const isLimitedStock = inventory !== null && inventory > 0 && inventory <= 5;
+
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        const response = await fetch("/api/products");
+        const data = await response.json();
+
+        if (!data.success) return;
+
+        const cjcipa = data.products.find(
+          (product: any) =>
+            product.slug === "cjcipa" ||
+            product.slug === "cjc-ipa" ||
+            product.slug === "cjc/ipa" ||
+            product.slug === "cjcipa-10mg" ||
+            product.slug === "cjc-ipa-10mg" ||
+            product.id === "cjcipa" ||
+            product.id === "cjc-ipa" ||
+            product.name?.toLowerCase().includes("cjc") ||
+            product.name?.toLowerCase().includes("ipa")
+        );
+
+        if (cjcipa) {
+          setInventory(cjcipa.inventory ?? 0);
+        } else {
+          setInventory(null);
+        }
+      } catch (error) {
+        console.error("Failed to fetch inventory:", error);
+        setInventory(null);
+      }
+    };
+
+    fetchInventory();
+  }, []);
+
   const addToCart = () => {
+    if (isOutOfStock) return;
+
+    const cartProduct = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity,
+      image: product.image,
+    };
+
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
 
     const existingProduct = existingCart.find(
-      (item: any) => item.id === product.id
+      (item: any) => item.id === cartProduct.id
     );
 
     const updatedCart = existingProduct
       ? existingCart.map((item: any) =>
-          item.id === product.id
+          item.id === cartProduct.id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         )
-      : [...existingCart, product];
+      : [...existingCart, cartProduct];
 
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     window.dispatchEvent(new Event("cartUpdated"));
@@ -46,17 +94,38 @@ export default function CJCIPAPage() {
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#081526]/95 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 md:px-10 py-5 flex items-center justify-between">
           <a href="/">
-            <img src="/images/logo.png" alt="Apexx Biolabs" className="h-12 w-auto" />
+            <img
+              src="/images/logo.png"
+              alt="Apexx Biolabs"
+              className="h-12 w-auto"
+            />
           </a>
 
           <nav className="hidden md:flex items-center gap-10 uppercase tracking-widest text-sm text-white">
-            <a href="/" className="hover:text-blue-300 transition-all">Home</a>
-            <a href="/products" className="text-blue-300 border-b border-blue-300 pb-2">Products</a>
-            <a href="/coas" className="hover:text-blue-300 transition-all">COAs</a>
-            <a href="/contact" className="hover:text-blue-300 transition-all">Contact</a>
+            <a href="/" className="hover:text-blue-300 transition-all">
+              Home
+            </a>
+
+            <a
+              href="/products"
+              className="text-blue-300 border-b border-blue-300 pb-2"
+            >
+              Products
+            </a>
+
+            <a href="/coas" className="hover:text-blue-300 transition-all">
+              COAs
+            </a>
+
+            <a href="/contact" className="hover:text-blue-300 transition-all">
+              Contact
+            </a>
           </nav>
 
-          <a href="/cart" className="relative text-white hover:text-blue-300 transition-all">
+          <a
+            href="/cart"
+            className="relative text-white hover:text-blue-300 transition-all"
+          >
             <ShoppingCart size={30} />
           </a>
         </div>
@@ -69,7 +138,11 @@ export default function CJCIPAPage() {
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
             <div className="flex items-center justify-center">
               <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
-                <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
 
@@ -83,12 +156,27 @@ export default function CJCIPAPage() {
               </h1>
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                High-purity CJC-1295 No DAC / Ipamorelin research blend intended strictly for laboratory research applications and analytical use.
+                High-purity CJC/IPA research peptide blend intended strictly for
+                laboratory research applications and analytical use.
               </p>
 
-              <p className="text-5xl font-black text-white mb-8">
+              <p className="text-5xl font-black text-white mb-3">
                 ${product.price}.00
               </p>
+
+              {isLimitedStock && (
+                <div className="font-semibold mb-8 text-yellow-300">
+                  Limited Stock
+                </div>
+              )}
+
+              {isOutOfStock && (
+                <div className="font-semibold mb-8 text-red-300">
+                  Out of Stock
+                </div>
+              )}
+
+              {!isLimitedStock && !isOutOfStock && <div className="mb-8" />}
 
               <div className="h-px bg-white/10 mb-8" />
 
@@ -99,7 +187,7 @@ export default function CJCIPAPage() {
                   </p>
 
                   <div className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-7 py-4 text-sm font-semibold uppercase tracking-widest text-white">
-                    5mg / 5mg
+                    10mg
                   </div>
                 </div>
 
@@ -125,10 +213,15 @@ export default function CJCIPAPage() {
 
                     <button
                       onClick={() => {
-                        setQuantity((prev) => prev + 1);
+                        setQuantity((prev) =>
+                          inventory === null
+                            ? prev + 1
+                            : Math.min(inventory, prev + 1)
+                        );
                         setAdded(false);
                       }}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08]"
+                      disabled={isOutOfStock}
+                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08] disabled:opacity-40"
                     >
                       +
                     </button>
@@ -137,117 +230,88 @@ export default function CJCIPAPage() {
               </div>
 
               <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
-  <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2">
+                  <svg
+                    className="w-5 h-5 text-blue-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7m16 0H4m16 0V8a1 1 0 00-1-1h-3.5M4 12V8a1 1 0 011-1h3.5m0 0a1.5 1.5 0 113 0m-3 0h3m0 0a1.5 1.5 0 113 0"
+                    />
+                  </svg>
 
-    <svg
-      className="w-5 h-5 text-blue-300"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7m16 0H4m16 0V8a1 1 0 00-1-1h-3.5M4 12V8a1 1 0 011-1h3.5m0 0a1.5 1.5 0 113 0m-3 0h3m0 0a1.5 1.5 0 113 0"
-      />
-    </svg>
+                  <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
+                    FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
+                  </p>
+                </div>
+              </div>
 
-    <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
-      FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
-    </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                {isOutOfStock ? (
+                  <button
+                    disabled
+                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
+                  >
+                    Out of Stock
+                  </button>
+                ) : (
+                  <button
+                    onClick={addToCart}
+                    className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
+                  >
+                    <ShoppingCart size={22} />
+                    {added ? "Added To Cart" : "Add To Cart"}
+                  </button>
+                )}
 
-  </div>
-</div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <button
-                  onClick={addToCart}
-                  className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
+                <a
+                  href="/cart"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
                 >
-                  <ShoppingCart size={22} />
-                  {added ? "Added To Cart" : "Add To Cart"}
-                </button>
-
-                <a href="/cart" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
                   View Cart
                 </a>
 
-                <a href="/products" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
+                <a
+                  href="/products"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
                   Continue Shopping
                 </a>
 
                 <a
-                  href="/images/coas/cjc-ipa-no-dac-coa.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/coas"
                   className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
                 >
                   View COA
                 </a>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* COA Summary */}
-      <section className="px-6 md:px-10 pb-16">
-        <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
-          <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
-            <div>
-              <p className="uppercase tracking-[0.35em] text-blue-300 text-xs mb-2">
-                Janoshik
-              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  ["Size", "10mg"],
+                  ["Form", "Lyophilized"],
+                  ["Purity", "99%+"],
+                  ["Storage", "2–8°C"],
+                ].map(([label, value]) => (
+                  <div
+                    key={label}
+                    className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-5"
+                  >
+                    <p className="uppercase tracking-widest text-white/40 text-xs mb-2">
+                      {label}
+                    </p>
 
-              <h3 className="text-2xl font-black text-white mb-5">
-                Latest Certificate of Analysis
-              </h3>
-
-              <div className="flex flex-wrap gap-3">
-                <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
-                  <span className="text-green-400 font-semibold">
-                    ✓ Content Verified
-                  </span>
-                </div>
-
-                <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
-                  <span className="text-[#A5D8FF] font-semibold">
-                    Ipamorelin: 5.25mg
-                  </span>
-                </div>
-
-                <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
-                  <span className="text-[#A5D8FF] font-semibold">
-                    CJC-1295: 5.20mg
-                  </span>
-                </div>
-
-                <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
-                  <span className="text-white/70">
-                    Batch: CJCIPA504292026-09
-                  </span>
-                </div>
+                    <p className="text-white text-base font-semibold">
+                      {value}
+                    </p>
+                  </div>
+                ))}
               </div>
-            </div>
-
-            <div className="flex flex-col items-center md:items-end">
-              <div className="text-4xl font-black text-[#A5D8FF]">
-                5mg / 5mg
-              </div>
-
-              <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
-                Verified Blend Content
-              </div>
-
-              <a
-                href="/images/coas/cjc-ipa-no-dac-coa.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
-              >
-                View Full COA
-              </a>
             </div>
           </div>
         </div>
@@ -259,14 +323,16 @@ export default function CJCIPAPage() {
             [FlaskConical, "Research Use Only", "Strictly for laboratory research."],
             [ShieldCheck, "Third-Party Tested", "Independent lab verified when available."],
             [ClipboardCheck, "Batch Documented", "Documentation available for verified lots."],
-            [ShieldCheck, "Quality Target", "Verified peptide content."],
+            [ShieldCheck, "Quality Target", "99%+ purity target."],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
               <Icon className="text-blue-300" size={34} />
+
               <div>
                 <h3 className="text-white uppercase tracking-widest font-bold text-sm">
                   {title}
                 </h3>
+
                 <p className="text-white/50 text-sm mt-1">{text}</p>
               </div>
             </div>
@@ -281,23 +347,28 @@ export default function CJCIPAPage() {
           </p>
 
           <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
-            CJC/Ipamorelin Research Overview
+            Growth Hormone Secretagogue Research Overview
           </h2>
 
           <p className="text-white/70 text-lg leading-relaxed max-w-4xl mb-8">
-            CJC-1295 No DAC and Ipamorelin are studied in laboratory research models involving peptide signaling,
-            growth hormone pathway research, and receptor interaction studies.
+            CJC/IPA is studied in laboratory research models involving growth
+            hormone secretagogue pathways, peptide signaling, pituitary-response
+            models, and metabolic research applications.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
             {[
-              ["CJC-1295 No DAC", "Studied in models involving mod GRF (1-29) peptide signaling."],
-              ["Ipamorelin", "Evaluated in laboratory investigations involving receptor interaction pathways."],
-              ["Blend Research", "Researched in relation to combined peptide content and analytical verification."],
+              ["GHRH Pathway", "Studied for growth-hormone-releasing hormone pathway signaling."],
+              ["Secretagogue Research", "Evaluated in models involving peptide-stimulated signaling responses."],
+              ["Metabolic Models", "Researched in laboratory models involving energy regulation pathways."],
               ["Storage", "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use."],
             ].map(([title, text]) => (
-              <div key={title} className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all">
+              <div
+                key={title}
+                className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
+              >
                 <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
+
                 <p className="text-white/60 text-sm leading-relaxed">{text}</p>
               </div>
             ))}
@@ -322,12 +393,15 @@ export default function CJCIPAPage() {
             <h3 className="text-blue-300 font-bold uppercase tracking-[0.25em] text-sm mb-4">
               {section.title}
             </h3>
-            <p className="text-white/60 text-sm leading-relaxed">{section.text}</p>
+
+            <p className="text-white/60 text-sm leading-relaxed">
+              {section.text}
+            </p>
           </div>
         </section>
       ))}
 
-            <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
+      <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 mb-14">
           <div>
             <img
@@ -337,7 +411,8 @@ export default function CJCIPAPage() {
             />
 
             <p className="text-white/60 text-sm leading-relaxed">
-              Premium research-grade peptides built on science, quality, and transparency.
+              Premium research-grade peptides built on science, quality, and
+              transparency.
             </p>
 
             <div className="flex gap-3 mt-6">
@@ -372,7 +447,11 @@ export default function CJCIPAPage() {
 
               <div className="space-y-3 text-white/50">
                 {links.map(([label, href]: any) => (
-                  <a key={label} href={href} className="block hover:text-blue-300">
+                  <a
+                    key={label}
+                    href={href}
+                    className="block hover:text-blue-300"
+                  >
                     {label}
                   </a>
                 ))}

@@ -441,7 +441,7 @@ export default function MOTSCPage() {
       >
         <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
           <img
-            src="/images/apx3blue.png"
+            src="/images/apx310blue.png"
             alt="APX-3"
             className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
           />
@@ -463,7 +463,7 @@ export default function MOTSCPage() {
       >
         <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
           <img
-            src="/images/adamaxblue.png"
+            src="/images/adamaxblue.PNG"
             alt="Adamax"
             className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
           />

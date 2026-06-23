@@ -358,6 +358,97 @@ export default function PE2228Page() {
         </div>
       </section>
 
+      {/* Frequently Researched Together */}
+<section className="px-6 md:px-10 pb-16">
+  <div className="max-w-7xl mx-auto">
+    <div className="mb-8">
+      <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
+        Related Research
+      </p>
+
+      <h2 className="text-3xl md:text-4xl font-black text-white">
+        Frequently Researched Together
+      </h2>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      {/* Semax */}
+      <a
+        href="/products/semax"
+        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+      >
+        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+          <img
+            src="/images/semaxblue.png"
+            alt="Semax"
+            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
+
+        <h3 className="text-2xl font-black text-white mb-2">Semax</h3>
+
+        <p className="text-white/60 text-sm leading-relaxed mb-4">
+          Studied in laboratory models involving cognitive signaling pathways and neuroregulation.
+        </p>
+
+        <span className="text-[#A5D8FF] font-semibold">
+          View Product →
+        </span>
+      </a>
+
+      {/* Selank */}
+      <a
+        href="/products/selank"
+        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+      >
+        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+          <img
+            src="/images/selankblue.png"
+            alt="Selank"
+            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
+
+        <h3 className="text-2xl font-black text-white mb-2">Selank</h3>
+
+        <p className="text-white/60 text-sm leading-relaxed mb-4">
+          Research involving neuropeptide signaling and central nervous system models.
+        </p>
+
+        <span className="text-[#A5D8FF] font-semibold">
+          View Product →
+        </span>
+      </a>
+
+      {/* Pinealon */}
+      <a
+        href="/products/pinealon"
+        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+      >
+        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+          <img
+            src="/images/pinealonblue.png"
+            alt="Pinealon"
+            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
+
+        <h3 className="text-2xl font-black text-white mb-2">Pinealon</h3>
+
+        <p className="text-white/60 text-sm leading-relaxed mb-4">
+          Studied in laboratory models involving neuroregulation and cellular signaling pathways.
+        </p>
+
+        <span className="text-[#A5D8FF] font-semibold">
+          View Product →
+        </span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
       {[
         {
           title: "FDA Disclaimer",

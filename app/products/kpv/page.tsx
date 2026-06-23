@@ -419,12 +419,12 @@ export default function KPVPage() {
       {/* Frequently Researched Together */}
 <section className="px-6 md:px-10 pb-16">
   <div className="max-w-7xl mx-auto">
-    <div className="mb-8">
+    <div className="mb-10">
       <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
         Related Research
       </p>
 
-      <h2 className="text-3xl md:text-4xl font-black text-white">
+      <h2 className="text-3xl md:text-5xl font-black text-white">
         Frequently Researched Together
       </h2>
     </div>
@@ -434,79 +434,79 @@ export default function KPVPage() {
       {/* BPC-157 */}
       <a
         href="/products/bpc157"
-        className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] hover:-translate-y-2 transition-all duration-300"
+        className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/40 hover:bg-white/[0.06] transition-all duration-300"
       >
-        <div className="rounded-[40px] overflow-hidden mb-6 h-[280px] flex items-center justify-center">
+        <div className="rounded-[32px] overflow-hidden mb-5">
           <img
             src="/images/bpc157blue.png"
             alt="BPC-157"
-            className="max-h-[190px] w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-[220px] object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </div>
 
-        <h3 className="text-2xl font-bold text-white mb-2">
+        <h3 className="text-2xl font-black text-white mb-2">
           BPC-157
         </h3>
 
-        <p className="text-white/60 text-sm mb-4 leading-relaxed">
+        <p className="text-white/60 text-sm leading-relaxed mb-5">
           Research involving tissue repair pathways and cellular response mechanisms.
         </p>
 
-        <p className="text-[#A5D8FF] font-semibold">
+        <span className="text-[#A5D8FF] font-semibold">
           View Product →
-        </p>
+        </span>
       </a>
 
       {/* TB-500 */}
       <a
         href="/products/tb500"
-        className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] hover:-translate-y-2 transition-all duration-300"
+        className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/40 hover:bg-white/[0.06] transition-all duration-300"
       >
-        <div className="rounded-[40px] overflow-hidden mb-6 h-[280px] flex items-center justify-center">
+        <div className="rounded-[32px] overflow-hidden mb-5">
           <img
             src="/images/tb500blue.png"
             alt="TB-500"
-            className="max-h-[190px] w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-[220px] object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </div>
 
-        <h3 className="text-2xl font-bold text-white mb-2">
+        <h3 className="text-2xl font-black text-white mb-2">
           TB-500
         </h3>
 
-        <p className="text-white/60 text-sm mb-4 leading-relaxed">
+        <p className="text-white/60 text-sm leading-relaxed mb-5">
           Research focused on recovery pathways and cellular migration models.
         </p>
 
-        <p className="text-[#A5D8FF] font-semibold">
+        <span className="text-[#A5D8FF] font-semibold">
           View Product →
-        </p>
+        </span>
       </a>
 
       {/* MOTS-c */}
       <a
         href="/products/motsc"
-        className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] hover:-translate-y-2 transition-all duration-300"
+        className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/40 hover:bg-white/[0.06] transition-all duration-300"
       >
-        <div className="rounded-[40px] overflow-hidden mb-6 h-[280px] flex items-center justify-center">
+        <div className="rounded-[32px] overflow-hidden mb-5">
           <img
             src="/images/motscblue.png"
             alt="MOTS-c"
-            className="max-h-[190px] w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-[220px] object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </div>
 
-        <h3 className="text-2xl font-bold text-white mb-2">
+        <h3 className="text-2xl font-black text-white mb-2">
           MOTS-c
         </h3>
 
-        <p className="text-white/60 text-sm mb-4 leading-relaxed">
+        <p className="text-white/60 text-sm leading-relaxed mb-5">
           Studied in laboratory models involving metabolic and mitochondrial research.
         </p>
 
-        <p className="text-[#A5D8FF] font-semibold">
+        <span className="text-[#A5D8FF] font-semibold">
           View Product →
-        </p>
+        </span>
       </a>
 
     </div>

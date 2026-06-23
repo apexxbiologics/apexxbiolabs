@@ -32,7 +32,14 @@ export default function COAsPage() {
       content: "30 mL",
       coa: "/images/coas/bacwater-coa.pdf",
     },
-    { name: "KPV", batch: "Pending", status: "Awaiting Testing" },
+{
+  name: "KPV",
+  batch: "Purple Cap-1",
+  status: "Verified",
+  purity: "99.60%",
+  content: "10.41 mg",
+  coa: "/images/coas/6-26-kpv-coa.pdf",
+},
     { name: "GHK-Cu", batch: "Pending", status: "Awaiting Testing" },
     { name: "Pinealon", batch: "Pending", status: "Awaiting Testing" },
     {
@@ -116,7 +123,7 @@ export default function COAsPage() {
 
           <div className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-white/10 bg-white/[0.04] text-sm text-white/70 mb-10">
             <span className="text-green-400">✓</span>
-            <span>Last Updated: June 19, 2026</span>
+            <span>Last Updated: June 23, 2026</span>
           </div>
 
           <p className="text-white/70 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto mb-10">

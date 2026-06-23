@@ -436,11 +436,11 @@ export default function KPVPage() {
         href="/products/bpc157"
         className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] hover:-translate-y-2 transition-all duration-300"
       >
-        <div className="rounded-[40px] overflow-hidden mb-6">
+        <div className="rounded-[40px] overflow-hidden mb-6 h-[280px] flex items-center justify-center">
           <img
             src="/images/bpc157blue.png"
             alt="BPC-157"
-            className="w-full h-[280px] object-cover transition-transform duration-300 group-hover:scale-105"
+            className="max-h-[190px] w-auto object-contain transition-transform duration-300 group-hover:scale-105"
           />
         </div>
 
@@ -462,11 +462,11 @@ export default function KPVPage() {
         href="/products/tb500"
         className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] hover:-translate-y-2 transition-all duration-300"
       >
-        <div className="rounded-[40px] overflow-hidden mb-6">
+        <div className="rounded-[40px] overflow-hidden mb-6 h-[280px] flex items-center justify-center">
           <img
-            src="/images/tb500hex.png"
+            src="/images/tb500blue.png"
             alt="TB-500"
-            className="w-full h-[280px] object-cover transition-transform duration-300 group-hover:scale-105"
+            className="max-h-[190px] w-auto object-contain transition-transform duration-300 group-hover:scale-105"
           />
         </div>
 
@@ -488,11 +488,11 @@ export default function KPVPage() {
         href="/products/motsc"
         className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] hover:-translate-y-2 transition-all duration-300"
       >
-        <div className="rounded-[40px] overflow-hidden mb-6">
+        <div className="rounded-[40px] overflow-hidden mb-6 h-[280px] flex items-center justify-center">
           <img
             src="/images/motscblue.png"
             alt="MOTS-c"
-            className="w-full h-[280px] object-cover transition-transform duration-300 group-hover:scale-105"
+            className="max-h-[190px] w-auto object-contain transition-transform duration-300 group-hover:scale-105"
           />
         </div>
 

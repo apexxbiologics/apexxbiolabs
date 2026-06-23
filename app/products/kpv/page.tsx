@@ -436,7 +436,7 @@ export default function KPVPage() {
         href="/products/bpc157"
         className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
       >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#8EC1F5] h-[230px] flex items-center justify-center">
+        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
           <img
             src="/images/bpc157blue.png"
             alt="BPC-157"
@@ -458,7 +458,7 @@ export default function KPVPage() {
         href="/products/tb500"
         className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
       >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#8EC1F5] h-[230px] flex items-center justify-center">
+        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
           <img
             src="/images/tb500blue.png"
             alt="TB-500"
@@ -480,7 +480,7 @@ export default function KPVPage() {
         href="/products/motsc"
         className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
       >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#8EC1F5] h-[230px] flex items-center justify-center">
+        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
           <img
             src="/images/motscblue.png"
             alt="MOTS-c"

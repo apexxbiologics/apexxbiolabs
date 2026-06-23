@@ -294,6 +294,68 @@ export default function MOTSCPage() {
         </div>
       </section>
 
+      {/* COA Summary */}
+<section className="px-6 md:px-10 pb-16">
+  <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
+    <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
+      <div>
+        <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-xs mb-2">
+          Freedom Diagnostics
+        </p>
+
+        <h3 className="text-2xl font-black text-white mb-5">
+          Latest Certificate of Analysis
+        </h3>
+
+        <div className="flex flex-wrap gap-3">
+          <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
+            <span className="text-green-400 font-semibold">
+              ✓ Identity Confirmed
+            </span>
+          </div>
+
+          <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+            <span className="text-[#A5D8FF] font-semibold">
+              99.48% Purity
+            </span>
+          </div>
+
+          <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+            <span className="text-[#A5D8FF] font-semibold">
+              13.94mg Content
+            </span>
+          </div>
+
+          <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
+            <span className="text-white/70">
+              Lot: Light Purple Cap-1
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col items-center md:items-end">
+        <div className="text-5xl font-black text-[#A5D8FF]">
+          99.48%
+        </div>
+
+        <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
+          Purity
+        </div>
+
+        <a
+          href="/images/coas/6-26-motsc-coa.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
+        >
+          View Full COA
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
       <section className="px-6 md:px-10 pb-10">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[

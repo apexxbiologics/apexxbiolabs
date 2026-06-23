@@ -416,6 +416,94 @@ export default function KPVPage() {
         </div>
       </section>
 
+      {/* Frequently Researched Together */}
+<section className="px-6 md:px-10 pb-16">
+  <div className="max-w-7xl mx-auto">
+    <div className="mb-8">
+      <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
+        Related Research
+      </p>
+
+      <h2 className="text-3xl md:text-4xl font-black text-white">
+        Frequently Researched Together
+      </h2>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <a
+        href="/products/bpc157"
+        className="group rounded-[28px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+      >
+        <img
+          src="/images/bpc157blue.png"
+          alt="BPC-157"
+          className="w-full h-56 object-contain mb-4"
+        />
+
+        <h3 className="text-2xl font-bold text-white mb-2">
+          BPC-157
+        </h3>
+
+        <p className="text-white/60 text-sm mb-4">
+          Research involving tissue repair pathways and cellular response mechanisms.
+        </p>
+
+        <p className="text-[#A5D8FF] font-semibold">
+          View Product →
+        </p>
+      </a>
+
+      <a
+        href="/products/tb500"
+        className="group rounded-[28px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+      >
+        <img
+          src="/images/tb500hex.png"
+          alt="TB-500"
+          className="w-full h-56 object-contain mb-4"
+        />
+
+        <h3 className="text-2xl font-bold text-white mb-2">
+          TB-500
+        </h3>
+
+        <p className="text-white/60 text-sm mb-4">
+          Research focused on recovery pathways and cellular migration models.
+        </p>
+
+        <p className="text-[#A5D8FF] font-semibold">
+          View Product →
+        </p>
+      </a>
+
+      <a
+        href="/products/motsc"
+        className="group rounded-[28px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+      >
+        <img
+          src="/images/motscblue.png"
+          alt="MOTS-c"
+          className="w-full h-56 object-contain mb-4"
+        />
+
+        <h3 className="text-2xl font-bold text-white mb-2">
+          MOTS-c
+        </h3>
+
+        <p className="text-white/60 text-sm mb-4">
+          Studied in laboratory models involving metabolic and mitochondrial research.
+        </p>
+
+        <p className="text-[#A5D8FF] font-semibold">
+          View Product →
+        </p>
+      </a>
+
+    </div>
+  </div>
+</section>
+
       {[
         {
           title: "FDA Disclaimer",

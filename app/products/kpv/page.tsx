@@ -431,15 +431,16 @@ export default function KPVPage() {
 
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
+      {/* BPC-157 */}
       <a
         href="/products/bpc157"
         className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] hover:-translate-y-2 transition-all duration-300"
       >
-        <div className="rounded-[40px] overflow-hidden bg-[#9BC7FF] h-[280px] flex items-center justify-center mb-6">
+        <div className="rounded-[40px] overflow-hidden mb-6">
           <img
             src="/images/bpc157blue.png"
             alt="BPC-157"
-            className="max-h-[220px] object-contain transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-[280px] object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </div>
 
@@ -456,15 +457,16 @@ export default function KPVPage() {
         </p>
       </a>
 
+      {/* TB-500 */}
       <a
         href="/products/tb500"
         className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] hover:-translate-y-2 transition-all duration-300"
       >
-        <div className="rounded-[40px] overflow-hidden bg-[#9BC7FF] h-[280px] flex items-center justify-center mb-6">
+        <div className="rounded-[40px] overflow-hidden mb-6">
           <img
-            src="/images/tb500blue.png"
+            src="/images/tb500hex.png"
             alt="TB-500"
-            className="max-h-[220px] object-contain transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-[280px] object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </div>
 
@@ -481,15 +483,16 @@ export default function KPVPage() {
         </p>
       </a>
 
+      {/* MOTS-c */}
       <a
         href="/products/motsc"
         className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] hover:-translate-y-2 transition-all duration-300"
       >
-        <div className="rounded-[40px] overflow-hidden bg-[#9BC7FF] h-[280px] flex items-center justify-center mb-6">
+        <div className="rounded-[40px] overflow-hidden mb-6">
           <img
             src="/images/motscblue.png"
             alt="MOTS-c"
-            className="max-h-[220px] object-contain transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-[280px] object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </div>
 

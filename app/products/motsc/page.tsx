@@ -419,6 +419,91 @@ export default function MOTSCPage() {
         </div>
       </section>
 
+      {/* Frequently Researched Together */}
+<section className="px-6 md:px-10 pb-16">
+  <div className="max-w-7xl mx-auto">
+    <div className="mb-8">
+      <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
+        Related Research
+      </p>
+
+      <h2 className="text-3xl md:text-4xl font-black text-white">
+        Frequently Researched Together
+      </h2>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      {/* APX-3 */}
+      <a
+        href="/products/apx3"
+        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+      >
+        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+          <img
+            src="/images/apx3blue.png"
+            alt="APX-3"
+            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
+
+        <h3 className="text-2xl font-black text-white mb-2">APX-3</h3>
+
+        <p className="text-white/60 text-sm leading-relaxed mb-4">
+          Triple agonist research peptide studied in metabolic regulation and body composition models.
+        </p>
+
+        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
+      </a>
+
+      {/* Adamax */}
+      <a
+        href="/products/adamax"
+        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+      >
+        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+          <img
+            src="/images/adamaxblue.png"
+            alt="Adamax"
+            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
+
+        <h3 className="text-2xl font-black text-white mb-2">Adamax</h3>
+
+        <p className="text-white/60 text-sm leading-relaxed mb-4">
+          Research involving metabolic regulation and performance-focused laboratory models.
+        </p>
+
+        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
+      </a>
+
+      {/* CJC/IPA */}
+      <a
+        href="/products/cjcipa"
+        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+      >
+        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+          <img
+            src="/images/cjcipablue.png"
+            alt="CJC/IPA"
+            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
+
+        <h3 className="text-2xl font-black text-white mb-2">CJC/IPA</h3>
+
+        <p className="text-white/60 text-sm leading-relaxed mb-4">
+          Research involving growth hormone signaling pathways and endocrine response models.
+        </p>
+
+        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
       {[
         {
           title: "FDA Disclaimer",

@@ -415,7 +415,7 @@ export default function KPVPage() {
           </div>
         </div>
       </section>
-
+      
       {/* Frequently Researched Together */}
 <section className="px-6 md:px-10 pb-16">
   <div className="max-w-7xl mx-auto">
@@ -433,19 +433,21 @@ export default function KPVPage() {
 
       <a
         href="/products/bpc157"
-        className="group rounded-[28px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+        className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] hover:-translate-y-2 transition-all duration-300"
       >
-        <img
-          src="/images/bpc157blue.png"
-          alt="BPC-157"
-          className="w-full h-56 object-contain mb-4"
-        />
+        <div className="rounded-[40px] overflow-hidden bg-[#9BC7FF] h-[280px] flex items-center justify-center mb-6">
+          <img
+            src="/images/bpc157blue.png"
+            alt="BPC-157"
+            className="max-h-[220px] object-contain transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
 
         <h3 className="text-2xl font-bold text-white mb-2">
           BPC-157
         </h3>
 
-        <p className="text-white/60 text-sm mb-4">
+        <p className="text-white/60 text-sm mb-4 leading-relaxed">
           Research involving tissue repair pathways and cellular response mechanisms.
         </p>
 
@@ -456,19 +458,21 @@ export default function KPVPage() {
 
       <a
         href="/products/tb500"
-        className="group rounded-[28px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+        className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] hover:-translate-y-2 transition-all duration-300"
       >
-        <img
-          src="/images/tb500hex.png"
-          alt="TB-500"
-          className="w-full h-56 object-contain mb-4"
-        />
+        <div className="rounded-[40px] overflow-hidden bg-[#9BC7FF] h-[280px] flex items-center justify-center mb-6">
+          <img
+            src="/images/tb500blue.png"
+            alt="TB-500"
+            className="max-h-[220px] object-contain transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
 
         <h3 className="text-2xl font-bold text-white mb-2">
           TB-500
         </h3>
 
-        <p className="text-white/60 text-sm mb-4">
+        <p className="text-white/60 text-sm mb-4 leading-relaxed">
           Research focused on recovery pathways and cellular migration models.
         </p>
 
@@ -479,19 +483,21 @@ export default function KPVPage() {
 
       <a
         href="/products/motsc"
-        className="group rounded-[28px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+        className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-6 hover:border-blue-400/50 hover:bg-white/[0.07] hover:-translate-y-2 transition-all duration-300"
       >
-        <img
-          src="/images/motscblue.png"
-          alt="MOTS-c"
-          className="w-full h-56 object-contain mb-4"
-        />
+        <div className="rounded-[40px] overflow-hidden bg-[#9BC7FF] h-[280px] flex items-center justify-center mb-6">
+          <img
+            src="/images/motscblue.png"
+            alt="MOTS-c"
+            className="max-h-[220px] object-contain transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
 
         <h3 className="text-2xl font-bold text-white mb-2">
           MOTS-c
         </h3>
 
-        <p className="text-white/60 text-sm mb-4">
+        <p className="text-white/60 text-sm mb-4 leading-relaxed">
           Studied in laboratory models involving metabolic and mitochondrial research.
         </p>
 

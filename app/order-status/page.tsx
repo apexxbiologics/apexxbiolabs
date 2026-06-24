@@ -62,8 +62,10 @@ export default function OrderStatusPage() {
 
     setLoading(false);
   };
+  
 
   return (
+
     <main className="min-h-screen bg-[#081526] text-white px-6 py-16">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">

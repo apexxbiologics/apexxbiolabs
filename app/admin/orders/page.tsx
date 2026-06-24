@@ -17,6 +17,27 @@ type Order = {
 };
 
 export default function AdminOrdersPage() {
+
+    const markPaymentReceived = async (orderNumber: string) => {
+  const response = await fetch("/api/orders/payment-received", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ orderNumber }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok || !data.success) {
+    alert("Failed to mark payment received.");
+    return;
+  }
+
+  alert("Payment received. Inventory updated.");
+  window.location.reload();
+};
+
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 const [trackingInputs, setTrackingInputs] = useState<Record<string, string>>({});

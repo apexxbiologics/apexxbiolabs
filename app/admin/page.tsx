@@ -1,11 +1,16 @@
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export default async function AdminPage() {
-  const { data: orders } = await supabase
+  const { data: orders } = await supabaseAdmin
     .from("orders")
     .select("total, status");
 
-  const { data: subscribers } = await supabase
+  const { data: subscribers } = await supabaseAdmin
     .from("promo_subscribers")
     .select("email");
 
@@ -14,7 +19,7 @@ export default async function AdminPage() {
 
   const totalRevenue =
     orders?.reduce((sum, order) => {
-      if (order.status === "paid" || order.status === "shipped") {
+      if (order.status === "paid" || order.status === "shipped" || order.status === "Payment Received") {
         return sum + Number(order.total || 0);
       }
       return sum;
@@ -46,7 +51,6 @@ export default async function AdminPage() {
   return (
     <main className="min-h-screen bg-[#081526] text-white px-6 py-12">
       <div className="max-w-6xl mx-auto">
-
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
           <div>
             <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
@@ -122,7 +126,6 @@ export default async function AdminPage() {
             </a>
           ))}
         </div>
-
       </div>
     </main>
   );

@@ -64,10 +64,7 @@ const fetchOrders = async () => {
     fetchOrders();
   }, []);
 
-  const filteredOrders = orders.filter((order) => {
-  const search = searchTerm.toLowerCase();
-
-  const filteredOrders = orders.filter((order) => {
+const filteredOrders = orders.filter((order) => {
   const search = searchTerm.trim().toLowerCase();
 
   if (!search) return true;
@@ -81,17 +78,6 @@ const fetchOrders = async () => {
     order.status?.toLowerCase().includes(search)
   );
 });
-
-  return (
-    order.order_number?.toLowerCase().includes(search) ||
-    order.customer_email?.toLowerCase().includes(search) ||
-    order.first_name?.toLowerCase().includes(search) ||
-    order.last_name?.toLowerCase().includes(search) ||
-    order.status?.toLowerCase().includes(search)
-  );
-});
-
-const totalOrders = orders.length;
 const awaitingPayment = orders.filter((o) => o.status === "awaiting_payment").length;
 const paidOrders = orders.filter((o) => o.status === "paid").length;
 const shippedOrders = orders.filter((o) => o.status === "shipped").length;

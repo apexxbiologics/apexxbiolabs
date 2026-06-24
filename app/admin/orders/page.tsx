@@ -78,6 +78,7 @@ const filteredOrders = orders.filter((order) => {
     order.status?.toLowerCase().includes(search)
   );
 });
+const totalOrders = orders.length;
 const awaitingPayment = orders.filter((o) => o.status === "awaiting_payment").length;
 const paidOrders = orders.filter((o) => o.status === "paid").length;
 const shippedOrders = orders.filter((o) => o.status === "shipped").length;

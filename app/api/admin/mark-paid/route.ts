@@ -1,14 +1,19 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function POST(request: Request) {
   try {
     const { orderId } = await request.json();
 
-    const { data: order, error } = await supabase
+    const { data: order, error } = await supabaseAdmin
       .from("orders")
       .update({ status: "paid" })
       .eq("id", orderId)
@@ -29,7 +34,7 @@ export async function POST(request: Request) {
         const itemId = String(item.id || "").toLowerCase();
         const itemName = String(item.name || "").toLowerCase();
 
-        const { data: products, error: productError } = await supabase
+        const { data: products, error: productError } = await supabaseAdmin
           .from("products")
           .select("id, slug, name, inventory")
           .or(`slug.eq.${itemId},name.ilike.%${itemName}%`)
@@ -51,7 +56,7 @@ export async function POST(request: Request) {
           Number(product.inventory || 0) - Number(item.quantity || 0)
         );
 
-        const { error: updateError } = await supabase
+        const { error: updateError } = await supabaseAdmin
           .from("products")
           .update({ inventory: newInventory })
           .eq("id", product.id);
@@ -73,7 +78,7 @@ export async function POST(request: Request) {
       }, 0);
 
       if (vialCount >= 4) {
-        const { data: bacProducts, error: bacError } = await supabase
+        const { data: bacProducts, error: bacError } = await supabaseAdmin
           .from("products")
           .select("id, slug, name, inventory")
           .or(
@@ -91,7 +96,7 @@ export async function POST(request: Request) {
             Number(bacWater.inventory || 0) - 1
           );
 
-          const { error: bacUpdateError } = await supabase
+          const { error: bacUpdateError } = await supabaseAdmin
             .from("products")
             .update({ inventory: newBacWaterInventory })
             .eq("id", bacWater.id);

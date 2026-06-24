@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 
 type CartItem = {
   id: string;
   quantity: number;
 };
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function POST(req: Request) {
   try {
@@ -17,7 +22,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { data: order, error: orderError } = await supabase
+    const { data: order, error: orderError } = await supabaseAdmin
       .from("orders")
       .select("order_number, status, cart")
       .eq("order_number", orderNumber)
@@ -40,7 +45,7 @@ export async function POST(req: Request) {
     const cart = order.cart as CartItem[];
 
     for (const item of cart) {
-      const { data: product, error: productError } = await supabase
+      const { data: product, error: productError } = await supabaseAdmin
         .from("products")
         .select("inventory")
         .eq("slug", item.id)
@@ -53,7 +58,7 @@ export async function POST(req: Request) {
 
       const newInventory = Math.max(0, product.inventory - item.quantity);
 
-      const { error: updateInventoryError } = await supabase
+      const { error: updateInventoryError } = await supabaseAdmin
         .from("products")
         .update({ inventory: newInventory })
         .eq("slug", item.id);
@@ -63,7 +68,7 @@ export async function POST(req: Request) {
       }
     }
 
-    const { error: statusError } = await supabase
+    const { error: statusError } = await supabaseAdmin
       .from("orders")
       .update({ status: "Payment Received" })
       .eq("order_number", orderNumber);

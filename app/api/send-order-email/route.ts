@@ -1,8 +1,13 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function POST(request: Request) {
   try {
@@ -26,13 +31,12 @@ export async function POST(request: Request) {
 
     const orderNumber = `APX-${Date.now()}`;
 
-    const { data: order, error: orderInsertError } = await supabase
-      .from("orders")
+const { data: order, error: orderInsertError } = await supabaseAdmin
+  .from("orders")
       .insert([
         {
           order_number: orderNumber,
-          customer_email: customerEmail,
-          first_name: firstName,
+customer_email: customerEmail.trim().toLowerCase(),          first_name: firstName,
           last_name: lastName,
           address,
           city,

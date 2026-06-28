@@ -89,6 +89,11 @@ export default function COAsPage() {
       content: "5mg / 5mg",
       coa: "/images/coas/cjc-ipa-no-dac-coa.pdf",
     },
+    {
+  name: "Tesamorelin",
+  batch: "Pending",
+  status: "Awaiting Testing",
+},
   ];
 
   return (

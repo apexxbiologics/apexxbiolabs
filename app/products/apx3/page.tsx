@@ -16,28 +16,33 @@ export default function APX3Page() {
   const [quantity, setQuantity] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [inventory, setInventory] = useState({
-    "10mg": 0,
-    "20mg": 0,
+  const [productData, setProductData] = useState({
+    "10mg": {
+      inventory: 0,
+      price: 70,
+    },
+    "20mg": {
+      inventory: 0,
+      price: 130,
+    },
   });
 
   const productOptions = {
     "10mg": {
       id: "APX-3-10mg",
       name: "APX-3 10mg",
-      price: 70,
       image: "/images/apx310blue.png",
     },
     "20mg": {
       id: "APX-3-20mg",
       name: "APX-3 20mg",
-      price: 130,
       image: "/images/apx320.png",
     },
   };
 
   const selectedProduct = productOptions[selectedMg];
-  const selectedInventory = inventory[selectedMg];
+  const selectedInventory = productData[selectedMg].inventory;
+  const selectedPrice = productData[selectedMg].price;
   const inStock = selectedInventory > 0;
 
   const products = [
@@ -55,12 +60,16 @@ export default function APX3Page() {
     { name: "Selank", keywords: ["selank"], path: "/products/selank" },
     { name: "Semax", keywords: ["semax"], path: "/products/semax" },
     { name: "TB-500", keywords: ["tb", "tb500", "tb-500"], path: "/products/tb500" },
+    { name: "Tesamorelin", keywords: ["tesa", "tesamorelin"], path: "/products/tesamorelin" },
   ];
 
   useEffect(() => {
-    const fetchInventory = async () => {
+    const fetchProductData = async () => {
       try {
-        const response = await fetch("/api/products");
+        const response = await fetch("/api/products", {
+          cache: "no-store",
+        });
+
         const data = await response.json();
 
         if (!data.success) return;
@@ -73,16 +82,22 @@ export default function APX3Page() {
           (product: any) => product.slug === "apx3-20mg"
         );
 
-        setInventory({
-          "10mg": apx10?.inventory ?? 0,
-          "20mg": apx20?.inventory ?? 0,
+        setProductData({
+          "10mg": {
+            inventory: Number(apx10?.inventory ?? 0),
+            price: Number(apx10?.price ?? 70),
+          },
+          "20mg": {
+            inventory: Number(apx20?.inventory ?? 0),
+            price: Number(apx20?.price ?? 130),
+          },
         });
       } catch (error) {
-        console.error("Failed to fetch inventory:", error);
+        console.error("Failed to fetch product data:", error);
       }
     };
 
-    fetchInventory();
+    fetchProductData();
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -107,7 +122,7 @@ export default function APX3Page() {
     const product = {
       id: selectedProduct.id,
       name: selectedProduct.name,
-      price: selectedProduct.price,
+      price: selectedPrice,
       quantity,
       image: selectedProduct.image,
     };
@@ -221,7 +236,7 @@ export default function APX3Page() {
               </p>
 
               <p className="text-5xl font-black text-white mb-3">
-                ${selectedProduct.price}.00
+                ${selectedPrice.toFixed(2)}
               </p>
 
               <div
@@ -255,6 +270,7 @@ export default function APX3Page() {
                         onClick={() => {
                           setSelectedMg(mg);
                           setAdded(false);
+                          setQuantity(1);
                         }}
                         className={`px-7 py-4 rounded-full border uppercase tracking-widest text-sm font-semibold transition-all ${
                           selectedMg === mg
@@ -496,90 +512,97 @@ export default function APX3Page() {
         </div>
       </section>
 
-{/* Frequently Researched Together */}
-<section className="px-6 md:px-10 pb-16">
-  <div className="max-w-7xl mx-auto">
-    <div className="mb-8">
-      <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
-        Related Research
-      </p>
+      {/* Frequently Researched Together */}
+      <section className="px-6 md:px-10 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8">
+            <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
+              Related Research
+            </p>
 
-      <h2 className="text-3xl md:text-4xl font-black text-white">
-        Frequently Researched Together
-      </h2>
-    </div>
+            <h2 className="text-3xl md:text-4xl font-black text-white">
+              Frequently Researched Together
+            </h2>
+          </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <a
+              href="/products/adamax"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/adamaxblue.PNG"
+                  alt="Adamax"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
 
-      {/* Adamax */}
-      <a
-        href="/products/adamax"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/adamaxblue.PNG"
-            alt="Adamax"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
+              <h3 className="text-2xl font-black text-white mb-2">
+                Adamax
+              </h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Research involving metabolic regulation and performance-focused laboratory models.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+
+            <a
+              href="/products/motsc"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/motscblue.png"
+                  alt="MOTS-c"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">
+                MOTS-c
+              </h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Studied in laboratory models involving mitochondrial signaling and metabolic research.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+
+            <a
+              href="/products/cjcipa"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/cjcipablue.png"
+                  alt="CJC/IPA"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">
+                CJC/IPA
+              </h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Research involving growth hormone signaling pathways and endocrine response models.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+          </div>
         </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">Adamax</h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Research involving metabolic regulation and performance-focused laboratory models.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
-      </a>
-
-      {/* MOTS-c */}
-      <a
-        href="/products/motsc"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/motscblue.png"
-            alt="MOTS-c"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">MOTS-c</h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Studied in laboratory models involving mitochondrial signaling and metabolic research.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
-      </a>
-
-      {/* CJC/IPA */}
-      <a
-        href="/products/cjcipa"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/cjcipablue.png"
-            alt="CJC/IPA"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">CJC/IPA</h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Research involving growth hormone signaling pathways and endocrine response models.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
-      </a>
-
-    </div>
-  </div>
-</section>
+      </section>
 
       {[
         {

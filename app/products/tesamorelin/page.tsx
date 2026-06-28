@@ -21,20 +21,20 @@ export default function TesamorelinPage() {
     "10mg": 0,
   });
 
-const productOptions = {
-  "5mg": {
-    id: "TESAMORELIN-5mg",
-    name: "Tesamorelin 5mg",
-    price: 45,
-    image: "/images/tesa5blue.png",
-  },
-  "10mg": {
-    id: "TESAMORELIN-10mg",
-    name: "Tesamorelin 10mg",
-    price: 85,
-    image: "/images/tesa10blue.png",
-  },
-};
+  const productOptions = {
+    "5mg": {
+      id: "TESAMORELIN-5mg",
+      name: "Tesamorelin 5mg",
+      price: 45,
+      image: "/images/tesa5blue.png",
+    },
+    "10mg": {
+      id: "TESAMORELIN-10mg",
+      name: "Tesamorelin 10mg",
+      price: 85,
+      image: "/images/tesa10blue.png",
+    },
+  };
 
   const selectedProduct = productOptions[selectedMg];
   const selectedInventory = inventory[selectedMg];
@@ -57,22 +57,43 @@ const productOptions = {
   useEffect(() => {
     const fetchInventory = async () => {
       try {
-        const response = await fetch("/api/products");
+        const response = await fetch("/api/products", {
+          cache: "no-store",
+        });
+
         const data = await response.json();
 
         if (!data.success) return;
 
-        const tesa5 = data.products.find(
-          (product: any) => product.slug === "tesamorelin-5mg"
-        );
+        console.log("PRODUCTS FROM DATABASE:", data.products);
 
-        const tesa10 = data.products.find(
-          (product: any) => product.slug === "tesamorelin-10mg"
-        );
+        const tesa5 = data.products.find((product: any) => {
+          const slug = product.slug?.toLowerCase().trim();
+          const name = product.name?.toLowerCase().trim();
+          const size = product.size?.toLowerCase().trim();
+
+          return (
+            slug === "tesamorelin-5mg" ||
+            slug === "tesa-5mg" ||
+            (name?.includes("tesamorelin") && size === "5mg")
+          );
+        });
+
+        const tesa10 = data.products.find((product: any) => {
+          const slug = product.slug?.toLowerCase().trim();
+          const name = product.name?.toLowerCase().trim();
+          const size = product.size?.toLowerCase().trim();
+
+          return (
+            slug === "tesamorelin-10mg" ||
+            slug === "tesa-10mg" ||
+            (name?.includes("tesamorelin") && size === "10mg")
+          );
+        });
 
         setInventory({
-          "5mg": tesa5?.inventory ?? 0,
-          "10mg": tesa10?.inventory ?? 0,
+          "5mg": Number(tesa5?.inventory ?? 0),
+          "10mg": Number(tesa10?.inventory ?? 0),
         });
       } catch (error) {
         console.error("Failed to fetch inventory:", error);
@@ -133,19 +154,41 @@ const productOptions = {
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#081526]/95 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 md:px-10 py-5 flex items-center justify-between">
           <a href="/">
-            <img src="/images/logo.png" alt="Apexx Biolabs" className="h-12 w-auto" />
+            <img
+              src="/images/logo.png"
+              alt="Apexx Biolabs"
+              className="h-12 w-auto"
+            />
           </a>
 
           <nav className="hidden md:flex items-center gap-10 uppercase tracking-widest text-sm text-white">
-            <a href="/" className="hover:text-blue-300 transition-all">Home</a>
-            <a href="/products" className="text-blue-300 border-b border-blue-300 pb-2">Products</a>
-            <a href="/coas" className="hover:text-blue-300 transition-all">COAs</a>
-            <a href="/contact" className="hover:text-blue-300 transition-all">Contact</a>
+            <a href="/" className="hover:text-blue-300 transition-all">
+              Home
+            </a>
+
+            <a
+              href="/products"
+              className="text-blue-300 border-b border-blue-300 pb-2"
+            >
+              Products
+            </a>
+
+            <a href="/coas" className="hover:text-blue-300 transition-all">
+              COAs
+            </a>
+
+            <a href="/contact" className="hover:text-blue-300 transition-all">
+              Contact
+            </a>
           </nav>
 
           <div className="flex items-center gap-4">
             <form onSubmit={handleSearch} className="relative hidden md:block">
-              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
+              <Search
+                size={16}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50"
+              />
+
               <input
                 type="text"
                 placeholder="Search peptides..."
@@ -155,7 +198,10 @@ const productOptions = {
               />
             </form>
 
-            <a href="/cart" className="relative text-white hover:text-blue-300 transition-all">
+            <a
+              href="/cart"
+              className="relative text-white hover:text-blue-300 transition-all"
+            >
               <ShoppingCart size={30} />
             </a>
           </div>
@@ -187,8 +233,9 @@ const productOptions = {
               </h1>
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                A high-purity growth hormone-releasing hormone analog studied in laboratory
-                research models involving GH signaling, IGF-1 response pathways, and metabolic regulation.
+                A high-purity growth hormone-releasing hormone analog studied in
+                laboratory research models involving GH signaling, IGF-1 response
+                pathways, and metabolic regulation.
               </p>
 
               <p className="text-5xl font-black text-white mb-3">
@@ -256,7 +303,9 @@ const productOptions = {
 
                     <button
                       onClick={() => {
-                        setQuantity((prev) => Math.min(selectedInventory || 1, prev + 1));
+                        setQuantity((prev) =>
+                          Math.min(selectedInventory || 1, prev + 1)
+                        );
                         setAdded(false);
                       }}
                       disabled={!inStock}
@@ -284,20 +333,32 @@ const productOptions = {
                     {added ? "Added To Cart" : "Add To Cart"}
                   </button>
                 ) : (
-                  <button disabled className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold">
+                  <button
+                    disabled
+                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
+                  >
                     Out of Stock
                   </button>
                 )}
 
-                <a href="/cart" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
+                <a
+                  href="/cart"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
                   View Cart
                 </a>
 
-                <a href="/products" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
+                <a
+                  href="/products"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
                   Continue Shopping
                 </a>
 
-                <a href="/coas" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
+                <a
+                  href="/coas"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
                   View COA
                 </a>
               </div>
@@ -316,10 +377,12 @@ const productOptions = {
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
               <Icon className="text-blue-300" size={34} />
+
               <div>
                 <h3 className="text-white uppercase tracking-widest font-bold text-sm">
                   {title}
                 </h3>
+
                 <p className="text-white/50 text-sm mt-1">{text}</p>
               </div>
             </div>
@@ -338,9 +401,10 @@ const productOptions = {
           </h2>
 
           <p className="text-white/70 text-lg leading-relaxed max-w-4xl mb-8">
-            Tesamorelin is studied in laboratory research for its interaction with
-            growth hormone-releasing hormone receptor pathways, commonly evaluated
-            in endocrine signaling, IGF-1 response, and metabolic research models.
+            Tesamorelin is studied in laboratory research for its interaction
+            with growth hormone-releasing hormone receptor pathways, commonly
+            evaluated in endocrine signaling, IGF-1 response, and metabolic
+            research models.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
@@ -350,7 +414,10 @@ const productOptions = {
               ["Metabolic Research", "Used in laboratory studies involving body composition and metabolic pathways."],
               ["Storage", "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use."],
             ].map(([title, text]) => (
-              <div key={title} className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all">
+              <div
+                key={title}
+                className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
+              >
                 <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
                 <p className="text-white/60 text-sm leading-relaxed">{text}</p>
               </div>
@@ -376,6 +443,7 @@ const productOptions = {
             <h3 className="text-blue-300 font-bold uppercase tracking-[0.25em] text-sm mb-4">
               {section.title}
             </h3>
+
             <p className="text-white/60 text-sm leading-relaxed">
               {section.text}
             </p>
@@ -386,10 +454,34 @@ const productOptions = {
       <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 mb-14">
           <div>
-            <img src="/images/logo.png" alt="Apexx Biolabs" className="h-12 w-auto mb-5" />
+            <img
+              src="/images/logo.png"
+              alt="Apexx Biolabs"
+              className="h-12 w-auto mb-5"
+            />
+
             <p className="text-white/60 text-sm leading-relaxed">
-              Premium research-grade peptides built on science, quality, and transparency.
+              Premium research-grade peptides built on science, quality, and
+              transparency.
             </p>
+
+            <div className="flex gap-3 mt-6">
+              <a
+                href="https://www.tiktok.com/@apexx.nyc"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/[0.07] transition-all"
+              >
+                <span className="text-sm font-bold">♪</span>
+              </a>
+
+              <a
+                href="mailto:support@apexxbiolabs.com"
+                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/[0.07] transition-all"
+              >
+                <Mail size={18} />
+              </a>
+            </div>
           </div>
 
           {[
@@ -405,7 +497,11 @@ const productOptions = {
 
               <div className="space-y-3 text-white/50">
                 {links.map(([label, href]: any) => (
-                  <a key={label} href={href} className="block hover:text-blue-300">
+                  <a
+                    key={label}
+                    href={href}
+                    className="block hover:text-blue-300"
+                  >
                     {label}
                   </a>
                 ))}

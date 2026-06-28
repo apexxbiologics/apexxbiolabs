@@ -17,7 +17,7 @@ export default function ARA290Page() {
   const product = {
     id: "ara290",
     name: "ARA-290",
-    price: 50,
+    price: 60,
     image: "/images/ara290blue.png",
   };
 

@@ -41,54 +41,75 @@ export default function ProductsPage() {
       image: "/images/tb500.PNG",
       href: "/products/tb500",
     },
-    {
-      name: "Bacteriostatic Water",
-      desc: "Research Reconstitution Solution",
-      category: "Research Solutions",
-      image: "/images/bacwater.PNG",
-      href: "/products/bacwater",
-    },
-    {
+        {
       name: "KPV",
       desc: "10mg Research Peptide",
       category: "Tissue Repair Research",
       image: "/images/kpv.PNG",
       href: "/products/kpv",
     },
-    {
+        {
+      name: "MOTS-C",
+      desc: "10mg Research Peptide",
+      category: "Cellular Research",
+      image: "/images/motsc.PNG",
+      href: "/products/motsc",
+    },
+        {
       name: "GHK-Cu",
       desc: "100mg Research Peptide",
       category: "Dermal Research",
       image: "/images/ghkcu.PNG",
       href: "/products/ghkcu",
     },
-    {
-      name: "Pinealon",
+        {
+      name: "CJC/IPA Without DAC",
       desc: "10mg Research Peptide",
-      category: "Circadian Research",
-      image: "/images/pinealon.PNG",
-      href: "/products/pinealon",
+      category: "Secretagogue Research",
+      image: "/images/cjcipa.PNG",
+      href: "/products/cjcipa",
     },
-    {
-      name: "Selank",
+        {
+  name: "Tesamorelin",
+  desc: "5–10mg Research Peptide",
+  category: "Secretagogue Research",
+  image: "/images/tesa5.png",
+  href: "/products/tesamorelin",
+},
+        {
+      name: "ADAMAX",
       desc: "10mg Research Peptide",
       category: "Neuro Research",
-      image: "/images/selank.PNG",
-      href: "/products/selank",
+      image: "/images/adamax.PNG",
+      href: "/products/adamax",
     },
-    {
+        {
       name: "Semax",
       desc: "10mg Research Peptide",
       category: "Neuro Research",
       image: "/images/semax.PNG",
       href: "/products/semax",
     },
-    {
-      name: "MOTS-C",
+        {
+      name: "Selank",
       desc: "10mg Research Peptide",
-      category: "Cellular Research",
-      image: "/images/motsc.PNG",
-      href: "/products/motsc",
+      category: "Neuro Research",
+      image: "/images/selank.PNG",
+      href: "/products/selank",
+    },
+        {
+      name: "Pinealon",
+      desc: "10mg Research Peptide",
+      category: "Circadian Research",
+      image: "/images/pinealon.PNG",
+      href: "/products/pinealon",
+    },
+        {
+      name: "PE-22-28",
+      desc: "10mg Research Peptide",
+      category: "Neuro Research",
+      image: "/images/pe2228.PNG",
+      href: "/products/pe2228",
     },
     {
       name: "ARA-290",
@@ -97,34 +118,13 @@ export default function ProductsPage() {
       image: "/images/ara290.PNG",
       href: "/products/ara290",
     },
-    {
-      name: "PE-22-28",
-      desc: "10mg Research Peptide",
-      category: "Neuro Research",
-      image: "/images/pe2228.PNG",
-      href: "/products/pe2228",
+        {
+      name: "Bacteriostatic Water",
+      desc: "Research Reconstitution Solution",
+      category: "Research Solutions",
+      image: "/images/bacwater.PNG",
+      href: "/products/bacwater",
     },
-    {
-      name: "ADAMAX",
-      desc: "10mg Research Peptide",
-      category: "Neuro Research",
-      image: "/images/adamax.PNG",
-      href: "/products/adamax",
-    },
-    {
-      name: "CJC/IPA Without DAC",
-      desc: "10mg Research Peptide",
-      category: "Secretagogue Research",
-      image: "/images/cjcipa.PNG",
-      href: "/products/cjcipa",
-    },
-    {
-  name: "Tesamorelin",
-  desc: "5–10mg Research Peptide",
-  category: "Secretagogue Research",
-  image: "/images/tesa5.png",
-  href: "/products/tesamorelin",
-},
   ];
 
   const filteredProducts = products.filter((product) => {

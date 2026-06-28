@@ -17,7 +17,7 @@ export default function GHKCUPage() {
   const product = {
     id: "ghkcu",
     name: "GHK-Cu",
-    price: 65,
+    price: 55,
     image: "/images/ghkcublue.png",
   };
 

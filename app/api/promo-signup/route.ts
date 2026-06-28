@@ -17,10 +17,13 @@ export async function POST(request: Request) {
 
     const cleanEmail = email.trim().toLowerCase();
 
-const { error } = await supabaseAdmin.from("promo_subscribers").insert([      {
-        email: cleanEmail,
-      },
-    ]);
+const { error } = await supabaseAdmin.from("promo_subscribers").insert([
+  {
+    email: cleanEmail,
+    marketing_consent: true,
+    source: "promo_signup",
+  },
+]);
 
     if (error?.code === "23505") {
       return NextResponse.json({

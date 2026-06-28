@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
 
 type Order = {
   id: string;
@@ -49,15 +48,19 @@ const [loginError, setLoginError] = useState("");
 const [searchTerm, setSearchTerm] = useState("");
 
 const fetchOrders = async () => {
-  const { data, error } = await supabase
-    .from("orders")
-    .select("*")
-    .order("created_at", { ascending: false });
+  try {
+    const response = await fetch("/api/admin/orders");
+    const result = await response.json();
 
-  if (error) {
+    if (!response.ok || !result.success) {
+      console.error("Error fetching orders:", result.error);
+      setOrders([]);
+    } else {
+      setOrders(result.orders || []);
+    }
+  } catch (error) {
     console.error("Error fetching orders:", error);
-  } else {
-    setOrders(data || []);
+    setOrders([]);
   }
 
   setLoading(false);

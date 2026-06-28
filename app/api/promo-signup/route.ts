@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -17,8 +17,7 @@ export async function POST(request: Request) {
 
     const cleanEmail = email.trim().toLowerCase();
 
-    const { error } = await supabase.from("promo_subscribers").insert([
-      {
+const { error } = await supabaseAdmin.from("promo_subscribers").insert([      {
         email: cleanEmail,
       },
     ]);

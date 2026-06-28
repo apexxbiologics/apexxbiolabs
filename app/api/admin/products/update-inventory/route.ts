@@ -3,11 +3,14 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function POST(req: Request) {
   try {
-    const { id, inventory } = await req.json();
+    const { id, inventory, price } = await req.json();
 
     const { error } = await supabaseAdmin
       .from("products")
-      .update({ inventory })
+      .update({
+        inventory: Number(inventory),
+        price: Number(price),
+      })
       .eq("id", id);
 
     if (error) {
@@ -22,7 +25,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to update inventory.",
+        error: "Failed to update product.",
       },
       { status: 500 }
     );

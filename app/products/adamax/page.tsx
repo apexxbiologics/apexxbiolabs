@@ -17,7 +17,7 @@ export default function AdamaxPage() {
   const product = {
     id: "adamax",
     name: "ADAMAX",
-    price: 75,
+    price: 65,
     image: "/images/adamaxblue.PNG",
   };
 

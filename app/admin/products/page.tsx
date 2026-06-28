@@ -67,33 +67,37 @@ export default function AdminProductsPage() {
     );
   };
 
-  const saveInventory = async (id: string, inventory: number) => {
-    setSavingId(id);
-    setStatus("");
+const saveInventory = async (
+  id: string,
+  inventory: number,
+  price: number
+) => {
+  setSavingId(id);
+  setStatus("");
 
-    try {
-      const response = await fetch("/api/admin/products/update-inventory", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id, inventory }),
-      });
+  try {
+    const response = await fetch("/api/admin/products/update-inventory", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, inventory, price }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (!data.success) {
-        setStatus(data.error || "Inventory update failed.");
-        return;
-      }
-
-      setStatus("✓ Inventory updated successfully.");
-    } catch {
-      setStatus("Something went wrong saving inventory.");
-    } finally {
-      setSavingId(null);
+    if (!data.success) {
+      setStatus(data.error || "Product update failed.");
+      return;
     }
-  };
+
+    setStatus("✓ Product updated successfully.");
+  } catch {
+    setStatus("Something went wrong saving product.");
+  } finally {
+    setSavingId(null);
+  }
+};
 
   const filteredProducts = products.filter((product) =>
     `${product.name} ${product.slug} ${product.size || ""}`
@@ -259,9 +263,24 @@ export default function AdminProductsPage() {
                           {product.size || "—"}
                         </td>
 
-                        <td className="py-5 font-bold">
-                          ${Number(product.price).toFixed(2)}
-                        </td>
+                    <td className="py-5">
+  <input
+    type="number"
+    min="0"
+    step="0.01"
+    value={product.price}
+    onChange={(e) =>
+      setProducts((prev) =>
+        prev.map((item) =>
+          item.id === product.id
+            ? { ...item, price: Number(e.target.value) }
+            : item
+        )
+      )
+    }
+    className="w-28 rounded-full bg-white/[0.06] border border-white/10 px-4 py-3 text-sm font-bold text-white outline-none focus:border-blue-400"
+  />
+</td>
 
                         <td className="py-5">
                           <input
@@ -317,10 +336,11 @@ export default function AdminProductsPage() {
                           <div className="flex justify-end">
                             <button
                               onClick={() =>
-                                saveInventory(
-                                  product.id,
-                                  Number(product.inventory)
-                                )
+saveInventory(
+  product.id,
+  Number(product.inventory),
+  Number(product.price)
+)
                               }
                               disabled={savingId === product.id}
                               className="rounded-full bg-white text-[#081526] px-5 py-3 font-bold uppercase tracking-widest text-xs hover:bg-blue-100 transition-all disabled:opacity-50 flex items-center gap-2"

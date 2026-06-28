@@ -585,16 +585,16 @@ const handlePromoSignup = async (e: React.FormEvent) => {
             href: "/products/tb500",
           },
           {
-            name: "Bacteriostatic Water",
-            desc: "Research Reconstitution Solution",
-            image: "/images/bacwater.PNG",
-            href: "/products/bacwater",
-          },
-          {
             name: "KPV",
             desc: "10mg Research Peptide",
             image: "/images/kpv.PNG",
             href: "/products/kpv",
+          },
+                    {
+            name: "MOTS-C",
+            desc: "10mg Research Peptide",
+            image: "/images/motsc.PNG",
+            href: "/products/motsc",
           },
           {
             name: "GHK-Cu",
@@ -602,29 +602,47 @@ const handlePromoSignup = async (e: React.FormEvent) => {
             image: "/images/ghkcu.PNG",
             href: "/products/ghkcu",
           },
-          {
-            name: "Pinealon",
+                    {
+            name: "CJC/IPA Without DAC",
             desc: "10mg Research Peptide",
-            image: "/images/pinealon.PNG",
-            href: "/products/pinealon",
+            image: "/images/cjcipa.PNG",
+            href: "/products/cjcipa",
           },
+                    {
+  name: "Tesamorelin",
+  desc: "5mg • 10mg Research Peptide",
+  image: "/images/tesa5.png",
+  href: "/products/tesamorelin",
+},
           {
+            name: "ADAMAX",
+            desc: "10mg Research Peptide",
+            image: "/images/adamax.PNG",
+            href: "/products/adamax",
+          },
+                    {
+            name: "Semax",
+            desc: "10mg Research Peptide",
+            image: "/images/semax.PNG",
+            href: "/products/semax",
+          },
+                    {
             name: "Selank",
             desc: "10mg Research Peptide",
             image: "/images/selank.PNG",
             href: "/products/selank",
           },
           {
-            name: "Semax",
+            name: "Pinealon",
             desc: "10mg Research Peptide",
-            image: "/images/semax.PNG",
-            href: "/products/semax",
+            image: "/images/pinealon.PNG",
+            href: "/products/pinealon",
           },
-          {
-            name: "MOTS-C",
+                    {
+            name: "PE-22-28",
             desc: "10mg Research Peptide",
-            image: "/images/motsc.PNG",
-            href: "/products/motsc",
+            image: "/images/pe2228.PNG",
+            href: "/products/pe2228",
           },
           {
             name: "ARA-290",
@@ -633,29 +651,11 @@ const handlePromoSignup = async (e: React.FormEvent) => {
             href: "/products/ara290",
           },
           {
-            name: "PE-22-28",
-            desc: "10mg Research Peptide",
-            image: "/images/pe2228.PNG",
-            href: "/products/pe2228",
+            name: "Bacteriostatic Water",
+            desc: "Research Reconstitution Solution",
+            image: "/images/bacwater.PNG",
+            href: "/products/bacwater",
           },
-          {
-            name: "ADAMAX",
-            desc: "10mg Research Peptide",
-            image: "/images/adamax.PNG",
-            href: "/products/adamax",
-          },
-          {
-            name: "CJC/IPA Without DAC",
-            desc: "10mg Research Peptide",
-            image: "/images/cjcipa.PNG",
-            href: "/products/cjcipa",
-          },
-          {
-  name: "Tesamorelin",
-  desc: "5mg • 10mg Research Peptide",
-  image: "/images/tesa5.png",
-  href: "/products/tesamorelin",
-},
         ].map((product) => (
           <div
             key={product.name}

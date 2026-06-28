@@ -118,6 +118,13 @@ export default function ProductsPage() {
       image: "/images/cjcipa.PNG",
       href: "/products/cjcipa",
     },
+    {
+  name: "Tesamorelin",
+  desc: "5–10mg Research Peptide",
+  category: "Secretagogue Research",
+  image: "/images/tesa5.png",
+  href: "/products/tesamorelin",
+},
   ];
 
   const filteredProducts = products.filter((product) => {

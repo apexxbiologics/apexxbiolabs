@@ -57,6 +57,7 @@ const products = [
 { name: "PE-22-28", href: "/products/pe2228" },
 { name: "ADAMAX", href: "/products/adamax" },
 { name: "CJC/IPA Without DAC", href: "/products/cjcipa" },
+{ name: "Tesamorelin", href: "/products/tesamorelin" },
 ];
 
 const filteredProducts = products.filter((product) =>
@@ -649,6 +650,12 @@ const handlePromoSignup = async (e: React.FormEvent) => {
             image: "/images/cjcipa.PNG",
             href: "/products/cjcipa",
           },
+          {
+  name: "Tesamorelin",
+  desc: "5mg • 10mg Research Peptide",
+  image: "/images/tesa5.png",
+  href: "/products/tesamorelin",
+},
         ].map((product) => (
           <div
             key={product.name}

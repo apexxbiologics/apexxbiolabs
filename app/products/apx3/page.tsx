@@ -25,13 +25,13 @@ export default function APX3Page() {
     "10mg": {
       id: "APX-3-10mg",
       name: "APX-3 10mg",
-      price: 80,
+      price: 70,
       image: "/images/apx310blue.png",
     },
     "20mg": {
       id: "APX-3-20mg",
       name: "APX-3 20mg",
-      price: 150,
+      price: 130,
       image: "/images/apx320.png",
     },
   };

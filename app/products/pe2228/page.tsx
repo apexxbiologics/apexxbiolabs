@@ -17,7 +17,7 @@ export default function PE2228Page() {
   const product = {
     id: "pe2228",
     name: "PE-22-28",
-    price: 50,
+    price: 55,
     image: "/images/pe2228blue.png",
   };
 

@@ -1,8 +1,7 @@
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export default async function SubscribersPage() {
-  const { data: subscribers, error } = await supabase
-    .from("promo_subscribers")
+const { data: subscribers, error } = await supabaseAdmin    .from("promo_subscribers")
     .select("email, first_name, last_name, source, marketing_consent, created_at")
     .order("created_at", { ascending: false });
 

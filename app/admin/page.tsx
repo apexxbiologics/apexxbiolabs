@@ -14,16 +14,25 @@ export default async function AdminPage() {
     .from("promo_subscribers")
     .select("email");
 
-  const totalOrders = orders?.length || 0;
-  const totalSubscribers = subscribers?.length || 0;
+  const safeOrders = orders || [];
+  const safeSubscribers = subscribers || [];
 
-  const totalRevenue =
-    orders?.reduce((sum, order) => {
-      if (order.status === "paid" || order.status === "shipped" || order.status === "Payment Received") {
-        return sum + Number(order.total || 0);
-      }
-      return sum;
-    }, 0) || 0;
+  const totalOrders = safeOrders.length;
+  const totalSubscribers = safeSubscribers.length;
+
+  const totalRevenue = safeOrders.reduce((sum, order) => {
+    const status = String(order.status || "").toLowerCase();
+
+    if (
+      status === "paid" ||
+      status === "shipped" ||
+      status === "payment received"
+    ) {
+      return sum + Number(order.total || 0);
+    }
+
+    return sum;
+  }, 0);
 
   const adminCards = [
     {
@@ -57,9 +66,7 @@ export default async function AdminPage() {
               Apexx Admin
             </p>
 
-            <h1 className="text-5xl md:text-6xl font-black">
-              Dashboard
-            </h1>
+            <h1 className="text-5xl md:text-6xl font-black">Dashboard</h1>
           </div>
 
           <a
@@ -70,15 +77,12 @@ export default async function AdminPage() {
           </a>
         </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
           <div className="rounded-[30px] border border-blue-400/15 bg-white/[0.04] p-6">
             <p className="text-white/50 text-sm uppercase tracking-widest">
               Total Orders
             </p>
-            <p className="text-4xl font-black text-white mt-3">
-              {totalOrders}
-            </p>
+            <p className="text-4xl font-black text-white mt-3">{totalOrders}</p>
           </div>
 
           <div className="rounded-[30px] border border-blue-400/15 bg-white/[0.04] p-6">
@@ -100,7 +104,6 @@ export default async function AdminPage() {
           </div>
         </div>
 
-        {/* Admin Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {adminCards.map((card) => (
             <a
@@ -110,13 +113,8 @@ export default async function AdminPage() {
             >
               <div className="flex items-center justify-between gap-6">
                 <div>
-                  <h2 className="text-2xl font-black mb-3">
-                    {card.title}
-                  </h2>
-
-                  <p className="text-white/60">
-                    {card.description}
-                  </p>
+                  <h2 className="text-2xl font-black mb-3">{card.title}</h2>
+                  <p className="text-white/60">{card.description}</p>
                 </div>
 
                 <div className="w-12 h-12 rounded-full border border-blue-400/20 bg-blue-500/10 flex items-center justify-center text-blue-300 group-hover:translate-x-1 transition-all">

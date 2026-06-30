@@ -6,24 +6,30 @@ const supabaseAdmin = createClient(
 );
 
 export default async function AdminPage() {
-  const { data: orders } = await supabaseAdmin
+  const { data: orders = [] } = await supabaseAdmin
     .from("orders")
     .select("total, status");
 
-  const { data: subscribers } = await supabaseAdmin
+  const { data: subscribers = [] } = await supabaseAdmin
     .from("promo_subscribers")
     .select("email");
 
-  const totalOrders = orders?.length || 0;
-  const totalSubscribers = subscribers?.length || 0;
+  const totalOrders = orders.length;
+  const totalSubscribers = subscribers.length;
 
-  const totalRevenue =
-    orders?.reduce((sum, order) => {
-      if (order.status === "paid" || order.status === "shipped" || order.status === "Payment Received") {
-        return sum + Number(order.total || 0);
-      }
-      return sum;
-    }, 0) || 0;
+  const totalRevenue = orders.reduce((sum, order) => {
+    const status = String(order.status || "").toLowerCase();
+
+    if (
+      status === "paid" ||
+      status === "shipped" ||
+      status === "payment received"
+    ) {
+      return sum + Number(order.total || 0);
+    }
+
+    return sum;
+  }, 0);
 
   const adminCards = [
     {

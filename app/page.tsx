@@ -16,7 +16,7 @@ import { Gift, BadgePercent } from "lucide-react";
 import { Star } from "lucide-react";
 export default function Home() {
   const [search, setSearch] = useState("");
-
+const [openFAQ, setOpenFAQ] = useState<number | null>(null);
 const [disclaimerChecked, setDisclaimerChecked] = useState(false);
 
     const [cartCount, setCartCount] = useState(0);
@@ -1252,13 +1252,13 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
         Frequently Asked Questions
       </p>
 
-      <h2 className="text-5xl md:text-7xl font-black tracking-tight text-white leading-[0.95] mb-6">
+      <h2 className="text-5xl md:text-7xl font-black text-white leading-[0.95] mb-6">
         Common Questions
       </h2>
 
-      <p className="text-white/70 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
-        Quick answers about product testing, shipping, COAs, and research-use
-        policies.
+      <p className="text-white/70 text-lg max-w-3xl mx-auto leading-relaxed">
+        Quick answers about our products, shipping, COAs, and laboratory
+        research standards.
       </p>
     </div>
 
@@ -1282,23 +1282,38 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
         {
           question: "Do you provide COAs?",
           answer:
-            "Yes. Certificates of Analysis will be uploaded as batch testing becomes available.",
+            "Yes. Certificates of Analysis are available when batch testing has been completed and uploaded.",
         },
         {
           question: "Are these products for human use?",
           answer:
-            "No. All products are for laboratory research use only and are not intended for human consumption, medical use, veterinary use, diagnosis, treatment, or prevention of disease.",
+            "No. All Apexx Biolabs products are sold strictly for laboratory research use only and are not intended for human consumption, medical use, veterinary use, diagnosis, treatment, cure, or prevention of disease.",
         },
-      ].map((faq) => (
+      ].map((faq, index) => (
         <div
           key={faq.question}
-          className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-7 hover:bg-white/[0.07] hover:border-blue-400/40 transition-all"
+          className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm overflow-hidden hover:bg-white/[0.07] hover:border-blue-400/50 transition-all duration-300"
         >
-          <h3 className="text-xl md:text-2xl font-black text-white mb-4">
-            {faq.question}
-          </h3>
+          <button
+            onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
+            className="w-full flex justify-between items-center text-left p-7 gap-6"
+          >
+            <span className="text-xl md:text-2xl font-black text-white">
+              {faq.question}
+            </span>
 
-          <p className="text-white/60 leading-relaxed">{faq.answer}</p>
+            <span className="text-3xl text-blue-300 shrink-0">
+              {openFAQ === index ? "−" : "+"}
+            </span>
+          </button>
+
+          {openFAQ === index && (
+            <div className="px-7 pb-7 pt-5 border-t border-white/10">
+              <p className="text-white/60 leading-relaxed">
+                {faq.answer}
+              </p>
+            </div>
+          )}
         </div>
       ))}
     </div>

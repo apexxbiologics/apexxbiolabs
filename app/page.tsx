@@ -1242,6 +1242,78 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
   </div>
 </section>
 
+{/* HOMEPAGE FAQ */}
+<section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
+
+  <div className="relative z-10 max-w-5xl mx-auto">
+    <div className="text-center mb-14">
+      <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
+        Frequently Asked Questions
+      </p>
+
+      <h2 className="text-5xl md:text-7xl font-black tracking-tight text-white leading-[0.95] mb-6">
+        Common Questions
+      </h2>
+
+      <p className="text-white/70 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
+        Quick answers about product testing, shipping, COAs, and research-use
+        policies.
+      </p>
+    </div>
+
+    <div className="space-y-5">
+      {[
+        {
+          question: "What are your products?",
+          answer:
+            "We provide premium research compounds intended strictly for laboratory and analytical research purposes only.",
+        },
+        {
+          question: "Are your products tested?",
+          answer:
+            "Yes. Products are batch tested and COA verified when available to support consistency, quality, and transparency.",
+        },
+        {
+          question: "How long does shipping take?",
+          answer:
+            "Orders typically ship within 1–2 business days. Delivery time depends on your location and carrier.",
+        },
+        {
+          question: "Do you provide COAs?",
+          answer:
+            "Yes. Certificates of Analysis will be uploaded as batch testing becomes available.",
+        },
+        {
+          question: "Are these products for human use?",
+          answer:
+            "No. All products are for laboratory research use only and are not intended for human consumption, medical use, veterinary use, diagnosis, treatment, or prevention of disease.",
+        },
+      ].map((faq) => (
+        <div
+          key={faq.question}
+          className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-7 hover:bg-white/[0.07] hover:border-blue-400/40 transition-all"
+        >
+          <h3 className="text-xl md:text-2xl font-black text-white mb-4">
+            {faq.question}
+          </h3>
+
+          <p className="text-white/60 leading-relaxed">{faq.answer}</p>
+        </div>
+      ))}
+    </div>
+
+    <div className="text-center mt-12">
+      <a
+        href="/faq"
+        className="inline-flex rounded-full bg-white text-[#081526] px-8 py-4 font-bold uppercase tracking-widest hover:bg-blue-100 transition-all"
+      >
+        View Full FAQ
+      </a>
+    </div>
+  </div>
+</section>
+
 <section className="relative px-6 md:px-10 py-24 bg-[#081526] overflow-hidden">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 

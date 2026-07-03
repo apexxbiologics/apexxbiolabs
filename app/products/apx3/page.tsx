@@ -532,62 +532,61 @@ export default function APX3Page() {
     </div>
 
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {[
-        {
-          type: "Clinical Trial",
-          source: "New England Journal of Medicine",
-          title:
-            "Triple-Hormone-Receptor Agonist Retatrutide for Obesity — A Phase 2 Trial",
-          authors: "Jastreboff AM, et al.",
-          year: "2023",
-          url: "https://pubmed.ncbi.nlm.nih.gov/37366315/",
-        },
-        {
-          type: "Clinical Trial",
-          source: "The Lancet",
-          title:
-            "Retatrutide for People with Type 2 Diabetes — A Phase 2 Trial",
-          authors: "Rosenstock J, et al.",
-          year: "2023",
-          url: "https://pubmed.ncbi.nlm.nih.gov/36998546/",
-        },
-        {
-          type: "Liver Research",
-          source: "Nature Medicine",
-          title:
-            "Retatrutide for Metabolic Dysfunction-Associated Steatotic Liver Disease",
-          authors: "Sanyal AJ, et al.",
-          year: "2024",
-          url: "https://pubmed.ncbi.nlm.nih.gov/39282827/",
-        },
-        {
-          type: "Meta-Analysis",
-          source: "Nutrition, Metabolism & Cardiovascular Diseases",
-          title:
-            "Effects of Once-Weekly Retatrutide on Weight and Metabolic Outcomes",
-          authors: "Pasqualotto E, et al.",
-          year: "2024",
-          url: "https://pubmed.ncbi.nlm.nih.gov/39318607/",
-        },
-        {
-          type: "Review Article",
-          source: "Expert Opinion",
-          title:
-            "A Review of the Investigational Drug Retatrutide, a Novel Triple Agonist",
-          authors: "Kaur M, et al.",
-          year: "2024",
-          url: "https://pubmed.ncbi.nlm.nih.gov/38367045/",
-        },
-        {
-          type: "Clinical Registry",
-          source: "ClinicalTrials.gov",
-          title:
-            "Retatrutide Clinical Trials Registry",
-          authors: "ClinicalTrials.gov",
-          year: "Ongoing",
-          url: "https://clinicaltrials.gov/search?term=retatrutide",
-        },
-      ].map((paper) => (
+{[
+  {
+    type: "Clinical Trial",
+    source: "New England Journal of Medicine",
+    title:
+      "Triple-Hormone-Receptor Agonist Retatrutide for Obesity — A Phase 2 Trial",
+    authors: "Jastreboff AM, et al.",
+    year: "2023",
+    url: "https://pubmed.ncbi.nlm.nih.gov/37366315/",
+  },
+  {
+    type: "Clinical Trial",
+    source: "The Lancet",
+    title:
+      "Retatrutide, a GIP, GLP-1 and Glucagon Receptor Agonist, for People with Type 2 Diabetes",
+    authors: "Rosenstock J, et al.",
+    year: "2023",
+    url: "https://pubmed.ncbi.nlm.nih.gov/37385280/",
+  },
+  {
+    type: "Liver Research",
+    source: "Nature Medicine",
+    title:
+      "Triple Hormone Receptor Agonist Retatrutide for Metabolic Dysfunction-Associated Steatotic Liver Disease",
+    authors: "Sanyal AJ, et al.",
+    year: "2024",
+    url: "https://pubmed.ncbi.nlm.nih.gov/38858523/",
+  },
+  {
+    type: "Meta-Analysis",
+    source: "Nutrition, Metabolism & Cardiovascular Diseases",
+    title:
+      "Effects of Once-Weekly Retatrutide on Weight and Metabolic Outcomes",
+    authors: "Pasqualotto E, et al.",
+    year: "2024",
+    url: "https://pubmed.ncbi.nlm.nih.gov/39318607/",
+  },
+  {
+    type: "Review Article",
+    source: "Expert Opinion",
+    title:
+      "A Review of the Investigational Drug Retatrutide, a Novel Triple Agonist",
+    authors: "Kaur M, et al.",
+    year: "2024",
+    url: "https://pubmed.ncbi.nlm.nih.gov/38367045/",
+  },
+  {
+    type: "Clinical Registry",
+    source: "ClinicalTrials.gov",
+    title: "Retatrutide Clinical Trials Registry",
+    authors: "ClinicalTrials.gov",
+    year: "Ongoing",
+    url: "https://clinicaltrials.gov/search?term=retatrutide",
+  },
+].map((paper) => (
         <a
           key={paper.title}
           href={paper.url}

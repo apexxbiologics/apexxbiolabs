@@ -840,6 +840,12 @@ const handlePromoSignup = async (e: React.FormEvent) => {
               Have a question about an order, COA, product page, or shipment?
               Our support team typically responds within 24–48 business hours.
             </p>
+            <a
+  href="/contact"
+  className="inline-flex mt-8 rounded-full border border-blue-400/30 bg-white/[0.04] px-6 py-3 text-sm font-semibold uppercase tracking-widest text-white hover:bg-white/[0.08] transition-all"
+>
+  Contact Support
+</a>
           </div>
         </div>
       </div>

@@ -42,7 +42,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Review submitted. It will appear after approval.",
+      message: "Your review has been submitted. Thank you for your feedback!",
     });
   } catch {
     return NextResponse.json(

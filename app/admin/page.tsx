@@ -55,6 +55,11 @@ export default async function AdminPage() {
       description: "Manage inventory and product listings.",
       href: "/admin/products",
     },
+    {
+  title: "Reviews",
+  description: "Approve, unapprove, or delete customer reviews.",
+  href: "/admin/reviews",
+},
   ];
 
   return (

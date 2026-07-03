@@ -13,7 +13,7 @@ import { FlaskConical, Microscope } from "lucide-react";
 import { Check } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { Gift, BadgePercent } from "lucide-react";
-
+import { Star } from "lucide-react";
 export default function Home() {
   const [search, setSearch] = useState("");
 
@@ -31,7 +31,7 @@ const [quantity, setQuantity] = useState(1);
 const [searchTerm, setSearchTerm] = useState("");
 const [promoEmail, setPromoEmail] = useState("");
 const [promoStatus, setPromoStatus] = useState("");
-
+const [reviews, setReviews] = useState<any[]>([]);
 const startProductScroll = (direction: "left" | "right") => {
   stopProductScroll();
 
@@ -129,6 +129,21 @@ useEffect(() => {
     playPromise.catch(() => {});
   }
 }, [accepted]);
+
+useEffect(() => {
+  const fetchReviews = async () => {
+    const { data } = await supabase
+      .from("reviews")
+      .select("id, name, rating, review")
+      .eq("approved", true)
+      .order("created_at", { ascending: false })
+      .limit(3);
+
+    setReviews(data || []);
+  };
+
+  fetchReviews();
+}, []);
 
 const handleAccept = () => {
   setAccepted(true);
@@ -868,6 +883,74 @@ const handlePromoSignup = async (e: React.FormEvent) => {
         </a>
       </div>
     </div>
+  </div>
+</section>
+
+{/* CUSTOMER REVIEWS */}
+<section className="relative py-24 px-6 bg-[#081526] border-b border-white/10 overflow-hidden">
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
+
+  <div className="relative z-10 max-w-7xl mx-auto">
+    <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-14">
+      <div>
+        <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
+          Customer Feedback
+        </p>
+
+        <h2 className="text-5xl md:text-7xl font-black tracking-tight text-white leading-[0.95]">
+          Verified Customer Reviews
+        </h2>
+
+        <p className="text-white/70 text-lg md:text-xl leading-relaxed mt-6 max-w-2xl">
+          Feedback from Apexx customers about ordering, support, shipping, and documentation.
+        </p>
+      </div>
+
+      <a
+        href="/reviews"
+        className="border border-white/10 bg-white/[0.04] text-white rounded-full px-8 py-3 text-sm font-semibold uppercase tracking-widest hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+      >
+        Leave a Review
+      </a>
+    </div>
+
+    {reviews.length > 0 ? (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {reviews.map((item) => (
+          <div
+            key={item.id}
+            className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 hover:bg-white/[0.07] hover:border-blue-400/40 transition-all"
+          >
+            <div className="flex gap-1 mb-6">
+              {Array.from({ length: item.rating }).map((_, index) => (
+                <Star
+                  key={index}
+                  size={20}
+                  className="fill-blue-300 text-blue-300"
+                />
+              ))}
+            </div>
+
+            <p className="text-white/70 leading-relaxed mb-8">
+              “{item.review}”
+            </p>
+
+            <div className="border-t border-white/10 pt-5">
+              <p className="text-white font-bold">{item.name}</p>
+              <p className="text-blue-300 text-xs uppercase tracking-widest mt-1">
+                Verified Customer
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-10 text-center max-w-3xl mx-auto">
+        <p className="text-white/60">
+          Customer reviews will appear here once approved.
+        </p>
+      </div>
+    )}
   </div>
 </section>
 

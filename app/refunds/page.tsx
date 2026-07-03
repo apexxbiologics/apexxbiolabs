@@ -11,7 +11,6 @@ import {
   Clock,
   AlertTriangle,
   HeartHandshake,
-  Twitter,
 } from "lucide-react";
 
 export default function RefundPolicyPage() {
@@ -555,15 +554,14 @@ export default function RefundPolicyPage() {
                   support@apexxbiolabs.com
                 </a>
 
-                <a
-                  href="https://x.com/ApexxBiolabsLLC"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-white/70 hover:text-white transition-all"
-                >
-                  <Twitter size={16} />
-                  X
-                </a>
+<a
+  href="https://x.com/ApexxBiolabsLLC"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="block text-white/70 hover:text-white transition-all"
+>
+  X
+</a>
 
                 <a
                   href="https://www.tiktok.com/@apexx.nyc"

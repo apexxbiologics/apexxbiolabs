@@ -7,5 +7,5 @@ export async function POST(req: Request) {
 
   await supabaseAdmin.from("reviews").delete().eq("id", id);
 
-  return NextResponse.redirect(new URL("/admin/reviews", req.url));
+  return NextResponse.redirect(new URL("/admin/reviews", req.url), 303);
 }

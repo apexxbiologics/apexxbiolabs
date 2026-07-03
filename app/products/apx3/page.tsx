@@ -512,6 +512,121 @@ export default function APX3Page() {
         </div>
       </section>
 
+      {/* Sources & References */}
+<section className="px-6 md:px-10 pb-16">
+  <div className="max-w-7xl mx-auto">
+    <div className="mb-10">
+      <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
+        Sources & References
+      </p>
+
+      <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
+        Retatrutide Research References
+      </h2>
+
+      <p className="text-white/60 text-lg leading-relaxed max-w-3xl">
+        Select peer-reviewed publications and clinical research resources
+        related to retatrutide, a triple agonist studied in GIP, GLP-1, and
+        glucagon receptor pathway research.
+      </p>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {[
+        {
+          type: "Clinical Trial",
+          source: "New England Journal of Medicine",
+          title:
+            "Triple-Hormone-Receptor Agonist Retatrutide for Obesity — A Phase 2 Trial",
+          authors: "Jastreboff AM, et al.",
+          year: "2023",
+          url: "https://pubmed.ncbi.nlm.nih.gov/37366315/",
+        },
+        {
+          type: "Clinical Trial",
+          source: "The Lancet",
+          title:
+            "Retatrutide for People with Type 2 Diabetes — A Phase 2 Trial",
+          authors: "Rosenstock J, et al.",
+          year: "2023",
+          url: "https://pubmed.ncbi.nlm.nih.gov/36998546/",
+        },
+        {
+          type: "Liver Research",
+          source: "Nature Medicine",
+          title:
+            "Retatrutide for Metabolic Dysfunction-Associated Steatotic Liver Disease",
+          authors: "Sanyal AJ, et al.",
+          year: "2024",
+          url: "https://pubmed.ncbi.nlm.nih.gov/39282827/",
+        },
+        {
+          type: "Meta-Analysis",
+          source: "Nutrition, Metabolism & Cardiovascular Diseases",
+          title:
+            "Effects of Once-Weekly Retatrutide on Weight and Metabolic Outcomes",
+          authors: "Pasqualotto E, et al.",
+          year: "2024",
+          url: "https://pubmed.ncbi.nlm.nih.gov/39318607/",
+        },
+        {
+          type: "Review Article",
+          source: "Expert Opinion",
+          title:
+            "A Review of the Investigational Drug Retatrutide, a Novel Triple Agonist",
+          authors: "Kaur M, et al.",
+          year: "2024",
+          url: "https://pubmed.ncbi.nlm.nih.gov/38367045/",
+        },
+        {
+          type: "Clinical Registry",
+          source: "ClinicalTrials.gov",
+          title:
+            "Retatrutide Clinical Trials Registry",
+          authors: "ClinicalTrials.gov",
+          year: "Ongoing",
+          url: "https://clinicaltrials.gov/search?term=retatrutide",
+        },
+      ].map((paper) => (
+        <a
+          key={paper.title}
+          href={paper.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group rounded-[30px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-7 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+        >
+          <div className="flex items-center justify-between gap-4 mb-5">
+            <span className="rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-[#A5D8FF] text-xs font-bold uppercase tracking-widest">
+              {paper.type}
+            </span>
+
+            <span className="text-white/40 text-sm">{paper.year}</span>
+          </div>
+
+          <p className="text-[#A5D8FF] text-xs font-bold uppercase tracking-[0.25em] mb-4">
+            {paper.source}
+          </p>
+
+          <h3 className="text-xl font-black text-white leading-snug mb-5 group-hover:text-blue-200 transition-all">
+            {paper.title}
+          </h3>
+
+          <p className="text-white/50 italic mb-6">{paper.authors}</p>
+
+          <span className="text-[#A5D8FF] font-semibold">
+            View Source →
+          </span>
+        </a>
+      ))}
+    </div>
+
+    <p className="text-white/40 text-xs uppercase tracking-widest leading-relaxed mt-8">
+      References are provided for educational research context only. Apexx
+      Biolabs products are sold strictly for laboratory research use only.
+    </p>
+  </div>
+</section>
+
       {/* Frequently Researched Together */}
       <section className="px-6 md:px-10 pb-16">
         <div className="max-w-7xl mx-auto">

@@ -131,15 +131,31 @@ useEffect(() => {
 }, [accepted]);
 
 useEffect(() => {
+  const video = videoRef.current;
+
+  if (!video) return;
+
+  video.muted = true;
+
+  const playPromise = video.play();
+
+  if (playPromise !== undefined) {
+    playPromise.catch(() => {});
+  }
+}, [accepted]);
+
+useEffect(() => {
   const fetchReviews = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("reviews")
       .select("id, name, rating, review")
       .eq("approved", true)
       .order("created_at", { ascending: false })
       .limit(3);
 
-    setReviews(data || []);
+    if (!error && data) {
+      setReviews(data);
+    }
   };
 
   fetchReviews();

@@ -10,5 +10,5 @@ export async function POST(req: Request) {
     .update({ approved: false })
     .eq("id", id);
 
-  return NextResponse.redirect(new URL("/admin/reviews", req.url));
+  return NextResponse.redirect(new URL("/admin/reviews", req.url), 303);
 }

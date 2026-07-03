@@ -6,8 +6,41 @@ import { Star, MessageSquareText } from "lucide-react";
 export default function ReviewsPage() {
   const [name, setName] = useState("");
   const [rating, setRating] = useState(5);
+  const [shippingRating, setShippingRating] = useState<number | null>(null);
+  const [packagingRating, setPackagingRating] = useState<number | null>(null);
+  const [productRating, setProductRating] = useState<number | null>(null);
+  const [orderingRating, setOrderingRating] = useState<number | null>(null);
+  const [supportRating, setSupportRating] = useState<number | null>(null);
   const [review, setReview] = useState("");
   const [status, setStatus] = useState("");
+
+  const RatingStars = ({
+    value,
+    onChange,
+  }: {
+    value: number | null;
+    onChange: (value: number) => void;
+  }) => (
+    <div className="flex gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type="button"
+          onClick={() => onChange(star)}
+          className="text-blue-300"
+        >
+          <Star
+            size={26}
+            className={
+              value && star <= value
+                ? "fill-blue-300 text-blue-300"
+                : "text-white/20"
+            }
+          />
+        </button>
+      ))}
+    </div>
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,7 +50,16 @@ export default function ReviewsPage() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, rating, review }),
+      body: JSON.stringify({
+        name,
+        rating,
+        review,
+        shipping_rating: shippingRating,
+        packaging_rating: packagingRating,
+        product_rating: productRating,
+        ordering_rating: orderingRating,
+        support_rating: supportRating,
+      }),
     });
 
     const data = await response.json();
@@ -26,6 +68,11 @@ export default function ReviewsPage() {
     if (data.success) {
       setName("");
       setRating(5);
+      setShippingRating(null);
+      setPackagingRating(null);
+      setProductRating(null);
+      setOrderingRating(null);
+      setSupportRating(null);
       setReview("");
     }
   };
@@ -61,7 +108,7 @@ export default function ReviewsPage() {
             </div>
 
             <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
-              Customer Feedback
+              Customer Experiences
             </p>
 
             <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.95] mb-8">
@@ -78,6 +125,62 @@ export default function ReviewsPage() {
             onSubmit={handleSubmit}
             className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10"
           >
+            <div className="mb-8">
+              <label className="block text-sm uppercase tracking-widest text-blue-300 mb-3">
+                Overall Experience
+              </label>
+
+              <RatingStars value={rating} onChange={setRating} />
+            </div>
+
+            <div className="rounded-[1.5rem] border border-white/10 bg-[#020817]/60 p-6 mb-8">
+              <p className="text-sm uppercase tracking-widest text-blue-300 mb-5">
+                Optional Ratings
+              </p>
+
+              <div className="space-y-5">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-white/70">Shipping Speed</p>
+                  <RatingStars
+                    value={shippingRating}
+                    onChange={setShippingRating}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-white/70">Packaging</p>
+                  <RatingStars
+                    value={packagingRating}
+                    onChange={setPackagingRating}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-white/70">Product Quality</p>
+                  <RatingStars
+                    value={productRating}
+                    onChange={setProductRating}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-white/70">Ordering Experience</p>
+                  <RatingStars
+                    value={orderingRating}
+                    onChange={setOrderingRating}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-white/70">Customer Support</p>
+                  <RatingStars
+                    value={supportRating}
+                    onChange={setSupportRating}
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="mb-6">
               <label className="block text-sm uppercase tracking-widest text-blue-300 mb-3">
                 Name
@@ -87,48 +190,22 @@ export default function ReviewsPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                placeholder="Your name or initials"
+                placeholder="First name & last initial, e.g. John D."
                 className="w-full rounded-2xl bg-[#020817] border border-white/10 px-5 py-4 text-white outline-none focus:border-blue-400"
               />
             </div>
 
-            <div className="mb-6">
-              <label className="block text-sm uppercase tracking-widest text-blue-300 mb-3">
-                Rating
-              </label>
-
-              <div className="flex gap-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => setRating(star)}
-                    className="text-blue-300"
-                  >
-                    <Star
-                      size={30}
-                      className={
-                        star <= rating
-                          ? "fill-blue-300 text-blue-300"
-                          : "text-white/20"
-                      }
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
-
             <div className="mb-8">
               <label className="block text-sm uppercase tracking-widest text-blue-300 mb-3">
-                Review
+                Tell Us About Your Experience
               </label>
 
               <textarea
                 value={review}
                 onChange={(e) => setReview(e.target.value)}
                 required
-                rows={6}
-                placeholder="Please keep reviews focused on ordering, shipping, support, packaging, or documentation."
+                rows={4}
+                placeholder="Share your experience with ordering, shipping, packaging, product quality, or customer support."
                 className="w-full rounded-2xl bg-[#020817] border border-white/10 px-5 py-4 text-white outline-none focus:border-blue-400 resize-none"
               />
             </div>
@@ -148,8 +225,8 @@ export default function ReviewsPage() {
           </form>
 
           <p className="text-white/40 text-xs text-center uppercase tracking-widest leading-relaxed mt-8">
-            Reviews containing medical claims, human-use claims, or inappropriate
-            content will not be approved.
+            Reviews containing medical, therapeutic, or human-use claims may not
+            be approved.
           </p>
         </div>
       </section>

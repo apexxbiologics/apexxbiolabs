@@ -1,67 +1,73 @@
 import {
+  ShieldCheck,
+  PackageCheck,
   Camera,
   Mail,
-  PackageCheck,
-  ShieldCheck,
+  SearchCheck,
   CheckCircle,
   XCircle,
+  FlaskConical,
+  Truck,
   Clock,
   AlertTriangle,
+  HeartHandshake,
+  Twitter,
 } from "lucide-react";
 
 export default function RefundPolicyPage() {
-  const steps = [
+  const claimSteps = [
     {
-      number: "1",
-      icon: Camera,
-      title: "Document the Issue",
-      text: "Take clear photos of the damaged product, packaging, shipping label, and any visible issue as soon as the order arrives.",
-    },
-    {
-      number: "2",
       icon: Mail,
+      number: "01",
       title: "Contact Us",
-      text: "Email support@apexxbiolabs.com with your order number, photos, and a short description of the issue.",
+      text: "Email support@apexxbiolabs.com within 48 hours of delivery with your order number and a brief description of the issue.",
     },
     {
-      number: "3",
-      icon: PackageCheck,
-      title: "Review & Resolution",
-      text: "Once your claim is reviewed and verified, we may issue a one-time replacement, store credit, or other resolution at our discretion.",
+      icon: Camera,
+      number: "02",
+      title: "Send Photos",
+      text: "Include clear photos of the product, packaging, shipping label, and any visible damage or fulfillment issue.",
+    },
+    {
+      icon: SearchCheck,
+      number: "03",
+      title: "We Review It",
+      text: "Our team reviews every claim individually and works to provide a fair resolution as quickly as possible.",
     },
   ];
 
-  const eligible = [
-    "Products damaged during shipping with clear photo evidence",
-    "Incorrect items received",
-    "Missing items from an order",
-    "Defective products that do not meet stated quality standards",
+  const coveredClaims = [
+    "Product arrived damaged during shipping",
+    "Incorrect item was received",
+    "Item is missing from your shipment",
+    "Verified packaging or fulfillment error",
+    "Order issue reported within 48 hours of delivery",
   ];
 
-  const notEligible = [
+  const notCovered = [
     "Opened, used, reconstituted, or partially used products",
-    "Claims submitted without photo evidence",
-    "Products improperly stored after delivery",
-    "Products without proof of purchase",
-    "Change-of-mind returns or buyer’s remorse",
-    "Orders delayed, lost, or stolen after carrier delivery confirmation",
+    "Products stored improperly after delivery",
+    "Claims submitted after 48 hours",
+    "Buyer’s remorse or accidental purchases",
+    "Incorrect address entered by the customer",
+    "Carrier delays outside of our control",
   ];
 
-  const timeline = [
+  const resolutions = [
     {
-      title: "Claim Submitted",
-      text: "Customer emails photos, order number, and issue details.",
-      time: "Day 1",
+      icon: PackageCheck,
+      title: "Replacement Product",
+      text: "Approved claims may qualify for a one-time replacement when damage, missing items, or fulfillment errors are verified.",
     },
     {
-      title: "Claim Reviewed",
-      text: "Our team reviews the claim and verifies the submitted evidence.",
-      time: "1–2 business days",
+      icon: ShieldCheck,
+      title: "Store Credit",
+      text: "In some cases, store credit may be issued as a fair resolution for verified order concerns.",
     },
     {
-      title: "Resolution Issued",
-      text: "Approved claims may receive a replacement, store credit, or other approved resolution.",
-      time: "After approval",
+      icon: HeartHandshake,
+      title: "Case-by-Case Support",
+      text: "Every issue is reviewed individually so we can provide a reasonable solution whenever possible.",
     },
   ];
 
@@ -87,66 +93,92 @@ export default function RefundPolicyPage() {
       </header>
 
       <section className="relative px-6 py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_55%)]"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 blur-3xl rounded-full"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-cyan-500/10 blur-3xl rounded-full"></div>
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="text-center mb-20">
             <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
-              Damage Protection
+              Refunds & Replacements
             </p>
 
             <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.95] mb-8">
-              Returns & Refunds
+              We Stand Behind
+              <br />
+              Every Shipment.
             </h1>
 
             <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-              Every order is reviewed with care. If your product arrives
-              damaged, incorrect, or with a verified issue, contact us so our
-              team can review the claim.
+              Every Apexx Biolabs order is carefully inspected, packaged, and
+              verified before leaving our facility. If your order arrives
+              damaged, incorrect, or incomplete, our support team will review
+              the issue and work toward a fair resolution.
             </p>
           </div>
 
-          <div className="rounded-[2rem] border border-blue-400/20 bg-blue-500/10 backdrop-blur-sm p-8 md:p-12 mb-16">
-            <div className="w-16 h-16 rounded-2xl border border-white/10 bg-white/[0.05] text-blue-300 flex items-center justify-center mb-6">
-              <ShieldCheck size={34} strokeWidth={2} />
+          <div className="rounded-[2.5rem] border border-blue-400/20 bg-white/[0.04] backdrop-blur-sm p-8 md:p-12 mb-16">
+            <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 items-center">
+              <div>
+                <div className="w-16 h-16 rounded-2xl border border-white/10 bg-blue-500/10 text-blue-300 flex items-center justify-center mb-8">
+                  <ShieldCheck size={34} strokeWidth={2} />
+                </div>
+
+                <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-5">
+                  Our Commitment
+                </p>
+
+                <h2 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
+                  Order With Confidence.
+                </h2>
+
+                <p className="text-white/70 text-lg leading-relaxed">
+                  We understand that ordering laboratory research materials
+                  requires trust. While research-use products are generally
+                  non-returnable, verified shipping damage, missing items, or
+                  fulfillment mistakes may qualify for a replacement, store
+                  credit, or another approved resolution.
+                </p>
+              </div>
+
+              <div className="rounded-[2rem] border border-white/10 bg-[#081526]/60 p-8">
+                <p className="uppercase tracking-[0.3em] text-blue-300 text-xs mb-5">
+                  Typical Review Time
+                </p>
+
+                <div className="flex items-end gap-3 mb-6">
+                  <span className="text-6xl font-black text-white">1–2</span>
+                  <span className="text-white/60 pb-3">business days</span>
+                </div>
+
+                <p className="text-white/60 leading-relaxed">
+                  Most properly submitted claims are reviewed within 1–2
+                  business days after all required information has been
+                  received.
+                </p>
+              </div>
             </div>
-
-            <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-5">
-              Damage Protection Policy
-            </p>
-
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
-              Damaged Orders May Qualify for a One-Time Replacement
-            </h2>
-
-            <p className="text-white/70 text-lg leading-relaxed max-w-5xl">
-              If your order arrives damaged in transit, Apexx Biolabs may issue
-              a one-time replacement after the claim is reviewed and verified.
-              All damage claims must include clear photo evidence and are
-              subject to approval. One replacement may be issued per customer
-              per order.
-            </p>
           </div>
 
           <div className="mb-16">
             <div className="text-center mb-12">
               <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-5">
-                How Returns Work
+                Simple Claims Process
               </p>
 
               <h2 className="text-4xl md:text-5xl font-black text-white">
-                Simple Claim Process
+                How We Help
               </h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {steps.map((step) => {
+              {claimSteps.map((step) => {
                 const Icon = step.icon;
 
                 return (
                   <div
                     key={step.title}
-                    className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 hover:bg-white/[0.07] hover:border-blue-400/40 transition-all duration-300"
+                    className="group rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 hover:bg-white/[0.07] hover:border-blue-400/40 hover:-translate-y-1 transition-all duration-300"
                   >
                     <div className="flex items-center justify-between mb-8">
                       <div className="w-14 h-14 rounded-2xl border border-white/10 bg-white/[0.05] text-blue-300 flex items-center justify-center">
@@ -177,12 +209,16 @@ export default function RefundPolicyPage() {
                 <CheckCircle size={30} strokeWidth={2} />
               </div>
 
+              <p className="uppercase tracking-[0.3em] text-green-300 text-sm mb-4">
+                Covered Claims
+              </p>
+
               <h2 className="text-3xl font-black text-white mb-8">
-                Eligible for Review
+                When We Can Help
               </h2>
 
               <div className="space-y-5">
-                {eligible.map((item) => (
+                {coveredClaims.map((item) => (
                   <div key={item} className="flex gap-4">
                     <CheckCircle
                       size={20}
@@ -199,12 +235,16 @@ export default function RefundPolicyPage() {
                 <XCircle size={30} strokeWidth={2} />
               </div>
 
+              <p className="uppercase tracking-[0.3em] text-red-300 text-sm mb-4">
+                Not Covered
+              </p>
+
               <h2 className="text-3xl font-black text-white mb-8">
-                Not Eligible for Return
+                Outside Our Policy
               </h2>
 
               <div className="space-y-5">
-                {notEligible.map((item) => (
+                {notCovered.map((item) => (
                   <div key={item} className="flex gap-4">
                     <XCircle
                       size={20}
@@ -217,49 +257,123 @@ export default function RefundPolicyPage() {
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-12 mb-16">
-            <div className="flex items-center gap-4 mb-10">
-              <div className="w-14 h-14 rounded-2xl border border-white/10 bg-white/[0.05] text-blue-300 flex items-center justify-center">
-                <Clock size={30} strokeWidth={2} />
-              </div>
+          <div className="mb-16">
+            <div className="text-center mb-12">
+              <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-5">
+                Resolution Options
+              </p>
 
-              <div>
-                <p className="uppercase tracking-[0.3em] text-blue-300 text-sm mb-2">
-                  Replacement Timeline
-                </p>
-
-                <h2 className="text-3xl md:text-4xl font-black text-white">
-                  What Happens After You Report an Issue
-                </h2>
-              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white">
+                Fair Solutions for Verified Issues
+              </h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {timeline.map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-6"
-                >
-                  <p className="text-blue-300 text-sm uppercase tracking-widest mb-4">
-                    {item.time}
-                  </p>
+              {resolutions.map((item) => {
+                const Icon = item.icon;
 
-                  <h3 className="text-xl font-black text-white mb-3">
-                    {item.title}
-                  </h3>
+                return (
+                  <div
+                    key={item.title}
+                    className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 hover:bg-white/[0.07] hover:border-blue-400/40 transition-all duration-300"
+                  >
+                    <div className="w-14 h-14 rounded-2xl border border-white/10 bg-white/[0.05] text-blue-300 flex items-center justify-center mb-6">
+                      <Icon size={28} strokeWidth={2} />
+                    </div>
 
-                  <p className="text-white/60 leading-relaxed">
-                    {item.text}
-                  </p>
+                    <h3 className="text-2xl font-black text-white mb-4">
+                      {item.title}
+                    </h3>
+
+                    <p className="text-white/60 leading-relaxed">
+                      {item.text}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="rounded-[2.5rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-12 mb-16">
+            <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-12 items-center">
+              <div>
+                <div className="w-16 h-16 rounded-2xl border border-white/10 bg-white/[0.05] text-blue-300 flex items-center justify-center mb-8">
+                  <FlaskConical size={34} strokeWidth={2} />
                 </div>
-              ))}
+
+                <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-5">
+                  Quality Standards
+                </p>
+
+                <h2 className="text-4xl md:text-5xl font-black text-white leading-tight">
+                  Built on Transparency.
+                </h2>
+              </div>
+
+              <div className="space-y-6 text-white/70 text-lg leading-relaxed">
+                <p>
+                  Apexx Biolabs is committed to providing research-use products
+                  backed by quality review, careful packaging, and batch
+                  transparency.
+                </p>
+
+                <p>
+                  When available, Certificates of Analysis apply to the specific
+                  batch tested and are provided to support confidence in product
+                  identity and purity.
+                </p>
+
+                <p>
+                  Every shipment is prepared with care to help protect product
+                  integrity during transit.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-12 mb-16">
+            <div className="flex items-start gap-5 mb-8">
+              <div className="w-14 h-14 rounded-2xl border border-white/10 bg-white/[0.05] text-blue-300 flex items-center justify-center shrink-0">
+                <Truck size={30} strokeWidth={2} />
+              </div>
+
+              <div>
+                <p className="uppercase tracking-[0.3em] text-blue-300 text-sm mb-4">
+                  Shipping Responsibility
+                </p>
+
+                <h2 className="text-3xl md:text-4xl font-black text-white mb-5">
+                  We Help Investigate Shipping Issues
+                </h2>
+
+                <p className="text-white/70 text-lg leading-relaxed">
+                  Once an order has been accepted by the shipping carrier,
+                  delivery timing and handling are controlled by the carrier.
+                  However, if an issue occurs in transit, our team will review
+                  the situation and assist where possible.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-[2.5rem] border border-blue-400/20 bg-blue-500/10 backdrop-blur-sm p-8 md:p-12 mb-16">
+            <div className="w-16 h-16 rounded-2xl border border-white/10 bg-white/[0.05] text-blue-300 flex items-center justify-center mb-8">
+              <HeartHandshake size={34} strokeWidth={2} />
             </div>
 
-            <p className="text-white/50 text-sm leading-relaxed mt-8">
-              Note: All claims are subject to review and may be denied if
-              evidence is insufficient, inconsistent, incomplete, or suspicious.
-              Apexx Biolabs reserves the right to deny replacement, refund, or
-              credit requests at its sole discretion.
+            <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-5">
+              Our Promise
+            </p>
+
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
+              If Something Isn’t Right, Contact Us First.
+            </h2>
+
+            <p className="text-white/70 text-lg leading-relaxed max-w-5xl">
+              Apexx Biolabs was built on quality, transparency, and dependable
+              support. If you believe there is an issue with your order, please
+              reach out before assuming the worst. Our team is committed to
+              providing fair, prompt, and reasonable solutions whenever possible.
             </p>
           </div>
 
@@ -269,7 +383,7 @@ export default function RefundPolicyPage() {
             </div>
 
             <p className="uppercase tracking-[0.35em] text-yellow-300 text-sm mb-5">
-              Important Disclaimer
+              Important Notice
             </p>
 
             <div className="space-y-5 text-white/70 leading-relaxed">
@@ -281,28 +395,31 @@ export default function RefundPolicyPage() {
               </p>
 
               <p>
-                Due to the nature of research-use products, contamination risks,
-                and quality-control requirements, we do not accept returns of
+                Due to the nature of research-use products, contamination risk,
+                and quality-control requirements, we cannot accept returns of
                 opened, used, reconstituted, or partially used products.
               </p>
 
               <p>
-                Refunds are not offered for change of mind, dissatisfaction,
-                improper storage, misuse, or any reason other than a verified
-                order issue approved by Apexx Biolabs.
+                Refunds, replacements, and store credits are not guaranteed and
+                are issued only after review and approval by Apexx Biolabs.
               </p>
 
               <p>
-                By placing an order, you acknowledge and agree to this Returns
-                & Refunds Policy.
+                By placing an order, you acknowledge that you have read and
+                agree to this Returns & Replacements Policy.
               </p>
             </div>
           </div>
 
           <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-10">
-            <h2 className="text-3xl font-black text-white mb-8">
-              Need Help?
-            </h2>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-12 h-12 rounded-2xl border border-white/10 bg-white/[0.05] text-blue-300 flex items-center justify-center">
+                <Clock size={26} strokeWidth={2} />
+              </div>
+
+              <h2 className="text-3xl font-black text-white">Need Help?</h2>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div>
@@ -359,19 +476,31 @@ export default function RefundPolicyPage() {
               </h4>
 
               <div className="space-y-4">
-                <a href="/" className="block text-white/70 hover:text-white transition-all">
+                <a
+                  href="/"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
                   Home
                 </a>
 
-                <a href="/products" className="block text-white/70 hover:text-white transition-all">
+                <a
+                  href="/products"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
                   Products
                 </a>
 
-                <a href="/coas" className="block text-white/70 hover:text-white transition-all">
+                <a
+                  href="/coas"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
                   COAs
                 </a>
 
-                <a href="/contact" className="block text-white/70 hover:text-white transition-all">
+                <a
+                  href="/contact"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
                   Contact
                 </a>
               </div>
@@ -383,19 +512,31 @@ export default function RefundPolicyPage() {
               </h4>
 
               <div className="space-y-4">
-                <a href="/peptide-info" className="block text-white/70 hover:text-white transition-all">
+                <a
+                  href="/peptide-info"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
                   Peptide Info
                 </a>
 
-                <a href="/faq" className="block text-white/70 hover:text-white transition-all">
+                <a
+                  href="/faq"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
                   FAQ
                 </a>
 
-                <a href="/shipping" className="block text-white/70 hover:text-white transition-all">
+                <a
+                  href="/shipping"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
                   Shipping
                 </a>
 
-                <a href="/refunds" className="block text-white/70 hover:text-white transition-all">
+                <a
+                  href="/refunds"
+                  className="block text-white/70 hover:text-white transition-all"
+                >
                   Refunds
                 </a>
               </div>
@@ -412,6 +553,16 @@ export default function RefundPolicyPage() {
                   className="block text-white/70 hover:text-white transition-all"
                 >
                   support@apexxbiolabs.com
+                </a>
+
+                <a
+                  href="https://x.com/ApexxBiolabsLLC"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-white/70 hover:text-white transition-all"
+                >
+                  <Twitter size={16} />
+                  X
                 </a>
 
                 <a

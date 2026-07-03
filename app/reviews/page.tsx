@@ -116,8 +116,7 @@ export default function ReviewsPage() {
             </h1>
 
             <p className="text-white/70 text-lg leading-relaxed">
-              Share your experience with Apexx Biolabs. Reviews are reviewed
-              before appearing on the website.
+              Share your experience with Apexx Biolabs. Your feedback helps us improve our products and services. 
             </p>
           </div>
 

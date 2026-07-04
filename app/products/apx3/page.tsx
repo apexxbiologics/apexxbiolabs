@@ -789,6 +789,7 @@ export default function APX3Page() {
     <HiOutlineMail size={18} />
   </a>
 </div>
+          </div>
 
           {[
             ["Shop", [["All Products", "/products"], ["Certificates of Analysis", "/coas"]]],

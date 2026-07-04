@@ -9,6 +9,10 @@ import {
   Mail,
 } from "lucide-react";
 
+import { HiOutlineMail } from "react-icons/hi";
+import { FaTiktok } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+
 export default function AdamaxPage() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
@@ -489,7 +493,7 @@ export default function AdamaxPage() {
         </section>
       ))}
 
-      <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
+            <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 mb-14">
           <div>
             <img

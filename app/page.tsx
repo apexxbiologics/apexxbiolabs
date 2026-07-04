@@ -913,64 +913,154 @@ const handlePromoSignup = async (e: React.FormEvent) => {
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
   <div className="relative z-10 max-w-7xl mx-auto">
-    <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-14">
-      <div>
-        <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
-          Customer Feedback
-        </p>
+    <div className="text-center mb-14">
+      <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
+        Customer Experiences
+      </p>
 
-        <h2 className="text-5xl md:text-7xl font-black tracking-tight text-white leading-[0.95]">
-          Verified Customer Reviews
-        </h2>
+      <h2 className="text-5xl md:text-7xl font-black tracking-tight text-white leading-[0.95] mb-6">
+        Verified Customer Reviews
+      </h2>
 
-        <p className="text-white/70 text-lg md:text-xl leading-relaxed mt-6 max-w-2xl">
-          Feedback from Apexx customers about ordering, support, shipping, and documentation.
-        </p>
-      </div>
-
-      <a
-        href="/reviews"
-        className="border border-white/10 bg-white/[0.04] text-white rounded-full px-8 py-3 text-sm font-semibold uppercase tracking-widest hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
-      >
-        Leave a Review
-      </a>
+      <p className="text-white/70 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
+        Feedback from Apexx customers about ordering, support, shipping,
+        packaging, and product quality.
+      </p>
     </div>
 
     {reviews.length > 0 ? (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {reviews.map((item) => (
-          <div
-            key={item.id}
-            className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 hover:bg-white/[0.07] hover:border-blue-400/40 transition-all"
-          >
-            <div className="flex gap-1 mb-6">
-              {Array.from({ length: item.rating }).map((_, index) => (
-                <Star
-                  key={index}
-                  size={20}
-                  className="fill-blue-300 text-blue-300"
-                />
-              ))}
-            </div>
+      <>
+        <div className="rounded-[2.5rem] border border-blue-400/20 bg-white/[0.04] backdrop-blur-sm p-8 md:p-12 mb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-10 items-center">
+            <div className="text-center lg:text-left">
+              <p className="uppercase tracking-[0.3em] text-blue-300 text-xs mb-4">
+                Overall Rating
+              </p>
 
-            <p className="text-white/70 leading-relaxed mb-8">
-              “{item.review}”
-            </p>
+              <div className="flex items-center justify-center lg:justify-start gap-2 mb-5">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    size={30}
+                    className="fill-blue-300 text-blue-300"
+                  />
+                ))}
+              </div>
 
-            <div className="border-t border-white/10 pt-5">
-              <p className="text-white font-bold">{item.name}</p>
-              <p className="text-blue-300 text-xs uppercase tracking-widest mt-1">
-                Verified Customer
+              <div className="flex items-end justify-center lg:justify-start gap-3">
+                <span className="text-6xl md:text-7xl font-black text-white">
+                  5.0
+                </span>
+
+                <span className="text-white/50 text-xl pb-3">/ 5</span>
+              </div>
+
+              <p className="text-white/50 mt-4">
+                Based on approved customer reviews.
               </p>
             </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[
+                "Product Quality",
+                "Packaging",
+                "Shipping",
+                "Ordering Experience",
+                "Customer Support",
+              ].map((item) => (
+                <div
+                  key={item}
+                  className="rounded-[1.5rem] border border-white/10 bg-[#081526]/60 p-5"
+                >
+                  <p className="text-white/70 text-sm uppercase tracking-widest mb-3">
+                    {item}
+                  </p>
+
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star
+                        key={star}
+                        size={18}
+                        className="fill-blue-300 text-blue-300"
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              <a
+                href="/reviews"
+                className="rounded-[1.5rem] border border-blue-400/30 bg-blue-500/10 p-5 flex items-center justify-between text-blue-100 hover:bg-blue-500/20 transition-all"
+              >
+                <span className="font-bold uppercase tracking-widest text-sm">
+                  View All Reviews
+                </span>
+
+                <span className="text-2xl">→</span>
+              </a>
+            </div>
           </div>
-        ))}
-      </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {reviews.slice(0, 3).map((item) => (
+            <div
+              key={item.id}
+              className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 hover:bg-white/[0.07] hover:border-blue-400/40 transition-all"
+            >
+              <div className="flex gap-1 mb-6">
+                {Array.from({ length: item.rating }).map((_, index) => (
+                  <Star
+                    key={index}
+                    size={20}
+                    className="fill-blue-300 text-blue-300"
+                  />
+                ))}
+              </div>
+
+              <p className="text-white/70 leading-relaxed mb-8">
+                “{item.review}”
+              </p>
+
+              <div className="border-t border-white/10 pt-5">
+                <p className="text-white font-bold">{item.name}</p>
+
+                <p className="text-blue-300 text-xs uppercase tracking-widest mt-1">
+                  Verified Customer
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center mt-12 flex flex-col sm:flex-row gap-4 justify-center">
+          <a
+            href="/reviews"
+            className="inline-flex justify-center rounded-full border border-blue-400/30 bg-blue-500/10 px-8 py-4 text-sm font-bold uppercase tracking-widest text-blue-100 hover:bg-blue-500/20 transition-all"
+          >
+            View All Reviews
+          </a>
+
+          <a
+            href="/reviews#leave-review"
+            className="inline-flex justify-center rounded-full bg-white text-[#081526] px-8 py-4 text-sm font-bold uppercase tracking-widest hover:bg-blue-100 transition-all"
+          >
+            Leave a Review
+          </a>
+        </div>
+      </>
     ) : (
       <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-10 text-center max-w-3xl mx-auto">
-        <p className="text-white/60">
+        <p className="text-white/60 mb-6">
           Customer reviews will appear here once approved.
         </p>
+
+        <a
+          href="/reviews#leave-review"
+          className="inline-flex rounded-full bg-white text-[#081526] px-8 py-4 font-bold uppercase tracking-widest hover:bg-blue-100 transition-all"
+        >
+          Leave a Review
+        </a>
       </div>
     )}
   </div>

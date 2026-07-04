@@ -13,21 +13,23 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const {
-      customerEmail,
-      firstName,
-      lastName,
-      address,
-      city,
-      state,
-      zipCode,
-      paymentMethod,
-      cart,
-      subtotal,
-      shipping,
-      total,
-      freeBacWater,
-    } = body;
+const {
+  customerEmail,
+  firstName,
+  lastName,
+  address,
+  city,
+  state,
+  zipCode,
+  paymentMethod,
+  cart,
+  subtotal,
+  shipping,
+  discount,
+  promoCode,
+  total,
+  freeBacWater,
+} = body;
 
     const orderNumber = `APX-${Date.now()}`;
 
@@ -46,6 +48,8 @@ customer_email: customerEmail.trim().toLowerCase(),          first_name: firstNa
           cart,
           subtotal,
           shipping,
+          promo_code: promoCode,
+discount,
           total,
           status: "awaiting_payment",
         },
@@ -242,6 +246,20 @@ customer_email: customerEmail.trim().toLowerCase(),          first_name: firstNa
                     <p style="margin:0;"><strong>Shipping:</strong> $${Number(shipping).toFixed(2)}</p>
 
                     ${
+  promoCode
+    ? `
+      <p style="margin:0;">
+        <strong>Promo Code:</strong> ${promoCode}
+      </p>
+
+      <p style="margin:0;">
+        <strong>Discount:</strong> -$${Number(discount).toFixed(2)}
+      </p>
+    `
+    : ""
+}
+
+                    ${
                       freeBacWater
                         ? `
                           <p style="margin:8px 0 0; color:#16a34a; font-weight:bold;">
@@ -312,9 +330,19 @@ customer_email: customerEmail.trim().toLowerCase(),          first_name: firstNa
         <h3>Order Items</h3>
         <ul>${itemsHtml}</ul>
 
-        <p><strong>Subtotal:</strong> $${Number(subtotal).toFixed(2)}</p>
-        <p><strong>Shipping:</strong> $${Number(shipping).toFixed(2)}</p>
-        <p><strong>Total:</strong> $${Number(total).toFixed(2)}</p>
+<p><strong>Subtotal:</strong> $${Number(subtotal).toFixed(2)}</p>
+<p><strong>Shipping:</strong> $${Number(shipping).toFixed(2)}</p>
+
+${
+  promoCode
+    ? `
+      <p><strong>Promo Code:</strong> ${promoCode}</p>
+      <p><strong>Discount:</strong> -$${Number(discount).toFixed(2)}</p>
+    `
+    : ""
+}
+
+<p><strong>Total:</strong> $${Number(total).toFixed(2)}</p>
 
         ${
           freeBacWater

@@ -9,36 +9,71 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+const PROMO_CODES: Record<string, number> = {
+  FREEDOM10: 0.1,
+  PEPTIDEALS: 0.15,
+};
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-const {
-  customerEmail,
-  firstName,
-  lastName,
-  address,
-  city,
-  state,
-  zipCode,
-  paymentMethod,
-  cart,
-  subtotal,
-  shipping,
-  discount,
-  promoCode,
-  total,
-  freeBacWater,
-} = body;
+    const {
+      customerEmail,
+      firstName,
+      lastName,
+      address,
+      city,
+      state,
+      zipCode,
+      paymentMethod,
+      cart,
+      promoCode,
+    } = body;
 
     const orderNumber = `APX-${Date.now()}`;
 
-const { data: order, error: orderInsertError } = await supabaseAdmin
-  .from("orders")
+    const serverSubtotal = cart.reduce(
+      (sum: number, item: any) =>
+        sum + Number(item.price || 0) * Number(item.quantity || 0),
+      0
+    );
+
+    const normalizedPromoCode = String(promoCode || "").trim().toUpperCase();
+    const discountRate = PROMO_CODES[normalizedPromoCode] || 0;
+
+    const serverDiscount = Number(
+      (serverSubtotal * discountRate).toFixed(2)
+    );
+
+    const appliedPromoCode = discountRate > 0 ? normalizedPromoCode : "";
+
+    const freeShippingThreshold = 200;
+    const standardShipping = 5.99;
+
+    const serverShipping =
+      serverSubtotal > 0 && serverSubtotal < freeShippingThreshold
+        ? standardShipping
+        : 0;
+
+    const serverTotal = Number(
+      (serverSubtotal - serverDiscount + serverShipping).toFixed(2)
+    );
+
+    const vialCount = cart.reduce((total: number, item: any) => {
+      const isBacWater = String(item.name || "").toLowerCase().includes("bac");
+      return isBacWater ? total : total + Number(item.quantity || 0);
+    }, 0);
+
+    const serverFreeBacWater = vialCount >= 4;
+
+    const { data: order, error: orderInsertError } = await supabaseAdmin
+      .from("orders")
       .insert([
         {
           order_number: orderNumber,
-customer_email: customerEmail.trim().toLowerCase(),          first_name: firstName,
+          customer_email: customerEmail.trim().toLowerCase(),
+          first_name: firstName,
           last_name: lastName,
           address,
           city,
@@ -46,11 +81,11 @@ customer_email: customerEmail.trim().toLowerCase(),          first_name: firstNa
           zip_code: zipCode,
           payment_method: paymentMethod,
           cart,
-          subtotal,
-          shipping,
-          promo_code: promoCode,
-discount,
-          total,
+          subtotal: serverSubtotal,
+          shipping: serverShipping,
+          discount: serverDiscount,
+          promo_code: appliedPromoCode,
+          total: serverTotal,
           status: "awaiting_payment",
         },
       ])
@@ -71,9 +106,20 @@ discount,
         (item: any) =>
           `<li style="margin-bottom:8px;">${item.name} x ${
             item.quantity
-          } — $${(item.price * item.quantity).toFixed(2)}</li>`
+          } — $${(Number(item.price || 0) * Number(item.quantity || 0)).toFixed(
+            2
+          )}</li>`
       )
       .join("");
+
+    const promoHtml = appliedPromoCode
+      ? `
+        <p style="margin:0;"><strong>Promo Code:</strong> ${appliedPromoCode}</p>
+        <p style="margin:0;"><strong>Discount:</strong> -$${Number(
+          serverDiscount
+        ).toFixed(2)}</p>
+      `
+      : "";
 
     await resend.emails.send({
       from: "Apexx Biolabs <orders@apexxbiolabs.com>",
@@ -123,7 +169,7 @@ discount,
                   </p>
 
                   <p style="margin:0; color:#0f172a !important; font-size:50px; font-weight:900;">
-                    $${Number(total).toFixed(2)}
+                    $${Number(serverTotal).toFixed(2)}
                   </p>
                 </div>
 
@@ -242,25 +288,12 @@ discount,
                   </ul>
 
                   <div style="border-top:1px solid #dbeafe; padding-top:16px; color:#334155; line-height:1.8;">
-                    <p style="margin:0;"><strong>Subtotal:</strong> $${Number(subtotal).toFixed(2)}</p>
-                    <p style="margin:0;"><strong>Shipping:</strong> $${Number(shipping).toFixed(2)}</p>
+                    <p style="margin:0;"><strong>Subtotal:</strong> $${Number(serverSubtotal).toFixed(2)}</p>
+                    <p style="margin:0;"><strong>Shipping:</strong> $${Number(serverShipping).toFixed(2)}</p>
+                    ${promoHtml}
 
                     ${
-  promoCode
-    ? `
-      <p style="margin:0;">
-        <strong>Promo Code:</strong> ${promoCode}
-      </p>
-
-      <p style="margin:0;">
-        <strong>Discount:</strong> -$${Number(discount).toFixed(2)}
-      </p>
-    `
-    : ""
-}
-
-                    ${
-                      freeBacWater
+                      serverFreeBacWater
                         ? `
                           <p style="margin:8px 0 0; color:#16a34a; font-weight:bold;">
                             ✓ Complimentary Bac Water Included
@@ -270,7 +303,7 @@ discount,
                     }
 
                     <p style="margin:12px 0 0; color:#06111f; font-size:19px;">
-                      <strong>Total:</strong> $${Number(total).toFixed(2)}
+                      <strong>Total:</strong> $${Number(serverTotal).toFixed(2)}
                     </p>
                   </div>
                 </div>
@@ -330,22 +363,22 @@ discount,
         <h3>Order Items</h3>
         <ul>${itemsHtml}</ul>
 
-<p><strong>Subtotal:</strong> $${Number(subtotal).toFixed(2)}</p>
-<p><strong>Shipping:</strong> $${Number(shipping).toFixed(2)}</p>
-
-${
-  promoCode
-    ? `
-      <p><strong>Promo Code:</strong> ${promoCode}</p>
-      <p><strong>Discount:</strong> -$${Number(discount).toFixed(2)}</p>
-    `
-    : ""
-}
-
-<p><strong>Total:</strong> $${Number(total).toFixed(2)}</p>
+        <p><strong>Subtotal:</strong> $${Number(serverSubtotal).toFixed(2)}</p>
+        <p><strong>Shipping:</strong> $${Number(serverShipping).toFixed(2)}</p>
 
         ${
-          freeBacWater
+          appliedPromoCode
+            ? `
+              <p><strong>Promo Code:</strong> ${appliedPromoCode}</p>
+              <p><strong>Discount:</strong> -$${Number(serverDiscount).toFixed(2)}</p>
+            `
+            : ""
+        }
+
+        <p><strong>Total:</strong> $${Number(serverTotal).toFixed(2)}</p>
+
+        ${
+          serverFreeBacWater
             ? `<p style="color:green; font-weight:bold;">✓ INCLUDE 1 FREE BAC WATER WITH THIS ORDER</p>`
             : ""
         }

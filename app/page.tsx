@@ -7,6 +7,10 @@ import {
   BookOpen,
 } from "lucide-react";
 
+import { HiOutlineMail } from "react-icons/hi";
+import { FaTiktok } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+
 import { useEffect, useRef, useState } from "react";
 import { ShoppingCart, Search, Menu, X } from "lucide-react";
 import { FlaskConical, Microscope } from "lucide-react";

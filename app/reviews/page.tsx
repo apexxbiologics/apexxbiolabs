@@ -168,6 +168,7 @@ export default function ReviewsPage() {
                   <span className="text-6xl md:text-7xl font-black text-white">
                     {average}
                   </span>
+
                   <span className="text-white/50 text-xl pb-3">/ 5</span>
                 </div>
 
@@ -212,77 +213,16 @@ export default function ReviewsPage() {
                   <span className="font-bold uppercase tracking-widest text-sm">
                     Leave a Review
                   </span>
+
                   <span className="text-2xl">→</span>
                 </a>
               </div>
             </div>
           </div>
 
-          <div className="mb-20">
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
-              <div>
-                <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
-                  Latest Reviews
-                </p>
-
-                <h2 className="text-4xl md:text-5xl font-black text-white">
-                  What Customers Are Saying
-                </h2>
-              </div>
-            </div>
-
-            {reviews.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {reviews.map((item) => (
-                  <div
-                    key={item.id}
-                    className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 hover:bg-white/[0.07] hover:border-blue-400/40 transition-all"
-                  >
-                    <RatingStars value={item.rating} size={20} />
-
-                    <p className="text-white/70 leading-relaxed my-8">
-                      “{item.review}”
-                    </p>
-
-                    <div className="grid grid-cols-1 gap-2 text-sm text-white/50 mb-6">
-                      {item.product_rating && (
-                        <p>Product Quality: {item.product_rating}/5</p>
-                      )}
-                      {item.packaging_rating && (
-                        <p>Packaging: {item.packaging_rating}/5</p>
-                      )}
-                      {item.shipping_rating && (
-                        <p>Shipping: {item.shipping_rating}/5</p>
-                      )}
-                      {item.ordering_rating && (
-                        <p>Ordering: {item.ordering_rating}/5</p>
-                      )}
-                      {item.support_rating && (
-                        <p>Support: {item.support_rating}/5</p>
-                      )}
-                    </div>
-
-                    <div className="border-t border-white/10 pt-5">
-                      <p className="text-white font-bold">{item.name}</p>
-                      <p className="text-blue-300 text-xs uppercase tracking-widest mt-1">
-                        Verified Customer
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-10 text-center">
-                <p className="text-white/60">
-                  Customer reviews will appear here once approved.
-                </p>
-              </div>
-            )}
-          </div>
-
           <div
             id="leave-review"
-            className="max-w-3xl mx-auto rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10"
+            className="max-w-3xl mx-auto rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10 mb-20 scroll-mt-24"
           >
             <div className="text-center mb-10">
               <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-5">
@@ -402,6 +342,73 @@ export default function ReviewsPage() {
               Reviews containing medical, therapeutic, or human-use claims may
               not be approved.
             </p>
+          </div>
+
+          <div className="mb-20">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
+              <div>
+                <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
+                  Latest Reviews
+                </p>
+
+                <h2 className="text-4xl md:text-5xl font-black text-white">
+                  What Customers Are Saying
+                </h2>
+              </div>
+            </div>
+
+            {reviews.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {reviews.map((item) => (
+                  <div
+                    key={item.id}
+                    className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 hover:bg-white/[0.07] hover:border-blue-400/40 transition-all"
+                  >
+                    <RatingStars value={item.rating} size={20} />
+
+                    <p className="text-white/70 leading-relaxed my-8">
+                      “{item.review}”
+                    </p>
+
+                    <div className="grid grid-cols-1 gap-2 text-sm text-white/50 mb-6">
+                      {item.product_rating && (
+                        <p>Product Quality: {item.product_rating}/5</p>
+                      )}
+
+                      {item.packaging_rating && (
+                        <p>Packaging: {item.packaging_rating}/5</p>
+                      )}
+
+                      {item.shipping_rating && (
+                        <p>Shipping: {item.shipping_rating}/5</p>
+                      )}
+
+                      {item.ordering_rating && (
+                        <p>Ordering: {item.ordering_rating}/5</p>
+                      )}
+
+                      {item.support_rating && (
+                        <p>Support: {item.support_rating}/5</p>
+                      )}
+                    </div>
+
+                    <div className="border-t border-white/10 pt-5">
+                      <p className="text-white font-bold">{item.name}</p>
+
+                      <p className="text-blue-300 text-xs uppercase tracking-widest mt-1">
+                        Verified Customer
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-10 text-center">
+                <p className="text-white/60">
+                  Customer reviews will appear here once approved.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </section>

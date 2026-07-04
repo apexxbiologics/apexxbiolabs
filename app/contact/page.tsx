@@ -47,7 +47,7 @@ export default function ContactPage() {
             <span>Research Use Only • Professional Support</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-14 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-14 text-left">
             <a
               href="https://www.tiktok.com/@apexx.nyc"
               target="_blank"
@@ -55,7 +55,7 @@ export default function ContactPage() {
               className="group rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-10 hover:bg-white/[0.07] hover:border-blue-400/50 hover:-translate-y-2 transition-all duration-300"
             >
               <div className="w-16 h-16 rounded-2xl border border-white/10 bg-[#102A4A] flex items-center justify-center text-blue-300 mb-6">
-                <div className="text-4xl font-black">♪</div>
+                <FaTiktok size={34} />
               </div>
 
               <p className="uppercase tracking-widest text-blue-300 text-sm mb-3">
@@ -73,24 +73,35 @@ export default function ContactPage() {
             </a>
 
             <a
+              href="https://x.com/ApexxBiolabsLLC"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-10 hover:bg-white/[0.07] hover:border-blue-400/50 hover:-translate-y-2 transition-all duration-300"
+            >
+              <div className="w-16 h-16 rounded-2xl border border-white/10 bg-[#102A4A] flex items-center justify-center text-blue-300 mb-6">
+                <FaXTwitter size={34} />
+              </div>
+
+              <p className="uppercase tracking-widest text-blue-300 text-sm mb-3">
+                X
+              </p>
+
+              <h2 className="text-3xl font-black text-white mb-4">
+                @ApexxBiolabsLLC
+              </h2>
+
+              <p className="text-white/60 leading-relaxed">
+                Follow us on X for company announcements, research updates, new
+                product releases, and important laboratory news.
+              </p>
+            </a>
+
+            <a
               href="mailto:support@apexxbiolabs.com"
               className="group rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-10 hover:bg-white/[0.07] hover:border-blue-400/50 hover:-translate-y-2 transition-all duration-300"
             >
               <div className="w-16 h-16 rounded-2xl border border-white/10 bg-[#102A4A] flex items-center justify-center text-blue-300 mb-6">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.8}
-                  stroke="currentColor"
-                  className="w-9 h-9"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M21.75 7.5v9A2.25 2.25 0 0 1 19.5 18.75h-15A2.25 2.25 0 0 1 2.25 16.5v-9m19.5 0L12 13.5 2.25 7.5m19.5 0A2.25 2.25 0 0 0 19.5 5.25h-15A2.25 2.25 0 0 0 2.25 7.5"
-                  />
-                </svg>
+                <HiOutlineMail size={38} />
               </div>
 
               <p className="uppercase tracking-widest text-blue-300 text-sm mb-3">
@@ -134,9 +145,7 @@ export default function ContactPage() {
                   {item.title}
                 </h3>
 
-                <p className="text-white/60 leading-relaxed">
-                  {item.text}
-                </p>
+                <p className="text-white/60 leading-relaxed">{item.text}</p>
               </div>
             ))}
           </div>
@@ -166,7 +175,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-                        <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
+      <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 mb-14">
           <div>
             <img
@@ -176,45 +185,71 @@ export default function ContactPage() {
             />
 
             <p className="text-white/60 text-sm leading-relaxed">
-              Premium research-grade peptides built on science, quality, and transparency.
+              Premium research-grade peptides built on science, quality, and
+              transparency.
             </p>
 
-<div className="flex gap-3 mt-6">
-  <a
-    href="https://www.tiktok.com/@apexx.nyc"
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label="TikTok"
-    className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:border-blue-400/40 hover:bg-white/[0.07] transition-all"
-  >
-    <FaTiktok size={18} />
-  </a>
+            <div className="flex gap-3 mt-6">
+              <a
+                href="https://www.tiktok.com/@apexx.nyc"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="TikTok"
+                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:border-blue-400/40 hover:bg-white/[0.07] transition-all"
+              >
+                <FaTiktok size={18} />
+              </a>
 
-  <a
-    href="https://x.com/ApexxBiolabsLLC"
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label="X"
-    className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:border-blue-400/40 hover:bg-white/[0.07] transition-all"
-  >
-    <FaXTwitter size={18} />
-  </a>
+              <a
+                href="https://x.com/ApexxBiolabsLLC"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="X"
+                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:border-blue-400/40 hover:bg-white/[0.07] transition-all"
+              >
+                <FaXTwitter size={18} />
+              </a>
 
-  <a
-    href="mailto:support@apexxbiolabs.com"
-    aria-label="Email"
-    className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:border-blue-400/40 hover:bg-white/[0.07] transition-all"
-  >
-    <HiOutlineMail size={18} />
-  </a>
-</div>
+              <a
+                href="mailto:support@apexxbiolabs.com"
+                aria-label="Email"
+                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:border-blue-400/40 hover:bg-white/[0.07] transition-all"
+              >
+                <HiOutlineMail size={18} />
+              </a>
+            </div>
           </div>
 
           {[
-            ["Shop", [["All Products", "/products"], ["Certificates of Analysis", "/coas"]]],
-            ["Resources", [["Research Library", "/peptide-info"], ["FAQ", "/faq"]]],
-            ["Support", [["Contact Us", "/contact"], ["Shipping Info", "/shipping"], ["Returns & Refunds", "/refunds"]]],
-            ["Legal", [["Privacy Policy", "/privacy"], ["Terms of Service", "/terms"]]],
+            [
+              "Shop",
+              [
+                ["All Products", "/products"],
+                ["Certificates of Analysis", "/coas"],
+              ],
+            ],
+            [
+              "Resources",
+              [
+                ["Research Library", "/peptide-info"],
+                ["FAQ", "/faq"],
+              ],
+            ],
+            [
+              "Support",
+              [
+                ["Contact Us", "/contact"],
+                ["Shipping Info", "/shipping"],
+                ["Returns & Refunds", "/refunds"],
+              ],
+            ],
+            [
+              "Legal",
+              [
+                ["Privacy Policy", "/privacy"],
+                ["Terms of Service", "/terms"],
+              ],
+            ],
           ].map(([title, links]: any) => (
             <div key={title}>
               <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">

@@ -234,8 +234,7 @@ export default function ReviewsPage() {
               </h2>
 
               <p className="text-white/60 leading-relaxed">
-                Reviews are reviewed before appearing on the website.
-              </p>
+We appreciate you taking the time to leave a review. Your feedback helps us continually improve our products, customer service, and overall experience.              </p>
             </div>
 
             <form onSubmit={handleSubmit}>

@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ShoppingCart, Trash2, ShieldCheck, PackageCheck } from "lucide-react";
 
+import { HiOutlineMail } from "react-icons/hi";
+import { FaTiktok } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+
 type CartItem = {
   id: string;
   name: string;
@@ -325,145 +329,75 @@ export default function CartPage() {
         </div>
       </section>
 
-      <footer className="bg-[#081526] border-t border-blue-900/40 px-6 pt-24 pb-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
-            <div>
-              <img
-                src="/images/logo.png"
-                alt="Apexx Biolabs"
-                className="h-12 w-auto mb-6"
-              />
+      <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 mb-14">
+          <div>
+            <img
+              src="/images/logo.png"
+              alt="Apexx Biolabs"
+              className="h-12 w-auto mb-5"
+            />
 
-              <p className="text-white/70 leading-relaxed text-sm">
-                High-purity research compounds supported by batch documentation,
-                analytical testing, and research-use transparency.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
-                Company
-              </h4>
-
-              <div className="space-y-4">
-                <a
-                  href="/"
-                  className="block text-white/70 hover:text-white transition-all"
-                >
-                  Home
-                </a>
-
-                <a
-                  href="/products"
-                  className="block text-white/70 hover:text-white transition-all"
-                >
-                  Products
-                </a>
-
-                <a
-                  href="/coas"
-                  className="block text-white/70 hover:text-white transition-all"
-                >
-                  COAs
-                </a>
-
-                <a
-                  href="/contact"
-                  className="block text-white/70 hover:text-white transition-all"
-                >
-                  Contact
-                </a>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
-                Resources
-              </h4>
-
-              <div className="space-y-4">
-                <a
-                  href="/peptide-info"
-                  className="block text-white/70 hover:text-white transition-all"
-                >
-                  Peptide Info
-                </a>
-
-                <a
-                  href="/faq"
-                  className="block text-white/70 hover:text-white transition-all"
-                >
-                  FAQ
-                </a>
-
-                <a
-                  href="/shipping"
-                  className="block text-white/70 hover:text-white transition-all"
-                >
-                  Shipping
-                </a>
-
-                <a
-                  href="/refunds"
-                  className="block text-white/70 hover:text-white transition-all"
-                >
-                  Refunds
-                </a>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-white text-sm font-semibold uppercase tracking-[0.25em] mb-6">
-                Contact
-              </h4>
-
-              <div className="space-y-4">
-                <a
-                  href="mailto:support@apexxbiolabs.com"
-                  className="block text-white/70 hover:text-white transition-all"
-                >
-                  support@apexxbiolabs.com
-                </a>
-
-                <a
-                  href="https://www.tiktok.com/@apexx.nyc"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-white/70 hover:text-white transition-all"
-                >
-                  TikTok
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-white/10 pt-10">
-            <p className="text-white/40 text-xs uppercase tracking-[0.18em] leading-relaxed max-w-5xl">
-              FOR LABORATORY RESEARCH USE ONLY. NOT FOR HUMAN CONSUMPTION. NOT
-              FOR MEDICAL, DIAGNOSTIC, THERAPEUTIC, OR VETERINARY USE.
+            <p className="text-white/60 text-sm leading-relaxed">
+              Premium research-grade peptides built on science, quality, and transparency.
             </p>
 
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6 mt-10">
-              <p className="text-white/40 text-sm">
-                © 2026 Apexx Biolabs. All Rights Reserved.
-              </p>
+<div className="flex gap-3 mt-6">
+  <a
+    href="https://www.tiktok.com/@apexx.nyc"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="TikTok"
+    className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:border-blue-400/40 hover:bg-white/[0.07] transition-all"
+  >
+    <FaTiktok size={18} />
+  </a>
 
-              <div className="flex gap-8 text-sm text-white/40">
-                <a href="/privacy" className="hover:text-white transition-all">
-                  Privacy
-                </a>
+  <a
+    href="https://x.com/ApexxBiolabsLLC"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="X"
+    className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:border-blue-400/40 hover:bg-white/[0.07] transition-all"
+  >
+    <FaXTwitter size={18} />
+  </a>
 
-                <a href="/terms" className="hover:text-white transition-all">
-                  Terms
-                </a>
+  <a
+    href="mailto:support@apexxbiolabs.com"
+    aria-label="Email"
+    className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:border-blue-400/40 hover:bg-white/[0.07] transition-all"
+  >
+    <HiOutlineMail size={18} />
+  </a>
+</div>
+          </div>
 
-                <a href="/shipping" className="hover:text-white transition-all">
-                  Shipping
-                </a>
+          {[
+            ["Shop", [["All Products", "/products"], ["Certificates of Analysis", "/coas"]]],
+            ["Resources", [["Research Library", "/peptide-info"], ["FAQ", "/faq"]]],
+            ["Support", [["Contact Us", "/contact"], ["Shipping Info", "/shipping"], ["Returns & Refunds", "/refunds"]]],
+            ["Legal", [["Privacy Policy", "/privacy"], ["Terms of Service", "/terms"]]],
+          ].map(([title, links]: any) => (
+            <div key={title}>
+              <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
+                {title}
+              </h4>
+
+              <div className="space-y-3 text-white/50">
+                {links.map(([label, href]: any) => (
+                  <a key={label} href={href} className="block hover:text-blue-300">
+                    {label}
+                  </a>
+                ))}
               </div>
             </div>
-          </div>
+          ))}
+        </div>
+
+        <div className="max-w-7xl mx-auto border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between gap-4 text-white/40 text-sm">
+          <p>© 2026 Apexx Biolabs. All rights reserved.</p>
+          <p>SSL Secured · 99%+ Purity · Research Use Only</p>
         </div>
       </footer>
     </main>

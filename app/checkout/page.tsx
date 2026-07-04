@@ -59,10 +59,15 @@ const [marketingConsent, setMarketingConsent] = useState(true);
 const shipping =
   subtotal > 0 && !qualifiesForFreeShipping ? standardShipping : 0;
 
-const discount =
-  promoCode.trim().toUpperCase() === "FREEDOM10"
-    ? subtotal * 0.1
-    : 0;
+const normalizedPromoCode = promoCode.trim().toUpperCase();
+
+const promoDiscounts: Record<string, number> = {
+  FREEDOM10: 0.1,
+  PEPTIDEALS: 0.15,
+};
+
+const discountRate = promoDiscounts[normalizedPromoCode] || 0;
+const discount = subtotal * discountRate;
 
 const total = Number((subtotal - discount + shipping).toFixed(2));
 
@@ -463,11 +468,11 @@ const handlePlaceOrder = async () => {
     className="checkout-input"
   />
 
-  {promoCode.trim().toUpperCase() === "FREEDOM10" && (
-    <p className="text-green-300 text-sm mt-2 font-semibold">
-      ✓ FREEDOM10 Applied (10% Off)
-    </p>
-  )}
+{discountRate > 0 && (
+  <p className="text-green-300 text-sm mt-2 font-semibold">
+    ✓ {normalizedPromoCode} Applied ({Math.round(discountRate * 100)}% Off)
+  </p>
+)}
 </div>
 
                   <div className="flex justify-between text-white/60">
@@ -477,8 +482,8 @@ const handlePlaceOrder = async () => {
 
 {discount > 0 && (
   <div className="flex justify-between text-green-300 font-semibold">
-    <span>FREEDOM10</span>
-    <span>-${discount.toFixed(2)}</span>
+{normalizedPromoCode} applied — ${discount.toFixed(2)} off
+<span>-${discount.toFixed(2)}</span>
   </div>
 )}
 

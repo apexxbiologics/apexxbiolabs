@@ -9,8 +9,10 @@ type Order = {
   first_name: string;
   last_name: string;
   payment_method: string;
-  total: number;
-  status: string;
+total: number;
+promo_code: string | null;
+discount: number | null;
+status: string;
   tracking_number: string | null;
   created_at: string;
 };
@@ -258,8 +260,9 @@ const totalRevenue = orders.reduce((sum, order) => sum + Number(order.total || 0
                     <th className="p-5">Order</th>
                     <th className="p-5">Customer</th>
                     <th className="p-5">Payment</th>
-                    <th className="p-5">Total</th>
-                    <th className="p-5">Status</th>
+<th className="p-5">Total</th>
+<th className="p-5">Promo</th>
+<th className="p-5">Status</th>
 <th className="p-5">Created</th>
 <th className="p-5">Tracking</th>
 <th className="p-5">Actions</th>                  
@@ -292,6 +295,20 @@ const totalRevenue = orders.reduce((sum, order) => sum + Number(order.total || 0
                       <td className="p-5 font-black text-blue-300">
                         ${Number(order.total).toFixed(2)}
                       </td>
+
+                      <td className="p-5">
+  {order.promo_code ? (
+    <div>
+      <p className="font-bold text-green-300">{order.promo_code}</p>
+      <p className="text-sm text-white/50">
+        -${Number(order.discount || 0).toFixed(2)}
+      </p>
+    </div>
+  ) : (
+    <span className="text-white/30 text-sm">None</span>
+  )}
+</td>
+
 
                       <td className="p-5">
                         <span className="inline-flex rounded-full border border-blue-300/30 bg-blue-500/10 px-4 py-2 text-xs uppercase tracking-widest text-blue-200">

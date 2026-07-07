@@ -21,7 +21,7 @@ export default function MOTSCPage() {
   const product = {
     id: "motsc",
     name: "MOTS-C",
-    price: 60,
+    price: 45,
     image: "/images/motscblue.png",
   };
 

@@ -67,7 +67,7 @@ const normalizedPromoCode = promoCode.trim().toUpperCase();
 
 const promoDiscounts: Record<string, number> = {
   FREEDOM10: 0.1,
-  PEPTIDEALS: 0.15,
+  PEPTIDEALS: 0.20,
 };
 
 const discountRate = promoDiscounts[normalizedPromoCode] || 0;

@@ -21,7 +21,7 @@ export default function CJCIPAPage() {
   const product = {
     id: "cjcipa",
     name: "CJC/IPA",
-    price: 60,
+    price: 55,
     image: "/images/cjcipablue.png",
   };
 

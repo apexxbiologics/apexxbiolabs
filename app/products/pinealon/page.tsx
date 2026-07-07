@@ -21,7 +21,7 @@ export default function PinealonPage() {
   const product = {
     id: "pinealon",
     name: "Pinealon",
-    price: 60,
+    price: 55,
     image: "/images/pinealonblue.png",
   };
 

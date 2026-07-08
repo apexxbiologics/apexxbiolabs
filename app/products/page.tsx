@@ -200,24 +200,6 @@ export default function ProductsPage() {
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-      <header className="border-b border-white/10 bg-[#081526]/95 backdrop-blur-xl px-6 py-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <a href="/">
-            <img
-              src="/images/logo.png"
-              alt="Apexx Biolabs"
-              className="h-12 w-auto"
-            />
-          </a>
-
-          <a
-            href="/"
-            className="border border-white/10 bg-white/[0.04] text-white rounded-full px-6 py-3 text-xs uppercase tracking-widest hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
-          >
-            Home
-          </a>
-        </div>
-      </header>
 
       <section className="relative px-6 py-24 bg-[#081526] border-b border-white/10 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>

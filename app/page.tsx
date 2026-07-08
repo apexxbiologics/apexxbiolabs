@@ -313,13 +313,13 @@ const handlePromoSignup = async (e: React.FormEvent) => {
 )}
 
 <div className="min-h-screen bg-[#081526] text-white">
-<Navbar />
+  <Navbar />
 
-{/* HERO */}
-<section className="relative pt-44 pb-24 px-6 bg-[#081526] overflow-hidden">
+  {/* HERO */}
+  <section className="relative pt-8 pb-24 px-6 bg-[#081526] overflow-hidden">
 
 {/* Free Shipping Banner */}
-<div className="relative z-20 -mt-20 mb-4 rounded-full border border-blue-400/30 bg-blue-500/10 px-6 py-4 text-center backdrop-blur-sm max-w-5xl mx-auto">
+<div className="relative z-20 mb-4 rounded-full border border-blue-400/30 bg-blue-500/10 px-6 py-4 text-center backdrop-blur-sm max-w-5xl mx-auto">
   <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
     Free Shipping On Orders Over $200
   </p>

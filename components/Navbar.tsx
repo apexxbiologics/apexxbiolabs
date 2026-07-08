@@ -1,13 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Menu,
-  X,
-  Search,
-  ShoppingCart,
-  ChevronRight,
-} from "lucide-react";
+import { Menu, X, Search, ShoppingCart, ChevronRight } from "lucide-react";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -57,70 +51,70 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 left-0 w-full z-50 border-b border-blue-900/70 bg-[#081526]/95 backdrop-blur-xl px-5 md:px-10 py-5">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <style jsx global>{`
+        .no-scrollbar {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+
+      <header className="sticky top-0 left-0 z-50 w-full border-b border-blue-900/50 bg-[#071323]/95 px-5 py-4 backdrop-blur-xl md:px-10">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center gap-6">
             <button
               onClick={() => setMenuOpen(true)}
-              className="text-white hover:text-blue-400 transition-all"
+              className="rounded-full border border-white/10 bg-white/[0.04] p-3 text-white transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-300"
               aria-label="Open menu"
             >
-              <Menu size={34} />
+              <Menu size={26} />
             </button>
 
             <a href="/">
               <img
                 src="/images/logo.png"
                 alt="Apexx Biolabs"
-className="h-20 md:h-24 w-auto"              />
+                className="h-16 w-auto md:h-20"
+              />
             </a>
           </div>
 
-          <nav className="hidden md:flex items-center gap-14 text-white text-sm font-bold uppercase tracking-[0.22em]">
-            <a
-              href="/"
-              className="hover:text-blue-400 transition-all border-b-2 border-blue-500 pb-2"
-            >
+          <nav className="hidden items-center gap-12 text-sm font-bold uppercase tracking-[0.22em] text-white md:flex">
+            <a href="/" className="border-b-2 border-blue-500 pb-2">
               Home
             </a>
-
-            <a
-              href="/products"
-              className="hover:text-blue-400 transition-all pb-2"
-            >
+            <a href="/products" className="pb-2 transition hover:text-blue-300">
               Products
             </a>
-
-            <a href="/coas" className="hover:text-blue-400 transition-all pb-2">
+            <a href="/coas" className="pb-2 transition hover:text-blue-300">
               COAs
             </a>
-
-            <a
-              href="/contact"
-              className="hover:text-blue-400 transition-all pb-2"
-            >
+            <a href="/contact" className="pb-2 transition hover:text-blue-300">
               Contact
             </a>
           </nav>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => setSearchOpen(!searchOpen)}
-              className="text-white hover:text-blue-400 transition-all"
+              className="rounded-full border border-white/10 bg-white/[0.04] p-3 text-white transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-300"
               aria-label="Search products"
             >
-              <Search size={34} />
+              <Search size={25} />
             </button>
 
             <a
               href="/cart"
-              className="relative text-white hover:text-blue-400 transition-all"
+              className="relative rounded-full border border-white/10 bg-white/[0.04] p-3 text-white transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-300"
               aria-label="Cart"
             >
-              <ShoppingCart size={36} />
+              <ShoppingCart size={26} />
 
               {cartCount > 0 && (
-                <span className="absolute -top-3 -right-4 bg-blue-600 text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center">
+                <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
                   {cartCount}
                 </span>
               )}
@@ -129,22 +123,22 @@ className="h-20 md:h-24 w-auto"              />
         </div>
 
         {searchOpen && (
-          <div className="max-w-3xl mx-auto mt-5 relative">
+          <div className="relative mx-auto mt-5 max-w-3xl">
             <input
               type="text"
               placeholder="Search products..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-[#020817] border border-blue-700 focus:border-blue-400 outline-none rounded-2xl px-6 py-4 text-white placeholder:text-gray-400 text-base"
+              className="w-full rounded-2xl border border-blue-800 bg-[#020817] px-6 py-4 text-base text-white outline-none placeholder:text-gray-400 focus:border-blue-400"
             />
 
             {search && filteredProducts.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-3 bg-[#081526] border border-blue-800 rounded-2xl overflow-hidden z-[999]">
+              <div className="absolute left-0 right-0 top-full z-[999] mt-3 overflow-hidden rounded-2xl border border-blue-800 bg-[#081526]">
                 {filteredProducts.map((product) => (
                   <a
                     key={product.name}
                     href={product.href}
-                    className="block px-6 py-4 text-white hover:bg-[#102A4A] transition-all"
+                    className="block px-6 py-4 text-white transition hover:bg-[#102A4A]"
                   >
                     {product.name}
                   </a>
@@ -156,25 +150,31 @@ className="h-20 md:h-24 w-auto"              />
       </header>
 
       {menuOpen && (
-        <div className="fixed inset-0 z-[999] bg-black/60 backdrop-blur-sm">
-          <div className="h-full w-[88%] max-w-md bg-[#081526] border-r border-blue-900 p-8 shadow-2xl overflow-y-auto">
-            <div className="flex items-center justify-between mb-10">
+        <div className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-md">
+          <button
+            onClick={() => setMenuOpen(false)}
+            className="absolute inset-0 h-full w-full cursor-default"
+            aria-label="Close menu overlay"
+          />
+
+          <aside className="no-scrollbar relative h-full w-[90%] max-w-[520px] overflow-y-auto border-r border-blue-900/50 bg-[#071323] px-7 py-8 shadow-2xl md:px-10">
+            <div className="mb-12 flex items-center justify-between">
               <img
                 src="/images/logo.png"
                 alt="Apexx Biolabs"
-className="h-20 md:h-24 w-auto"             
- />
+                className="h-16 w-auto md:h-20"
+              />
 
               <button
                 onClick={() => setMenuOpen(false)}
-                className="text-white hover:text-blue-400 transition-all"
+                className="rounded-full border border-white/10 bg-white/[0.04] p-3 text-white transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-300"
                 aria-label="Close menu"
               >
-                <X size={30} />
+                <X size={25} />
               </button>
             </div>
 
-            <div className="space-y-9">
+            <div className="space-y-10 pb-10">
               <MenuSection
                 title="Navigation"
                 links={[
@@ -220,7 +220,7 @@ className="h-20 md:h-24 w-auto"
                 ]}
               />
             </div>
-          </div>
+          </aside>
         </div>
       )}
     </>
@@ -236,24 +236,24 @@ function MenuSection({
 }) {
   return (
     <div>
-      <p className="text-blue-300 text-xs uppercase tracking-[0.35em] mb-4">
+      <p className="mb-4 text-xs uppercase tracking-[0.38em] text-blue-300">
         {title}
       </p>
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         {links.map(([label, href]) => (
           <a
             key={label}
             href={href}
-            className="group flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4 text-white/75 hover:text-white hover:bg-white/[0.07] hover:border-blue-400/50 transition-all"
+            className="group flex items-center justify-between rounded-[1.4rem] border border-white/10 bg-white/[0.045] px-6 py-5 text-white/75 transition hover:border-blue-400/60 hover:bg-blue-500/10 hover:text-white"
           >
-            <span className="uppercase tracking-widest text-sm font-semibold">
+            <span className="text-sm font-bold uppercase tracking-[0.18em]">
               {label}
             </span>
 
             <ChevronRight
-              size={16}
-              className="text-white/30 group-hover:text-blue-300 transition-all"
+              size={18}
+              className="text-white/25 transition group-hover:translate-x-1 group-hover:text-blue-300"
             />
           </a>
         ))}

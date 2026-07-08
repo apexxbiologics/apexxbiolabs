@@ -72,7 +72,7 @@ export default function Navbar() {
               <img
                 src="/images/logo.png"
                 alt="Apexx Biolabs"
-                className="h-10 md:h-12 w-auto"
+className="h-20 md:h-24 w-auto"
               />
             </a>
           </div>

@@ -154,7 +154,7 @@ export default function ProductsPage() {
   name: "Kisspeptin-10",
   desc: "10mg Research Peptide",
   category: "Neuro Research",
-  image: "/images/kisspeptin10blue.png",
+  image: "/images/kisspeptin10.png",
   href: "/products/kisspeptin10",
 },
 {

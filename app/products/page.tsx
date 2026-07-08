@@ -124,7 +124,7 @@ export default function ProductsPage() {
     },
     {
   name: "NAD+",
-  desc: "500mg Research Compound",
+  desc: "1000mg Research Compound",
   category: "Cellular Research",
   image: "/images/nad.png",
   href: "/products/nad",
@@ -159,14 +159,14 @@ export default function ProductsPage() {
 },
 {
   name: "KLOW",
-  desc: "10mg Research Peptide",
+  desc: "80mg Research Peptide",
   category: "Metabolic Research",
   image: "/images/klow.png",
   href: "/products/klow",
 },
 {
   name: "Wolverine",
-  desc: "10mg Research Blend",
+  desc: "20mg Research Blend",
   category: "Tissue Repair Research",
   image: "/images/wolverine.png",
   href: "/products/wolverine",

@@ -177,22 +177,6 @@ discountRate,
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-      <header className="border-b border-white/10 bg-[#081526]/95 backdrop-blur-xl px-6 py-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <a href="/">
-            <img
-              src="/images/logo.png"
-              alt="Apexx Biolabs"
-              className="h-12 w-auto"
-            />
-          </a>
-
-          <div className="flex items-center gap-2 text-white/60 text-sm">
-            <Lock size={16} className="text-blue-300" />
-            Secure Checkout
-          </div>
-        </div>
-      </header>
 
       <section className="relative px-6 py-20 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>

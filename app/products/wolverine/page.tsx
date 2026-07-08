@@ -24,8 +24,8 @@ export default function WolverinePage() {
   });
 
   const product = {
-    id: "WOLVERINE-10mg",
-    name: "Wolverine 10mg",
+    id: "WOLVERINE-20mg",
+    name: "Wolverine 20mg",
     image: "/images/wolverineblue.png",
   };
 
@@ -71,7 +71,7 @@ export default function WolverinePage() {
         if (!data.success) return;
 
         const wolverine = data.products.find(
-          (product: any) => product.slug === "wolverine-10mg"
+          (product: any) => product.slug === "wolverine-20mg"
         );
 
         setProductData({
@@ -250,7 +250,7 @@ export default function WolverinePage() {
                   </p>
 
                   <div className="rounded-full border border-white/10 bg-white/[0.04] px-7 py-4 w-fit uppercase tracking-widest text-sm font-semibold text-white">
-                    10mg
+                    20mg
                   </div>
                 </div>
 

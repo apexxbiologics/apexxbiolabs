@@ -98,6 +98,46 @@ export default function COAsPage() {
   batch: "Pending",
   status: "Awaiting Testing",
 },
+{
+  name: "NAD+",
+  batch: "Pending",
+  status: "Awaiting Testing",
+},
+{
+  name: "AOD-9604",
+  batch: "Pending",
+  status: "Awaiting Testing",
+},
+{
+  name: "PT-141",
+  batch: "Pending",
+  status: "Awaiting Testing",
+},
+{
+  name: "Acetic Acid",
+  batch: "Pending",
+  status: "Awaiting Testing",
+},
+{
+  name: "5-Amino-1MQ",
+  batch: "Pending",
+  status: "Awaiting Testing",
+},
+{
+  name: "Kisspeptin-10",
+  batch: "Pending",
+  status: "Awaiting Testing",
+},
+{
+  name: "KLOW",
+  batch: "Pending",
+  status: "Awaiting Testing",
+},
+{
+  name: "Wolverine",
+  batch: "Pending",
+  status: "Awaiting Testing",
+},
   ];
 
   return (
@@ -135,7 +175,7 @@ export default function COAsPage() {
 
           <div className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-white/10 bg-white/[0.04] text-sm text-white/70 mb-10">
             <span className="text-green-400">✓</span>
-            <span>Last Updated: June 23, 2026</span>
+<span>Last Updated: July 8, 2026</span>
           </div>
 
           <p className="text-white/70 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto mb-10">

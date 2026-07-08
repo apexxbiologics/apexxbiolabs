@@ -525,7 +525,7 @@ export default function APX3Page() {
       </p>
 
       <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
-        Retatrutide Research References
+Scientific References
       </h2>
 
       <p className="text-white/60 text-lg leading-relaxed max-w-3xl">

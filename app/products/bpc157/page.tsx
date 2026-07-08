@@ -93,45 +93,6 @@ export default function BPC157Page() {
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#081526]/95 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 py-5 flex items-center justify-between">
-          <a href="/">
-            <img
-              src="/images/logo.png"
-              alt="Apexx Biolabs"
-              className="h-12 w-auto"
-            />
-          </a>
-
-          <nav className="hidden md:flex items-center gap-10 uppercase tracking-widest text-sm text-white">
-            <a href="/" className="hover:text-blue-300 transition-all">
-              Home
-            </a>
-
-            <a
-              href="/products"
-              className="text-blue-300 border-b border-blue-300 pb-2"
-            >
-              Products
-            </a>
-
-            <a href="/coas" className="hover:text-blue-300 transition-all">
-              COAs
-            </a>
-
-            <a href="/contact" className="hover:text-blue-300 transition-all">
-              Contact
-            </a>
-          </nav>
-
-          <a
-            href="/cart"
-            className="relative text-white hover:text-blue-300 transition-all"
-          >
-            <ShoppingCart size={30} />
-          </a>
-        </div>
-      </header>
 
       <section className="relative px-6 md:px-10 py-16 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>

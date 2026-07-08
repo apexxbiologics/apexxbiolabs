@@ -24,8 +24,8 @@ export default function NADPage() {
   });
 
   const product = {
-    id: "NAD-500mg",
-    name: "NAD+ 500mg",
+    id: "NAD-1000mg",
+    name: "NAD+ 1000mg",
     image: "/images/nadblue.png",
   };
 
@@ -64,7 +64,7 @@ export default function NADPage() {
         if (!data.success) return;
 
         const nad = data.products.find(
-          (product: any) => product.slug === "nad-500mg"
+          (product: any) => product.slug === "nad-1000mg"
         );
 
         setProductData({
@@ -244,7 +244,7 @@ export default function NADPage() {
                   </p>
 
                   <div className="rounded-full border border-white/10 bg-white/[0.04] px-7 py-4 w-fit uppercase tracking-widest text-sm font-semibold text-white">
-                    500mg
+                    1000mg
                   </div>
                 </div>
 

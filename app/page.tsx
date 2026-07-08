@@ -10,7 +10,6 @@ import {
 import { HiOutlineMail } from "react-icons/hi";
 import { FaTiktok } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import Navbar from "@/components/Navbar";
 
 import { useEffect, useRef, useState } from "react";
 import { ShoppingCart, Search, Menu, X } from "lucide-react";
@@ -313,7 +312,6 @@ const handlePromoSignup = async (e: React.FormEvent) => {
 )}
 
 <div className="min-h-screen bg-[#081526] text-white">
-  <Navbar />
 
   {/* HERO */}
   <section className="relative pt-8 pb-24 px-6 bg-[#081526] overflow-hidden">

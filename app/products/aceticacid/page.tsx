@@ -13,27 +13,23 @@ import FavoriteButton from "@/components/FavoriteButton";
 export default function AceticAcidPage() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
-
-  const [productData, setProductData] = useState({
-    inventory: 0,
-    price: 15,
-  });
+  const [inventory, setInventory] = useState<number | null>(null);
+  const [price, setPrice] = useState(15);
 
   const product = {
-    id: "ACETIC-ACID-10ML",
+    id: "aceticacid-10ml",
     name: "Acetic Acid 10mL",
     image: "/images/aceticacidblue.png",
     path: "/products/aceticacid",
   };
 
-  const selectedInventory = productData.inventory;
-  const selectedPrice = productData.price;
-  const inStock = selectedInventory > 0;
+  const isOutOfStock = inventory !== null && inventory <= 0;
+  const isLimitedStock = inventory !== null && inventory > 0 && inventory <= 5;
 
   const favoriteProduct = {
     id: product.id,
     name: product.name,
-    price: selectedPrice,
+    price,
     image: product.image,
     path: product.path,
   };
@@ -50,15 +46,26 @@ export default function AceticAcidPage() {
         if (!data.success) return;
 
         const aceticAcid = data.products.find(
-          (product: any) => product.slug === "aceticacid-10ml"
+          (item: any) =>
+            item.slug === "aceticacid" ||
+            item.slug === "aceticacid-10ml" ||
+            item.id === "aceticacid" ||
+            item.id === "aceticacid-10ml" ||
+            item.id === "ACETIC-ACID-10ML" ||
+            item.name?.toLowerCase().includes("acetic")
         );
 
-        setProductData({
-          inventory: Number(aceticAcid?.inventory ?? 0),
-          price: Number(aceticAcid?.price ?? 15),
-        });
+        if (aceticAcid) {
+          setInventory(Number(aceticAcid.inventory ?? 0));
+          setPrice(Number(aceticAcid.price ?? 15));
+        } else {
+          setInventory(null);
+          setPrice(15);
+        }
       } catch (error) {
-        console.error("Failed to fetch product data:", error);
+        console.error("Failed to fetch Acetic Acid data:", error);
+        setInventory(null);
+        setPrice(15);
       }
     };
 
@@ -66,12 +73,12 @@ export default function AceticAcidPage() {
   }, []);
 
   const addToCart = () => {
-    if (!inStock) return;
+    if (isOutOfStock) return;
 
     const cartProduct = {
       id: product.id,
       name: product.name,
-      price: selectedPrice,
+      price,
       quantity,
       image: product.image,
       path: product.path,
@@ -86,7 +93,12 @@ export default function AceticAcidPage() {
     const updatedCart = existingProduct
       ? existingCart.map((item: any) =>
           item.id === cartProduct.id
-            ? { ...item, quantity: item.quantity + quantity }
+            ? {
+                ...item,
+                quantity: item.quantity + quantity,
+                price,
+                path: product.path,
+              }
             : item
         )
       : [...existingCart, cartProduct];
@@ -116,7 +128,7 @@ export default function AceticAcidPage() {
             </div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-              <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
+              <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-4">
                 Research Solution
               </p>
 
@@ -131,18 +143,22 @@ export default function AceticAcidPage() {
               </p>
 
               <p className="text-5xl font-black text-white mb-3">
-                ${selectedPrice.toFixed(2)}
+                ${price.toFixed(2)}
               </p>
 
-              {selectedInventory <= 5 && (
-                <div
-                  className={`font-semibold mb-8 ${
-                    selectedInventory <= 0 ? "text-red-300" : "text-yellow-300"
-                  }`}
-                >
-                  {selectedInventory <= 0 ? "Out of Stock" : "Limited Stock"}
+              {isLimitedStock && (
+                <div className="font-semibold mb-8 text-yellow-300">
+                  Limited Stock
                 </div>
               )}
+
+              {isOutOfStock && (
+                <div className="font-semibold mb-8 text-red-300">
+                  Out of Stock
+                </div>
+              )}
+
+              {!isLimitedStock && !isOutOfStock && <div className="mb-8" />}
 
               <div className="h-px bg-white/10 mb-8" />
 
@@ -152,7 +168,7 @@ export default function AceticAcidPage() {
                     Size
                   </p>
 
-                  <div className="rounded-full border border-white/10 bg-white/[0.04] px-7 py-4 w-fit uppercase tracking-widest text-sm font-semibold text-white">
+                  <div className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-7 py-4 text-sm font-semibold uppercase tracking-widest text-white">
                     10mL
                   </div>
                 </div>
@@ -168,7 +184,7 @@ export default function AceticAcidPage() {
                         setQuantity((prev) => Math.max(1, prev - 1));
                         setAdded(false);
                       }}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08]"
+                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08]"
                     >
                       −
                     </button>
@@ -180,12 +196,14 @@ export default function AceticAcidPage() {
                     <button
                       onClick={() => {
                         setQuantity((prev) =>
-                          Math.min(selectedInventory || 1, prev + 1)
+                          inventory === null
+                            ? prev + 1
+                            : Math.min(inventory, prev + 1)
                         );
                         setAdded(false);
                       }}
-                      disabled={!inStock}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08] disabled:opacity-40"
+                      disabled={isOutOfStock}
+                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08] disabled:opacity-40"
                     >
                       +
                     </button>
@@ -195,25 +213,25 @@ export default function AceticAcidPage() {
 
               <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
                 <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider text-center">
-                  FREE Bacteriostatic Water With Purchase of Any 4 Vials
+                  FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {inStock ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                {isOutOfStock ? (
+                  <button
+                    disabled
+                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
+                  >
+                    Out of Stock
+                  </button>
+                ) : (
                   <button
                     onClick={addToCart}
                     className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
                   >
                     <ShoppingCart size={22} />
                     {added ? "Added To Cart" : "Add To Cart"}
-                  </button>
-                ) : (
-                  <button
-                    disabled
-                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
-                  >
-                    Out of Stock
                   </button>
                 )}
 
@@ -252,11 +270,13 @@ export default function AceticAcidPage() {
             [ShieldCheck, "Lab Workflow", "Prepared for research applications."],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
-              <Icon className="text-blue-300" size={34} />
+              <Icon className="text-[#A5D8FF]" size={34} />
+
               <div>
                 <h3 className="text-white uppercase tracking-widest font-bold text-sm">
                   {title}
                 </h3>
+
                 <p className="text-white/50 text-sm mt-1">{text}</p>
               </div>
             </div>
@@ -266,7 +286,7 @@ export default function AceticAcidPage() {
 
       <section className="px-6 md:px-10 pb-16">
         <div className="max-w-7xl mx-auto rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-          <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-3">
+          <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
             Research Profile
           </p>
 
@@ -283,16 +303,29 @@ export default function AceticAcidPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
             {[
-              ["Lab Preparation", "Used in laboratory preparation and handling workflows."],
-              ["Analytical Use", "Commonly applied in controlled analytical research settings."],
-              ["Peptide Workflow", "Often used in peptide-related laboratory preparation models."],
-              ["Storage", "Store tightly sealed at room temperature or as directed. Keep protected from contamination."],
+              [
+                "Lab Preparation",
+                "Used in laboratory preparation and handling workflows.",
+              ],
+              [
+                "Analytical Use",
+                "Commonly applied in controlled analytical research settings.",
+              ],
+              [
+                "Peptide Workflow",
+                "Often used in peptide-related laboratory preparation models.",
+              ],
+              [
+                "Storage",
+                "Store tightly sealed at room temperature or as directed. Keep protected from contamination.",
+              ],
             ].map(([title, text]) => (
               <div
                 key={title}
                 className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
               >
                 <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
+
                 <p className="text-white/60 text-sm leading-relaxed">{text}</p>
               </div>
             ))}
@@ -314,9 +347,10 @@ export default function AceticAcidPage() {
       ].map((section) => (
         <section key={section.title} className="px-6 md:px-10 pb-16">
           <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
-            <h3 className="text-blue-300 font-bold uppercase tracking-[0.25em] text-sm mb-4">
+            <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-sm mb-4">
               {section.title}
             </h3>
+
             <p className="text-white/60 text-sm leading-relaxed">
               {section.text}
             </p>

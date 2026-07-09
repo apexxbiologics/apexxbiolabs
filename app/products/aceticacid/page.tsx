@@ -154,6 +154,7 @@ export default function AceticAcidPage() {
     />
   </div>
 </div>
+</div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
               <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">

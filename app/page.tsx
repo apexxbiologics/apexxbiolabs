@@ -390,23 +390,23 @@ const handlePromoSignup = async (e: React.FormEvent) => {
           </a>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-14">
-          {[
-            "99%+ Purity",
-            "Third-Party Tested",
-            "COA Included",
-            "Fast Shipping",
-          ].map((item, index) => (
-            <Reveal key={item} delay={index * 100}>
-              <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-5 hover:bg-white/[0.07] hover:border-blue-400/50 transition-all">
-                <p className="text-blue-300 text-xl mb-3">✓</p>
-                <p className="text-white/70 text-xs uppercase tracking-widest leading-relaxed">
-                  {item}
-                </p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+<div className="grid grid-cols-2 items-stretch gap-4 mt-14 md:grid-cols-4">
+  {[
+    "99%+ Purity",
+    "Third-Party Tested",
+    "COA Included",
+    "Fast Shipping",
+  ].map((item, index) => (
+    <Reveal key={item} delay={index * 100}>
+      <div className="h-full min-h-[108px] rounded-[1.5rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-5 transition-all hover:border-blue-400/50 hover:bg-white/[0.07]">
+        <p className="mb-3 text-xl text-blue-300">✓</p>
+        <p className="text-xs uppercase leading-relaxed tracking-widest text-white/70">
+          {item}
+        </p>
+      </div>
+    </Reveal>
+  ))}
+</div>
       </div>
     </Reveal>
   </div>

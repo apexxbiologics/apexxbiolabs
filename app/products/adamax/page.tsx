@@ -9,10 +9,11 @@ import {
   Mail,
 } from "lucide-react";
 
+import FavoriteButton from "@/components/FavoriteButton";
+
 import { HiOutlineMail } from "react-icons/hi";
 import { FaTiktok } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import FavoriteButton from "@/components/FavoriteButton";
 export default function AdamaxPage() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);

@@ -333,6 +333,98 @@ export default function AceticAcidPage() {
         </div>
       </section>
 
+      {/* Frequently Researched Together */}
+      <section className="px-6 md:px-10 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8">
+            <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
+              Related Research
+            </p>
+
+            <h2 className="text-3xl md:text-4xl font-black text-white">
+              Frequently Researched Together
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* BPC-157 */}
+            <a
+              href="/products/bpc157"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/bpc157blue.png"
+                  alt="BPC-157"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">BPC-157</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Research peptide commonly studied in tissue response, recovery
+                pathways, and cellular repair models.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+
+            {/* TB-500 */}
+            <a
+              href="/products/tb500"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/tb500blue.png"
+                  alt="TB-500"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">TB-500</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Studied in laboratory models involving cellular migration,
+                tissue remodeling, and regenerative research.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+
+            {/* KPV */}
+            <a
+              href="/products/kpv"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/kpvblue.png"
+                  alt="KPV"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">KPV</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Research peptide studied in inflammatory response models,
+                cellular signaling, and peptide pathway research.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+          </div>
+        </div>
+      </section>
+      
       {[
         {
           title: "FDA Disclaimer",

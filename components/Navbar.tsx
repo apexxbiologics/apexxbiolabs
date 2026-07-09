@@ -107,9 +107,6 @@ export default function Navbar() {
               Contact
             </a>
 
-            <a href="/account" className="pb-2 transition hover:text-blue-300">
-              Dashboard
-            </a>
           </nav>
 
           <div className="flex items-center gap-4">

@@ -19,8 +19,8 @@ export default function Kisspeptin10Page() {
   const product = {
     id: "kisspeptin10",
     name: "Kisspeptin-10",
+    price,
     image: "/images/kisspeptin10blue.png",
-    path: "/products/kisspeptin10",
   };
 
   const isOutOfStock = inventory !== null && inventory <= 0;
@@ -29,44 +29,40 @@ export default function Kisspeptin10Page() {
   const favoriteProduct = {
     id: product.id,
     name: product.name,
-    price,
+    price: product.price,
     image: product.image,
-    path: product.path,
   };
 
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await fetch("/api/products", {
-          cache: "no-store",
-        });
-
+        const response = await fetch("/api/products");
         const data = await response.json();
 
         if (!data.success) return;
 
         const kisspeptin = data.products.find(
-          (item: any) =>
-            item.slug === "kisspeptin10" ||
-            item.slug === "kisspeptin10-10mg" ||
-            item.slug === "kisspeptin-10" ||
-            item.slug === "kisspeptin-10-10mg" ||
-            item.id === "kisspeptin10" ||
-            item.id === "kisspeptin10-10mg" ||
-            item.id === "kisspeptin-10" ||
-            item.id === "kisspeptin-10-10mg" ||
-            item.name?.toLowerCase().includes("kisspeptin")
+          (product: any) =>
+            product.slug === "kisspeptin10" ||
+            product.slug === "kisspeptin10-10mg" ||
+            product.slug === "kisspeptin-10" ||
+            product.slug === "kisspeptin-10-10mg" ||
+            product.id === "kisspeptin10" ||
+            product.id === "kisspeptin10-10mg" ||
+            product.id === "kisspeptin-10" ||
+            product.id === "kisspeptin-10-10mg" ||
+            product.name?.toLowerCase().includes("kisspeptin")
         );
 
         if (kisspeptin) {
-          setInventory(Number(kisspeptin.inventory ?? 0));
+          setInventory(kisspeptin.inventory ?? 0);
           setPrice(Number(kisspeptin.price ?? 55));
         } else {
           setInventory(null);
           setPrice(55);
         }
       } catch (error) {
-        console.error("Failed to fetch Kisspeptin-10 data:", error);
+        console.error("Failed to fetch inventory:", error);
         setInventory(null);
         setPrice(55);
       }
@@ -81,10 +77,9 @@ export default function Kisspeptin10Page() {
     const cartProduct = {
       id: product.id,
       name: product.name,
-      price,
+      price: product.price,
       quantity,
       image: product.image,
-      path: product.path,
     };
 
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -99,9 +94,7 @@ export default function Kisspeptin10Page() {
             ? {
                 ...item,
                 quantity: item.quantity + quantity,
-                price,
-                image: product.image,
-                path: product.path,
+                price: product.price,
               }
             : item
         )
@@ -115,7 +108,7 @@ export default function Kisspeptin10Page() {
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
       <section className="relative px-6 md:px-10 py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
@@ -141,13 +134,14 @@ export default function Kisspeptin10Page() {
               </h1>
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                High-purity Kisspeptin-10 produced for laboratory research
-                involving hypothalamic signaling, reproductive endocrinology,
-                GnRH regulation, and neuroendocrine pathway research.
+                High-purity Kisspeptin-10 intended strictly for laboratory
+                research involving hypothalamic signaling, reproductive
+                endocrinology, GnRH regulation, and neuroendocrine pathway
+                research.
               </p>
 
               <p className="text-5xl font-black text-white mb-3">
-                ${price.toFixed(2)}
+                ${product.price.toFixed(2)}
               </p>
 
               {isLimitedStock && (
@@ -326,15 +320,15 @@ export default function Kisspeptin10Page() {
             {[
               [
                 "Hypothalamic Signaling",
-                "Studied for activity involving hypothalamic signaling pathways.",
+                "Studied in laboratory models evaluating hypothalamic signaling and neuroendocrine communication.",
               ],
               [
                 "GnRH Regulation",
-                "Evaluated in laboratory models involving gonadotropin-releasing hormone release.",
+                "Evaluated in research models involving gonadotropin-releasing hormone release and pathway signaling.",
               ],
               [
-                "Neuroendocrine Research",
-                "Frequently researched in reproductive endocrine signaling models.",
+                "Endocrine Research",
+                "Frequently researched in reproductive endocrine signaling and hormonal regulation models.",
               ],
               [
                 "Storage",
@@ -421,7 +415,7 @@ export default function Kisspeptin10Page() {
             >
               <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
                 <img
-                  src="/images/tesa5blue.png"
+                  src="/images/tesa5.png"
                   alt="Tesamorelin"
                   className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
                 />

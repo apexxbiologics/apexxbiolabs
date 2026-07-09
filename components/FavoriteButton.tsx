@@ -12,13 +12,18 @@ type Product = {
   image: string;
 };
 
-export default function FavoriteButton({ product }: { product: Product }) {
+export default function FavoriteButton({
+  product,
+}: {
+  product: Product;
+}) {
   const router = useRouter();
+
   const [favoriteId, setFavoriteId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    async function checkFavorite() {
+    async function loadFavorite() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -37,7 +42,7 @@ export default function FavoriteButton({ product }: { product: Product }) {
       }
     }
 
-    checkFavorite();
+    loadFavorite();
   }, [product.id]);
 
   async function toggleFavorite() {
@@ -58,7 +63,9 @@ export default function FavoriteButton({ product }: { product: Product }) {
         .delete()
         .eq("id", favoriteId);
 
-      if (!error) setFavoriteId(null);
+      if (!error) {
+        setFavoriteId(null);
+      }
     } else {
       const { data, error } = await supabase
         .from("favorites")
@@ -84,18 +91,20 @@ export default function FavoriteButton({ product }: { product: Product }) {
     <button
       onClick={toggleFavorite}
       disabled={loading}
-      className={`inline-flex items-center justify-center gap-2 rounded-full border px-6 py-3 text-xs font-black uppercase tracking-[0.22em] transition ${
-        favoriteId
-          ? "border-blue-400/50 bg-blue-500/15 text-blue-200"
-          : "border-white/10 bg-white/[0.05] text-white hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-200"
-      }`}
+      aria-label={
+        favoriteId ? "Remove from favorites" : "Add to favorites"
+      }
+      className="absolute top-5 right-5 z-20 flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-black/35 backdrop-blur-xl shadow-xl transition-all duration-300 hover:scale-110 hover:border-blue-400/40 hover:bg-black/50 active:scale-95 disabled:opacity-50"
     >
       <Heart
-        size={17}
-        className={favoriteId ? "fill-blue-300 text-blue-300" : ""}
+        size={22}
+        strokeWidth={2.2}
+        className={`transition-all duration-300 ${
+          favoriteId
+            ? "fill-red-500 text-red-500 scale-110"
+            : "text-white hover:text-red-400"
+        }`}
       />
-
-      {favoriteId ? "Saved" : "Save"}
     </button>
   );
 }

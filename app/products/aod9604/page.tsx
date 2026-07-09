@@ -332,65 +332,98 @@ export default function AOD9604Page() {
         </div>
       </section>
 
+      {/* Frequently Researched Together */}
       <section className="px-6 md:px-10 pb-16">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
             <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
-              Frequently Researched Together
+              Related Research
             </p>
 
             <h2 className="text-3xl md:text-4xl font-black text-white">
-              Related Research Compounds
+              Frequently Researched Together
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                name: "5-Amino-1MQ 50mg",
-                image: "/images/5amino1mqblue.png",
-                path: "/products/5amino1mq",
-                text: "Often researched in models involving NNMT-related pathways, adipocyte signaling, and metabolic regulation.",
-              },
-              {
-                name: "Tesamorelin 5mg",
-                image: "/images/tesa5.png",
-                path: "/products/tesamorelin",
-                text: "Studied in laboratory models involving GH-axis signaling, metabolic regulation, and body composition research.",
-              },
-              {
-                name: "MOTS-C 10mg",
-                image: "/images/motscblue.png",
-                path: "/products/motsc",
-                text: "Commonly researched in models involving mitochondrial signaling, cellular energy balance, and metabolic pathways.",
-              },
-            ].map((item) => (
-              <a
-                key={item.name}
-                href={item.path}
-                className="group rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 hover:bg-white/[0.06] transition-all"
-              >
-                <div className="mb-5 h-[260px] rounded-[28px] overflow-hidden border border-blue-400/10 bg-white/[0.03] flex items-center justify-center">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
+            {/* 5-Amino-1MQ */}
+            <a
+              href="/products/5amino1mq"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/5amino1mqblue.png"
+                  alt="5-Amino-1MQ"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
 
-                <h3 className="text-white text-2xl font-black mb-3">
-                  {item.name}
-                </h3>
+              <h3 className="text-2xl font-black text-white mb-2">
+                5-Amino-1MQ
+              </h3>
 
-                <p className="text-white/60 text-sm leading-relaxed mb-5">
-                  {item.text}
-                </p>
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Studied in NNMT-related pathways, adipocyte signaling, and
+                metabolic regulation research models.
+              </p>
 
-                <div className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-xs font-bold uppercase tracking-widest text-[#A5D8FF] group-hover:bg-blue-500/10 transition-all">
-                  View Product
-                </div>
-              </a>
-            ))}
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+
+            {/* Tesamorelin */}
+            <a
+              href="/products/tesamorelin"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/tesa5.png"
+                  alt="Tesamorelin"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">
+                Tesamorelin
+              </h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Researched in GH-axis signaling, metabolic regulation, and body
+                composition models.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+
+            {/* MOTS-C */}
+            <a
+              href="/products/motsc"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/motscblue.png"
+                  alt="MOTS-C"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">MOTS-C</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Studied in mitochondrial signaling, cellular energy balance,
+                and metabolic pathway research.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
           </div>
         </div>
       </section>

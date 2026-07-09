@@ -210,7 +210,7 @@ export default function AccountPage() {
           <DashboardCard
             icon={<Heart />}
             label="Favorites"
-            value="Coming Soon"
+            value="View saved products"
             description="Saved products and reorder shortcuts"
           />
         </section>
@@ -360,12 +360,11 @@ export default function AccountPage() {
 
               <h2 className="mb-6 text-2xl font-black">Account Tools</h2>
 
-              <div className="space-y-3">
                 <QuickAction
                   href="/account"
                   icon={<Home />}
                   title="Dashboard"
-                  description="View your account overview"
+                  description="Account overview"
                 />
 
                 <QuickAction
@@ -386,17 +385,16 @@ export default function AccountPage() {
                   href="/account/favorites"
                   icon={<Heart />}
                   title="Favorites"
-                  description="Coming soon"
+                  description="View saved products"
                 />
 
                 <QuickAction
                   href="/account/settings"
                   icon={<Settings />}
                   title="Security"
-                  description="Coming soon"
+                  description="Password and login settings"
                 />
-              </div>
-            </section>
+              </section>
 
             <section className="rounded-[2rem] border border-blue-400/20 bg-blue-500/10 p-6 md:p-8">
               <p className="mb-2 text-xs font-bold uppercase tracking-[0.3em] text-blue-300">

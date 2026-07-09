@@ -6,59 +6,74 @@ import {
   FlaskConical,
   ShieldCheck,
   ClipboardCheck,
-  Mail,
 } from "lucide-react";
 
-import { HiOutlineMail } from "react-icons/hi";
-import { FaTiktok } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import FavoriteButton from "@/components/FavoriteButton";
 
 export default function TB500Page() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [inventory, setInventory] = useState<number | null>(null);
+  const [price, setPrice] = useState(60);
 
   const product = {
     id: "tb500",
     name: "TB-500",
-    price: 60,
     image: "/images/tb500blue.png",
+    path: "/products/tb500",
   };
 
   const isOutOfStock = inventory !== null && inventory <= 0;
   const isLimitedStock = inventory !== null && inventory > 0 && inventory <= 5;
 
+  const favoriteProduct = {
+    id: product.id,
+    name: product.name,
+    price,
+    image: product.image,
+    path: product.path,
+  };
+
   useEffect(() => {
-    const fetchInventory = async () => {
+    const fetchProductData = async () => {
       try {
-        const response = await fetch("/api/products");
+        const response = await fetch("/api/products", {
+          cache: "no-store",
+        });
+
         const data = await response.json();
 
         if (!data.success) return;
 
         const tb500 = data.products.find(
-          (product: any) =>
-            product.slug === "tb500" ||
-            product.slug === "tb-500" ||
-            product.slug === "tb500-10mg" ||
-            product.slug === "tb-500-10mg" ||
-            product.id === "tb500" ||
-            product.id === "tb-500" ||
-            product.name?.toLowerCase().includes("tb")
+          (item: any) =>
+            item.slug === "tb500" ||
+            item.slug === "tb-500" ||
+            item.slug === "tb500-10mg" ||
+            item.slug === "tb-500-10mg" ||
+            item.id === "tb500" ||
+            item.id === "tb-500" ||
+            item.id === "tb500-10mg" ||
+            item.id === "TB-500-10mg" ||
+            item.name?.toLowerCase().includes("tb-500") ||
+            item.name?.toLowerCase().includes("tb500")
         );
 
         if (tb500) {
-          setInventory(tb500.inventory ?? 0);
+          setInventory(Number(tb500.inventory ?? 0));
+          setPrice(Number(tb500.price ?? 60));
         } else {
           setInventory(null);
+          setPrice(60);
         }
       } catch (error) {
-        console.error("Failed to fetch inventory:", error);
+        console.error("Failed to fetch TB-500 data:", error);
         setInventory(null);
+        setPrice(60);
       }
     };
 
-    fetchInventory();
+    fetchProductData();
   }, []);
 
   const addToCart = () => {
@@ -67,9 +82,10 @@ export default function TB500Page() {
     const cartProduct = {
       id: product.id,
       name: product.name,
-      price: product.price,
+      price,
       quantity,
       image: product.image,
+      path: product.path,
     };
 
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -81,7 +97,12 @@ export default function TB500Page() {
     const updatedCart = existingProduct
       ? existingCart.map((item: any) =>
           item.id === cartProduct.id
-            ? { ...item, quantity: item.quantity + quantity }
+            ? {
+                ...item,
+                quantity: item.quantity + quantity,
+                price,
+                path: product.path,
+              }
             : item
         )
       : [...existingCart, cartProduct];
@@ -93,14 +114,15 @@ export default function TB500Page() {
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-
       <section className="relative px-6 md:px-10 py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
             <div className="flex items-center justify-center">
-              <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+              <div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <FavoriteButton product={favoriteProduct} />
+
                 <img
                   src={product.image}
                   alt={product.name}
@@ -110,7 +132,7 @@ export default function TB500Page() {
             </div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-              <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
+              <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-4">
                 Research Peptide
               </p>
 
@@ -119,12 +141,13 @@ export default function TB500Page() {
               </h1>
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                High-purity TB-500 research peptide intended strictly for
-                laboratory research applications and analytical use.
+                High-purity TB-500 research peptide studied in laboratory
+                models involving cellular migration, actin regulation, tissue
+                response pathways, and repair-related signaling.
               </p>
 
               <p className="text-5xl font-black text-white mb-3">
-                ${product.price}.00
+                ${price.toFixed(2)}
               </p>
 
               {isLimitedStock && (
@@ -165,7 +188,7 @@ export default function TB500Page() {
                         setQuantity((prev) => Math.max(1, prev - 1));
                         setAdded(false);
                       }}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08]"
+                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08]"
                     >
                       −
                     </button>
@@ -184,7 +207,7 @@ export default function TB500Page() {
                         setAdded(false);
                       }}
                       disabled={isOutOfStock}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08] disabled:opacity-40"
+                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08] disabled:opacity-40"
                     >
                       +
                     </button>
@@ -265,7 +288,7 @@ export default function TB500Page() {
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
           <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
             <div>
-              <p className="uppercase tracking-[0.35em] text-blue-300 text-xs mb-2">
+              <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-xs mb-2">
                 Freedom Diagnostics
               </p>
 
@@ -323,13 +346,25 @@ export default function TB500Page() {
       <section className="px-6 md:px-10 pb-10">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            [FlaskConical, "Research Use Only", "Strictly for laboratory research."],
-            [ShieldCheck, "Third-Party Tested", "Independent lab verified when available."],
-            [ClipboardCheck, "Batch Documented", "Documentation available for verified lots."],
+            [
+              FlaskConical,
+              "Research Use Only",
+              "Strictly for laboratory research.",
+            ],
+            [
+              ShieldCheck,
+              "Third-Party Tested",
+              "Independent lab verified when available.",
+            ],
+            [
+              ClipboardCheck,
+              "Batch Documented",
+              "Documentation available for verified lots.",
+            ],
             [ShieldCheck, "Quality Target", "99%+ purity target."],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
-              <Icon className="text-blue-300" size={34} />
+              <Icon className="text-[#A5D8FF]" size={34} />
 
               <div>
                 <h3 className="text-white uppercase tracking-widest font-bold text-sm">
@@ -345,7 +380,7 @@ export default function TB500Page() {
 
       <section className="px-6 md:px-10 pb-16">
         <div className="max-w-7xl mx-auto rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-          <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-3">
+          <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
             Research Profile
           </p>
 
@@ -361,22 +396,30 @@ export default function TB500Page() {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
             {[
-              ["Cellular Migration", "Studied in models involving cellular movement and migration pathways."],
-              ["Actin Research", "Evaluated in laboratory investigations involving actin regulation and cell structure."],
-              ["Tissue Response", "Researched in relation to repair-associated signaling and cellular response models."],
-              ["Storage", "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use."],
+              [
+                "Cellular Migration",
+                "Studied in models involving cellular movement and migration pathways.",
+              ],
+              [
+                "Actin Research",
+                "Evaluated in laboratory investigations involving actin regulation and cell structure.",
+              ],
+              [
+                "Tissue Response",
+                "Researched in relation to repair-associated signaling and cellular response models.",
+              ],
+              [
+                "Storage",
+                "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
+              ],
             ].map(([title, text]) => (
               <div
                 key={title}
                 className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
               >
-                <h3 className="text-white text-lg font-bold mb-3">
-                  {title}
-                </h3>
+                <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
 
-                <p className="text-white/60 text-sm leading-relaxed">
-                  {text}
-                </p>
+                <p className="text-white/60 text-sm leading-relaxed">{text}</p>
               </div>
             ))}
           </div>
@@ -384,89 +427,93 @@ export default function TB500Page() {
       </section>
 
       {/* Frequently Researched Together */}
-<section className="px-6 md:px-10 pb-16">
-  <div className="max-w-7xl mx-auto">
-    <div className="mb-8">
-      <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
-        Related Research
-      </p>
+      <section className="px-6 md:px-10 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8">
+            <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
+              Related Research
+            </p>
 
-      <h2 className="text-3xl md:text-4xl font-black text-white">
-        Frequently Researched Together
-      </h2>
-    </div>
+            <h2 className="text-3xl md:text-4xl font-black text-white">
+              Frequently Researched Together
+            </h2>
+          </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <a
+              href="/products/bpc157"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/bpc157blue.png"
+                  alt="BPC-157"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
 
-      {/* BPC-157 */}
-      <a
-        href="/products/bpc157"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/bpc157blue.png"
-            alt="BPC-157"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
+              <h3 className="text-2xl font-black text-white mb-2">BPC-157</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Research involving tissue repair pathways and cellular response
+                mechanisms.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+
+            <a
+              href="/products/kpv"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/kpvblue.png"
+                  alt="KPV"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">KPV</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Studied in models involving inflammatory pathways and cellular
+                signaling mechanisms.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+
+            <a
+              href="/products/ara290"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/ara290blue.png"
+                  alt="ARA-290"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">ARA-290</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Research involving tissue protection pathways and cellular
+                response signaling.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+          </div>
         </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">BPC-157</h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Research involving tissue repair pathways and cellular response mechanisms.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
-      </a>
-
-      {/* KPV */}
-      <a
-        href="/products/kpv"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/kpvblue.png"
-            alt="KPV"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">KPV</h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Studied in models involving inflammatory pathways and cellular signaling mechanisms.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
-      </a>
-
-      {/* ARA-290 */}
-      <a
-        href="/products/ara290"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/ara290blue.png"
-            alt="ARA-290"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">ARA-290</h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Research involving tissue protection pathways and cellular response signaling.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
-      </a>
-
-    </div>
-  </div>
-</section>
+      </section>
 
       {[
         {
@@ -482,7 +529,7 @@ export default function TB500Page() {
       ].map((section) => (
         <section key={section.title} className="px-6 md:px-10 pb-16">
           <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
-            <h3 className="text-blue-300 font-bold uppercase tracking-[0.25em] text-sm mb-4">
+            <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-sm mb-4">
               {section.title}
             </h3>
 
@@ -492,7 +539,6 @@ export default function TB500Page() {
           </div>
         </section>
       ))}
-
     </main>
   );
 }

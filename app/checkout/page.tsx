@@ -1,12 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
-import { Lock, ShoppingCart, ShieldCheck, Package, Star } from "lucide-react";
-
-import { HiOutlineMail } from "react-icons/hi";
-import { FaTiktok } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import {
+  Lock,
+  ShoppingCart,
+  ShieldCheck,
+  Package,
+  Star,
+  UserCircle,
+} from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 type CartItem = {
   id: string;
@@ -22,8 +27,11 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState("venmo");
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-const [successOrderNumber, setSuccessOrderNumber] = useState("");
-const [promoCode, setPromoCode] = useState("");
+  const [successOrderNumber, setSuccessOrderNumber] = useState("");
+  const [promoCode, setPromoCode] = useState("");
+
+  const [loggedInEmail, setLoggedInEmail] = useState("");
+  const [loggedInUsername, setLoggedInUsername] = useState("");
 
   const [customerEmail, setCustomerEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -33,7 +41,7 @@ const [promoCode, setPromoCode] = useState("");
   const [city, setCity] = useState("");
   const [stateValue, setStateValue] = useState("");
   const [zipCode, setZipCode] = useState("");
-const [marketingConsent, setMarketingConsent] = useState(true);
+  const [marketingConsent, setMarketingConsent] = useState(true);
 
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
@@ -45,6 +53,29 @@ const [marketingConsent, setMarketingConsent] = useState(true);
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem("cart") || "[]");
     setCart(savedCart);
+
+    async function loadCustomer() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user?.email) return;
+
+      setLoggedInEmail(user.email);
+      setCustomerEmail(user.email);
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("username, first_name, last_name")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (profile?.username) setLoggedInUsername(profile.username);
+      if (profile?.first_name) setFirstName(profile.first_name);
+      if (profile?.last_name) setLastName(profile.last_name);
+    }
+
+    loadCustomer();
   }, []);
 
   const subtotal = cart.reduce(
@@ -60,27 +91,26 @@ const [marketingConsent, setMarketingConsent] = useState(true);
     freeShippingThreshold - subtotal
   );
 
-const shipping =
-  subtotal > 0 && !qualifiesForFreeShipping ? standardShipping : 0;
+  const shipping =
+    subtotal > 0 && !qualifiesForFreeShipping ? standardShipping : 0;
 
-const normalizedPromoCode = promoCode.trim().toUpperCase();
+  const normalizedPromoCode = promoCode.trim().toUpperCase();
 
-const promoDiscounts: Record<string, number> = {
-  FREEDOM10: 0.1,
-  PEPTIDEALS: 0.20,
-};
+  const promoDiscounts: Record<string, number> = {
+    FREEDOM10: 0.1,
+    PEPTIDEALS: 0.2,
+  };
 
-const discountRate = promoDiscounts[normalizedPromoCode] || 0;
-const discount = subtotal * discountRate;
+  const discountRate = promoDiscounts[normalizedPromoCode] || 0;
+  const discount = subtotal * discountRate;
+  const total = Number((subtotal - discount + shipping).toFixed(2));
 
-const total = Number((subtotal - discount + shipping).toFixed(2));
+  const vialCount = cart.reduce((total, item) => {
+    const isBacWater = item.name.toLowerCase().includes("bac");
+    return isBacWater ? total : total + item.quantity;
+  }, 0);
 
-const vialCount = cart.reduce((total, item) => {
-  const isBacWater = item.name.toLowerCase().includes("bac");
-  return isBacWater ? total : total + item.quantity;
-}, 0);
-
-const qualifiesForFreeBacWater = vialCount >= 4;
+  const qualifiesForFreeBacWater = vialCount >= 4;
 
   const isCheckoutComplete =
     customerEmail.trim() !== "" &&
@@ -121,63 +151,62 @@ const qualifiesForFreeBacWater = vialCount >= 4;
     setZipCode(zip);
   };
 
-const handlePlaceOrder = async () => {
-  if (!isCheckoutComplete || loading) return;
+  const handlePlaceOrder = async () => {
+    if (!isCheckoutComplete || loading) return;
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    const response = await fetch("/api/send-order-email", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        customerEmail,
-        firstName,
-        lastName,
-        address,
-        apartment,
-        city,
-        state: stateValue,
-        zipCode,
-        paymentMethod,
-        cart,
-        subtotal,
-        shipping,
-        promoCode: discountRate > 0 ? normalizedPromoCode : "",
-discount,
-discountRate,
-        total,
-        freeShipping: qualifiesForFreeShipping,
-        freeBacWater: qualifiesForFreeBacWater,
-        vialCount,
-        marketingConsent,
-      }),
-    });
+    try {
+      const response = await fetch("/api/send-order-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerEmail,
+          firstName,
+          lastName,
+          address,
+          apartment,
+          city,
+          state: stateValue,
+          zipCode,
+          paymentMethod,
+          cart,
+          subtotal,
+          shipping,
+          promoCode: discountRate > 0 ? normalizedPromoCode : "",
+          discount,
+          discountRate,
+          total,
+          freeShipping: qualifiesForFreeShipping,
+          freeBacWater: qualifiesForFreeBacWater,
+          vialCount,
+          marketingConsent,
+        }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok || !data.success) {
-      throw new Error(data.error || "Order submission failed");
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Order submission failed");
+      }
+
+      localStorage.removeItem("cart");
+      window.dispatchEvent(new Event("cartUpdated"));
+      setCart([]);
+      setSuccessOrderNumber(data.orderNumber);
+      setShowSuccess(true);
+    } catch (error: any) {
+      console.error("Checkout error:", error);
+      alert(error.message || "Something went wrong submitting your order.");
+    } finally {
+      setLoading(false);
     }
-
-    localStorage.removeItem("cart");
-    window.dispatchEvent(new Event("cartUpdated"));
-    setCart([]);
-    setSuccessOrderNumber(data.orderNumber);
-    setShowSuccess(true);
-  } catch (error: any) {
-    console.error("Checkout error:", error);
-    alert(error.message || "Something went wrong submitting your order.");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-
       <section className="relative px-6 py-20 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
 
@@ -215,9 +244,82 @@ discountRate,
 
           <div className="grid grid-cols-1 xl:grid-cols-[1fr_430px] gap-8">
             <div className="space-y-8">
+              <section className="rounded-[2rem] border border-blue-400/20 bg-blue-500/10 backdrop-blur-sm p-8">
+                {loggedInEmail ? (
+                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div className="flex items-start gap-4">
+                      <div className="rounded-full border border-blue-300/30 bg-blue-400/10 p-3">
+                        <UserCircle className="text-blue-300" size={28} />
+                      </div>
+
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.35em] text-blue-300 mb-2">
+                          Signed In
+                        </p>
+
+                        <h2 className="text-2xl font-black text-white">
+                          Welcome back
+                          {loggedInUsername ? `, ${loggedInUsername}` : ""}
+                        </h2>
+
+                        <p className="text-white/60 text-sm mt-2">
+                          Your email has been filled automatically. This order
+                          will appear in your customer portal.
+                        </p>
+
+                        <p className="text-blue-200 text-sm mt-3 font-semibold">
+                          {loggedInEmail}
+                        </p>
+                      </div>
+                    </div>
+
+                    <Link
+                      href="/account"
+                      className="rounded-full border border-white/10 bg-white/[0.06] px-6 py-3 text-xs font-bold uppercase tracking-[0.25em] text-white hover:border-blue-300/50 text-center"
+                    >
+                      My Account
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.35em] text-blue-300 mb-3">
+                        Returning Customer
+                      </p>
+
+                      <h2 className="text-3xl font-black text-white mb-3">
+                        Log in for faster checkout
+                      </h2>
+
+                      <p className="text-white/60 text-sm leading-relaxed">
+                        Log in to connect this order to your customer portal and
+                        view tracking after checkout. You can also continue as a
+                        guest below.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col gap-3 sm:flex-row md:flex-col">
+                      <Link
+                        href="/account/login"
+                        className="rounded-full bg-white px-7 py-4 text-center text-xs font-black uppercase tracking-[0.25em] text-[#081526] hover:bg-blue-100"
+                      >
+                        Log In
+                      </Link>
+
+                      <Link
+                        href="/account/signup"
+                        className="rounded-full border border-white/10 bg-white/[0.06] px-7 py-4 text-center text-xs font-black uppercase tracking-[0.25em] text-white hover:border-blue-300/50"
+                      >
+                        Create Account
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </section>
+
               <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
                 <h2 className="text-3xl font-black text-white mb-6">
-                  Contact
+                  Contact Information
                 </h2>
 
                 <input
@@ -226,7 +328,14 @@ discountRate,
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
                   className="checkout-input w-full"
+                  readOnly={!!loggedInEmail}
                 />
+
+                {loggedInEmail && (
+                  <p className="mt-3 text-xs text-blue-200/70">
+                    Email is connected to your signed-in account.
+                  </p>
+                )}
               </section>
 
               <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
@@ -445,38 +554,41 @@ discountRate,
                 </div>
 
                 <div className="border-t border-white/10 pt-6 space-y-4 mb-8">
+                  <div>
+                    <label className="block text-sm text-white/60 mb-2">
+                      Promo Code
+                    </label>
 
-                <div>
-  <label className="block text-sm text-white/60 mb-2">
-    Promo Code
-  </label>
+                    <input
+                      type="text"
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value)}
+                      placeholder="Enter promo code"
+                      className="checkout-input"
+                    />
 
-  <input
-    type="text"
-    value={promoCode}
-    onChange={(e) => setPromoCode(e.target.value)}
-    placeholder="Enter promo code"
-    className="checkout-input"
-  />
-
-{discountRate > 0 && (
-  <p className="text-green-300 text-sm mt-2 font-semibold">
-    ✓ {normalizedPromoCode} Applied ({Math.round(discountRate * 100)}% Off)
-  </p>
-)}
-</div>
+                    {discountRate > 0 && (
+                      <p className="text-green-300 text-sm mt-2 font-semibold">
+                        ✓ {normalizedPromoCode} Applied (
+                        {Math.round(discountRate * 100)}% Off)
+                      </p>
+                    )}
+                  </div>
 
                   <div className="flex justify-between text-white/60">
                     <span>Subtotal</span>
                     <span>${subtotal.toFixed(2)}</span>
                   </div>
 
-{discount > 0 && (
-  <div className="flex justify-between text-green-300 font-semibold">
-{normalizedPromoCode} applied — ${discount.toFixed(2)} off
-<span>-${discount.toFixed(2)}</span>
-  </div>
-)}
+                  {discount > 0 && (
+                    <div className="flex justify-between text-green-300 font-semibold">
+                      <span>
+                        {normalizedPromoCode} applied — ${discount.toFixed(2)}{" "}
+                        off
+                      </span>
+                      <span>-${discount.toFixed(2)}</span>
+                    </div>
+                  )}
 
                   <div className="flex justify-between text-white/60">
                     <span>Shipping</span>
@@ -505,21 +617,24 @@ discountRate,
                       </div>
                     ))}
 
-{qualifiesForFreeBacWater && (
-  <div className="rounded-2xl border border-green-400/20 bg-green-500/10 p-4">
-    <p className="text-green-300 font-bold text-sm">
-      ✓ Complimentary Bac Water Included
-    </p>
+                  {qualifiesForFreeBacWater && (
+                    <div className="rounded-2xl border border-green-400/20 bg-green-500/10 p-4">
+                      <p className="text-green-300 font-bold text-sm">
+                        ✓ Complimentary Bac Water Included
+                      </p>
 
-    <p className="text-white/60 text-sm mt-1">
-      Orders with 4 or more vials receive one complimentary bacteriostatic water.
-    </p>
-  </div>
-)}
+                      <p className="text-white/60 text-sm mt-1">
+                        Orders with 4 or more vials receive one complimentary
+                        bacteriostatic water.
+                      </p>
+                    </div>
+                  )}
 
                   <div className="flex justify-between text-2xl font-black text-white pt-4 border-t border-white/10">
                     <span>Total Due</span>
-                    <span className="text-blue-300">${total.toFixed(2)}</span>
+                    <span className="text-blue-300">
+                      ${total.toFixed(2)}
+                    </span>
                   </div>
                 </div>
               </section>
@@ -556,26 +671,27 @@ discountRate,
                   ))}
                 </div>
 
-<div className="rounded-[2rem] border border-blue-400/20 bg-blue-500/10 p-6 mb-6">
-  <p className="text-blue-100 font-bold uppercase tracking-widest mb-3 text-sm">
-    Payment Amount
-  </p>
+                <div className="rounded-[2rem] border border-blue-400/20 bg-blue-500/10 p-6 mb-6">
+                  <p className="text-blue-100 font-bold uppercase tracking-widest mb-3 text-sm">
+                    Payment Amount
+                  </p>
 
-  <p className="text-4xl font-black text-white mb-2">
-    ${total.toFixed(2)}
-  </p>
+                  <p className="text-4xl font-black text-white mb-2">
+                    ${total.toFixed(2)}
+                  </p>
 
-  {discount > 0 && (
-    <p className="text-green-300 text-sm font-semibold mb-2">
-      FREEDOM10 applied — ${discount.toFixed(2)} off
-    </p>
-  )}
+                  {discount > 0 && (
+                    <p className="text-green-300 text-sm font-semibold mb-2">
+                      {normalizedPromoCode} applied — ${discount.toFixed(2)} off
+                    </p>
+                  )}
 
-  <p className="text-blue-100/70 text-sm">
-    Please send exactly ${total.toFixed(2)} via{" "}
-    {paymentMethod === "venmo" ? "Venmo" : "Zelle"} after your order is submitted.
-  </p>
-</div>
+                  <p className="text-blue-100/70 text-sm">
+                    Please send exactly ${total.toFixed(2)} via{" "}
+                    {paymentMethod === "venmo" ? "Venmo" : "Zelle"} after your
+                    order is submitted.
+                  </p>
+                </div>
 
                 <div className="rounded-[1.5rem] border border-white/10 bg-[#081526]/50 p-6">
                   <h3 className="text-blue-300 font-bold uppercase tracking-widest text-sm mb-4">
@@ -595,20 +711,21 @@ discountRate,
                 </div>
               </section>
 
-<div className="mb-6 rounded-2xl border border-blue-300/20 bg-blue-500/10 p-5">
-  <label className="flex items-start gap-3 cursor-pointer">
-    <input
-      type="checkbox"
-      checked={marketingConsent}
-      onChange={(e) => setMarketingConsent(e.target.checked)}
-      className="mt-1 h-4 w-4"
-    />
+              <div className="mb-6 rounded-2xl border border-blue-300/20 bg-blue-500/10 p-5">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={marketingConsent}
+                    onChange={(e) => setMarketingConsent(e.target.checked)}
+                    className="mt-1 h-4 w-4"
+                  />
 
-    <span className="text-sm text-white/70 leading-relaxed">
-     Yes, I'd like to receive early access to new releases, restock alerts, and exclusive offers from Apexx Biolabs.
-    </span>
-  </label>
-</div>
+                  <span className="text-sm text-white/70 leading-relaxed">
+                    Yes, I'd like to receive early access to new releases,
+                    restock alerts, and exclusive offers from Apexx Biolabs.
+                  </span>
+                </label>
+              </div>
 
               <button
                 onClick={handlePlaceOrder}
@@ -658,71 +775,68 @@ discountRate,
       </section>
 
       {showSuccess && (
-  <div className="fixed inset-0 z-[9999] bg-[#020817]/80 backdrop-blur-md flex items-center justify-center px-4">
-    <div className="w-full max-w-lg rounded-[36px] border border-blue-300/30 bg-gradient-to-br from-[#eef7ff] via-white to-[#dbeafe] shadow-[0_0_70px_rgba(96,165,250,0.35)] overflow-hidden">
-      
-      <div className="p-8 md:p-10 text-center">
+        <div className="fixed inset-0 z-[9999] bg-[#020817]/80 backdrop-blur-md flex items-center justify-center px-4">
+          <div className="w-full max-w-lg rounded-[36px] border border-blue-300/30 bg-gradient-to-br from-[#eef7ff] via-white to-[#dbeafe] shadow-[0_0_70px_rgba(96,165,250,0.35)] overflow-hidden">
+            <div className="p-8 md:p-10 text-center">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-blue-500/10 border border-blue-400/30 flex items-center justify-center">
+                <svg
+                  className="w-10 h-10 text-blue-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={3}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
 
-        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-blue-500/10 border border-blue-400/30 flex items-center justify-center">
-          <svg
-            className="w-10 h-10 text-blue-500"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={3}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
+              <p className="uppercase tracking-[0.35em] text-blue-500 text-xs mb-4">
+                Order Received
+              </p>
+
+              <h2 className="text-4xl font-black text-[#081526] mb-4">
+                Thank You
+              </h2>
+
+              <p className="text-slate-600 leading-relaxed mb-7">
+                Your order has been successfully submitted. Payment instructions
+                have been sent to your email.
+              </p>
+
+              <div className="rounded-[24px] border border-blue-200 bg-white/80 p-5 mb-7">
+                <p className="text-blue-500 text-xs uppercase tracking-[0.25em] mb-2 font-bold">
+                  Order Number
+                </p>
+
+                <p className="text-[#081526] font-black text-lg break-all">
+                  {successOrderNumber}
+                </p>
+              </div>
+
+              <div className="rounded-[24px] bg-[#081526] p-5 mb-7">
+                <p className="text-blue-200 text-sm leading-relaxed">
+                  Please check your email for your payment instructions. Include
+                  only your order number in the payment note.
+                </p>
+              </div>
+
+              <button
+                onClick={() => {
+                  setShowSuccess(false);
+                  window.location.href = loggedInEmail ? "/account" : "/";
+                }}
+                className="w-full rounded-full bg-[#081526] text-white font-bold py-4 uppercase tracking-widest hover:bg-blue-900 transition-all"
+              >
+                {loggedInEmail ? "View My Account" : "Continue"}
+              </button>
+            </div>
+          </div>
         </div>
-
-        <p className="uppercase tracking-[0.35em] text-blue-500 text-xs mb-4">
-          Order Received
-        </p>
-
-        <h2 className="text-4xl font-black text-[#081526] mb-4">
-          Thank You
-        </h2>
-
-        <p className="text-slate-600 leading-relaxed mb-7">
-          Your order has been successfully submitted. Payment instructions have
-          been sent to your email.
-        </p>
-
-        <div className="rounded-[24px] border border-blue-200 bg-white/80 p-5 mb-7">
-          <p className="text-blue-500 text-xs uppercase tracking-[0.25em] mb-2 font-bold">
-            Order Number
-          </p>
-
-          <p className="text-[#081526] font-black text-lg break-all">
-            {successOrderNumber}
-          </p>
-        </div>
-
-        <div className="rounded-[24px] bg-[#081526] p-5 mb-7">
-          <p className="text-blue-200 text-sm leading-relaxed">
-            Please check your email for your payment instructions. Include only
-            your order number in the payment note.
-          </p>
-        </div>
-
-        <button
-          onClick={() => {
-            setShowSuccess(false);
-            window.location.href = "/";
-          }}
-          className="w-full rounded-full bg-[#081526] text-white font-bold py-4 uppercase tracking-widest hover:bg-blue-900 transition-all"
-        >
-          Continue
-        </button>
-
-      </div>
-    </div>
-  </div>
-)}
+      )}
 
       <style jsx>{`
         .checkout-input {
@@ -747,8 +861,11 @@ discountRate,
         select.checkout-input {
           appearance: none;
         }
-      `}</style>
 
+        select.checkout-input option {
+          color: #081526;
+        }
+      `}</style>
     </main>
   );
 }

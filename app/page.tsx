@@ -314,39 +314,35 @@ const handlePromoSignup = async (e: React.FormEvent) => {
 
 <div className="min-h-screen bg-[#081526] text-white">
 
-  {/* HERO */}
-  <section className="relative pt-8 pb-24 px-6 bg-[#081526] overflow-hidden">
-
-{/* Free Shipping Banner */}
-<div className="relative z-20 mb-4 rounded-full border border-blue-400/30 bg-blue-500/10 px-6 py-4 text-center backdrop-blur-sm max-w-5xl mx-auto">
-  <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
-    Free Shipping On Orders Over $200
-  </p>
-</div>
-
-{/* Promo Banners */}
-<div className="relative z-20 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
-
-<div className="rounded-full border border-blue-400/30 bg-blue-500/10 backdrop-blur-sm px-8 py-5 text-center">
-    <p className="text-white font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
-          JOIN THE LIST
-
-    </p>
-    <p className="text-blue-100 text-xs mt-1">
-    Exclusive promos, product updates & promo codes.
+{/* HERO */}
+<section className="relative pt-8 pb-24 px-6 bg-[#081526] overflow-hidden">
+  {/* Free Shipping Banner */}
+  <div className="relative z-20 mb-4 rounded-full border border-blue-400/30 bg-blue-500/10 px-6 py-4 text-center backdrop-blur-sm max-w-5xl mx-auto">
+    <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
+      Free Shipping On Orders Over $200
     </p>
   </div>
 
-  <div className="rounded-full border border-blue-400/30 bg-blue-500/10 backdrop-blur-sm px-8 py-5 text-center">
-    <p className="text-white font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
-      FREE BAC WATER
-    </p>
-    <p className="text-blue-100 text-xs mt-1">
-      Buy Any 4 Vials & Receive Complimentary Bac Water
-    </p>
-  </div>
+  {/* Promo Banners */}
+  <div className="relative z-20 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
+    <div className="rounded-full border border-blue-400/30 bg-blue-500/10 backdrop-blur-sm px-8 py-5 text-center">
+      <p className="text-white font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
+        JOIN THE LIST
+      </p>
+      <p className="text-blue-100 text-xs mt-1">
+        Exclusive promos, product updates & promo codes.
+      </p>
+    </div>
 
-</div>
+    <div className="rounded-full border border-blue-400/30 bg-blue-500/10 backdrop-blur-sm px-8 py-5 text-center">
+      <p className="text-white font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
+        FREE BAC WATER
+      </p>
+      <p className="text-blue-100 text-xs mt-1">
+        Buy Any 4 Vials & Receive Complimentary Bac Water
+      </p>
+    </div>
+  </div>
 
   {/* Background Image */}
   <div
@@ -357,83 +353,67 @@ const handlePromoSignup = async (e: React.FormEvent) => {
     }}
   />
 
-  {/* Navy Overlay */}
-<div className="absolute inset-0 z-[1] bg-gradient-to-r from-[#081526] via-[#081526]/92 to-transparent" />
-  {/* Luxury Glow */}
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_55%)]"></div>
+  <div className="absolute inset-0 z-[1] bg-gradient-to-r from-[#081526] via-[#081526]/92 to-transparent" />
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_55%)]" />
 
   <div className="relative z-10 max-w-7xl mx-auto py-20 flex items-center">
+    <Reveal>
+      <div className="max-w-3xl">
+        <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
+          Research. Quality. Confidence.
+        </p>
 
-    <div className="max-w-3xl">
+        <h1 className="text-6xl md:text-8xl font-black tracking-tight leading-[0.9] text-white">
+          Research
+          <br />
+          <span className="text-blue-300">Without Limits.</span>
+        </h1>
 
-      <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
-        Research. Quality. Confidence.
-      </p>
+        <p className="mt-8 text-white/70 text-lg md:text-xl leading-relaxed max-w-2xl">
+          High-purity research compounds supported by analytical verification,
+          batch documentation, and research-use transparency.
+        </p>
 
-      <h1 className="text-6xl md:text-8xl font-black tracking-tight leading-[0.9] text-white">
-        Research
-        <br />
-
-        <span className="text-blue-300">
-          Without Limits.
-        </span>
-      </h1>
-
-      <p className="mt-8 text-white/70 text-lg md:text-xl leading-relaxed max-w-2xl">
-        High-purity research compounds supported by analytical verification,
-        batch documentation, and research-use transparency.
-      </p>
-
-      <div className="flex flex-col sm:flex-row gap-4 mt-10">
-
-        <a
-          href="#shop"
-          className="bg-white text-[#081526] px-9 py-4 rounded-full text-sm uppercase tracking-widest font-semibold text-center hover:bg-blue-100 transition-all"
-        >
-          Shop Products
-        </a>
-
-        <a
-          href="/coas"
-          className="border border-white/10 bg-white/[0.04] backdrop-blur-sm px-9 py-4 rounded-full text-sm uppercase tracking-widest font-semibold text-center hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
-        >
-          View COAs
-        </a>
-
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-14">
-
-        {[
-          "99%+ Purity",
-          "Third-Party Tested",
-          "COA Included",
-          "Fast Shipping",
-        ].map((item) => (
-          <div
-            key={item}
-            className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-5 hover:bg-white/[0.07] hover:border-blue-400/50 transition-all"
+        <div className="flex flex-col sm:flex-row gap-4 mt-10">
+          <a
+            href="#shop"
+            className="bg-white text-[#081526] px-9 py-4 rounded-full text-sm uppercase tracking-widest font-semibold text-center hover:bg-blue-100 transition-all"
           >
-            <p className="text-blue-300 text-xl mb-3">✓</p>
+            Shop Products
+          </a>
 
-            <p className="text-white/70 text-xs uppercase tracking-widest leading-relaxed">
-              {item}
-            </p>
-          </div>
-        ))}
+          <a
+            href="/coas"
+            className="border border-white/10 bg-white/[0.04] backdrop-blur-sm px-9 py-4 rounded-full text-sm uppercase tracking-widest font-semibold text-center hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+          >
+            View COAs
+          </a>
+        </div>
 
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-14">
+          {[
+            "99%+ Purity",
+            "Third-Party Tested",
+            "COA Included",
+            "Fast Shipping",
+          ].map((item, index) => (
+            <Reveal key={item} delay={index * 100}>
+              <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-5 hover:bg-white/[0.07] hover:border-blue-400/50 transition-all">
+                <p className="text-blue-300 text-xl mb-3">✓</p>
+                <p className="text-white/70 text-xs uppercase tracking-widest leading-relaxed">
+                  {item}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
       </div>
-
-    </div>
-
+    </Reveal>
   </div>
 </section>
 
 {/* PRODUCTS */}
-<section
-  id="shop"
-  className="relative py-24 px-6 bg-[#081526] border-b border-white/10 overflow-hidden"
->
+<section className="relative py-20">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
 
   <div className="relative z-10 max-w-7xl mx-auto">
@@ -1184,11 +1164,12 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
 
   </div>
 </section>
-    
-    <section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_55%)]"></div>
 
-  <div className="relative z-10 max-w-7xl mx-auto">
+<Reveal>
+  <section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_55%)]" />
+
+    <div className="relative z-10 max-w-7xl mx-auto">
 
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center mb-16">
 
@@ -1270,10 +1251,13 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
       </div>
 
     </div>
+    </div>
+  </section>
+</Reveal>
 
-  </div>
-</section>
-
+<Reveal>
+  <section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
+  </section>
 {/* HOMEPAGE FAQ */}
 <section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
@@ -1360,8 +1344,10 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
     </div>
   </div>
 </section>
+</Reveal>
 
-<section className="relative px-6 md:px-10 py-24 bg-[#081526] overflow-hidden">
+<Reveal>
+  <section className="relative px-6 md:px-10 py-24 bg-[#081526] overflow-hidden">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
   <div className="relative z-10 max-w-5xl mx-auto rounded-[42px] border border-blue-300/20 bg-gradient-to-br from-[#102743] via-[#12345A] to-[#0B1B30] p-8 md:p-12 shadow-[0_0_60px_rgba(96,165,250,0.12)]">
@@ -1411,7 +1397,8 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
 )}
 
   </div>
-</section>
+  </section>
+</Reveal>
 
 </div>
 </>

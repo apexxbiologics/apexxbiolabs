@@ -21,6 +21,7 @@ export default function Kisspeptin10Page() {
     name: "Kisspeptin-10",
     price,
     image: "/images/kisspeptin10blue.png",
+    path: `/products/kisspeptin10`,
   };
 
   const isOutOfStock = inventory !== null && inventory <= 0;
@@ -29,8 +30,9 @@ export default function Kisspeptin10Page() {
   const favoriteProduct = {
     id: product.id,
     name: product.name,
-    price: product.price,
+    price,
     image: product.image,
+    path: product.path,
   };
 
   useEffect(() => {

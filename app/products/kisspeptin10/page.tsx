@@ -17,11 +17,10 @@ export default function Kisspeptin10Page() {
   const [price, setPrice] = useState(55);
 
   const product = {
-    id: "kisspeptin10",
-    name: "Kisspeptin-10",
-    price,
+    id: "kisspeptin10-10mg",
+    name: "Kisspeptin-10 10mg",
     image: "/images/kisspeptin10blue.png",
-    path: `/products/kisspeptin10`,
+    path: "/products/kisspeptin10",
   };
 
   const isOutOfStock = inventory !== null && inventory <= 0;
@@ -38,33 +37,37 @@ export default function Kisspeptin10Page() {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await fetch("/api/products");
+        const response = await fetch("/api/products", {
+          cache: "no-store",
+        });
+
         const data = await response.json();
 
         if (!data.success) return;
 
         const kisspeptin = data.products.find(
-          (product: any) =>
-            product.slug === "kisspeptin10" ||
-            product.slug === "kisspeptin10-10mg" ||
-            product.slug === "kisspeptin-10" ||
-            product.slug === "kisspeptin-10-10mg" ||
-            product.id === "kisspeptin10" ||
-            product.id === "kisspeptin10-10mg" ||
-            product.id === "kisspeptin-10" ||
-            product.id === "kisspeptin-10-10mg" ||
-            product.name?.toLowerCase().includes("kisspeptin")
+          (item: any) =>
+            item.slug === "kisspeptin10" ||
+            item.slug === "kisspeptin10-10mg" ||
+            item.slug === "kisspeptin-10" ||
+            item.slug === "kisspeptin-10-10mg" ||
+            item.id === "kisspeptin10" ||
+            item.id === "kisspeptin10-10mg" ||
+            item.id === "kisspeptin-10" ||
+            item.id === "kisspeptin-10-10mg" ||
+            item.id === "KISSPEPTIN-10-10mg" ||
+            item.name?.toLowerCase().includes("kisspeptin")
         );
 
         if (kisspeptin) {
-          setInventory(kisspeptin.inventory ?? 0);
+          setInventory(Number(kisspeptin.inventory ?? 0));
           setPrice(Number(kisspeptin.price ?? 55));
         } else {
           setInventory(null);
           setPrice(55);
         }
       } catch (error) {
-        console.error("Failed to fetch inventory:", error);
+        console.error("Failed to fetch Kisspeptin-10 data:", error);
         setInventory(null);
         setPrice(55);
       }
@@ -79,9 +82,10 @@ export default function Kisspeptin10Page() {
     const cartProduct = {
       id: product.id,
       name: product.name,
-      price: product.price,
+      price,
       quantity,
       image: product.image,
+      path: product.path,
     };
 
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -96,7 +100,8 @@ export default function Kisspeptin10Page() {
             ? {
                 ...item,
                 quantity: item.quantity + quantity,
-                price: product.price,
+                price,
+                path: product.path,
               }
             : item
         )
@@ -110,7 +115,7 @@ export default function Kisspeptin10Page() {
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
       <section className="relative px-6 md:px-10 py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
@@ -143,7 +148,7 @@ export default function Kisspeptin10Page() {
               </p>
 
               <p className="text-5xl font-black text-white mb-3">
-                ${product.price.toFixed(2)}
+                ${price.toFixed(2)}
               </p>
 
               {isLimitedStock && (
@@ -212,25 +217,9 @@ export default function Kisspeptin10Page() {
               </div>
 
               <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
-                <div className="flex items-center justify-center gap-2">
-                  <svg
-                    className="w-5 h-5 text-blue-300"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7m16 0H4m16 0V8a1 1 0 00-1-1h-3.5M4 12V8a1 1 0 011-1h3.5m0 0a1.5 1.5 0 113 0m-3 0h3m0 0a1.5 1.5 0 113 0"
-                    />
-                  </svg>
-
-                  <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider text-center">
-                    FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
-                  </p>
-                </div>
+                <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider text-center">
+                  FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
+                </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
@@ -280,9 +269,21 @@ export default function Kisspeptin10Page() {
       <section className="px-6 md:px-10 pb-10">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            [FlaskConical, "Research Use Only", "Strictly for laboratory research."],
-            [ShieldCheck, "Third-Party Tested", "Independent lab verified when available."],
-            [ClipboardCheck, "Batch Documented", "Documentation available for verified lots."],
+            [
+              FlaskConical,
+              "Research Use Only",
+              "Strictly for laboratory research.",
+            ],
+            [
+              ShieldCheck,
+              "Third-Party Tested",
+              "Independent lab verified when available.",
+            ],
+            [
+              ClipboardCheck,
+              "Batch Documented",
+              "Documentation available for verified lots.",
+            ],
             [ShieldCheck, "Quality Target", "99%+ purity target."],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
@@ -350,6 +351,7 @@ export default function Kisspeptin10Page() {
         </div>
       </section>
 
+      {/* Frequently Researched Together */}
       <section className="px-6 md:px-10 pb-16">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">

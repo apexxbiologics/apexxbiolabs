@@ -3,20 +3,16 @@
 import { useEffect, useState } from "react";
 import {
   ShoppingCart,
-  Search,
   FlaskConical,
   ShieldCheck,
   ClipboardCheck,
 } from "lucide-react";
 
-import { HiOutlineMail } from "react-icons/hi";
-import { FaTiktok } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
 import FavoriteButton from "@/components/FavoriteButton";
+
 export default function AceticAcidPage() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
 
   const [productData, setProductData] = useState({
     inventory: 0,
@@ -27,6 +23,7 @@ export default function AceticAcidPage() {
     id: "ACETIC-ACID-10ML",
     name: "Acetic Acid 10mL",
     image: "/images/aceticacidblue.png",
+    path: "/products/aceticacid",
   };
 
   const selectedInventory = productData.inventory;
@@ -34,33 +31,12 @@ export default function AceticAcidPage() {
   const inStock = selectedInventory > 0;
 
   const favoriteProduct = {
-  id: product.id,
-  name: product.name,
-  price: selectedPrice,
-  image: product.image,
-};
-
-  const products = [
-    { name: "Acetic Acid", keywords: ["acetic", "acetic acid"], path: "/products/aceticacid" },
-    { name: "APX-3", keywords: ["apx", "apx3", "apx-3"], path: "/products/apx3" },
-    { name: "Adamax", keywords: ["adamax"], path: "/products/adamax" },
-    { name: "AOD-9604", keywords: ["aod", "aod9604", "aod-9604"], path: "/products/aod9604" },
-    { name: "ARA-290", keywords: ["ara", "ara290", "ara-290"], path: "/products/ara290" },
-    { name: "Bacteriostatic Water", keywords: ["bac water", "water", "bacteriostatic"], path: "/products/bacwater" },
-    { name: "BPC-157", keywords: ["bpc", "bpc157", "bpc-157"], path: "/products/bpc157" },
-    { name: "CJC/IPA", keywords: ["cjc", "ipa", "cjc ipa", "cjc/ipa"], path: "/products/cjcipa" },
-    { name: "GHK-Cu", keywords: ["ghk", "ghkcu", "ghk-cu"], path: "/products/ghkcu" },
-    { name: "KPV", keywords: ["kpv"], path: "/products/kpv" },
-    { name: "MOTS-C", keywords: ["mots", "motsc", "mots-c"], path: "/products/motsc" },
-    { name: "NAD+", keywords: ["nad", "nad+", "nicotinamide adenine dinucleotide"], path: "/products/nad" },
-    { name: "PE-22-28", keywords: ["pe", "pe2228", "pe-22-28"], path: "/products/pe2228" },
-    { name: "Pinealon", keywords: ["pinealon"], path: "/products/pinealon" },
-    { name: "PT-141", keywords: ["pt", "pt141", "pt-141", "bremelanotide"], path: "/products/pt141" },
-    { name: "Selank", keywords: ["selank"], path: "/products/selank" },
-    { name: "Semax", keywords: ["semax"], path: "/products/semax" },
-    { name: "TB-500", keywords: ["tb", "tb500", "tb-500"], path: "/products/tb500" },
-    { name: "Tesamorelin", keywords: ["tesa", "tesamorelin"], path: "/products/tesamorelin" },
-  ];
+    id: product.id,
+    name: product.name,
+    price: selectedPrice,
+    image: product.image,
+    path: product.path,
+  };
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -89,22 +65,6 @@ export default function AceticAcidPage() {
     fetchProductData();
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const query = searchTerm.toLowerCase().trim();
-
-    const match = products.find(
-      (product) =>
-        product.name.toLowerCase().includes(query) ||
-        product.keywords.some((keyword) => keyword.includes(query))
-    );
-
-    if (match) {
-      window.location.href = match.path;
-    }
-  };
-
   const addToCart = () => {
     if (!inStock) return;
 
@@ -114,6 +74,7 @@ export default function AceticAcidPage() {
       price: selectedPrice,
       quantity,
       image: product.image,
+      path: product.path,
     };
 
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -137,24 +98,22 @@ export default function AceticAcidPage() {
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-
       <section className="relative px-6 md:px-10 py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
-<div className="flex items-center justify-center">
-  <div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
-    <FavoriteButton product={favoriteProduct} />
+            <div className="flex items-center justify-center">
+              <div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <FavoriteButton product={favoriteProduct} />
 
-    <img
-      src={product.image}
-      alt={product.name}
-      className="w-full h-full object-cover"
-    />
-  </div>
-</div>
-</div>
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
               <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
@@ -175,13 +134,15 @@ export default function AceticAcidPage() {
                 ${selectedPrice.toFixed(2)}
               </p>
 
-              <div className={`font-semibold mb-8 ${inStock ? "text-blue-300" : "text-red-300"}`}>
-                {selectedInventory <= 5 && (
-                  <div className={`font-semibold mb-8 ${selectedInventory <= 0 ? "text-red-300" : "text-yellow-300"}`}>
-                    {selectedInventory <= 0 ? "Out of Stock" : "Limited Stock"}
-                  </div>
-                )}
-              </div>
+              {selectedInventory <= 5 && (
+                <div
+                  className={`font-semibold mb-8 ${
+                    selectedInventory <= 0 ? "text-red-300" : "text-yellow-300"
+                  }`}
+                >
+                  {selectedInventory <= 0 ? "Out of Stock" : "Limited Stock"}
+                </div>
+              )}
 
               <div className="h-px bg-white/10 mb-8" />
 
@@ -218,7 +179,9 @@ export default function AceticAcidPage() {
 
                     <button
                       onClick={() => {
-                        setQuantity((prev) => Math.min(selectedInventory || 1, prev + 1));
+                        setQuantity((prev) =>
+                          Math.min(selectedInventory || 1, prev + 1)
+                        );
                         setAdded(false);
                       }}
                       disabled={!inStock}
@@ -231,11 +194,9 @@ export default function AceticAcidPage() {
               </div>
 
               <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
-                <div className="flex items-center justify-center gap-2">
-                  <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
-                    FREE Bacteriostatic Water With Purchase of Any 4 Vials
-                  </p>
-                </div>
+                <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider text-center">
+                  FREE Bacteriostatic Water With Purchase of Any 4 Vials
+                </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -248,20 +209,32 @@ export default function AceticAcidPage() {
                     {added ? "Added To Cart" : "Add To Cart"}
                   </button>
                 ) : (
-                  <button disabled className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold">
+                  <button
+                    disabled
+                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
+                  >
                     Out of Stock
                   </button>
                 )}
 
-                <a href="/cart" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
+                <a
+                  href="/cart"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
                   View Cart
                 </a>
 
-                <a href="/products" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
+                <a
+                  href="/products"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
                   Continue Shopping
                 </a>
 
-                <a href="/coas" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
+                <a
+                  href="/coas"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
                   View COA
                 </a>
               </div>
@@ -281,7 +254,9 @@ export default function AceticAcidPage() {
             <div key={title} className="flex gap-4">
               <Icon className="text-blue-300" size={34} />
               <div>
-                <h3 className="text-white uppercase tracking-widest font-bold text-sm">{title}</h3>
+                <h3 className="text-white uppercase tracking-widest font-bold text-sm">
+                  {title}
+                </h3>
                 <p className="text-white/50 text-sm mt-1">{text}</p>
               </div>
             </div>
@@ -313,7 +288,10 @@ export default function AceticAcidPage() {
               ["Peptide Workflow", "Often used in peptide-related laboratory preparation models."],
               ["Storage", "Store tightly sealed at room temperature or as directed. Keep protected from contamination."],
             ].map(([title, text]) => (
-              <div key={title} className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all">
+              <div
+                key={title}
+                className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
+              >
                 <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
                 <p className="text-white/60 text-sm leading-relaxed">{text}</p>
               </div>
@@ -339,11 +317,12 @@ export default function AceticAcidPage() {
             <h3 className="text-blue-300 font-bold uppercase tracking-[0.25em] text-sm mb-4">
               {section.title}
             </h3>
-            <p className="text-white/60 text-sm leading-relaxed">{section.text}</p>
+            <p className="text-white/60 text-sm leading-relaxed">
+              {section.text}
+            </p>
           </div>
         </section>
       ))}
-
     </main>
   );
 }

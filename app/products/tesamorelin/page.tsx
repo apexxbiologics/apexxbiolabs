@@ -3,63 +3,61 @@
 import { useEffect, useState } from "react";
 import {
   ShoppingCart,
-  Search,
   FlaskConical,
   ShieldCheck,
   ClipboardCheck,
-  Mail,
 } from "lucide-react";
 
-import { HiOutlineMail } from "react-icons/hi";
-import { FaTiktok } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import FavoriteButton from "@/components/FavoriteButton";
 
 export default function TesamorelinPage() {
   const [added, setAdded] = useState(false);
   const [selectedMg, setSelectedMg] = useState<"5mg" | "10mg">("5mg");
   const [quantity, setQuantity] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
 
-  const [inventory, setInventory] = useState({
-    "5mg": 0,
-    "10mg": 0,
+  const [productData, setProductData] = useState({
+    "5mg": {
+      inventory: 0,
+      price: 45,
+    },
+    "10mg": {
+      inventory: 0,
+      price: 85,
+    },
   });
 
   const productOptions = {
     "5mg": {
-      id: "TESAMORELIN-5mg",
+      id: "tesamorelin-5mg",
       name: "Tesamorelin 5mg",
-      price: 45,
       image: "/images/tesa5blue.png",
+      path: "/products/tesamorelin",
     },
     "10mg": {
-      id: "TESAMORELIN-10mg",
+      id: "tesamorelin-10mg",
       name: "Tesamorelin 10mg",
-      price: 85,
       image: "/images/tesa10blue.png",
+      path: "/products/tesamorelin",
     },
   };
 
   const selectedProduct = productOptions[selectedMg];
-  const selectedInventory = inventory[selectedMg];
-  const inStock = selectedInventory > 0;
+  const selectedInventory = productData[selectedMg].inventory;
+  const selectedPrice = productData[selectedMg].price;
 
-  const products = [
-    { name: "APX-3", keywords: ["apx", "apx3", "apx-3"], path: "/products/apx3" },
-    { name: "Adamax", keywords: ["adamax"], path: "/products/adamax" },
-    { name: "Bacteriostatic Water", keywords: ["bac water", "water", "bacteriostatic"], path: "/products/bacwater" },
-    { name: "BPC-157", keywords: ["bpc", "bpc157", "bpc-157"], path: "/products/bpc157" },
-    { name: "CJC/IPA", keywords: ["cjc", "ipa", "cjc ipa", "cjc/ipa"], path: "/products/cjcipa" },
-    { name: "GHK-Cu", keywords: ["ghk", "ghkcu", "ghk-cu"], path: "/products/ghkcu" },
-    { name: "MOTS-C", keywords: ["mots", "motsc", "mots-c"], path: "/products/motsc" },
-    { name: "Selank", keywords: ["selank"], path: "/products/selank" },
-    { name: "Semax", keywords: ["semax"], path: "/products/semax" },
-    { name: "TB-500", keywords: ["tb", "tb500", "tb-500"], path: "/products/tb500" },
-    { name: "Tesamorelin", keywords: ["tesa", "tesamorelin"], path: "/products/tesamorelin" },
-  ];
+  const isOutOfStock = selectedInventory <= 0;
+  const isLimitedStock = selectedInventory > 0 && selectedInventory <= 5;
+
+  const favoriteProduct = {
+    id: selectedProduct.id,
+    name: selectedProduct.name,
+    price: selectedPrice,
+    image: selectedProduct.image,
+    path: selectedProduct.path,
+  };
 
   useEffect(() => {
-    const fetchInventory = async () => {
+    const fetchProductData = async () => {
       try {
         const response = await fetch("/api/products", {
           cache: "no-store",
@@ -69,84 +67,84 @@ export default function TesamorelinPage() {
 
         if (!data.success) return;
 
-        console.log("PRODUCTS FROM DATABASE:", data.products);
-
-        const tesa5 = data.products.find((product: any) => {
-          const slug = product.slug?.toLowerCase().trim();
-          const name = product.name?.toLowerCase().trim();
-          const size = product.size?.toLowerCase().trim();
+        const tesa5 = data.products.find((item: any) => {
+          const slug = item.slug?.toLowerCase().trim();
+          const name = item.name?.toLowerCase().trim();
+          const size = item.size?.toLowerCase().trim();
 
           return (
             slug === "tesamorelin-5mg" ||
             slug === "tesa-5mg" ||
-            (name?.includes("tesamorelin") && size === "5mg")
+            item.id === "tesamorelin-5mg" ||
+            item.id === "TESAMORELIN-5mg" ||
+            (name?.includes("tesamorelin") && size === "5mg") ||
+            name?.includes("tesamorelin 5")
           );
         });
 
-        const tesa10 = data.products.find((product: any) => {
-          const slug = product.slug?.toLowerCase().trim();
-          const name = product.name?.toLowerCase().trim();
-          const size = product.size?.toLowerCase().trim();
+        const tesa10 = data.products.find((item: any) => {
+          const slug = item.slug?.toLowerCase().trim();
+          const name = item.name?.toLowerCase().trim();
+          const size = item.size?.toLowerCase().trim();
 
           return (
             slug === "tesamorelin-10mg" ||
             slug === "tesa-10mg" ||
-            (name?.includes("tesamorelin") && size === "10mg")
+            item.id === "tesamorelin-10mg" ||
+            item.id === "TESAMORELIN-10mg" ||
+            (name?.includes("tesamorelin") && size === "10mg") ||
+            name?.includes("tesamorelin 10")
           );
         });
 
-        setInventory({
-          "5mg": Number(tesa5?.inventory ?? 0),
-          "10mg": Number(tesa10?.inventory ?? 0),
+        setProductData({
+          "5mg": {
+            inventory: Number(tesa5?.inventory ?? 0),
+            price: Number(tesa5?.price ?? 45),
+          },
+          "10mg": {
+            inventory: Number(tesa10?.inventory ?? 0),
+            price: Number(tesa10?.price ?? 85),
+          },
         });
       } catch (error) {
-        console.error("Failed to fetch inventory:", error);
+        console.error("Failed to fetch Tesamorelin data:", error);
       }
     };
 
-    fetchInventory();
+    fetchProductData();
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const query = searchTerm.toLowerCase().trim();
-
-    const match = products.find(
-      (product) =>
-        product.name.toLowerCase().includes(query) ||
-        product.keywords.some((keyword) => keyword.includes(query))
-    );
-
-    if (match) {
-      window.location.href = match.path;
-    }
-  };
-
   const addToCart = () => {
-    if (!inStock) return;
+    if (isOutOfStock) return;
 
-    const product = {
+    const cartProduct = {
       id: selectedProduct.id,
       name: selectedProduct.name,
-      price: selectedProduct.price,
+      price: selectedPrice,
       quantity,
       image: selectedProduct.image,
+      path: selectedProduct.path,
     };
 
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
 
     const existingProduct = existingCart.find(
-      (item: any) => item.id === product.id
+      (item: any) => item.id === cartProduct.id
     );
 
     const updatedCart = existingProduct
       ? existingCart.map((item: any) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
+          item.id === cartProduct.id
+            ? {
+                ...item,
+                quantity: item.quantity + quantity,
+                price: selectedPrice,
+                path: selectedProduct.path,
+              }
             : item
         )
-      : [...existingCart, product];
+      : [...existingCart, cartProduct];
 
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     window.dispatchEvent(new Event("cartUpdated"));
@@ -155,14 +153,15 @@ export default function TesamorelinPage() {
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-
       <section className="relative px-6 md:px-10 py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
             <div className="flex items-center justify-center">
-              <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+              <div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <FavoriteButton product={favoriteProduct} />
+
                 <img
                   src={selectedProduct.image}
                   alt={selectedProduct.name}
@@ -172,7 +171,7 @@ export default function TesamorelinPage() {
             </div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-              <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
+              <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-4">
                 Research Peptide
               </p>
 
@@ -181,24 +180,29 @@ export default function TesamorelinPage() {
               </h1>
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                A high-purity growth hormone-releasing hormone analog studied in
-                laboratory research models involving GH signaling, IGF-1 response
-                pathways, and metabolic regulation.
+                High-purity Tesamorelin research peptide studied in laboratory
+                models involving growth hormone-releasing hormone receptor
+                pathways, GH signaling, IGF-1 response pathways, and metabolic
+                regulation.
               </p>
 
               <p className="text-5xl font-black text-white mb-3">
-                ${selectedProduct.price}.00
+                ${selectedPrice.toFixed(2)}
               </p>
 
-              {selectedInventory <= 5 && (
-                <div
-                  className={`font-semibold mb-8 ${
-                    selectedInventory <= 0 ? "text-red-300" : "text-yellow-300"
-                  }`}
-                >
-                  {selectedInventory <= 0 ? "Out of Stock" : "Limited Stock"}
+              {isLimitedStock && (
+                <div className="font-semibold mb-8 text-yellow-300">
+                  Limited Stock
                 </div>
               )}
+
+              {isOutOfStock && (
+                <div className="font-semibold mb-8 text-red-300">
+                  Out of Stock
+                </div>
+              )}
+
+              {!isLimitedStock && !isOutOfStock && <div className="mb-8" />}
 
               <div className="h-px bg-white/10 mb-8" />
 
@@ -240,7 +244,7 @@ export default function TesamorelinPage() {
                         setQuantity((prev) => Math.max(1, prev - 1));
                         setAdded(false);
                       }}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08]"
+                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08]"
                     >
                       −
                     </button>
@@ -256,8 +260,8 @@ export default function TesamorelinPage() {
                         );
                         setAdded(false);
                       }}
-                      disabled={!inStock}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08] disabled:opacity-40"
+                      disabled={isOutOfStock}
+                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08] disabled:opacity-40"
                     >
                       +
                     </button>
@@ -267,25 +271,25 @@ export default function TesamorelinPage() {
 
               <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
                 <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider text-center">
-                  FREE Bacteriostatic Water With Purchase of Any 4 Vials
+                  FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {inStock ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                {isOutOfStock ? (
+                  <button
+                    disabled
+                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
+                  >
+                    Out of Stock
+                  </button>
+                ) : (
                   <button
                     onClick={addToCart}
                     className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
                   >
                     <ShoppingCart size={22} />
                     {added ? "Added To Cart" : "Add To Cart"}
-                  </button>
-                ) : (
-                  <button
-                    disabled
-                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
-                  >
-                    Out of Stock
                   </button>
                 )}
 
@@ -318,13 +322,25 @@ export default function TesamorelinPage() {
       <section className="px-6 md:px-10 pb-10">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            [FlaskConical, "Research Use Only", "Strictly for laboratory research."],
-            [ShieldCheck, "Third-Party Tested", "Independent lab verified."],
-            [ClipboardCheck, "Batch Documented", "Full transparency."],
+            [
+              FlaskConical,
+              "Research Use Only",
+              "Strictly for laboratory research.",
+            ],
+            [
+              ShieldCheck,
+              "Third-Party Tested",
+              "Independent lab verified when available.",
+            ],
+            [
+              ClipboardCheck,
+              "Batch Documented",
+              "Documentation available for verified lots.",
+            ],
             [ShieldCheck, "Quality Target", "99%+ purity target."],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
-              <Icon className="text-blue-300" size={34} />
+              <Icon className="text-[#A5D8FF]" size={34} />
 
               <div>
                 <h3 className="text-white uppercase tracking-widest font-bold text-sm">
@@ -340,7 +356,7 @@ export default function TesamorelinPage() {
 
       <section className="px-6 md:px-10 pb-16">
         <div className="max-w-7xl mx-auto rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-          <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-3">
+          <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
             Research Profile
           </p>
 
@@ -357,118 +373,124 @@ export default function TesamorelinPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
             {[
-              ["GHRH Pathway", "Studied for growth hormone-releasing hormone receptor signaling."],
-              ["IGF-1 Response", "Evaluated in research models involving downstream IGF-1 activity."],
-              ["Metabolic Research", "Used in laboratory studies involving body composition and metabolic pathways."],
-              ["Storage", "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use."],
+              [
+                "GHRH Pathway",
+                "Studied for growth hormone-releasing hormone receptor signaling.",
+              ],
+              [
+                "IGF-1 Response",
+                "Evaluated in research models involving downstream IGF-1 activity.",
+              ],
+              [
+                "Metabolic Research",
+                "Used in laboratory studies involving body composition and metabolic pathways.",
+              ],
+              [
+                "Storage",
+                "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
+              ],
             ].map(([title, text]) => (
               <div
                 key={title}
                 className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
               >
                 <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
+
                 <p className="text-white/60 text-sm leading-relaxed">{text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
+
       {/* Frequently Researched Together */}
-<section className="px-6 md:px-10 pb-16">
-  <div className="max-w-7xl mx-auto">
-    <div className="mb-8">
-      <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
-        Related Research
-      </p>
+      <section className="px-6 md:px-10 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8">
+            <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
+              Related Research
+            </p>
 
-      <h2 className="text-3xl md:text-4xl font-black text-white">
-        Frequently Researched Together
-      </h2>
-    </div>
+            <h2 className="text-3xl md:text-4xl font-black text-white">
+              Frequently Researched Together
+            </h2>
+          </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <a
+              href="/products/cjcipa"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/cjcipablue.png"
+                  alt="CJC/IPA"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
 
-      {/* CJC/IPA */}
-      <a
-        href="/products/cjcipa"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/cjcipablue.png"
-            alt="CJC/IPA"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
+              <h3 className="text-2xl font-black text-white mb-2">CJC/IPA</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Research involving growth hormone signaling pathways and
+                endocrine response models.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+
+            <a
+              href="/products/motsc"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/motscblue.png"
+                  alt="MOTS-C"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">MOTS-C</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Studied in laboratory models involving mitochondrial signaling
+                and metabolic research.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+
+            <a
+              href="/products/apx3"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/apx310blue.png"
+                  alt="APX-3"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">APX-3</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Research involving metabolic signaling, energy regulation, and
+                body composition models.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+          </div>
         </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">
-          CJC/IPA
-        </h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Research involving growth hormone signaling pathways and endocrine response models.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">
-          View Product →
-        </span>
-      </a>
-
-      {/* MOTS-C */}
-      <a
-        href="/products/motsc"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/motscblue.png"
-            alt="MOTS-C"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">
-          MOTS-C
-        </h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Studied in laboratory models involving mitochondrial signaling and metabolic research.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">
-          View Product →
-        </span>
-      </a>
-
-      {/* APX-3 */}
-      <a
-        href="/products/apx3"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/apx310blue.png"
-            alt="APX-3"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">
-          APX-3
-        </h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Research involving metabolic signaling, energy regulation, and body composition models.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">
-          View Product →
-        </span>
-      </a>
-
-    </div>
-  </div>
-</section>
+      </section>
 
       {[
         {
@@ -484,7 +506,7 @@ export default function TesamorelinPage() {
       ].map((section) => (
         <section key={section.title} className="px-6 md:px-10 pb-16">
           <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
-            <h3 className="text-blue-300 font-bold uppercase tracking-[0.25em] text-sm mb-4">
+            <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-sm mb-4">
               {section.title}
             </h3>
 
@@ -494,7 +516,6 @@ export default function TesamorelinPage() {
           </div>
         </section>
       ))}
-
     </main>
   );
 }

@@ -6,59 +6,73 @@ import {
   FlaskConical,
   ShieldCheck,
   ClipboardCheck,
-  Mail,
 } from "lucide-react";
 
-import { HiOutlineMail } from "react-icons/hi";
-import { FaTiktok } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import FavoriteButton from "@/components/FavoriteButton";
 
 export default function ARA290Page() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [inventory, setInventory] = useState<number | null>(null);
+  const [price, setPrice] = useState(50);
 
   const product = {
     id: "ara290",
     name: "ARA-290",
-    price: 50,
     image: "/images/ara290blue.png",
+    path: "/products/ara290",
   };
 
   const isOutOfStock = inventory !== null && inventory <= 0;
   const isLimitedStock = inventory !== null && inventory > 0 && inventory <= 5;
 
+  const favoriteProduct = {
+    id: product.id,
+    name: product.name,
+    price,
+    image: product.image,
+    path: product.path,
+  };
+
   useEffect(() => {
-    const fetchInventory = async () => {
+    const fetchProductData = async () => {
       try {
-        const response = await fetch("/api/products");
+        const response = await fetch("/api/products", {
+          cache: "no-store",
+        });
+
         const data = await response.json();
 
         if (!data.success) return;
 
         const ara290 = data.products.find(
-          (product: any) =>
-            product.slug === "ara290" ||
-            product.slug === "ara-290" ||
-            product.slug === "ara290-10mg" ||
-            product.slug === "ara-290-10mg" ||
-            product.id === "ara290" ||
-            product.id === "ara-290" ||
-            product.name?.toLowerCase().includes("ara")
+          (item: any) =>
+            item.slug === "ara290" ||
+            item.slug === "ara-290" ||
+            item.slug === "ara290-10mg" ||
+            item.slug === "ara-290-10mg" ||
+            item.id === "ara290" ||
+            item.id === "ara-290" ||
+            item.id === "ara290-10mg" ||
+            item.id === "ARA-290-10mg" ||
+            item.name?.toLowerCase().includes("ara")
         );
 
         if (ara290) {
-          setInventory(ara290.inventory ?? 0);
+          setInventory(Number(ara290.inventory ?? 0));
+          setPrice(Number(ara290.price ?? 50));
         } else {
           setInventory(null);
+          setPrice(50);
         }
       } catch (error) {
-        console.error("Failed to fetch inventory:", error);
+        console.error("Failed to fetch ARA-290 data:", error);
         setInventory(null);
+        setPrice(50);
       }
     };
 
-    fetchInventory();
+    fetchProductData();
   }, []);
 
   const addToCart = () => {
@@ -67,9 +81,10 @@ export default function ARA290Page() {
     const cartProduct = {
       id: product.id,
       name: product.name,
-      price: product.price,
+      price,
       quantity,
       image: product.image,
+      path: product.path,
     };
 
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -81,7 +96,12 @@ export default function ARA290Page() {
     const updatedCart = existingProduct
       ? existingCart.map((item: any) =>
           item.id === cartProduct.id
-            ? { ...item, quantity: item.quantity + quantity }
+            ? {
+                ...item,
+                quantity: item.quantity + quantity,
+                price,
+                path: product.path,
+              }
             : item
         )
       : [...existingCart, cartProduct];
@@ -93,14 +113,15 @@ export default function ARA290Page() {
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-
       <section className="relative px-6 md:px-10 py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
             <div className="flex items-center justify-center">
-              <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+              <div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <FavoriteButton product={favoriteProduct} />
+
                 <img
                   src={product.image}
                   alt={product.name}
@@ -110,7 +131,7 @@ export default function ARA290Page() {
             </div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-              <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
+              <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-4">
                 Research Peptide
               </p>
 
@@ -119,12 +140,13 @@ export default function ARA290Page() {
               </h1>
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                High-purity ARA-290 research peptide intended strictly for
-                laboratory research applications and analytical use.
+                High-purity ARA-290 research peptide studied in laboratory
+                models involving cytoprotective pathways, inflammatory
+                signaling, tissue response, and nerve-related research.
               </p>
 
               <p className="text-5xl font-black text-white mb-3">
-                ${product.price}.00
+                ${price.toFixed(2)}
               </p>
 
               {isLimitedStock && (
@@ -165,7 +187,7 @@ export default function ARA290Page() {
                         setQuantity((prev) => Math.max(1, prev - 1));
                         setAdded(false);
                       }}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08]"
+                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08]"
                     >
                       −
                     </button>
@@ -184,7 +206,7 @@ export default function ARA290Page() {
                         setAdded(false);
                       }}
                       disabled={isOutOfStock}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08] disabled:opacity-40"
+                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08] disabled:opacity-40"
                     >
                       +
                     </button>
@@ -253,7 +275,6 @@ export default function ARA290Page() {
                   View COA
                 </a>
               </div>
-
             </div>
           </div>
         </div>
@@ -268,7 +289,7 @@ export default function ARA290Page() {
             [ShieldCheck, "Quality Target", "99%+ purity target."],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
-              <Icon className="text-blue-300" size={34} />
+              <Icon className="text-[#A5D8FF]" size={34} />
 
               <div>
                 <h3 className="text-white uppercase tracking-widest font-bold text-sm">
@@ -283,143 +304,143 @@ export default function ARA290Page() {
       </section>
 
       <section className="px-6 md:px-10 pb-16">
-  <div className="max-w-7xl mx-auto rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-    <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-3">
-      Research Profile
-    </p>
-
-    <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
-      Cytoprotective Pathway Overview
-    </h2>
-
-    <p className="text-white/70 text-lg leading-relaxed max-w-4xl mb-8">
-      ARA-290 is a synthetic peptide derived from the tissue-protective region
-      of erythropoietin (EPO). In laboratory research it is studied for its
-      interaction with innate repair receptor pathways involved in cellular
-      protection, inflammatory signaling, tissue response, and nerve-related
-      research models.
-    </p>
-
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-      {[
-        [
-          "Innate Repair Receptor",
-          "Studied for activation of tissue-protective signaling pathways involved in cellular resilience and recovery research."
-        ],
-        [
-          "Inflammatory Signaling",
-          "Evaluated in laboratory models examining cytokine activity, inflammatory regulation, and cellular stress responses."
-        ],
-        [
-          "Neural Research",
-          "Investigated in studies involving nerve function, neurobiology, and peripheral signaling pathways."
-        ],
-        [
-          "Storage",
-          "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use."
-        ],
-      ].map(([title, text]) => (
-        <div
-          key={title}
-          className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
-        >
-          <h3 className="text-white text-lg font-bold mb-3">
-            {title}
-          </h3>
-
-          <p className="text-white/60 text-sm leading-relaxed">
-            {text}
+        <div className="max-w-7xl mx-auto rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
+          <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
+            Research Profile
           </p>
+
+          <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
+            Cytoprotective Pathway Overview
+          </h2>
+
+          <p className="text-white/70 text-lg leading-relaxed max-w-4xl mb-8">
+            ARA-290 is a synthetic peptide derived from the tissue-protective
+            region of erythropoietin. In laboratory research, it is studied for
+            its interaction with innate repair receptor pathways involved in
+            cellular protection, inflammatory signaling, tissue response, and
+            nerve-related research models.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+            {[
+              [
+                "Innate Repair Receptor",
+                "Studied for tissue-protective signaling pathways involved in cellular resilience and recovery research.",
+              ],
+              [
+                "Inflammatory Signaling",
+                "Evaluated in models examining cytokine activity, inflammatory regulation, and cellular stress responses.",
+              ],
+              [
+                "Neural Research",
+                "Investigated in studies involving nerve function, neurobiology, and peripheral signaling pathways.",
+              ],
+              [
+                "Storage",
+                "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
+              ],
+            ].map(([title, text]) => (
+              <div
+                key={title}
+                className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
+              >
+                <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
+
+                <p className="text-white/60 text-sm leading-relaxed">{text}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
+      </section>
 
-{/* Frequently Researched Together */}
-<section className="px-6 md:px-10 pb-16">
-  <div className="max-w-7xl mx-auto">
-    <div className="mb-8">
-      <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
-        Related Research
-      </p>
+      {/* Frequently Researched Together */}
+      <section className="px-6 md:px-10 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8">
+            <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
+              Related Research
+            </p>
 
-      <h2 className="text-3xl md:text-4xl font-black text-white">
-        Frequently Researched Together
-      </h2>
-    </div>
+            <h2 className="text-3xl md:text-4xl font-black text-white">
+              Frequently Researched Together
+            </h2>
+          </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <a
+              href="/products/kpv"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/kpvblue.png"
+                  alt="KPV"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
 
-      {/* KPV */}
-      <a
-        href="/products/kpv"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/kpvblue.png"
-            alt="KPV"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
+              <h3 className="text-2xl font-black text-white mb-2">KPV</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Studied in models involving inflammatory pathways and cellular
+                signaling mechanisms.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+
+            <a
+              href="/products/bpc157"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/bpc157blue.png"
+                  alt="BPC-157"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">BPC-157</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Research involving tissue repair pathways and cellular response
+                mechanisms.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+
+            <a
+              href="/products/tb500"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/tb500blue.png"
+                  alt="TB-500"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">TB-500</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Research focused on recovery pathways and cellular migration
+                models.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+          </div>
         </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">KPV</h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Studied in models involving inflammatory pathways and cellular signaling mechanisms.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
-      </a>
-
-      {/* BPC-157 */}
-      <a
-        href="/products/bpc157"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/bpc157blue.png"
-            alt="BPC-157"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">BPC-157</h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Research involving tissue repair pathways and cellular response mechanisms.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
-      </a>
-
-      {/* TB-500 */}
-      <a
-        href="/products/tb500"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/tb500blue.png"
-            alt="TB-500"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">TB-500</h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Research focused on recovery pathways and cellular migration models.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
-      </a>
-
-    </div>
-  </div>
-</section>
+      </section>
 
       {[
         {
@@ -435,7 +456,7 @@ export default function ARA290Page() {
       ].map((section) => (
         <section key={section.title} className="px-6 md:px-10 pb-16">
           <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
-            <h3 className="text-blue-300 font-bold uppercase tracking-[0.25em] text-sm mb-4">
+            <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-sm mb-4">
               {section.title}
             </h3>
 

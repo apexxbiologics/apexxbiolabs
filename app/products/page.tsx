@@ -233,8 +233,7 @@ export default function ProductsPage() {
                 placeholder="Search by product name..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-white/[0.05] border border-white/10 focus:border-blue-400/60 outline-none rounded-full pl-16 pr-6 py-5 text-white placeholder:text-white/35 backdrop-blur-sm shadow-[0_20px_80px_rgba(0,0,0,0.18)]"
-              />
+className="w-full bg-[#101d2f] border border-blue-400/40 focus:border-blue-300 outline-none rounded-full pl-16 pr-6 py-5 text-white placeholder:text-white/45 shadow-[0_20px_80px_rgba(0,0,0,0.22)]"              />
             </div>
 
             <div className="grid grid-cols-3 gap-3">

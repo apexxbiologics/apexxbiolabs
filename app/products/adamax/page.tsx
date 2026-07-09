@@ -12,7 +12,7 @@ import {
 import { HiOutlineMail } from "react-icons/hi";
 import { FaTiktok } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-
+import FavoriteButton from "@/components/FavoriteButton";
 export default function AdamaxPage() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
@@ -28,6 +28,13 @@ export default function AdamaxPage() {
   const inStock = inventory === null || inventory > 0;
   const isOutOfStock = inventory !== null && inventory <= 0;
   const isLimitedStock = inventory !== null && inventory > 0 && inventory <= 5;
+
+  const favoriteProduct = {
+  id: product.id,
+  name: product.name,
+  price: product.price,
+  image: product.image,
+};
 
   useEffect(() => {
     const fetchInventory = async () => {
@@ -99,13 +106,13 @@ export default function AdamaxPage() {
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
             <div className="flex items-center justify-center">
-              <div className="w-full max-w-[520px] h-[520px] rounded-[40px] border border-white/10 bg-white/[0.03] backdrop-blur-sm flex items-center justify-center overflow-hidden">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-full object-cover rounded-[32px]"
-                />
-              </div>
+<FavoriteButton product={favoriteProduct} />
+
+<img
+  src={product.image}
+  alt={product.name}
+  className="w-full h-full object-cover"
+/>
             </div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">

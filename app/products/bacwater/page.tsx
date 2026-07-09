@@ -6,59 +6,72 @@ import {
   FlaskConical,
   ShieldCheck,
   ClipboardCheck,
-  Mail,
 } from "lucide-react";
 
-import { HiOutlineMail } from "react-icons/hi";
-import { FaTiktok } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import FavoriteButton from "@/components/FavoriteButton";
 
 export default function BacWaterPage() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [inventory, setInventory] = useState<number | null>(null);
+  const [price, setPrice] = useState(20);
 
   const product = {
     id: "bacwater",
     name: "Bacteriostatic Water",
-    price: 20,
     image: "/images/bacwaterblue.png",
+    path: "/products/bacwater",
   };
 
   const isOutOfStock = inventory !== null && inventory <= 0;
   const isLimitedStock = inventory !== null && inventory > 0 && inventory <= 5;
 
+  const favoriteProduct = {
+    id: product.id,
+    name: product.name,
+    price,
+    image: product.image,
+    path: product.path,
+  };
+
   useEffect(() => {
-    const fetchInventory = async () => {
+    const fetchProductData = async () => {
       try {
-        const response = await fetch("/api/products");
+        const response = await fetch("/api/products", {
+          cache: "no-store",
+        });
+
         const data = await response.json();
 
         if (!data.success) return;
 
         const bacwater = data.products.find(
-          (product: any) =>
-            product.slug === "bacwater" ||
-            product.slug === "bac-water" ||
-            product.slug === "bacteriostatic-water" ||
-            product.id === "bacwater" ||
-            product.id === "bac-water" ||
-            product.name?.toLowerCase().includes("bacteriostatic") ||
-            product.name?.toLowerCase().includes("bac water")
+          (item: any) =>
+            item.slug === "bacwater" ||
+            item.slug === "bac-water" ||
+            item.slug === "bacteriostatic-water" ||
+            item.id === "bacwater" ||
+            item.id === "bac-water" ||
+            item.id === "bacteriostatic-water" ||
+            item.name?.toLowerCase().includes("bacteriostatic") ||
+            item.name?.toLowerCase().includes("bac water")
         );
 
         if (bacwater) {
-          setInventory(bacwater.inventory ?? 0);
+          setInventory(Number(bacwater.inventory ?? 0));
+          setPrice(Number(bacwater.price ?? 20));
         } else {
           setInventory(null);
+          setPrice(20);
         }
       } catch (error) {
-        console.error("Failed to fetch inventory:", error);
+        console.error("Failed to fetch bacteriostatic water data:", error);
         setInventory(null);
+        setPrice(20);
       }
     };
 
-    fetchInventory();
+    fetchProductData();
   }, []);
 
   const addToCart = () => {
@@ -67,9 +80,10 @@ export default function BacWaterPage() {
     const cartProduct = {
       id: product.id,
       name: product.name,
-      price: product.price,
+      price,
       quantity,
       image: product.image,
+      path: product.path,
     };
 
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -81,7 +95,12 @@ export default function BacWaterPage() {
     const updatedCart = existingProduct
       ? existingCart.map((item: any) =>
           item.id === cartProduct.id
-            ? { ...item, quantity: item.quantity + quantity }
+            ? {
+                ...item,
+                quantity: item.quantity + quantity,
+                price,
+                path: product.path,
+              }
             : item
         )
       : [...existingCart, cartProduct];
@@ -93,14 +112,15 @@ export default function BacWaterPage() {
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-
       <section className="relative px-6 md:px-10 py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
             <div className="flex items-center justify-center">
-              <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+              <div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <FavoriteButton product={favoriteProduct} />
+
                 <img
                   src={product.image}
                   alt={product.name}
@@ -110,7 +130,7 @@ export default function BacWaterPage() {
             </div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-              <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
+              <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-4">
                 Research Reconstitution Solution
               </p>
 
@@ -120,12 +140,12 @@ export default function BacWaterPage() {
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
                 30mL bacteriostatic reconstitution solution intended strictly
-                for laboratory research applications and analytical preparation
-                use.
+                for laboratory research applications, analytical preparation,
+                and research-use handling workflows.
               </p>
 
               <p className="text-5xl font-black text-white mb-3">
-                ${product.price}.00
+                ${price.toFixed(2)}
               </p>
 
               {isLimitedStock && (
@@ -166,7 +186,7 @@ export default function BacWaterPage() {
                         setQuantity((prev) => Math.max(1, prev - 1));
                         setAdded(false);
                       }}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08]"
+                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08]"
                     >
                       −
                     </button>
@@ -185,7 +205,7 @@ export default function BacWaterPage() {
                         setAdded(false);
                       }}
                       disabled={isOutOfStock}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08] disabled:opacity-40"
+                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08] disabled:opacity-40"
                     >
                       +
                     </button>
@@ -193,7 +213,29 @@ export default function BacWaterPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
+                <div className="flex items-center justify-center gap-2">
+                  <svg
+                    className="w-5 h-5 text-blue-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7m16 0H4m16 0V8a1 1 0 00-1-1h-3.5M4 12V8a1 1 0 011-1h3.5m0 0a1.5 1.5 0 113 0m-3 0h3m0 0a1.5 1.5 0 113 0"
+                    />
+                  </svg>
+
+                  <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
+                    FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                 {isOutOfStock ? (
                   <button
                     disabled
@@ -243,7 +285,7 @@ export default function BacWaterPage() {
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
           <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
             <div>
-              <p className="uppercase tracking-[0.35em] text-blue-300 text-xs mb-2">
+              <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-xs mb-2">
                 Parrox
               </p>
 
@@ -271,9 +313,7 @@ export default function BacWaterPage() {
                 </div>
 
                 <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
-                  <span className="text-white/70">
-                    Lot: PRX-2026-04-A
-                  </span>
+                  <span className="text-white/70">Lot: PRX-2026-04-A</span>
                 </div>
               </div>
             </div>
@@ -301,13 +341,29 @@ export default function BacWaterPage() {
       <section className="px-6 md:px-10 pb-10">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            [FlaskConical, "Research Use Only", "Strictly for laboratory research."],
-            [ShieldCheck, "Third-Party Tested", "Analytical documentation available."],
-            [ClipboardCheck, "Batch Documented", "Lot PRX-2026-04-A verified."],
-            [ShieldCheck, "QC Status", "pH, BA content, and recovery passed."],
+            [
+              FlaskConical,
+              "Research Use Only",
+              "Strictly for laboratory research.",
+            ],
+            [
+              ShieldCheck,
+              "Third-Party Tested",
+              "Analytical documentation available.",
+            ],
+            [
+              ClipboardCheck,
+              "Batch Documented",
+              "Lot PRX-2026-04-A verified.",
+            ],
+            [
+              ShieldCheck,
+              "QC Status",
+              "pH, BA content, and recovery passed.",
+            ],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
-              <Icon className="text-blue-300" size={34} />
+              <Icon className="text-[#A5D8FF]" size={34} />
 
               <div>
                 <h3 className="text-white uppercase tracking-widest font-bold text-sm">
@@ -323,7 +379,7 @@ export default function BacWaterPage() {
 
       <section className="px-6 md:px-10 pb-16">
         <div className="max-w-7xl mx-auto rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-          <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-3">
+          <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
             Research Profile
           </p>
 
@@ -333,22 +389,29 @@ export default function BacWaterPage() {
 
           <p className="text-white/70 text-lg leading-relaxed max-w-4xl mb-8">
             Bacteriostatic water is used in laboratory research workflows as a
-            sterile reconstitution solution for research preparation and
-            analytical handling.
+            sterile reconstitution solution for research preparation,
+            analytical handling, and controlled laboratory workflows.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
             {[
               ["Volume", "30mL research-use reconstitution solution."],
               ["pH Testing", "pH result of 7.0 within specification range."],
-              ["Benzyl Alcohol", "0.85% benzyl alcohol content verified by testing."],
-              ["Storage", "Store as directed on product label. Keep sealed and protected from contamination."],
+              [
+                "Benzyl Alcohol",
+                "0.85% benzyl alcohol content verified by testing.",
+              ],
+              [
+                "Storage",
+                "Store as directed on product label. Keep sealed and protected from contamination.",
+              ],
             ].map(([title, text]) => (
               <div
                 key={title}
                 className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
               >
                 <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
+
                 <p className="text-white/60 text-sm leading-relaxed">{text}</p>
               </div>
             ))}
@@ -370,7 +433,7 @@ export default function BacWaterPage() {
       ].map((section) => (
         <section key={section.title} className="px-6 md:px-10 pb-16">
           <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
-            <h3 className="text-blue-300 font-bold uppercase tracking-[0.25em] text-sm mb-4">
+            <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-sm mb-4">
               {section.title}
             </h3>
 
@@ -380,7 +443,6 @@ export default function BacWaterPage() {
           </div>
         </section>
       ))}
-
     </main>
   );
 }

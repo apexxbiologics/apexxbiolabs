@@ -3,65 +3,36 @@
 import { useEffect, useState } from "react";
 import {
   ShoppingCart,
-  Search,
   FlaskConical,
   ShieldCheck,
   ClipboardCheck,
 } from "lucide-react";
 
-import { HiOutlineMail } from "react-icons/hi";
-import { FaTiktok } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
 import FavoriteButton from "@/components/FavoriteButton";
 
 export default function FiveAmino1MQPage() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const [productData, setProductData] = useState({
-    inventory: 0,
-    price: 55,
-  });
+  const [inventory, setInventory] = useState<number | null>(null);
+  const [price, setPrice] = useState(55);
 
   const product = {
-    id: "5-AMINO-1MQ-50mg",
+    id: "5amino1mq-50mg",
     name: "5-Amino-1MQ 50mg",
     image: "/images/5amino1mqblue.png",
+    path: "/products/5amino1mq",
   };
 
-  const selectedInventory = productData.inventory;
-  const selectedPrice = productData.price;
-  const inStock = selectedInventory > 0;
-const favoriteProduct = {
-  id: product.id,
-  name: product.name,
-  price: selectedPrice,
-  image: product.image,
-};
+  const isOutOfStock = inventory !== null && inventory <= 0;
+  const isLimitedStock = inventory !== null && inventory > 0 && inventory <= 5;
 
-  const products = [
-    { name: "5-Amino-1MQ", keywords: ["5amino", "5 amino", "5-amino", "5amino1mq", "5-amino-1mq"], path: "/products/5amino1mq" },
-    { name: "Acetic Acid", keywords: ["acetic", "acetic acid"], path: "/products/aceticacid" },
-    { name: "APX-3", keywords: ["apx", "apx3", "apx-3"], path: "/products/apx3" },
-    { name: "Adamax", keywords: ["adamax"], path: "/products/adamax" },
-    { name: "AOD-9604", keywords: ["aod", "aod9604", "aod-9604"], path: "/products/aod9604" },
-    { name: "ARA-290", keywords: ["ara", "ara290", "ara-290"], path: "/products/ara290" },
-    { name: "Bacteriostatic Water", keywords: ["bac water", "water", "bacteriostatic"], path: "/products/bacwater" },
-    { name: "BPC-157", keywords: ["bpc", "bpc157", "bpc-157"], path: "/products/bpc157" },
-    { name: "CJC/IPA", keywords: ["cjc", "ipa", "cjc ipa", "cjc/ipa"], path: "/products/cjcipa" },
-    { name: "GHK-Cu", keywords: ["ghk", "ghkcu", "ghk-cu"], path: "/products/ghkcu" },
-    { name: "KPV", keywords: ["kpv"], path: "/products/kpv" },
-    { name: "MOTS-C", keywords: ["mots", "motsc", "mots-c"], path: "/products/motsc" },
-    { name: "NAD+", keywords: ["nad", "nad+", "nicotinamide adenine dinucleotide"], path: "/products/nad" },
-    { name: "PE-22-28", keywords: ["pe", "pe2228", "pe-22-28"], path: "/products/pe2228" },
-    { name: "Pinealon", keywords: ["pinealon"], path: "/products/pinealon" },
-    { name: "PT-141", keywords: ["pt", "pt141", "pt-141", "bremelanotide"], path: "/products/pt141" },
-    { name: "Selank", keywords: ["selank"], path: "/products/selank" },
-    { name: "Semax", keywords: ["semax"], path: "/products/semax" },
-    { name: "TB-500", keywords: ["tb", "tb500", "tb-500"], path: "/products/tb500" },
-    { name: "Tesamorelin", keywords: ["tesa", "tesamorelin"], path: "/products/tesamorelin" },
-  ];
+  const favoriteProduct = {
+    id: product.id,
+    name: product.name,
+    price,
+    image: product.image,
+    path: product.path,
+  };
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -75,46 +46,43 @@ const favoriteProduct = {
         if (!data.success) return;
 
         const fiveAmino = data.products.find(
-          (product: any) => product.slug === "5amino1mq-50mg"
+          (item: any) =>
+            item.slug === "5amino1mq" ||
+            item.slug === "5amino1mq-50mg" ||
+            item.id === "5amino1mq" ||
+            item.id === "5amino1mq-50mg" ||
+            item.id === "5-AMINO-1MQ-50mg" ||
+            item.name?.toLowerCase().includes("5-amino") ||
+            item.name?.toLowerCase().includes("5amino")
         );
 
-        setProductData({
-          inventory: Number(fiveAmino?.inventory ?? 0),
-          price: Number(fiveAmino?.price ?? 55),
-        });
+        if (fiveAmino) {
+          setInventory(Number(fiveAmino.inventory ?? 0));
+          setPrice(Number(fiveAmino.price ?? 55));
+        } else {
+          setInventory(null);
+          setPrice(55);
+        }
       } catch (error) {
-        console.error("Failed to fetch product data:", error);
+        console.error("Failed to fetch 5-Amino-1MQ data:", error);
+        setInventory(null);
+        setPrice(55);
       }
     };
 
     fetchProductData();
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const query = searchTerm.toLowerCase().trim();
-
-    const match = products.find(
-      (product) =>
-        product.name.toLowerCase().includes(query) ||
-        product.keywords.some((keyword) => keyword.includes(query))
-    );
-
-    if (match) {
-      window.location.href = match.path;
-    }
-  };
-
   const addToCart = () => {
-    if (!inStock) return;
+    if (isOutOfStock) return;
 
     const cartProduct = {
       id: product.id,
       name: product.name,
-      price: selectedPrice,
+      price,
       quantity,
       image: product.image,
+      path: product.path,
     };
 
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -126,7 +94,12 @@ const favoriteProduct = {
     const updatedCart = existingProduct
       ? existingCart.map((item: any) =>
           item.id === cartProduct.id
-            ? { ...item, quantity: item.quantity + quantity }
+            ? {
+                ...item,
+                quantity: item.quantity + quantity,
+                price,
+                path: product.path,
+              }
             : item
         )
       : [...existingCart, cartProduct];
@@ -138,28 +111,25 @@ const favoriteProduct = {
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-
       <section className="relative px-6 md:px-10 py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
             <div className="flex items-center justify-center">
-<div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+              <div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <FavoriteButton product={favoriteProduct} />
 
-<FavoriteButton product={favoriteProduct} />
-
-<img
-  src={product.image}
-  alt={product.name}
-  className="w-full h-full object-cover"
-/>
-
-</div>
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-              <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
+              <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-4">
                 Research Compound
               </p>
 
@@ -168,22 +138,29 @@ const favoriteProduct = {
               </h1>
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                High-purity 5-Amino-1MQ produced for laboratory research involving
-                NNMT-related pathways, cellular metabolism, adipocyte signaling,
-                metabolic regulation, and energy balance research models.
+                High-purity 5-Amino-1MQ produced for laboratory research
+                involving NNMT-related pathways, cellular metabolism, adipocyte
+                signaling, metabolic regulation, and energy balance research
+                models.
               </p>
 
               <p className="text-5xl font-black text-white mb-3">
-                ${selectedPrice.toFixed(2)}
+                ${price.toFixed(2)}
               </p>
 
-              <div className={`font-semibold mb-8 ${inStock ? "text-blue-300" : "text-red-300"}`}>
-                {selectedInventory <= 5 && (
-                  <div className={`font-semibold mb-8 ${selectedInventory <= 0 ? "text-red-300" : "text-yellow-300"}`}>
-                    {selectedInventory <= 0 ? "Out of Stock" : "Limited Stock"}
-                  </div>
-                )}
-              </div>
+              {isLimitedStock && (
+                <div className="font-semibold mb-8 text-yellow-300">
+                  Limited Stock
+                </div>
+              )}
+
+              {isOutOfStock && (
+                <div className="font-semibold mb-8 text-red-300">
+                  Out of Stock
+                </div>
+              )}
+
+              {!isLimitedStock && !isOutOfStock && <div className="mb-8" />}
 
               <div className="h-px bg-white/10 mb-8" />
 
@@ -193,7 +170,7 @@ const favoriteProduct = {
                     Size
                   </p>
 
-                  <div className="rounded-full border border-white/10 bg-white/[0.04] px-7 py-4 w-fit uppercase tracking-widest text-sm font-semibold text-white">
+                  <div className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-7 py-4 text-sm font-semibold uppercase tracking-widest text-white">
                     50mg
                   </div>
                 </div>
@@ -209,7 +186,7 @@ const favoriteProduct = {
                         setQuantity((prev) => Math.max(1, prev - 1));
                         setAdded(false);
                       }}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08]"
+                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08]"
                     >
                       −
                     </button>
@@ -220,11 +197,15 @@ const favoriteProduct = {
 
                     <button
                       onClick={() => {
-                        setQuantity((prev) => Math.min(selectedInventory || 1, prev + 1));
+                        setQuantity((prev) =>
+                          inventory === null
+                            ? prev + 1
+                            : Math.min(inventory, prev + 1)
+                        );
                         setAdded(false);
                       }}
-                      disabled={!inStock}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08] disabled:opacity-40"
+                      disabled={isOutOfStock}
+                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08] disabled:opacity-40"
                     >
                       +
                     </button>
@@ -233,15 +214,20 @@ const favoriteProduct = {
               </div>
 
               <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
-                <div className="flex items-center justify-center gap-2">
-                  <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
-                    FREE Bacteriostatic Water With Purchase of Any 4 Vials
-                  </p>
-                </div>
+                <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider text-center">
+                  FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
+                </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {inStock ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                {isOutOfStock ? (
+                  <button
+                    disabled
+                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
+                  >
+                    Out of Stock
+                  </button>
+                ) : (
                   <button
                     onClick={addToCart}
                     className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
@@ -249,21 +235,26 @@ const favoriteProduct = {
                     <ShoppingCart size={22} />
                     {added ? "Added To Cart" : "Add To Cart"}
                   </button>
-                ) : (
-                  <button disabled className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold">
-                    Out of Stock
-                  </button>
                 )}
 
-                <a href="/cart" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
+                <a
+                  href="/cart"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
                   View Cart
                 </a>
 
-                <a href="/products" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
+                <a
+                  href="/products"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
                   Continue Shopping
                 </a>
 
-                <a href="/coas" className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center">
+                <a
+                  href="/coas"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
+                >
                   View COA
                 </a>
               </div>
@@ -276,14 +267,18 @@ const favoriteProduct = {
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
             [FlaskConical, "Research Use Only", "Strictly for laboratory research."],
-            [ShieldCheck, "Third-Party Tested", "Independent lab verified."],
-            [ClipboardCheck, "Batch Documented", "Full transparency."],
+            [ShieldCheck, "Third-Party Tested", "Independent lab verified when available."],
+            [ClipboardCheck, "Batch Documented", "Documentation available for verified lots."],
             [ShieldCheck, "Quality Target", "99%+ purity target."],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
-              <Icon className="text-blue-300" size={34} />
+              <Icon className="text-[#A5D8FF]" size={34} />
+
               <div>
-                <h3 className="text-white uppercase tracking-widest font-bold text-sm">{title}</h3>
+                <h3 className="text-white uppercase tracking-widest font-bold text-sm">
+                  {title}
+                </h3>
+
                 <p className="text-white/50 text-sm mt-1">{text}</p>
               </div>
             </div>
@@ -293,7 +288,7 @@ const favoriteProduct = {
 
       <section className="px-6 md:px-10 pb-16">
         <div className="max-w-7xl mx-auto rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-          <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-3">
+          <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
             Research Profile
           </p>
 
@@ -302,21 +297,37 @@ const favoriteProduct = {
           </h2>
 
           <p className="text-white/70 text-lg leading-relaxed max-w-4xl mb-8">
-            5-Amino-1MQ is studied in laboratory research for its relationship to
-            NNMT-associated pathways and metabolic signaling. Research models
+            5-Amino-1MQ is studied in laboratory research for its relationship
+            to NNMT-associated pathways and metabolic signaling. Research models
             commonly evaluate its role in cellular energy balance, adipocyte
             biology, and metabolic regulation.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
             {[
-              ["NNMT Pathways", "Studied for activity involving nicotinamide N-methyltransferase-related pathways."],
-              ["Metabolic Signaling", "Evaluated in models involving energy balance and metabolic regulation."],
-              ["Adipocyte Research", "Frequently researched in adipocyte biology and body composition models."],
-              ["Storage", "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use."],
+              [
+                "NNMT Pathways",
+                "Studied for activity involving nicotinamide N-methyltransferase-related pathways.",
+              ],
+              [
+                "Metabolic Signaling",
+                "Evaluated in models involving energy balance and metabolic regulation.",
+              ],
+              [
+                "Adipocyte Research",
+                "Frequently researched in adipocyte biology and body composition models.",
+              ],
+              [
+                "Storage",
+                "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
+              ],
             ].map(([title, text]) => (
-              <div key={title} className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all">
+              <div
+                key={title}
+                className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
+              >
                 <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
+
                 <p className="text-white/60 text-sm leading-relaxed">{text}</p>
               </div>
             ))}
@@ -338,14 +349,16 @@ const favoriteProduct = {
       ].map((section) => (
         <section key={section.title} className="px-6 md:px-10 pb-16">
           <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
-            <h3 className="text-blue-300 font-bold uppercase tracking-[0.25em] text-sm mb-4">
+            <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-sm mb-4">
               {section.title}
             </h3>
-            <p className="text-white/60 text-sm leading-relaxed">{section.text}</p>
+
+            <p className="text-white/60 text-sm leading-relaxed">
+              {section.text}
+            </p>
           </div>
         </section>
       ))}
-
     </main>
   );
 }

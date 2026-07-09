@@ -17,7 +17,7 @@ export default function Kisspeptin10Page() {
   const [price, setPrice] = useState(55);
 
   const product = {
-    id: "kisspeptin10-10mg",
+    id: "kisspeptin10",
     name: "Kisspeptin-10",
     image: "/images/kisspeptin10blue.png",
     path: "/products/kisspeptin10",

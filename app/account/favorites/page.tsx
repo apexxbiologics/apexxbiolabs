@@ -205,17 +205,15 @@ export default function FavoritesPage() {
                 key={item.product_id}
                 className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 transition hover:border-blue-300/40 hover:bg-white/[0.06]"
               >
-<div className="relative mb-5 h-64 overflow-hidden rounded-[2rem] border border-blue-400/10 bg-[#93C5FD] shadow-[0_0_25px_rgba(96,165,250,0.18)]">
+<div className="group relative mb-5 h-[250px] rounded-[2rem] overflow-hidden border border-blue-400/10 bg-[#93C5FD] shadow-[0_0_25px_rgba(96,165,250,0.15)] flex items-center justify-center">
   {item.product_image ? (
     <img
       src={item.product_image}
       alt={item.product_name}
-      className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+      className="w-[62%] h-[62%] object-contain transition-transform duration-300 group-hover:scale-105"
     />
   ) : (
-    <div className="flex h-full items-center justify-center">
-      <Heart className="text-white" size={46} />
-    </div>
+    <Heart className="text-white" size={42} />
   )}
 </div>
 

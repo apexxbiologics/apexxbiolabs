@@ -41,12 +41,36 @@ type Profile = {
   created_at: string | null;
 };
 
+function safeParseCart(cart: any) {
+  if (!cart) return [];
+
+  if (Array.isArray(cart)) return cart;
+
+  if (typeof cart === "string") {
+    try {
+      const parsed = JSON.parse(cart);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  return [];
+}
+
+function formatStatus(status: string) {
+  return String(status || "pending")
+    .replaceAll("_", " ")
+    .toLowerCase();
+}
+
 export default function AccountPage() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [profile, setProfile] = useState<Profile | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [favoritesCount, setFavoritesCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -73,16 +97,22 @@ export default function AccountPage() {
         setProfile(profileData as Profile);
       }
 
-      const { data, error } = await supabase
+      const { data: ordersData } = await supabase
         .from("orders")
         .select("*")
         .eq("customer_email", normalizedEmail)
         .order("created_at", { ascending: false });
 
-      if (!error && data) {
-        setOrders(data as Order[]);
+      if (ordersData) {
+        setOrders(ordersData as Order[]);
       }
 
+      const { count } = await supabase
+        .from("favorites")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id);
+
+      setFavoritesCount(count || 0);
       setLoading(false);
     }
 
@@ -125,8 +155,7 @@ export default function AccountPage() {
   }
 
   function handleReorder(order: Order) {
-    const cartItems =
-      typeof order.cart === "string" ? JSON.parse(order.cart) : order.cart || [];
+    const cartItems = safeParseCart(order.cart);
 
     localStorage.setItem("cart", JSON.stringify(cartItems));
     window.dispatchEvent(new Event("cartUpdated"));
@@ -135,8 +164,12 @@ export default function AccountPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#081526] px-6 py-28 text-white">
-        <p className="text-center text-white/60">Loading account...</p>
+      <main className="min-h-screen bg-[#081526] px-6 py-32 text-white">
+        <div className="mx-auto max-w-7xl">
+          <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-10 text-center">
+            <p className="text-white/60">Loading your account...</p>
+          </div>
+        </div>
       </main>
     );
   }
@@ -144,31 +177,33 @@ export default function AccountPage() {
   return (
     <main className="min-h-screen bg-[#081526] px-6 py-28 text-white">
       <div className="mx-auto max-w-7xl">
+        {/* HERO */}
         <section className="mb-8 overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.04] shadow-2xl backdrop-blur">
-          <div className="relative p-8 md:p-10">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(96,165,250,0.20),transparent_45%)]" />
+          <div className="relative p-8 md:p-12">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(96,165,250,0.24),transparent_45%)]" />
+            <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl" />
 
             <div className="relative z-10 flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
               <div>
-                <p className="mb-4 text-xs font-bold uppercase tracking-[0.35em] text-blue-300">
+                <p className="mb-4 text-xs font-black uppercase tracking-[0.35em] text-blue-300">
                   Customer Portal
                 </p>
 
-                <h1 className="text-5xl font-black tracking-tight md:text-7xl">
+                <h1 className="max-w-4xl text-5xl font-black tracking-tight md:text-7xl">
                   Welcome back, {customerName}
                 </h1>
 
-                <p className="mt-5 max-w-2xl text-white/60">
-                  Manage your Apexx Biolabs orders, tracking updates, account
-                  information, saved preferences, and reorder history.
+                <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/60">
+                  View orders, check tracking, manage favorites, reorder
+                  products, and update your account security.
                 </p>
 
-                <div className="mt-6 flex flex-wrap gap-3 text-xs uppercase tracking-[0.2em] text-white/50">
-                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2">
+                <div className="mt-6 flex flex-wrap gap-3 text-xs uppercase tracking-[0.18em] text-white/55">
+                  <span className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2">
                     {email}
                   </span>
 
-                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2">
+                  <span className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2">
                     Customer since {customerSince}
                   </span>
                 </div>
@@ -185,8 +220,10 @@ export default function AccountPage() {
           </div>
         </section>
 
+        {/* DASHBOARD CARDS */}
         <section className="mb-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           <DashboardCard
+            href="/account"
             icon={<Package />}
             label="Total Orders"
             value={orders.length}
@@ -194,6 +231,7 @@ export default function AccountPage() {
           />
 
           <DashboardCard
+            href="/account"
             icon={<Box />}
             label="Active Orders"
             value={activeOrders}
@@ -201,6 +239,7 @@ export default function AccountPage() {
           />
 
           <DashboardCard
+            href="/account"
             icon={<Truck />}
             label="In Transit"
             value={inTransitOrders}
@@ -208,18 +247,20 @@ export default function AccountPage() {
           />
 
           <DashboardCard
+            href="/account/favorites"
             icon={<Heart />}
             label="Favorites"
-            value="View saved products"
-            description="Saved products and reorder shortcuts"
+            value={favoritesCount}
+            description="Saved products and quick access"
           />
         </section>
 
-        <section className="mb-8 grid gap-6 lg:grid-cols-[1fr_360px]">
+        <section className="grid gap-6 lg:grid-cols-[1fr_360px]">
+          {/* ORDERS */}
           <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 md:p-8">
-            <div className="mb-6 flex flex-col justify-between gap-3 md:flex-row md:items-end">
+            <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
               <div>
-                <p className="mb-2 text-xs font-bold uppercase tracking-[0.3em] text-blue-300">
+                <p className="mb-2 text-xs font-black uppercase tracking-[0.3em] text-blue-300">
                   Recent Orders
                 </p>
                 <h2 className="text-3xl font-black">Order History</h2>
@@ -227,21 +268,21 @@ export default function AccountPage() {
 
               <Link
                 href="/products"
-                className="rounded-full border border-white/10 bg-white/[0.06] px-5 py-3 text-xs font-black uppercase tracking-[0.2em] text-white hover:border-blue-300/50"
+                className="w-fit rounded-full border border-white/10 bg-white/[0.06] px-5 py-3 text-xs font-black uppercase tracking-[0.2em] text-white transition hover:border-blue-300/50"
               >
                 Shop Products
               </Link>
             </div>
 
             {orders.length === 0 ? (
-              <div className="rounded-2xl border border-white/10 bg-[#0f2035] p-8 text-center">
+              <div className="rounded-[1.75rem] border border-white/10 bg-[#0f2035] p-8 text-center">
                 <ShoppingBag className="mx-auto mb-4 text-blue-300" size={34} />
 
                 <h3 className="text-2xl font-black">No orders yet</h3>
 
                 <p className="mx-auto mt-3 max-w-md text-white/60">
-                  Once you place an order using this email, it will appear here
-                  automatically.
+                  Once you place an order using this email, your order history
+                  and tracking details will appear here automatically.
                 </p>
 
                 <Link
@@ -254,11 +295,7 @@ export default function AccountPage() {
             ) : (
               <div className="space-y-5">
                 {orders.map((order) => {
-                  const cartItems =
-                    typeof order.cart === "string"
-                      ? JSON.parse(order.cart)
-                      : order.cart || [];
-
+                  const cartItems = safeParseCart(order.cart);
                   const firstItems = cartItems.slice(0, 3);
 
                   return (
@@ -273,7 +310,7 @@ export default function AccountPage() {
                           </p>
 
                           <h3 className="mt-2 text-2xl font-black">
-                            ${Number(order.total).toFixed(2)}
+                            ${Number(order.total || 0).toFixed(2)}
                           </h3>
 
                           <p className="mt-2 text-sm text-white/50">
@@ -283,7 +320,7 @@ export default function AccountPage() {
                         </div>
 
                         <div className="w-fit rounded-full border border-blue-400/30 bg-blue-500/10 px-5 py-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-200">
-                          {order.status}
+                          {formatStatus(order.status)}
                         </div>
                       </div>
 
@@ -296,15 +333,17 @@ export default function AccountPage() {
                             {item.image && (
                               <img
                                 src={item.image}
-                                alt={item.name}
-                                className="h-12 w-12 rounded-xl object-contain"
+                                alt={item.name || "Product image"}
+                                className="h-14 w-14 rounded-full border border-blue-300/20 bg-blue-500/10 object-contain p-1"
                               />
                             )}
 
                             <div>
-                              <p className="text-sm font-bold">{item.name}</p>
+                              <p className="text-sm font-bold">
+                                {item.name || "Product"}
+                              </p>
                               <p className="text-xs text-white/50">
-                                Qty {item.quantity}
+                                Qty {item.quantity || 1}
                               </p>
                             </div>
                           </div>
@@ -318,7 +357,10 @@ export default function AccountPage() {
                       </div>
 
                       <div className="mt-6 grid gap-4 border-t border-white/10 pt-5 md:grid-cols-3">
-                        <InfoBlock label="Payment" value={order.status} />
+                        <InfoBlock
+                          label="Payment"
+                          value={formatStatus(order.status)}
+                        />
                         <InfoBlock
                           label="Carrier"
                           value={order.carrier || "Not available yet"}
@@ -352,14 +394,16 @@ export default function AccountPage() {
             )}
           </div>
 
+          {/* SIDEBAR */}
           <aside className="space-y-6">
             <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 md:p-8">
-              <p className="mb-2 text-xs font-bold uppercase tracking-[0.3em] text-blue-300">
+              <p className="mb-2 text-xs font-black uppercase tracking-[0.3em] text-blue-300">
                 Quick Actions
               </p>
 
               <h2 className="mb-6 text-2xl font-black">Account Tools</h2>
 
+              <div className="space-y-3">
                 <QuickAction
                   href="/account"
                   icon={<Home />}
@@ -378,7 +422,7 @@ export default function AccountPage() {
                   href="/account/profile"
                   icon={<UserCircle />}
                   title="Profile"
-                  description="Coming soon"
+                  description="Manage account details"
                 />
 
                 <QuickAction
@@ -394,10 +438,11 @@ export default function AccountPage() {
                   title="Security"
                   description="Password and login settings"
                 />
-              </section>
+              </div>
+            </section>
 
             <section className="rounded-[2rem] border border-blue-400/20 bg-blue-500/10 p-6 md:p-8">
-              <p className="mb-2 text-xs font-bold uppercase tracking-[0.3em] text-blue-300">
+              <p className="mb-2 text-xs font-black uppercase tracking-[0.3em] text-blue-300">
                 Recent Activity
               </p>
 
@@ -411,17 +456,18 @@ export default function AccountPage() {
               ) : (
                 <div className="space-y-4">
                   {orders.slice(0, 3).map((order) => (
-                    <div
+                    <Link
                       key={order.id}
-                      className="rounded-2xl border border-white/10 bg-white/[0.05] p-4"
+                      href={`/account/orders/${order.order_number}`}
+                      className="block rounded-2xl border border-white/10 bg-white/[0.05] p-4 transition hover:border-blue-300/40"
                     >
                       <p className="text-sm font-bold text-white">
                         Order {order.order_number}
                       </p>
                       <p className="mt-1 text-xs uppercase tracking-[0.2em] text-blue-200">
-                        {order.status}
+                        {formatStatus(order.status)}
                       </p>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}
@@ -434,23 +480,28 @@ export default function AccountPage() {
 }
 
 function DashboardCard({
+  href,
   icon,
   label,
   value,
   description,
 }: {
+  href: string;
   icon: React.ReactNode;
   label: string;
   value: string | number;
   description: string;
 }) {
   return (
-    <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-xl backdrop-blur">
-      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-blue-400/20 bg-blue-500/10 text-blue-300">
+    <Link
+      href={href}
+      className="group rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-xl backdrop-blur transition hover:-translate-y-1 hover:border-blue-300/40 hover:bg-white/[0.06]"
+    >
+      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-blue-400/20 bg-blue-500/10 text-blue-300 transition group-hover:scale-105">
         {icon}
       </div>
 
-      <p className="text-xs font-bold uppercase tracking-[0.25em] text-white/40">
+      <p className="text-xs font-black uppercase tracking-[0.25em] text-white/40">
         {label}
       </p>
 
@@ -459,7 +510,7 @@ function DashboardCard({
       <p className="mt-2 text-sm leading-relaxed text-white/50">
         {description}
       </p>
-    </div>
+    </Link>
   );
 }
 
@@ -488,7 +539,7 @@ function QuickAction({
   return (
     <Link
       href={href}
-      className="flex items-center gap-4 rounded-2xl border border-white/10 bg-[#0f2035] p-4 transition hover:border-blue-300/40"
+      className="flex items-center gap-4 rounded-2xl border border-white/10 bg-[#0f2035] p-4 transition hover:border-blue-300/40 hover:bg-white/[0.04]"
     >
       <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500/10 text-blue-300">
         {icon}

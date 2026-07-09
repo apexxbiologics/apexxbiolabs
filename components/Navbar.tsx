@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Menu, X, Search, ShoppingCart, ChevronRight } from "lucide-react";
+import {
+  Menu,
+  X,
+  Search,
+  ShoppingCart,
+  ChevronRight,
+  UserCircle,
+  Heart,
+} from "lucide-react";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -82,18 +90,25 @@ export default function Navbar() {
             </a>
           </div>
 
-          <nav className="hidden items-center gap-12 text-sm font-bold uppercase tracking-[0.22em] text-white md:flex">
-            <a href="/" className="border-b-2 border-blue-500 pb-2">
+          <nav className="hidden items-center gap-10 text-sm font-bold uppercase tracking-[0.22em] text-white md:flex">
+            <a href="/" className="pb-2 transition hover:text-blue-300">
               Home
             </a>
+
             <a href="/products" className="pb-2 transition hover:text-blue-300">
               Products
             </a>
+
             <a href="/coas" className="pb-2 transition hover:text-blue-300">
               COAs
             </a>
+
             <a href="/contact" className="pb-2 transition hover:text-blue-300">
               Contact
+            </a>
+
+            <a href="/account" className="pb-2 transition hover:text-blue-300">
+              Dashboard
             </a>
           </nav>
 
@@ -105,6 +120,22 @@ export default function Navbar() {
             >
               <Search size={25} />
             </button>
+
+            <a
+              href="/account/favorites"
+              className="hidden rounded-full border border-white/10 bg-white/[0.04] p-3 text-white transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-300 sm:inline-flex"
+              aria-label="Favorites"
+            >
+              <Heart size={25} />
+            </a>
+
+            <a
+              href="/account"
+              className="hidden rounded-full border border-white/10 bg-white/[0.04] p-3 text-white transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-300 sm:inline-flex"
+              aria-label="Account Dashboard"
+            >
+              <UserCircle size={26} />
+            </a>
 
             <a
               href="/cart"
@@ -145,6 +176,12 @@ export default function Navbar() {
                 ))}
               </div>
             )}
+
+            {search && filteredProducts.length === 0 && (
+              <div className="absolute left-0 right-0 top-full z-[999] mt-3 rounded-2xl border border-blue-800 bg-[#081526] px-6 py-4 text-white/60">
+                No products found.
+              </div>
+            )}
           </div>
         )}
       </header>
@@ -175,6 +212,16 @@ export default function Navbar() {
             </div>
 
             <div className="space-y-10 pb-10">
+              <MenuSection
+                title="Account"
+                links={[
+                  ["Dashboard", "/account"],
+                  ["Favorites", "/account/favorites"],
+                  ["Security Settings", "/account/settings"],
+                  ["Order Status", "/order-status"],
+                ]}
+              />
+
               <MenuSection
                 title="Navigation"
                 links={[
@@ -207,8 +254,8 @@ export default function Navbar() {
                 title="Support"
                 links={[
                   ["Shipping", "/shipping"],
-                  ["Order Status", "/order-status"],
                   ["Returns & Refunds", "/refunds"],
+                  ["Contact Support", "/contact"],
                 ]}
               />
 

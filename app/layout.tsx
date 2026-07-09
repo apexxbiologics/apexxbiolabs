@@ -17,9 +17,22 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.apexxbiolabs.com"),
 
-  title: "Apexx Biolabs",
+  title: {
+    default: "Apexx Biolabs",
+    template: "%s | Apexx Biolabs",
+  },
+
   description:
-    "Laboratory research materials intended strictly for scientific, educational, and analytical research purposes.",
+    "Premium research peptides and laboratory research materials intended strictly for scientific, educational, and analytical research purposes.",
+
+  keywords: [
+    "Apexx Biolabs",
+    "Research Peptides",
+    "Laboratory Research",
+    "Research Materials",
+    "Scientific Research",
+    "Peptides",
+  ],
 
   alternates: {
     canonical: "/",
@@ -27,6 +40,44 @@ export const metadata: Metadata = {
 
   verification: {
     google: "32QpnbgyOIQ_12SS9SlNK3I_eKubhzvcFAaNOEXDZYU",
+  },
+
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://www.apexxbiolabs.com",
+    siteName: "Apexx Biolabs",
+    title: "Apexx Biolabs",
+    description:
+      "Premium research peptides for laboratory research.",
+    images: [
+      {
+        url: "/images/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Apexx Biolabs Open Graph Image",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Apexx Biolabs",
+    description:
+      "Premium research peptides for laboratory research.",
+    images: ["/images/og-image.png"],
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
 };
 

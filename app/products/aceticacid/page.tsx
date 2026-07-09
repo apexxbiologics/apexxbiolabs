@@ -144,6 +144,7 @@ export default function AceticAcidPage() {
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
             <div className="flex items-center justify-center">
+              
 <FavoriteButton product={favoriteProduct} />
 
 <img

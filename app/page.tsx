@@ -10,6 +10,7 @@ import {
 import { HiOutlineMail } from "react-icons/hi";
 import { FaTiktok } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
+import Reveal from "@/components/Reveal";
 
 import { useEffect, useRef, useState } from "react";
 import { ShoppingCart, Search, Menu, X } from "lucide-react";
@@ -688,8 +689,7 @@ price: "$75.00",
     </div>
 
   </div>
-</section>
-
+<Reveal>
 {/* WHY CHOOSE APEXX */}
 <section className="relative py-20 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
@@ -840,6 +840,7 @@ price: "$75.00",
     </div>
   </div>
 </section>
+</Reveal>
 
 {/* CUSTOMER REVIEWS */}
 <section className="relative py-24 px-6 bg-[#081526] border-b border-white/10 overflow-hidden">

@@ -335,6 +335,69 @@ export default function FiveAmino1MQPage() {
         </div>
       </section>
 
+      <section className="px-6 md:px-10 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8">
+            <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
+              Frequently Researched Together
+            </p>
+
+            <h2 className="text-3xl md:text-4xl font-black text-white">
+              Pair With Related Research Compounds
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                name: "MOTS-C 10mg",
+                image: "/images/motscblue.png",
+                path: "/products/mots-c",
+                text: "Often researched in models involving mitochondrial signaling, metabolic regulation, and cellular energy pathways.",
+              },
+              {
+                name: "Tesamorelin 5mg",
+                image: "/images/tesa5.png",
+                path: "/products/tesamorelin-5mg",
+                text: "Studied in research models involving GH-axis signaling, body composition, and metabolic pathway regulation.",
+              },
+              {
+                name: "CJC/Ipamorelin 10mg",
+                image: "/images/cjcipa.png",
+                path: "/products/cjc-ipa",
+                text: "Commonly evaluated in research involving growth hormone secretagogue pathways and recovery-related models.",
+              },
+            ].map((item) => (
+              <a
+                key={item.name}
+                href={item.path}
+                className="group rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 hover:bg-white/[0.06] transition-all"
+              >
+                <div className="mb-5 h-[260px] rounded-[28px] overflow-hidden border border-blue-400/10 bg-white/[0.03] flex items-center justify-center">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+
+                <h3 className="text-white text-2xl font-black mb-3">
+                  {item.name}
+                </h3>
+
+                <p className="text-white/60 text-sm leading-relaxed mb-5">
+                  {item.text}
+                </p>
+
+                <div className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-xs font-bold uppercase tracking-widest text-[#A5D8FF] group-hover:bg-blue-500/10 transition-all">
+                  View Product
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+      
       {[
         {
           title: "FDA Disclaimer",

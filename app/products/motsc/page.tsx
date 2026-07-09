@@ -6,59 +6,73 @@ import {
   FlaskConical,
   ShieldCheck,
   ClipboardCheck,
-  Mail,
 } from "lucide-react";
 
-import { HiOutlineMail } from "react-icons/hi";
-import { FaTiktok } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import FavoriteButton from "@/components/FavoriteButton";
 
 export default function MOTSCPage() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [inventory, setInventory] = useState<number | null>(null);
+  const [price, setPrice] = useState(45);
 
   const product = {
     id: "motsc",
     name: "MOTS-C",
-    price: 45,
     image: "/images/motscblue.png",
+    path: "/products/motsc",
   };
 
   const isOutOfStock = inventory !== null && inventory <= 0;
   const isLimitedStock = inventory !== null && inventory > 0 && inventory <= 5;
 
+  const favoriteProduct = {
+    id: product.id,
+    name: product.name,
+    price,
+    image: product.image,
+    path: product.path,
+  };
+
   useEffect(() => {
-    const fetchInventory = async () => {
+    const fetchProductData = async () => {
       try {
-        const response = await fetch("/api/products");
+        const response = await fetch("/api/products", {
+          cache: "no-store",
+        });
+
         const data = await response.json();
 
         if (!data.success) return;
 
         const motsc = data.products.find(
-          (product: any) =>
-            product.slug === "motsc" ||
-            product.slug === "mots-c" ||
-            product.slug === "motsc-10mg" ||
-            product.slug === "mots-c-10mg" ||
-            product.id === "motsc" ||
-            product.id === "mots-c" ||
-            product.name?.toLowerCase().includes("mots")
+          (item: any) =>
+            item.slug === "motsc" ||
+            item.slug === "mots-c" ||
+            item.slug === "motsc-10mg" ||
+            item.slug === "mots-c-10mg" ||
+            item.id === "motsc" ||
+            item.id === "mots-c" ||
+            item.id === "motsc-10mg" ||
+            item.id === "MOTS-C-10mg" ||
+            item.name?.toLowerCase().includes("mots")
         );
 
         if (motsc) {
-          setInventory(motsc.inventory ?? 0);
+          setInventory(Number(motsc.inventory ?? 0));
+          setPrice(Number(motsc.price ?? 45));
         } else {
           setInventory(null);
+          setPrice(45);
         }
       } catch (error) {
-        console.error("Failed to fetch inventory:", error);
+        console.error("Failed to fetch MOTS-C data:", error);
         setInventory(null);
+        setPrice(45);
       }
     };
 
-    fetchInventory();
+    fetchProductData();
   }, []);
 
   const addToCart = () => {
@@ -67,9 +81,10 @@ export default function MOTSCPage() {
     const cartProduct = {
       id: product.id,
       name: product.name,
-      price: product.price,
+      price,
       quantity,
       image: product.image,
+      path: product.path,
     };
 
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -81,7 +96,12 @@ export default function MOTSCPage() {
     const updatedCart = existingProduct
       ? existingCart.map((item: any) =>
           item.id === cartProduct.id
-            ? { ...item, quantity: item.quantity + quantity }
+            ? {
+                ...item,
+                quantity: item.quantity + quantity,
+                price,
+                path: product.path,
+              }
             : item
         )
       : [...existingCart, cartProduct];
@@ -93,14 +113,15 @@ export default function MOTSCPage() {
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-
       <section className="relative px-6 md:px-10 py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
             <div className="flex items-center justify-center">
-              <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+              <div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <FavoriteButton product={favoriteProduct} />
+
                 <img
                   src={product.image}
                   alt={product.name}
@@ -119,12 +140,14 @@ export default function MOTSCPage() {
               </h1>
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                High-purity MOTS-C research peptide intended strictly for
-                laboratory research applications and analytical use.
+                High-purity MOTS-C research peptide studied in laboratory
+                models involving mitochondrial signaling, cellular energy
+                regulation, metabolic pathway models, and adaptive
+                stress-response mechanisms.
               </p>
 
               <p className="text-5xl font-black text-white mb-3">
-                ${product.price}.00
+                ${price.toFixed(2)}
               </p>
 
               {isLimitedStock && (
@@ -247,86 +270,99 @@ export default function MOTSCPage() {
                 </a>
 
                 <a
-                  href="/coas"
+                  href="/images/coas/6-26-motsc-coa.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
                 >
                   View COA
                 </a>
               </div>
-
             </div>
           </div>
         </div>
       </section>
 
       {/* COA Summary */}
-<section className="px-6 md:px-10 pb-16">
-  <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
-    <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
-      <div>
-        <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-xs mb-2">
-          Freedom Diagnostics
-        </p>
+      <section className="px-6 md:px-10 pb-16">
+        <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
+          <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
+            <div>
+              <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-xs mb-2">
+                Freedom Diagnostics
+              </p>
 
-        <h3 className="text-2xl font-black text-white mb-5">
-          Latest Certificate of Analysis
-        </h3>
+              <h3 className="text-2xl font-black text-white mb-5">
+                Latest Certificate of Analysis
+              </h3>
 
-        <div className="flex flex-wrap gap-3">
-          <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
-            <span className="text-green-400 font-semibold">
-              ✓ Identity Confirmed
-            </span>
-          </div>
+              <div className="flex flex-wrap gap-3">
+                <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
+                  <span className="text-green-400 font-semibold">
+                    ✓ Identity Confirmed
+                  </span>
+                </div>
 
-          <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
-            <span className="text-[#A5D8FF] font-semibold">
-              99.48% Purity
-            </span>
-          </div>
+                <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+                  <span className="text-[#A5D8FF] font-semibold">
+                    99.48% Purity
+                  </span>
+                </div>
 
-          <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
-            <span className="text-[#A5D8FF] font-semibold">
-              13.94mg Content
-            </span>
-          </div>
+                <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+                  <span className="text-[#A5D8FF] font-semibold">
+                    13.94mg Content
+                  </span>
+                </div>
 
-          <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
-            <span className="text-white/70">
-              Lot: Light Purple Cap-1
-            </span>
+                <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
+                  <span className="text-white/70">
+                    Lot: Light Purple Cap-1
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center md:items-end">
+              <div className="text-5xl font-black text-[#A5D8FF]">
+                99.48%
+              </div>
+
+              <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
+                Purity
+              </div>
+
+              <a
+                href="/images/coas/6-26-motsc-coa.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
+              >
+                View Full COA
+              </a>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="flex flex-col items-center md:items-end">
-        <div className="text-5xl font-black text-[#A5D8FF]">
-          99.48%
-        </div>
-
-        <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
-          Purity
-        </div>
-
-        <a
-          href="/images/coas/6-26-motsc-coa.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
-        >
-          View Full COA
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
 
       <section className="px-6 md:px-10 pb-10">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            [FlaskConical, "Research Use Only", "Strictly for laboratory research."],
-            [ShieldCheck, "Third-Party Tested", "Independent lab verified when available."],
-            [ClipboardCheck, "Batch Documented", "Documentation available for verified lots."],
+            [
+              FlaskConical,
+              "Research Use Only",
+              "Strictly for laboratory research.",
+            ],
+            [
+              ShieldCheck,
+              "Third-Party Tested",
+              "Independent lab verified when available.",
+            ],
+            [
+              ClipboardCheck,
+              "Batch Documented",
+              "Documentation available for verified lots.",
+            ],
             [ShieldCheck, "Quality Target", "99%+ purity target."],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
@@ -362,22 +398,30 @@ export default function MOTSCPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
             {[
-              ["Mitochondrial Signaling", "Studied in models involving mitochondrial-derived peptide communication."],
-              ["Energy Regulation", "Evaluated in laboratory research involving cellular energy and metabolic pathways."],
-              ["Stress Response", "Research focuses on adaptive cellular stress-response and homeostasis mechanisms."],
-              ["Storage", "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use."],
+              [
+                "Mitochondrial Signaling",
+                "Studied in models involving mitochondrial-derived peptide communication.",
+              ],
+              [
+                "Energy Regulation",
+                "Evaluated in laboratory research involving cellular energy and metabolic pathways.",
+              ],
+              [
+                "Stress Response",
+                "Research focuses on adaptive cellular stress-response and homeostasis mechanisms.",
+              ],
+              [
+                "Storage",
+                "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
+              ],
             ].map(([title, text]) => (
               <div
                 key={title}
                 className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
               >
-                <h3 className="text-white text-lg font-bold mb-3">
-                  {title}
-                </h3>
+                <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
 
-                <p className="text-white/60 text-sm leading-relaxed">
-                  {text}
-                </p>
+                <p className="text-white/60 text-sm leading-relaxed">{text}</p>
               </div>
             ))}
           </div>
@@ -385,89 +429,93 @@ export default function MOTSCPage() {
       </section>
 
       {/* Frequently Researched Together */}
-<section className="px-6 md:px-10 pb-16">
-  <div className="max-w-7xl mx-auto">
-    <div className="mb-8">
-      <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
-        Related Research
-      </p>
+      <section className="px-6 md:px-10 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8">
+            <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
+              Related Research
+            </p>
 
-      <h2 className="text-3xl md:text-4xl font-black text-white">
-        Frequently Researched Together
-      </h2>
-    </div>
+            <h2 className="text-3xl md:text-4xl font-black text-white">
+              Frequently Researched Together
+            </h2>
+          </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <a
+              href="/products/apx3"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/apx310blue.png"
+                  alt="APX-3"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
 
-      {/* APX-3 */}
-      <a
-        href="/products/apx3"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/apx310blue.png"
-            alt="APX-3"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
+              <h3 className="text-2xl font-black text-white mb-2">APX-3</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Triple agonist research peptide studied in metabolic regulation
+                and body composition models.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+
+            <a
+              href="/products/adamax"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/adamaxblue.PNG"
+                  alt="Adamax"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">Adamax</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Research involving metabolic regulation and performance-focused
+                laboratory models.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+
+            <a
+              href="/products/cjcipa"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/cjcipablue.png"
+                  alt="CJC/IPA"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">CJC/IPA</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Research involving growth hormone signaling pathways and
+                endocrine response models.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+          </div>
         </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">APX-3</h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Triple agonist research peptide studied in metabolic regulation and body composition models.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
-      </a>
-
-      {/* Adamax */}
-      <a
-        href="/products/adamax"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/adamaxblue.PNG"
-            alt="Adamax"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">Adamax</h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Research involving metabolic regulation and performance-focused laboratory models.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
-      </a>
-
-      {/* CJC/IPA */}
-      <a
-        href="/products/cjcipa"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/cjcipablue.png"
-            alt="CJC/IPA"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">CJC/IPA</h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Research involving growth hormone signaling pathways and endocrine response models.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
-      </a>
-
-    </div>
-  </div>
-</section>
+      </section>
 
       {[
         {
@@ -493,7 +541,6 @@ export default function MOTSCPage() {
           </div>
         </section>
       ))}
-
     </main>
   );
 }

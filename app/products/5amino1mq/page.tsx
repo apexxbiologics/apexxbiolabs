@@ -12,6 +12,7 @@ import {
 import { HiOutlineMail } from "react-icons/hi";
 import { FaTiktok } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
+import FavoriteButton from "@/components/FavoriteButton";
 
 export default function FiveAmino1MQPage() {
   const [added, setAdded] = useState(false);
@@ -32,6 +33,12 @@ export default function FiveAmino1MQPage() {
   const selectedInventory = productData.inventory;
   const selectedPrice = productData.price;
   const inStock = selectedInventory > 0;
+const favoriteProduct = {
+  id: product.id,
+  name: product.name,
+  price: selectedPrice,
+  image: product.image,
+};
 
   const products = [
     { name: "5-Amino-1MQ", keywords: ["5amino", "5 amino", "5-amino", "5amino1mq", "5-amino-1mq"], path: "/products/5amino1mq" },
@@ -138,9 +145,17 @@ export default function FiveAmino1MQPage() {
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
             <div className="flex items-center justify-center">
-              <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
-                <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
-              </div>
+<div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+
+<FavoriteButton product={favoriteProduct} />
+
+<img
+  src={product.image}
+  alt={product.name}
+  className="w-full h-full object-cover"
+/>
+
+</div>
             </div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">

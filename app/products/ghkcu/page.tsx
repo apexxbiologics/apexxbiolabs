@@ -6,59 +6,73 @@ import {
   FlaskConical,
   ShieldCheck,
   ClipboardCheck,
-  Mail,
 } from "lucide-react";
 
-import { HiOutlineMail } from "react-icons/hi";
-import { FaTiktok } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import FavoriteButton from "@/components/FavoriteButton";
 
 export default function GHKCUPage() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [inventory, setInventory] = useState<number | null>(null);
+  const [price, setPrice] = useState(55);
 
   const product = {
     id: "ghkcu",
     name: "GHK-Cu",
-    price: 55,
     image: "/images/ghkcublue.png",
+    path: "/products/ghkcu",
   };
 
   const isOutOfStock = inventory !== null && inventory <= 0;
   const isLimitedStock = inventory !== null && inventory > 0 && inventory <= 5;
 
+  const favoriteProduct = {
+    id: product.id,
+    name: product.name,
+    price,
+    image: product.image,
+    path: product.path,
+  };
+
   useEffect(() => {
-    const fetchInventory = async () => {
+    const fetchProductData = async () => {
       try {
-        const response = await fetch("/api/products");
+        const response = await fetch("/api/products", {
+          cache: "no-store",
+        });
+
         const data = await response.json();
 
         if (!data.success) return;
 
         const ghkcu = data.products.find(
-          (product: any) =>
-            product.slug === "ghkcu" ||
-            product.slug === "ghk-cu" ||
-            product.slug === "ghkcu-100mg" ||
-            product.slug === "ghk-cu-100mg" ||
-            product.id === "ghkcu" ||
-            product.id === "ghk-cu" ||
-            product.name?.toLowerCase().includes("ghk")
+          (item: any) =>
+            item.slug === "ghkcu" ||
+            item.slug === "ghk-cu" ||
+            item.slug === "ghkcu-100mg" ||
+            item.slug === "ghk-cu-100mg" ||
+            item.id === "ghkcu" ||
+            item.id === "ghk-cu" ||
+            item.id === "ghkcu-100mg" ||
+            item.id === "GHK-CU-100mg" ||
+            item.name?.toLowerCase().includes("ghk")
         );
 
         if (ghkcu) {
-          setInventory(ghkcu.inventory ?? 0);
+          setInventory(Number(ghkcu.inventory ?? 0));
+          setPrice(Number(ghkcu.price ?? 55));
         } else {
           setInventory(null);
+          setPrice(55);
         }
       } catch (error) {
-        console.error("Failed to fetch inventory:", error);
+        console.error("Failed to fetch GHK-Cu data:", error);
         setInventory(null);
+        setPrice(55);
       }
     };
 
-    fetchInventory();
+    fetchProductData();
   }, []);
 
   const addToCart = () => {
@@ -67,9 +81,10 @@ export default function GHKCUPage() {
     const cartProduct = {
       id: product.id,
       name: product.name,
-      price: product.price,
+      price,
       quantity,
       image: product.image,
+      path: product.path,
     };
 
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -81,7 +96,12 @@ export default function GHKCUPage() {
     const updatedCart = existingProduct
       ? existingCart.map((item: any) =>
           item.id === cartProduct.id
-            ? { ...item, quantity: item.quantity + quantity }
+            ? {
+                ...item,
+                quantity: item.quantity + quantity,
+                price,
+                path: product.path,
+              }
             : item
         )
       : [...existingCart, cartProduct];
@@ -93,14 +113,15 @@ export default function GHKCUPage() {
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-
       <section className="relative px-6 md:px-10 py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
             <div className="flex items-center justify-center">
-              <div className="w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+              <div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <FavoriteButton product={favoriteProduct} />
+
                 <img
                   src={product.image}
                   alt={product.name}
@@ -119,12 +140,14 @@ export default function GHKCUPage() {
               </h1>
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                High-purity GHK-Cu research peptide intended strictly for
-                laboratory research applications and analytical use.
+                High-purity GHK-Cu research peptide studied in laboratory
+                models involving copper peptide pathways, cellular signaling,
+                extracellular matrix interactions, tissue remodeling, and
+                peptide-mediated biological processes.
               </p>
 
               <p className="text-5xl font-black text-white mb-3">
-                ${product.price}.00
+                ${price.toFixed(2)}
               </p>
 
               {isLimitedStock && (
@@ -253,7 +276,6 @@ export default function GHKCUPage() {
                   View COA
                 </a>
               </div>
-
             </div>
           </div>
         </div>
@@ -262,9 +284,21 @@ export default function GHKCUPage() {
       <section className="px-6 md:px-10 pb-10">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            [FlaskConical, "Research Use Only", "Strictly for laboratory research."],
-            [ShieldCheck, "Third-Party Tested", "Independent lab verified when available."],
-            [ClipboardCheck, "Batch Documented", "Documentation available for verified lots."],
+            [
+              FlaskConical,
+              "Research Use Only",
+              "Strictly for laboratory research.",
+            ],
+            [
+              ShieldCheck,
+              "Third-Party Tested",
+              "Independent lab verified when available.",
+            ],
+            [
+              ClipboardCheck,
+              "Batch Documented",
+              "Documentation available for verified lots.",
+            ],
             [ShieldCheck, "Quality Target", "99%+ purity target."],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
@@ -301,112 +335,126 @@ export default function GHKCUPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
             {[
-              ["Copper Peptide Research", "Studied for peptide-copper interactions and cellular signaling pathways."],
-              ["Cellular Models", "Evaluated in laboratory models involving extracellular matrix and tissue remodeling mechanisms."],
-              ["Peptide Signaling", "Research focuses on peptide-mediated communication and regenerative biological pathways."],
-              ["Storage", "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use."],
+              [
+                "Copper Peptide Research",
+                "Studied for peptide-copper interactions and cellular signaling pathways.",
+              ],
+              [
+                "Cellular Models",
+                "Evaluated in laboratory models involving extracellular matrix and tissue remodeling mechanisms.",
+              ],
+              [
+                "Peptide Signaling",
+                "Research focuses on peptide-mediated communication and regenerative biological pathways.",
+              ],
+              [
+                "Storage",
+                "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
+              ],
             ].map(([title, text]) => (
               <div
                 key={title}
                 className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
               >
-                <h3 className="text-white text-lg font-bold mb-3">
-                  {title}
-                </h3>
+                <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
 
-                <p className="text-white/60 text-sm leading-relaxed">
-                  {text}
-                </p>
+                <p className="text-white/60 text-sm leading-relaxed">{text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-{/* Frequently Researched Together */}
-<section className="px-6 md:px-10 pb-16">
-  <div className="max-w-7xl mx-auto">
-    <div className="mb-8">
-      <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
-        Related Research
-      </p>
+      {/* Frequently Researched Together */}
+      <section className="px-6 md:px-10 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8">
+            <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
+              Related Research
+            </p>
 
-      <h2 className="text-3xl md:text-4xl font-black text-white">
-        Frequently Researched Together
-      </h2>
-    </div>
+            <h2 className="text-3xl md:text-4xl font-black text-white">
+              Frequently Researched Together
+            </h2>
+          </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <a
+              href="/products/bpc157"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/bpc157blue.png"
+                  alt="BPC-157"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
 
-      {/* BPC-157 */}
-      <a
-        href="/products/bpc157"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/bpc157blue.png"
-            alt="BPC-157"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
+              <h3 className="text-2xl font-black text-white mb-2">BPC-157</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Research involving tissue repair pathways and cellular response
+                mechanisms.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+
+            <a
+              href="/products/tb500"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/tb500blue.png"
+                  alt="TB-500"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">TB-500</h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Research focused on recovery pathways and cellular migration
+                models.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+
+            <a
+              href="/products/pinealon"
+              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
+            >
+              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+                <img
+                  src="/images/pinealonblue.png"
+                  alt="Pinealon"
+                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">
+                Pinealon
+              </h3>
+
+              <p className="text-white/60 text-sm leading-relaxed mb-4">
+                Studied in laboratory models involving neuroregulation and
+                cellular signaling pathways.
+              </p>
+
+              <span className="text-[#A5D8FF] font-semibold">
+                View Product →
+              </span>
+            </a>
+          </div>
         </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">BPC-157</h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Research involving tissue repair pathways and cellular response mechanisms.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
-      </a>
-
-      {/* TB-500 */}
-      <a
-        href="/products/tb500"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/tb500blue.png"
-            alt="TB-500"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">TB-500</h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Research focused on recovery pathways and cellular migration models.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
-      </a>
-
-      {/* Pinealon */}
-      <a
-        href="/products/pinealon"
-        className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-      >
-        <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-          <img
-            src="/images/pinealonblue.png"
-            alt="Pinealon"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-
-        <h3 className="text-2xl font-black text-white mb-2">Pinealon</h3>
-
-        <p className="text-white/60 text-sm leading-relaxed mb-4">
-          Studied in laboratory models involving neuroregulation and cellular signaling pathways.
-        </p>
-
-        <span className="text-[#A5D8FF] font-semibold">View Product →</span>
-      </a>
-
-    </div>
-  </div>
-</section>
+      </section>
 
       {[
         {
@@ -432,7 +480,6 @@ export default function GHKCUPage() {
           </div>
         </section>
       ))}
-
     </main>
   );
 }

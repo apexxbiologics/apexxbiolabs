@@ -3,24 +3,17 @@
 import { useEffect, useState } from "react";
 import {
   ShoppingCart,
-  Search,
   FlaskConical,
   ShieldCheck,
   ClipboardCheck,
-  Mail,
 } from "lucide-react";
 
-import { HiOutlineMail } from "react-icons/hi";
-import { FaTiktok } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
 import FavoriteButton from "@/components/FavoriteButton";
-
 
 export default function APX3Page() {
   const [added, setAdded] = useState(false);
   const [selectedMg, setSelectedMg] = useState<"10mg" | "20mg">("10mg");
   const [quantity, setQuantity] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
 
   const [productData, setProductData] = useState({
     "10mg": {
@@ -35,46 +28,33 @@ export default function APX3Page() {
 
   const productOptions = {
     "10mg": {
-      id: "APX-3-10mg",
+      id: "apx3-10mg",
       name: "APX-3 10mg",
       image: "/images/apx310blue.png",
+      path: "/products/apx3",
     },
     "20mg": {
-      id: "APX-3-20mg",
+      id: "apx3-20mg",
       name: "APX-3 20mg",
       image: "/images/apx320.png",
+      path: "/products/apx3",
     },
   };
 
   const selectedProduct = productOptions[selectedMg];
   const selectedInventory = productData[selectedMg].inventory;
   const selectedPrice = productData[selectedMg].price;
-  const inStock = selectedInventory > 0;
+
+  const isOutOfStock = selectedInventory <= 0;
+  const isLimitedStock = selectedInventory > 0 && selectedInventory <= 5;
 
   const favoriteProduct = {
-  id: selectedProduct.id,
-  name: selectedProduct.name,
-  price: selectedPrice,
-  image: selectedProduct.image,
-};
-
-  const products = [
-    { name: "APX-3", keywords: ["apx", "apx3", "apx-3"], path: "/products/apx3" },
-    { name: "Adamax", keywords: ["adamax"], path: "/products/adamax" },
-    { name: "ARA-290", keywords: ["ara", "ara290", "ara-290"], path: "/products/ara290" },
-    { name: "Bacteriostatic Water", keywords: ["bac water", "water", "bacteriostatic"], path: "/products/bacwater" },
-    { name: "BPC-157", keywords: ["bpc", "bpc157", "bpc-157"], path: "/products/bpc157" },
-    { name: "CJC/IPA", keywords: ["cjc", "ipa", "cjc ipa", "cjc/ipa"], path: "/products/cjcipa" },
-    { name: "GHK-Cu", keywords: ["ghk", "ghkcu", "ghk-cu"], path: "/products/ghkcu" },
-    { name: "KPV", keywords: ["kpv"], path: "/products/kpv" },
-    { name: "MOTS-C", keywords: ["mots", "motsc", "mots-c"], path: "/products/motsc" },
-    { name: "PE-22-28", keywords: ["pe", "pe2228", "pe-22-28"], path: "/products/pe2228" },
-    { name: "Pinealon", keywords: ["pinealon"], path: "/products/pinealon" },
-    { name: "Selank", keywords: ["selank"], path: "/products/selank" },
-    { name: "Semax", keywords: ["semax"], path: "/products/semax" },
-    { name: "TB-500", keywords: ["tb", "tb500", "tb-500"], path: "/products/tb500" },
-    { name: "Tesamorelin", keywords: ["tesa", "tesamorelin"], path: "/products/tesamorelin" },
-  ];
+    id: selectedProduct.id,
+    name: selectedProduct.name,
+    price: selectedPrice,
+    image: selectedProduct.image,
+    path: selectedProduct.path,
+  };
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -88,11 +68,21 @@ export default function APX3Page() {
         if (!data.success) return;
 
         const apx10 = data.products.find(
-          (product: any) => product.slug === "apx3-10mg"
+          (product: any) =>
+            product.slug === "apx3-10mg" ||
+            product.id === "apx3-10mg" ||
+            product.id === "APX-3-10mg" ||
+            product.name?.toLowerCase().includes("apx-3 10") ||
+            product.name?.toLowerCase().includes("apx3 10")
         );
 
         const apx20 = data.products.find(
-          (product: any) => product.slug === "apx3-20mg"
+          (product: any) =>
+            product.slug === "apx3-20mg" ||
+            product.id === "apx3-20mg" ||
+            product.id === "APX-3-20mg" ||
+            product.name?.toLowerCase().includes("apx-3 20") ||
+            product.name?.toLowerCase().includes("apx3 20")
         );
 
         setProductData({
@@ -106,53 +96,43 @@ export default function APX3Page() {
           },
         });
       } catch (error) {
-        console.error("Failed to fetch product data:", error);
+        console.error("Failed to fetch APX-3 product data:", error);
       }
     };
 
     fetchProductData();
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const query = searchTerm.toLowerCase().trim();
-
-    const match = products.find(
-      (product) =>
-        product.name.toLowerCase().includes(query) ||
-        product.keywords.some((keyword) => keyword.includes(query))
-    );
-
-    if (match) {
-      window.location.href = match.path;
-    }
-  };
-
   const addToCart = () => {
-    if (!inStock) return;
+    if (isOutOfStock) return;
 
-    const product = {
+    const cartProduct = {
       id: selectedProduct.id,
       name: selectedProduct.name,
       price: selectedPrice,
       quantity,
       image: selectedProduct.image,
+      path: selectedProduct.path,
     };
 
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
 
     const existingProduct = existingCart.find(
-      (item: any) => item.id === product.id
+      (item: any) => item.id === cartProduct.id
     );
 
     const updatedCart = existingProduct
       ? existingCart.map((item: any) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
+          item.id === cartProduct.id
+            ? {
+                ...item,
+                quantity: item.quantity + quantity,
+                price: selectedPrice,
+                path: selectedProduct.path,
+              }
             : item
         )
-      : [...existingCart, product];
+      : [...existingCart, cartProduct];
 
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     window.dispatchEvent(new Event("cartUpdated"));
@@ -161,28 +141,25 @@ export default function APX3Page() {
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-
       <section className="relative px-6 md:px-10 py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
             <div className="flex items-center justify-center">
-<div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+              <div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <FavoriteButton product={favoriteProduct} />
 
-  <FavoriteButton product={favoriteProduct} />
-
-  <img
-    src={selectedProduct.image}
-    alt={selectedProduct.name}
-    className="w-full h-full object-cover"
-  />
-
-</div>
+                <img
+                  src={selectedProduct.image}
+                  alt={selectedProduct.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-              <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
+              <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-4">
                 Research Peptide
               </p>
 
@@ -191,30 +168,28 @@ export default function APX3Page() {
               </h1>
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                A high-purity triple-agonist research peptide studied for its
-                interaction with GIP, GLP-1, and glucagon receptor pathways in
-                metabolic regulation and body composition research.
+                High-purity APX-3 research peptide studied in laboratory models
+                involving GIP, GLP-1, and glucagon receptor pathways, metabolic
+                signaling, energy regulation, and body composition research.
               </p>
 
               <p className="text-5xl font-black text-white mb-3">
                 ${selectedPrice.toFixed(2)}
               </p>
 
-              <div
-                className={`font-semibold mb-8 ${
-                  inStock ? "text-blue-300" : "text-red-300"
-                }`}
-              >
-                {selectedInventory <= 5 && (
-                  <div
-                    className={`font-semibold mb-8 ${
-                      selectedInventory <= 0 ? "text-red-300" : "text-yellow-300"
-                    }`}
-                  >
-                    {selectedInventory <= 0 ? "Out of Stock" : "Limited Stock"}
-                  </div>
-                )}
-              </div>
+              {isLimitedStock && (
+                <div className="font-semibold mb-8 text-yellow-300">
+                  Limited Stock
+                </div>
+              )}
+
+              {isOutOfStock && (
+                <div className="font-semibold mb-8 text-red-300">
+                  Out of Stock
+                </div>
+              )}
+
+              {!isLimitedStock && !isOutOfStock && <div className="mb-8" />}
 
               <div className="h-px bg-white/10 mb-8" />
 
@@ -256,7 +231,7 @@ export default function APX3Page() {
                         setQuantity((prev) => Math.max(1, prev - 1));
                         setAdded(false);
                       }}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08]"
+                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08]"
                     >
                       −
                     </button>
@@ -272,8 +247,8 @@ export default function APX3Page() {
                         );
                         setAdded(false);
                       }}
-                      disabled={!inStock}
-                      className="w-11 h-11 rounded-full text-2xl text-blue-300 hover:bg-white/[0.08] disabled:opacity-40"
+                      disabled={isOutOfStock}
+                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08] disabled:opacity-40"
                     >
                       +
                     </button>
@@ -298,26 +273,26 @@ export default function APX3Page() {
                   </svg>
 
                   <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
-                    FREE Bacteriostatic Water With Purchase of Any 4 Vials
+                    FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
                   </p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {inStock ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                {isOutOfStock ? (
+                  <button
+                    disabled
+                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
+                  >
+                    Out of Stock
+                  </button>
+                ) : (
                   <button
                     onClick={addToCart}
                     className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
                   >
                     <ShoppingCart size={22} />
                     {added ? "Added To Cart" : "Add To Cart"}
-                  </button>
-                ) : (
-                  <button
-                    disabled
-                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
-                  >
-                    Out of Stock
                   </button>
                 )}
 
@@ -358,7 +333,7 @@ export default function APX3Page() {
           <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
             <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
               <div>
-                <p className="uppercase tracking-[0.35em] text-blue-300 text-xs mb-2">
+                <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-xs mb-2">
                   Freedom Diagnostics
                 </p>
 
@@ -418,12 +393,12 @@ export default function APX3Page() {
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
             [FlaskConical, "Research Use Only", "Strictly for laboratory research."],
-            [ShieldCheck, "Third-Party Tested", "Independent lab verified."],
-            [ClipboardCheck, "Batch Documented", "Full transparency."],
+            [ShieldCheck, "Third-Party Tested", "Independent lab verified when available."],
+            [ClipboardCheck, "Batch Documented", "Documentation available for verified lots."],
             [ShieldCheck, "Quality Target", "99%+ purity target."],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
-              <Icon className="text-blue-300" size={34} />
+              <Icon className="text-[#A5D8FF]" size={34} />
 
               <div>
                 <h3 className="text-white uppercase tracking-widest font-bold text-sm">
@@ -439,7 +414,7 @@ export default function APX3Page() {
 
       <section className="px-6 md:px-10 pb-16">
         <div className="max-w-7xl mx-auto rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-          <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-3">
+          <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
             Research Profile
           </p>
 
@@ -450,15 +425,28 @@ export default function APX3Page() {
           <p className="text-white/70 text-lg leading-relaxed max-w-4xl mb-8">
             APX-3 is studied in laboratory research for its interaction with
             GIP, GLP-1, and glucagon receptor pathways, commonly evaluated in
-            metabolic signaling, energy regulation, and body composition research.
+            metabolic signaling, energy regulation, and body composition
+            research.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
             {[
-              ["GIP Pathway", "Studied for incretin signaling and nutrient-response research."],
-              ["GLP-1 Pathway", "Evaluated in metabolic regulation and glucose-response models."],
-              ["Glucagon Pathway", "Researched for energy expenditure and metabolic balance."],
-              ["Storage", "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use."],
+              [
+                "GIP Pathway",
+                "Studied for incretin signaling and nutrient-response research.",
+              ],
+              [
+                "GLP-1 Pathway",
+                "Evaluated in metabolic regulation and glucose-response models.",
+              ],
+              [
+                "Glucagon Pathway",
+                "Researched for energy expenditure and metabolic balance.",
+              ],
+              [
+                "Storage",
+                "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
+              ],
             ].map(([title, text]) => (
               <div
                 key={title}
@@ -474,118 +462,119 @@ export default function APX3Page() {
       </section>
 
       {/* Sources & References */}
-<section className="px-6 md:px-10 pb-16">
-  <div className="max-w-7xl mx-auto">
-    <div className="mb-10">
-      <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
-        Sources & References
-      </p>
+      <section className="px-6 md:px-10 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-10">
+            <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
+              Sources & References
+            </p>
 
-      <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
-Scientific References
-      </h2>
+            <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
+              Scientific References
+            </h2>
 
-      <p className="text-white/60 text-lg leading-relaxed max-w-3xl">
-        Select peer-reviewed publications and clinical research resources
-        related to retatrutide, a triple agonist studied in GIP, GLP-1, and
-        glucagon receptor pathway research.
-      </p>
-    </div>
-
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-{[
-  {
-    type: "Clinical Trial",
-    source: "New England Journal of Medicine",
-    title:
-      "Triple-Hormone-Receptor Agonist Retatrutide for Obesity — A Phase 2 Trial",
-    authors: "Jastreboff AM, et al.",
-    year: "2023",
-    url: "https://pubmed.ncbi.nlm.nih.gov/37366315/",
-  },
-  {
-    type: "Clinical Trial",
-    source: "The Lancet",
-    title:
-      "Retatrutide, a GIP, GLP-1 and Glucagon Receptor Agonist, for People with Type 2 Diabetes",
-    authors: "Rosenstock J, et al.",
-    year: "2023",
-    url: "https://pubmed.ncbi.nlm.nih.gov/37385280/",
-  },
-  {
-    type: "Liver Research",
-    source: "Nature Medicine",
-    title:
-      "Triple Hormone Receptor Agonist Retatrutide for Metabolic Dysfunction-Associated Steatotic Liver Disease",
-    authors: "Sanyal AJ, et al.",
-    year: "2024",
-    url: "https://pubmed.ncbi.nlm.nih.gov/38858523/",
-  },
-  {
-    type: "Meta-Analysis",
-    source: "Nutrition, Metabolism & Cardiovascular Diseases",
-    title:
-      "Effects of Once-Weekly Retatrutide on Weight and Metabolic Outcomes",
-    authors: "Pasqualotto E, et al.",
-    year: "2024",
-    url: "https://pubmed.ncbi.nlm.nih.gov/39318607/",
-  },
-  {
-    type: "Review Article",
-    source: "Expert Opinion",
-    title:
-      "A Review of the Investigational Drug Retatrutide, a Novel Triple Agonist",
-    authors: "Kaur M, et al.",
-    year: "2024",
-    url: "https://pubmed.ncbi.nlm.nih.gov/38367045/",
-  },
-  {
-    type: "Clinical Registry",
-    source: "ClinicalTrials.gov",
-    title: "Retatrutide Clinical Trials Registry",
-    authors: "ClinicalTrials.gov",
-    year: "Ongoing",
-    url: "https://clinicaltrials.gov/search?term=retatrutide",
-  },
-].map((paper) => (
-        <a
-          key={paper.title}
-          href={paper.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group rounded-[30px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-7 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
-        >
-          <div className="flex items-center justify-between gap-4 mb-5">
-            <span className="rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-[#A5D8FF] text-xs font-bold uppercase tracking-widest">
-              {paper.type}
-            </span>
-
-            <span className="text-white/40 text-sm">{paper.year}</span>
+            <p className="text-white/60 text-lg leading-relaxed max-w-3xl">
+              Select peer-reviewed publications and clinical research resources
+              related to retatrutide, a triple agonist studied in GIP, GLP-1,
+              and glucagon receptor pathway research.
+            </p>
           </div>
 
-          <p className="text-[#A5D8FF] text-xs font-bold uppercase tracking-[0.25em] mb-4">
-            {paper.source}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {[
+              {
+                type: "Clinical Trial",
+                source: "New England Journal of Medicine",
+                title:
+                  "Triple-Hormone-Receptor Agonist Retatrutide for Obesity — A Phase 2 Trial",
+                authors: "Jastreboff AM, et al.",
+                year: "2023",
+                url: "https://pubmed.ncbi.nlm.nih.gov/37366315/",
+              },
+              {
+                type: "Clinical Trial",
+                source: "The Lancet",
+                title:
+                  "Retatrutide, a GIP, GLP-1 and Glucagon Receptor Agonist, for People with Type 2 Diabetes",
+                authors: "Rosenstock J, et al.",
+                year: "2023",
+                url: "https://pubmed.ncbi.nlm.nih.gov/37385280/",
+              },
+              {
+                type: "Liver Research",
+                source: "Nature Medicine",
+                title:
+                  "Triple Hormone Receptor Agonist Retatrutide for Metabolic Dysfunction-Associated Steatotic Liver Disease",
+                authors: "Sanyal AJ, et al.",
+                year: "2024",
+                url: "https://pubmed.ncbi.nlm.nih.gov/38858523/",
+              },
+              {
+                type: "Meta-Analysis",
+                source: "Nutrition, Metabolism & Cardiovascular Diseases",
+                title:
+                  "Effects of Once-Weekly Retatrutide on Weight and Metabolic Outcomes",
+                authors: "Pasqualotto E, et al.",
+                year: "2024",
+                url: "https://pubmed.ncbi.nlm.nih.gov/39318607/",
+              },
+              {
+                type: "Review Article",
+                source: "Expert Opinion",
+                title:
+                  "A Review of the Investigational Drug Retatrutide, a Novel Triple Agonist",
+                authors: "Kaur M, et al.",
+                year: "2024",
+                url: "https://pubmed.ncbi.nlm.nih.gov/38367045/",
+              },
+              {
+                type: "Clinical Registry",
+                source: "ClinicalTrials.gov",
+                title: "Retatrutide Clinical Trials Registry",
+                authors: "ClinicalTrials.gov",
+                year: "Ongoing",
+                url: "https://clinicaltrials.gov/search?term=retatrutide",
+              },
+            ].map((paper) => (
+              <a
+                key={paper.title}
+                href={paper.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group rounded-[30px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-7 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+              >
+                <div className="flex items-center justify-between gap-4 mb-5">
+                  <span className="rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-[#A5D8FF] text-xs font-bold uppercase tracking-widest">
+                    {paper.type}
+                  </span>
+
+                  <span className="text-white/40 text-sm">{paper.year}</span>
+                </div>
+
+                <p className="text-[#A5D8FF] text-xs font-bold uppercase tracking-[0.25em] mb-4">
+                  {paper.source}
+                </p>
+
+                <h3 className="text-xl font-black text-white leading-snug mb-5 group-hover:text-blue-200 transition-all">
+                  {paper.title}
+                </h3>
+
+                <p className="text-white/50 italic mb-6">{paper.authors}</p>
+
+                <span className="text-[#A5D8FF] font-semibold">
+                  View Source →
+                </span>
+              </a>
+            ))}
+          </div>
+
+          <p className="text-white/40 text-xs uppercase tracking-widest leading-relaxed mt-8">
+            References are provided for educational research context only.
+            Apexx Biolabs products are sold strictly for laboratory research use
+            only.
           </p>
-
-          <h3 className="text-xl font-black text-white leading-snug mb-5 group-hover:text-blue-200 transition-all">
-            {paper.title}
-          </h3>
-
-          <p className="text-white/50 italic mb-6">{paper.authors}</p>
-
-          <span className="text-[#A5D8FF] font-semibold">
-            View Source →
-          </span>
-        </a>
-      ))}
-    </div>
-
-    <p className="text-white/40 text-xs uppercase tracking-widest leading-relaxed mt-8">
-      References are provided for educational research context only. Apexx
-      Biolabs products are sold strictly for laboratory research use only.
-    </p>
-  </div>
-</section>
+        </div>
+      </section>
 
       {/* Frequently Researched Together */}
       <section className="px-6 md:px-10 pb-16">
@@ -613,12 +602,11 @@ Scientific References
                 />
               </div>
 
-              <h3 className="text-2xl font-black text-white mb-2">
-                Adamax
-              </h3>
+              <h3 className="text-2xl font-black text-white mb-2">Adamax</h3>
 
               <p className="text-white/60 text-sm leading-relaxed mb-4">
-                Research involving metabolic regulation and performance-focused laboratory models.
+                Research involving peptide synergy, metabolic regulation, and
+                performance-focused laboratory models.
               </p>
 
               <span className="text-[#A5D8FF] font-semibold">
@@ -633,17 +621,16 @@ Scientific References
               <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
                 <img
                   src="/images/motscblue.png"
-                  alt="MOTS-c"
+                  alt="MOTS-C"
                   className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
                 />
               </div>
 
-              <h3 className="text-2xl font-black text-white mb-2">
-                MOTS-c
-              </h3>
+              <h3 className="text-2xl font-black text-white mb-2">MOTS-C</h3>
 
               <p className="text-white/60 text-sm leading-relaxed mb-4">
-                Studied in laboratory models involving mitochondrial signaling and metabolic research.
+                Studied in laboratory models involving mitochondrial signaling
+                and metabolic research.
               </p>
 
               <span className="text-[#A5D8FF] font-semibold">
@@ -663,12 +650,11 @@ Scientific References
                 />
               </div>
 
-              <h3 className="text-2xl font-black text-white mb-2">
-                CJC/IPA
-              </h3>
+              <h3 className="text-2xl font-black text-white mb-2">CJC/IPA</h3>
 
               <p className="text-white/60 text-sm leading-relaxed mb-4">
-                Research involving growth hormone signaling pathways and endocrine response models.
+                Research involving growth hormone signaling pathways and
+                endocrine response models.
               </p>
 
               <span className="text-[#A5D8FF] font-semibold">
@@ -693,7 +679,7 @@ Scientific References
       ].map((section) => (
         <section key={section.title} className="px-6 md:px-10 pb-16">
           <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
-            <h3 className="text-blue-300 font-bold uppercase tracking-[0.25em] text-sm mb-4">
+            <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-sm mb-4">
               {section.title}
             </h3>
 
@@ -703,7 +689,6 @@ Scientific References
           </div>
         </section>
       ))}
-
     </main>
   );
 }

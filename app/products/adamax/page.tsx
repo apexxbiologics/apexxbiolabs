@@ -26,7 +26,6 @@ export default function AdamaxPage() {
     image: "/images/adamaxblue.PNG",
   };
 
-  const inStock = inventory === null || inventory > 0;
   const isOutOfStock = inventory !== null && inventory <= 0;
   const isLimitedStock = inventory !== null && inventory > 0 && inventory <= 5;
 

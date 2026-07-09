@@ -24,8 +24,8 @@ export default function AceticAcidPage() {
   });
 
   const product = {
-    id: "ACETIC-ACID-30ML",
-    name: "Acetic Acid 30mL",
+    id: "ACETIC-ACID-10ML",
+    name: "Acetic Acid 10mL",
     image: "/images/aceticacidblue.png",
   };
 
@@ -74,7 +74,7 @@ export default function AceticAcidPage() {
         if (!data.success) return;
 
         const aceticAcid = data.products.find(
-          (product: any) => product.slug === "aceticacid-30ml"
+          (product: any) => product.slug === "aceticacid-10ml"
         );
 
         setProductData({
@@ -143,16 +143,17 @@ export default function AceticAcidPage() {
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
-            <div className="flex items-center justify-center">
-              
-<FavoriteButton product={favoriteProduct} />
+<div className="flex items-center justify-center">
+  <div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+    <FavoriteButton product={favoriteProduct} />
 
-<img
-  src={product.image}
-  alt={product.name}
-  className="w-full h-full object-cover"
-/>
-            </div>
+    <img
+      src={product.image}
+      alt={product.name}
+      className="w-full h-full object-cover"
+    />
+  </div>
+</div>
 
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
               <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
@@ -190,7 +191,7 @@ export default function AceticAcidPage() {
                   </p>
 
                   <div className="rounded-full border border-white/10 bg-white/[0.04] px-7 py-4 w-fit uppercase tracking-widest text-sm font-semibold text-white">
-                    30mL
+                    10mL
                   </div>
                 </div>
 

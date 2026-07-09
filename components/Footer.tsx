@@ -1,6 +1,7 @@
 import { HiOutlineMail } from "react-icons/hi";
 import { FaTiktok } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
+import { Heart, LayoutDashboard, ShieldCheck, ShoppingBag } from "lucide-react";
 
 const footerSections = [
   {
@@ -8,6 +9,16 @@ const footerSections = [
     links: [
       { label: "All Products", href: "/products" },
       { label: "Certificates of Analysis", href: "/coas" },
+      { label: "Cart", href: "/cart" },
+    ],
+  },
+  {
+    title: "Account",
+    links: [
+      { label: "Dashboard", href: "/account" },
+      { label: "Favorites", href: "/account/favorites" },
+      { label: "Security Settings", href: "/account/settings" },
+      { label: "Order Status", href: "/order-status" },
     ],
   },
   {
@@ -36,27 +47,62 @@ const footerSections = [
 
 export default function Footer() {
   return (
-    <footer className="bg-[#081526] border-t border-white/10 px-6 md:px-10 pt-16 pb-8">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 mb-14">
+    <footer className="border-t border-white/10 bg-[#081526] px-6 pb-8 pt-16 md:px-10">
+      <div className="mx-auto mb-14 grid max-w-7xl grid-cols-1 gap-12 lg:grid-cols-[1.3fr_repeat(5,1fr)]">
         <div>
           <img
             src="/images/logo.png"
             alt="Apexx Biolabs"
-            className="h-12 w-auto mb-5"
+            className="mb-5 h-12 w-auto"
           />
 
-          <p className="text-white/60 text-sm leading-relaxed">
+          <p className="max-w-sm text-sm leading-relaxed text-white/60">
             Premium research-grade compounds built on science, quality, and
             transparency.
           </p>
 
-          <div className="flex gap-3 mt-6">
+          <div className="mt-6 grid gap-3">
+            <a
+              href="/account"
+              className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-bold text-white/70 transition hover:border-blue-400/40 hover:bg-white/[0.07] hover:text-white"
+            >
+              <LayoutDashboard
+                size={18}
+                className="text-blue-300 transition group-hover:scale-110"
+              />
+              Customer Dashboard
+            </a>
+
+            <a
+              href="/account/favorites"
+              className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-bold text-white/70 transition hover:border-blue-400/40 hover:bg-white/[0.07] hover:text-white"
+            >
+              <Heart
+                size={18}
+                className="text-blue-300 transition group-hover:scale-110"
+              />
+              Saved Favorites
+            </a>
+
+            <a
+              href="/products"
+              className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-bold text-white/70 transition hover:border-blue-400/40 hover:bg-white/[0.07] hover:text-white"
+            >
+              <ShoppingBag
+                size={18}
+                className="text-blue-300 transition group-hover:scale-110"
+              />
+              Shop Products
+            </a>
+          </div>
+
+          <div className="mt-6 flex gap-3">
             <a
               href="https://www.tiktok.com/@apexx.nyc"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="TikTok"
-              className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:border-blue-400/40 hover:bg-white/[0.07] transition-all"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/70 transition-all hover:border-blue-400/40 hover:bg-white/[0.07] hover:text-white"
             >
               <FaTiktok size={18} />
             </a>
@@ -66,7 +112,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="X"
-              className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:border-blue-400/40 hover:bg-white/[0.07] transition-all"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/70 transition-all hover:border-blue-400/40 hover:bg-white/[0.07] hover:text-white"
             >
               <FaXTwitter size={18} />
             </a>
@@ -74,7 +120,7 @@ export default function Footer() {
             <a
               href="mailto:support@apexxbiolabs.com"
               aria-label="Email"
-              className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:border-blue-400/40 hover:bg-white/[0.07] transition-all"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/70 transition-all hover:border-blue-400/40 hover:bg-white/[0.07] hover:text-white"
             >
               <HiOutlineMail size={18} />
             </a>
@@ -83,7 +129,7 @@ export default function Footer() {
 
         {footerSections.map((section) => (
           <div key={section.title}>
-            <h4 className="text-white font-bold uppercase tracking-widest mb-5 text-sm">
+            <h4 className="mb-5 text-sm font-bold uppercase tracking-widest text-white">
               {section.title}
             </h4>
 
@@ -92,7 +138,7 @@ export default function Footer() {
                 <a
                   key={link.label}
                   href={link.href}
-                  className="block hover:text-blue-300 transition-all"
+                  className="block transition-all hover:text-blue-300"
                 >
                   {link.label}
                 </a>
@@ -102,16 +148,25 @@ export default function Footer() {
         ))}
       </div>
 
-      <div className="max-w-7xl mx-auto border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-white/40 text-sm">
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-sm text-white/40 md:flex-row">
         <p>© 2026 Apexx Biolabs. All rights reserved.</p>
 
-        <p>SSL Secured · 99%+ Purity · Research Use Only</p>
+        <div className="flex flex-wrap items-center justify-center gap-3 text-center">
+          <span className="inline-flex items-center gap-2">
+            <ShieldCheck size={15} className="text-blue-300" />
+            SSL Secured
+          </span>
+
+          <span>99%+ Purity</span>
+
+          <span>Research Use Only</span>
+        </div>
 
         <a
           href="https://www.jovavo.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-blue-300 transition-all"
+          className="transition-all hover:text-blue-300"
         >
           Crafted by Jovavo →
         </a>

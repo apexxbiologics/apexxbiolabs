@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 export default function LoginPage() {
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
@@ -19,8 +19,28 @@ export default function LoginPage() {
     setLoading(true);
     setMessage("");
 
+    let loginEmail = identifier.trim().toLowerCase();
+
+    const isEmail = loginEmail.includes("@");
+
+    if (!isEmail) {
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("email")
+        .eq("username", loginEmail)
+        .single();
+
+      if (profileError || !profile?.email) {
+        setMessage("No account found with that username.");
+        setLoading(false);
+        return;
+      }
+
+      loginEmail = profile.email;
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
-      email,
+      email: loginEmail,
       password,
     });
 
@@ -46,17 +66,17 @@ export default function LoginPage() {
         </h1>
 
         <p className="mb-8 text-sm leading-6 text-white/60">
-          View your ApexxBiolabs orders, payment status, shipping status, and
-          tracking information.
+          Log in with your username or email to view orders, payment status,
+          shipping status, and tracking information.
         </p>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <input
-            type="email"
-            placeholder="Email address"
+            type="text"
+            placeholder="Username or email address"
             className="w-full rounded-xl border border-white/10 bg-white/10 px-5 py-4 text-sm text-white outline-none placeholder:text-white/40 focus:border-blue-400"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
             required
           />
 

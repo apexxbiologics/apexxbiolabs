@@ -3,12 +3,10 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
-  const router = useRouter();
-
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
@@ -19,19 +17,40 @@ export default function SignupPage() {
     setLoading(true);
     setMessage("");
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-options: {
-  emailRedirectTo: "https://apexxbiolabs.com/account",
-},
-    });
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanUsername = username.trim().toLowerCase();
 
-    if (error) {
-      setMessage(error.message);
+    const { data: existingUsername } = await supabase
+      .from("profiles")
+      .select("username")
+      .eq("username", cleanUsername)
+      .maybeSingle();
+
+    if (existingUsername) {
+      setMessage("That username is already taken.");
       setLoading(false);
       return;
     }
+
+    const { data, error } = await supabase.auth.signUp({
+      email: cleanEmail,
+      password,
+      options: {
+        emailRedirectTo: "https://apexxbiolabs.com/account",
+      },
+    });
+
+    if (error || !data.user) {
+      setMessage(error?.message || "Could not create account.");
+      setLoading(false);
+      return;
+    }
+
+    await supabase.from("profiles").insert({
+      id: data.user.id,
+      email: cleanEmail,
+      username: cleanUsername,
+    });
 
     setMessage("Account created. Check your email to confirm your account.");
     setLoading(false);
@@ -49,8 +68,7 @@ options: {
         </h1>
 
         <p className="mb-8 text-sm leading-6 text-white/60">
-          Create an ApexxBiolabs account to view your orders, payment status,
-          shipping status, and tracking information.
+          Create an ApexxBiolabs account with a username or email login.
         </p>
 
         <form onSubmit={handleSignup} className="space-y-4">
@@ -60,6 +78,15 @@ options: {
             className="w-full rounded-xl border border-white/10 bg-white/10 px-5 py-4 text-sm text-white outline-none placeholder:text-white/40 focus:border-blue-400"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          <input
+            type="text"
+            placeholder="Username"
+            className="w-full rounded-xl border border-white/10 bg-white/10 px-5 py-4 text-sm text-white outline-none placeholder:text-white/40 focus:border-blue-400"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
 

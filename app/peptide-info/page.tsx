@@ -243,6 +243,142 @@ export default function PeptideInfoPage() {
         "Cellular communication studies",
       ],
     },
+    {
+  id: "5amino1mq",
+  category: "Metabolic Research Compound",
+  name: "5-Amino-1MQ",
+  details: "Small Molecule Research Compound | NNMT Pathway Research",
+  description:
+    "5-Amino-1MQ is a research compound studied in laboratory models involving nicotinamide N-methyltransferase pathways, cellular metabolism, and energy-balance signaling.",
+  mechanism:
+    "Experimental studies investigate 5-Amino-1MQ in relation to NNMT-associated signaling, NAD+ metabolism, adipocyte biology, mitochondrial activity, and metabolic pathway regulation.",
+  areas: [
+    "NNMT pathway research",
+    "Metabolic signaling studies",
+    "Cellular energy models",
+    "NAD+ metabolism research",
+    "Adipocyte biology investigations",
+  ],
+},
+{
+  id: "aceticacid",
+  category: "Research Solution",
+  name: "Acetic Acid",
+  details: "Laboratory Research Solution | Peptide Handling Support",
+  description:
+    "Acetic Acid is a laboratory research solution commonly used in controlled research workflows involving compound preparation, peptide handling, and analytical applications.",
+  mechanism:
+    "Research use of acetic acid is generally related to solution preparation, pH adjustment, peptide solubility support, and controlled laboratory handling procedures.",
+  areas: [
+    "Research solution preparation",
+    "Peptide handling workflows",
+    "Laboratory pH adjustment",
+    "Analytical preparation",
+    "Research compound support",
+  ],
+},
+{
+  id: "aod9604",
+  category: "Metabolic Research Peptide",
+  name: "AOD-9604",
+  details: "Synthetic hGH Fragment Analog | Metabolic Pathway Research",
+  description:
+    "AOD-9604 is a synthetic peptide fragment studied in laboratory models involving lipid metabolism, metabolic signaling, and growth-hormone-fragment research.",
+  mechanism:
+    "Experimental studies investigate AOD-9604 in relation to lipid metabolism pathways, adipocyte signaling, metabolic regulation, and peptide-mediated cellular communication.",
+  areas: [
+    "Lipid metabolism research",
+    "Adipocyte signaling studies",
+    "Metabolic pathway models",
+    "Growth hormone fragment research",
+    "Cellular communication studies",
+  ],
+},
+{
+  id: "kisspeptin10",
+  category: "Endocrine Research Peptide",
+  name: "Kisspeptin-10",
+  details: "10 amino acids | Kisspeptin Receptor Signaling Research",
+  description:
+    "Kisspeptin-10 is a synthetic peptide studied in endocrine signaling research, reproductive-axis models, neuroendocrine communication, and kisspeptin receptor pathway investigations.",
+  mechanism:
+    "Experimental studies investigate Kisspeptin-10 in relation to KISS1 receptor signaling, GnRH-associated pathways, hypothalamic communication, and endocrine regulatory mechanisms.",
+  areas: [
+    "KISS1 receptor research",
+    "Neuroendocrine signaling",
+    "GnRH pathway studies",
+    "Reproductive-axis models",
+    "Endocrine communication research",
+  ],
+},
+{
+  id: "klow",
+  category: "Metabolic Research Peptide",
+  name: "KLOW",
+  details: "Synthetic Research Peptide | Metabolic Signaling Research",
+  description:
+    "KLOW is a synthetic research peptide studied in laboratory models involving metabolic signaling, cellular energy regulation, and peptide-mediated pathway research.",
+  mechanism:
+    "Experimental research may evaluate KLOW in relation to metabolic pathway activity, receptor-associated signaling, cellular communication, and energy-balance research models.",
+  areas: [
+    "Metabolic signaling research",
+    "Cellular energy studies",
+    "Peptide pathway models",
+    "Research compound evaluation",
+    "Laboratory metabolic investigations",
+  ],
+},
+{
+  id: "nad",
+  category: "Cellular Research Compound",
+  name: "NAD+",
+  details: "Nicotinamide Adenine Dinucleotide | Cellular Energy Research",
+  description:
+    "NAD+ is a naturally occurring coenzyme studied in cellular metabolism, mitochondrial function, redox biology, DNA repair pathways, and cellular aging research models.",
+  mechanism:
+    "Experimental studies investigate NAD+ in relation to redox reactions, mitochondrial energy production, sirtuin activity, PARP-associated pathways, and cellular stress-response mechanisms.",
+  areas: [
+    "Mitochondrial research",
+    "Cellular energy metabolism",
+    "Redox biology",
+    "Sirtuin pathway studies",
+    "DNA repair pathway research",
+  ],
+},
+{
+  id: "pt141",
+  category: "Melanocortin Research Peptide",
+  name: "PT-141",
+  details: "Synthetic Melanocortin Analog | MC Receptor Pathway Research",
+  description:
+    "PT-141 is a synthetic peptide analog studied in laboratory models involving melanocortin receptor signaling, neuroendocrine pathways, and central nervous system communication.",
+  mechanism:
+    "Experimental studies investigate PT-141 in relation to melanocortin receptor activity, MC3R/MC4R-associated signaling, neurochemical communication, and receptor-mediated pathway research.",
+  areas: [
+    "Melanocortin receptor research",
+    "MC4R pathway studies",
+    "Neuroendocrine signaling",
+    "Central nervous system models",
+    "Receptor-mediated research",
+  ],
+},
+{
+  id: "wolverine",
+  category: "Research Peptide Blend",
+  name: "Wolverine",
+  details: "BPC-157 + TB-500 Research Blend | Tissue Research Models",
+  description:
+    "Wolverine is a research peptide blend commonly associated with BPC-157 and TB-500 pathway investigations, studied in laboratory models involving tissue response, cellular migration, and regenerative signaling.",
+  mechanism:
+    "Experimental research on the components commonly evaluates nitric oxide pathways, actin-regulating mechanisms, angiogenic signaling, cellular migration, and extracellular matrix remodeling.",
+  areas: [
+    "Tissue response research",
+    "Cellular migration studies",
+    "Angiogenesis models",
+    "Connective tissue research",
+    "Regenerative signaling investigations",
+  ],
+},
   ];
 
   return (

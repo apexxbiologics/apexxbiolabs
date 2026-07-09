@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
@@ -8,10 +8,41 @@ import { Lock } from "lucide-react";
 export default function UpdatePasswordPage() {
   const router = useRouter();
 
+  const [ready, setReady] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [updating, setUpdating] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("Verifying reset link...");
+
+  useEffect(() => {
+    async function setupRecoverySession() {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+        if (error) {
+          setMessage(error.message);
+          return;
+        }
+      }
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        setMessage("This reset link is invalid or expired. Please request a new password reset email.");
+        return;
+      }
+
+      setMessage("");
+      setReady(true);
+    }
+
+    setupRecoverySession();
+  }, []);
 
   async function handleUpdatePassword(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -39,8 +70,10 @@ export default function UpdatePasswordPage() {
       return;
     }
 
-    setMessage("Password updated successfully.");
+    setMessage("Password updated successfully. Redirecting to login...");
     setUpdating(false);
+
+    await supabase.auth.signOut();
 
     setTimeout(() => {
       router.push("/account/login");
@@ -75,6 +108,7 @@ export default function UpdatePasswordPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={!ready}
           />
 
           <input
@@ -85,6 +119,7 @@ export default function UpdatePasswordPage() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
+            disabled={!ready}
           />
 
           {message && (
@@ -95,8 +130,8 @@ export default function UpdatePasswordPage() {
 
           <button
             type="submit"
-            disabled={updating}
-            className="w-full rounded-xl bg-blue-500 px-5 py-4 text-sm font-black uppercase tracking-[0.25em] text-white transition hover:bg-blue-400 disabled:opacity-60"
+            disabled={!ready || updating}
+            className="w-full rounded-xl bg-blue-500 px-5 py-4 text-sm font-black uppercase tracking-[0.25em] text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {updating ? "Updating..." : "Update Password"}
           </button>

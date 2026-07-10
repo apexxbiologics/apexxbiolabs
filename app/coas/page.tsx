@@ -45,7 +45,7 @@ export default function COAsPage() {
           batch: "Blue Cap-1",
           purity: "99.47%",
           content: "11.83 mg",
-          coa: "/images/coas/tb500-10mg-blue-cap-coa.pdf",
+          coa: "/images/coas/tb500.pdf",
         },
       ],
     },

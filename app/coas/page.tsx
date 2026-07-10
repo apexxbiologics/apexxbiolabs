@@ -161,11 +161,14 @@ export default function COAsPage() {
       content: "5 mg / 5 mg",
       coa: "/images/coas/cjc-ipa-no-dac-coa.pdf",
     },
-    {
-      name: "Tesamorelin",
-      batch: "Pending",
-      status: "Awaiting Testing",
-    },
+{
+  name: "Tesamorelin",
+  batch: "Red Cap-1",
+  status: "Verified",
+  purity: "99.89%",
+  content: "5.48 mg",
+  coa: "/images/coas/tesamorelincoa7-10-26.pdf",
+},
     {
       name: "NAD+",
       batch: "Pending",

@@ -569,7 +569,7 @@ price: "$55.00",
 },
 {
   name: "Acetic Acid",
-  description: "Research solution for laboratory preparation and peptide handling workflows.",
+  desc: "Research Reconstitution Solution",
   price: "$15.00",
   image: "/images/aceticacid.png",
   href: "/products/aceticacid",

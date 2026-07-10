@@ -103,14 +103,26 @@ export default function COAsPage() {
       content: "11.71 mg",
       coa: "/images/coas/semax-10mg-coa.pdf",
     },
+{
+  name: "MOTS-c",
+  batch: "Blue Cap-2",
+  status: "Verified",
+  purity: "99.75%",
+  content: "12.42 mg",
+
+  // Latest COA
+  coa: "/images/coas/motsccoa.pdf",
+
+  // Previous COAs
+  previousCoas: [
     {
-      name: "MOTS-c",
       batch: "Light Purple Cap-1",
-      status: "Verified",
       purity: "99.48%",
       content: "13.94 mg",
       coa: "/images/coas/6-26-motsc-coa.pdf",
     },
+  ],
+},
     {
       name: "ARA-290",
       batch: "Pending",

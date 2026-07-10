@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 type PreviousCOA = {
   batch: string;
   purity: string;
@@ -16,6 +20,10 @@ type ProductCOA = {
 };
 
 export default function COAsPage() {
+  const [openPreviousCoas, setOpenPreviousCoas] = useState<string | null>(
+    null,
+  );
+
   const products: ProductCOA[] = [
     {
       name: "APX-3",
@@ -169,6 +177,12 @@ export default function COAsPage() {
     },
   ];
 
+  function togglePreviousCoas(productName: string) {
+    setOpenPreviousCoas((current) =>
+      current === productName ? null : productName,
+    );
+  }
+
   return (
     <main className="min-h-screen overflow-hidden bg-[#081526] text-white">
       {/* HERO */}
@@ -209,16 +223,20 @@ export default function COAsPage() {
       <section className="relative overflow-hidden px-6 py-20 md:px-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.08),transparent_60%)]" />
 
-        <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 md:grid-cols-2">
           {products.map((product) => {
             const isVerified = product.status === "Verified";
+
             const hasPreviousCoas =
-              product.previousCoas && product.previousCoas.length > 0;
+              Array.isArray(product.previousCoas) &&
+              product.previousCoas.length > 0;
+
+            const isPreviousOpen = openPreviousCoas === product.name;
 
             return (
-              <div
+              <article
                 key={product.name}
-                className="flex min-h-[260px] flex-col justify-between rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:border-blue-400/50 hover:bg-white/[0.07]"
+                className="flex min-h-[260px] flex-col justify-between rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm transition-all duration-300 hover:border-blue-400/50 hover:bg-white/[0.07] sm:p-8"
               >
                 <div>
                   <div className="mb-6 flex items-start justify-between gap-4">
@@ -229,7 +247,7 @@ export default function COAsPage() {
 
                       {hasPreviousCoas && (
                         <p className="mt-2 text-xs uppercase tracking-[0.24em] text-blue-300">
-                          Latest Batch
+                          Most Recent Batch
                         </p>
                       )}
                     </div>
@@ -308,16 +326,27 @@ export default function COAsPage() {
                     </a>
 
                     {hasPreviousCoas && (
-                      <details className="group overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/10">
-                        <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4 text-sm uppercase tracking-widest text-white/70 transition-all hover:bg-white/[0.04] hover:text-white [&::-webkit-details-marker]:hidden">
-                          <span>See Previous COAs</span>
+                      <div className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#06101f]">
+                        <button
+                          type="button"
+                          onClick={() => togglePreviousCoas(product.name)}
+                          aria-expanded={isPreviousOpen}
+                          className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-sm uppercase tracking-widest text-white/80 transition-all hover:bg-white/[0.05] hover:text-white"
+                        >
+                          <span>
+                            {isPreviousOpen
+                              ? "Hide Previous COAs"
+                              : "See Previous COAs"}
+                          </span>
 
                           <svg
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
                             strokeWidth="1.8"
-                            className="h-5 w-5 transition-transform duration-300 group-open:rotate-180"
+                            className={`h-5 w-5 shrink-0 transition-transform duration-300 ${
+                              isPreviousOpen ? "rotate-180" : ""
+                            }`}
                           >
                             <path
                               d="m6 9 6 6 6-6"
@@ -325,60 +354,66 @@ export default function COAsPage() {
                               strokeLinejoin="round"
                             />
                           </svg>
-                        </summary>
+                        </button>
 
-                        <div className="space-y-4 border-t border-white/10 p-4">
-                          {product.previousCoas?.map(
-                            (previousCoa, previousIndex) => (
-                              <div
-                                key={`${previousCoa.batch}-${previousIndex}`}
-                                className="rounded-[1.25rem] border border-white/10 bg-white/[0.03] p-5"
-                              >
-                                <div className="mb-5 space-y-3 text-sm">
-                                  <div className="flex justify-between gap-4 border-b border-white/10 pb-3">
-                                    <span className="text-white/50">
-                                      Batch
-                                    </span>
+                        {isPreviousOpen && (
+                          <div className="space-y-4 border-t border-white/10 p-4">
+                            <p className="px-1 text-xs uppercase tracking-[0.24em] text-white/40">
+                              Previous Test Results
+                            </p>
 
-                                    <span className="text-right text-white/80">
-                                      {previousCoa.batch}
-                                    </span>
-                                  </div>
-
-                                  <div className="flex justify-between gap-4 border-b border-white/10 pb-3">
-                                    <span className="text-white/50">
-                                      Purity
-                                    </span>
-
-                                    <span className="text-white/80">
-                                      {previousCoa.purity}
-                                    </span>
-                                  </div>
-
-                                  <div className="flex justify-between gap-4 border-b border-white/10 pb-3">
-                                    <span className="text-white/50">
-                                      Net Content
-                                    </span>
-
-                                    <span className="text-white/80">
-                                      {previousCoa.content}
-                                    </span>
-                                  </div>
-                                </div>
-
-                                <a
-                                  href={previousCoa.coa}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="block w-full rounded-full border border-white/10 bg-white/[0.04] py-3 text-center text-xs uppercase tracking-widest text-white/70 transition-all hover:border-blue-400/40 hover:bg-white/[0.08] hover:text-white"
+                            {product.previousCoas?.map(
+                              (previousCoa, previousIndex) => (
+                                <div
+                                  key={`${product.name}-${previousCoa.batch}-${previousIndex}`}
+                                  className="rounded-[1.25rem] border border-white/10 bg-white/[0.03] p-5"
                                 >
-                                  View Previous COA
-                                </a>
-                              </div>
-                            ),
-                          )}
-                        </div>
-                      </details>
+                                  <div className="mb-5 space-y-3 text-sm">
+                                    <div className="flex justify-between gap-4 border-b border-white/10 pb-3">
+                                      <span className="text-white/50">
+                                        Batch
+                                      </span>
+
+                                      <span className="text-right text-white/80">
+                                        {previousCoa.batch}
+                                      </span>
+                                    </div>
+
+                                    <div className="flex justify-between gap-4 border-b border-white/10 pb-3">
+                                      <span className="text-white/50">
+                                        Purity
+                                      </span>
+
+                                      <span className="text-white/80">
+                                        {previousCoa.purity}
+                                      </span>
+                                    </div>
+
+                                    <div className="flex justify-between gap-4 border-b border-white/10 pb-3">
+                                      <span className="text-white/50">
+                                        Net Content
+                                      </span>
+
+                                      <span className="text-white/80">
+                                        {previousCoa.content}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  <a
+                                    href={previousCoa.coa}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block w-full rounded-full border border-white/10 bg-white/[0.05] py-3 text-center text-xs uppercase tracking-widest text-white/80 transition-all hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-white"
+                                  >
+                                    View Previous COA
+                                  </a>
+                                </div>
+                              ),
+                            )}
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
                 ) : (
@@ -390,7 +425,7 @@ export default function COAsPage() {
                     COA Coming Soon
                   </button>
                 )}
-              </div>
+              </article>
             );
           })}
         </div>

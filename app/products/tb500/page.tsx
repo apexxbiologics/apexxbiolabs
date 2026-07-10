@@ -15,6 +15,7 @@ export default function TB500Page() {
   const [quantity, setQuantity] = useState(1);
   const [inventory, setInventory] = useState<number | null>(null);
   const [price, setPrice] = useState(60);
+  const [showPreviousCoa, setShowPreviousCoa] = useState(false);
 
   const product = {
     id: "tb500",

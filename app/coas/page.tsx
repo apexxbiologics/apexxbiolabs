@@ -77,11 +77,14 @@ export default function COAsPage() {
       content: "10.41 mg",
       coa: "/images/coas/6-26-kpv-coa.pdf",
     },
-    {
-      name: "GHK-Cu",
-      batch: "Pending",
-      status: "Awaiting Testing",
-    },
+{
+  name: "GHK-Cu",
+  batch: "Red Cap-1",
+  status: "Verified",
+  purity: "99.74%",
+  content: "114.96 mg",
+  coa: "/images/coas/ghkcucoa7-10-26.pdf",
+},
     {
       name: "Pinealon",
       batch: "Pending",

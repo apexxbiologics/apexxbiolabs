@@ -331,7 +331,7 @@ export default function GHKCUPage() {
               </div>
 
               <a
-                href="/images/coas/ghkcu-red-cap-1.pdf"
+                href="/images/coas/ghkcucoa7-10-26.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"

@@ -344,56 +344,66 @@ export default function TB500Page() {
       </div>
     </div>
 
-    {/* Previous COA */}
-    <div className="mt-8 border-t border-white/10 pt-6">
-      <button
-        type="button"
-        onClick={() => setShowPreviousCoa((prev) => !prev)}
-        className="w-full rounded-full border border-white/10 bg-white/[0.04] py-3 text-sm uppercase tracking-widest text-white/80 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
-      >
-        {showPreviousCoa ? "Hide Previous COA" : "See Previous COA"}
-      </button>
+{showPreviousCoa && (
+  <div className="mt-8 rounded-[28px] border border-white/10 bg-white/[0.03] p-6">
+    <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
+      <div>
+        <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-xs mb-2">
+          Previous Certificate of Analysis
+        </p>
 
-      {showPreviousCoa && (
-        <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-          <div className="flex flex-wrap gap-3 mb-5">
-            <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
-              <span className="text-green-400 font-semibold">
-                ✓ Identity Confirmed
-              </span>
-            </div>
+        <h3 className="text-2xl font-black text-white mb-5">
+          Blue Cap-1
+        </h3>
 
-            <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
-              <span className="text-[#A5D8FF] font-semibold">
-                99.47% Purity
-              </span>
-            </div>
-
-            <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
-              <span className="text-[#A5D8FF] font-semibold">
-                11.83mg Content
-              </span>
-            </div>
-
-            <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
-              <span className="text-white/70">
-                Lot: Blue Cap-1
-              </span>
-            </div>
+        <div className="flex flex-wrap gap-3">
+          <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
+            <span className="text-green-400 font-semibold">
+              ✓ Identity Confirmed
+            </span>
           </div>
 
-          <a
-            href="/images/coas/tb500-10mg-blue-cap-coa.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
-          >
-            View Previous COA
-          </a>
+          <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+            <span className="text-[#A5D8FF] font-semibold">
+              99.47% Purity
+            </span>
+          </div>
+
+          <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+            <span className="text-[#A5D8FF] font-semibold">
+              11.83mg Content
+            </span>
+          </div>
+
+          <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
+            <span className="text-white/70">
+              Lot: Blue Cap-1
+            </span>
+          </div>
         </div>
-      )}
+      </div>
+
+      <div className="flex flex-col items-center md:items-end">
+        <div className="text-5xl font-black text-[#A5D8FF]">
+          99.47%
+        </div>
+
+        <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
+          Purity
+        </div>
+
+        <a
+          href="/images/coas/tb500-10mg-blue-cap-coa.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
+        >
+          View Previous COA
+        </a>
+      </div>
     </div>
   </div>
+)}
 </section>
 
       <section className="px-6 md:px-10 pb-10">

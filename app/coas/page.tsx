@@ -33,14 +33,26 @@ export default function COAsPage() {
       content: "23.89 mg",
       coa: "/images/coas/apx3-20mg-blue-cap-coa.pdf",
     },
+{
+  name: "BPC-157",
+  batch: "Blue Cap-2",
+  status: "Verified",
+  purity: "99.72%",
+  content: "11.78 mg",
+
+  // Latest COA
+  coa: "/images/coas/bpc157coa7-10-26.pdf",
+
+  // Previous COAs
+  previousCoas: [
     {
-      name: "BPC-157",
       batch: "Black Cap-1",
-      status: "Verified",
       purity: "99.33%",
       content: "11.58 mg",
       coa: "/images/coas/bpc-157-10mg-black-cap-coa.pdf",
     },
+  ],
+},
 {
   name: "TB-500",
   batch: "Yellow Cap-2",

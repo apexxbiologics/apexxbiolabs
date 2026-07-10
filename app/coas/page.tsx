@@ -41,22 +41,26 @@ export default function COAsPage() {
       content: "11.58 mg",
       coa: "/images/coas/bpc-157-10mg-black-cap-coa.pdf",
     },
+{
+  name: "TB-500",
+  batch: "Yellow Cap-2",
+  status: "Verified",
+  purity: "99.95%",
+  content: "13.47 mg",
+
+  // MOST RECENT COA
+  coa: "/images/coas/tb500.pdf",
+
+  // OLDER COAS
+  previousCoas: [
     {
-      name: "TB-500",
-      batch: "Yellow Cap-2",
-      status: "Verified",
-      purity: "99.95%",
-      content: "13.47 mg",
-      coa: "/images/coas/tb500-10mg-yellow-cap-2-coa.jpg",
-      previousCoas: [
-        {
-          batch: "Blue Cap-1",
-          purity: "99.47%",
-          content: "11.83 mg",
-          coa: "/images/coas/tb500.pdf",
-        },
-      ],
+      batch: "Blue Cap-1",
+      purity: "99.47%",
+      content: "11.83 mg",
+      coa: "/images/coas/tb500-10mg-blue-cap-coa.pdf",
     },
+  ],
+},
     {
       name: "Bacteriostatic Water",
       batch: "PRX-2026-04-A",

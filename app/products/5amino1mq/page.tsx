@@ -33,7 +33,7 @@ export default function FiveAmino1MQPage() {
     image: product.image,
     path: product.path,
   };
-
+  
   useEffect(() => {
     const fetchProductData = async () => {
       try {
@@ -397,7 +397,7 @@ export default function FiveAmino1MQPage() {
           </div>
         </div>
       </section>
-      
+
       {[
         {
           title: "FDA Disclaimer",

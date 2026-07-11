@@ -6,42 +6,226 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  }
 );
 
 export async function POST(request: Request) {
   try {
     const { orderId, trackingNumber, carrier } = await request.json();
 
-    const trackingUrl =
-      carrier === "USPS"
-        ? `https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=${trackingNumber}`
-        : carrier === "UPS"
-        ? `https://www.ups.com/track?tracknum=${trackingNumber}`
-        : carrier === "FedEx"
-        ? `https://www.fedex.com/fedextrack/?trknbr=${trackingNumber}`
-        : "";
+    if (!orderId || !trackingNumber || !carrier) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Order ID, tracking number, and carrier are required.",
+        },
+        { status: 400 }
+      );
+    }
 
-const { data: order, error } = await supabaseAdmin
-  .from("orders")
+    const cleanedTrackingNumber = String(trackingNumber).trim();
+    const cleanedCarrier = String(carrier).trim();
+
+    if (!cleanedTrackingNumber) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Please enter a valid tracking number.",
+        },
+        { status: 400 }
+      );
+    }
+
+    /*
+     * Load the order before changing it.
+     * This lets us see whether it was already shipped.
+     */
+    const { data: existingOrder, error: existingOrderError } =
+      await supabaseAdmin
+        .from("orders")
+        .select("*")
+        .eq("id", orderId)
+        .single();
+
+    if (existingOrderError || !existingOrder) {
+      console.error("Order lookup error:", existingOrderError);
+
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Order could not be found.",
+        },
+        { status: 404 }
+      );
+    }
+
+    /*
+     * Only paid or already-shipped orders should be processed.
+     */
+    if (
+      existingOrder.status !== "paid" &&
+      existingOrder.status !== "shipped"
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "The order must be marked paid before it can be shipped.",
+        },
+        { status: 400 }
+      );
+    }
+
+    /*
+     * Update the tracking information and mark the order shipped.
+     */
+    const { data: order, error: updateError } = await supabaseAdmin
+      .from("orders")
       .update({
         status: "shipped",
-        tracking_number: trackingNumber,
-        carrier,
+        tracking_number: cleanedTrackingNumber,
+        carrier: cleanedCarrier,
       })
       .eq("id", orderId)
       .select()
       .single();
 
-    if (error) {
-      console.error("Tracking update error:", error);
+    if (updateError || !order) {
+      console.error("Tracking update error:", updateError);
+
       return NextResponse.json(
-        { success: false, error: "Failed to update tracking" },
+        {
+          success: false,
+          error: "Failed to update tracking information.",
+        },
         { status: 500 }
       );
     }
 
-    await resend.emails.send({
+    let pointsAwarded = 0;
+    let pointsMessage = "No points awarded.";
+
+    /*
+     * Check whether this order has already earned points.
+     *
+     * Your unique database index also prevents duplicates,
+     * but checking first gives us a cleaner response.
+     */
+    const { data: existingPointsTransaction } = await supabaseAdmin
+      .from("point_transactions")
+      .select("id, points")
+      .eq("order_id", order.id)
+      .eq("type", "earned")
+      .maybeSingle();
+
+    if (existingPointsTransaction) {
+      pointsAwarded = Number(existingPointsTransaction.points || 0);
+      pointsMessage = "Points were already awarded for this order.";
+    } else {
+      /*
+       * Locate the customer's Supabase account using their email.
+       */
+      const { data: usersData, error: usersError } =
+        await supabaseAdmin.auth.admin.listUsers({
+          page: 1,
+          perPage: 1000,
+        });
+
+      if (usersError) {
+        console.error("Customer account lookup error:", usersError);
+        pointsMessage =
+          "Order shipped, but the customer account could not be checked.";
+      } else {
+        const normalizedCustomerEmail = String(
+          order.customer_email || ""
+        )
+          .trim()
+          .toLowerCase();
+
+        const customerUser = usersData.users.find(
+          (user) =>
+            String(user.email || "")
+              .trim()
+              .toLowerCase() === normalizedCustomerEmail
+        );
+
+        if (!customerUser) {
+          /*
+           * Guest orders do not earn points because there is no account
+           * to attach the points to.
+           */
+          pointsMessage =
+            "Order shipped, but no customer account matched the order email.";
+        } else {
+          /*
+           * One point per dollar based on the final order total.
+           *
+           * Example:
+           * $99.99 = 99 points
+           * $100.00 = 100 points
+           */
+          const earnedPoints = Math.max(
+            0,
+            Math.floor(Number(order.total || 0))
+          );
+
+          if (earnedPoints > 0) {
+            const { error: pointsError } = await supabaseAdmin
+              .from("point_transactions")
+              .insert({
+                user_id: customerUser.id,
+                order_id: order.id,
+                points: earnedPoints,
+                type: "earned",
+                description: `Points earned from order ${order.order_number}`,
+              });
+
+            if (pointsError) {
+              /*
+               * PostgreSQL error 23505 means the unique index blocked
+               * a duplicate points transaction.
+               */
+              if (pointsError.code === "23505") {
+                pointsMessage =
+                  "Points were already awarded for this order.";
+              } else {
+                console.error("Points award error:", pointsError);
+                pointsMessage =
+                  "Order shipped, but points could not be awarded.";
+              }
+            } else {
+              pointsAwarded = earnedPoints;
+              pointsMessage = `${earnedPoints} points awarded.`;
+            }
+          }
+        }
+      }
+    }
+
+    const trackingUrl =
+      cleanedCarrier === "USPS"
+        ? `https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=${encodeURIComponent(
+            cleanedTrackingNumber
+          )}`
+        : cleanedCarrier === "UPS"
+        ? `https://www.ups.com/track?tracknum=${encodeURIComponent(
+            cleanedTrackingNumber
+          )}`
+        : cleanedCarrier === "FedEx"
+        ? `https://www.fedex.com/fedextrack/?trknbr=${encodeURIComponent(
+            cleanedTrackingNumber
+          )}`
+        : "";
+
+    /*
+     * Send the shipment confirmation email.
+     */
+    const { error: emailError } = await resend.emails.send({
       from: "Apexx Biolabs <orders@apexxbiolabs.com>",
       to: order.customer_email,
       subject: `Your Apexx Biolabs Order Has Shipped • ${order.order_number}`,
@@ -51,96 +235,118 @@ const { data: order, error } = await supabaseAdmin
             <div style="background:#ffffff; border:1px solid #dbeafe; border-radius:28px; overflow:hidden; box-shadow:0 18px 45px rgba(30,58,138,0.12);">
 
               <div style="background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff); padding:36px 24px; text-align:center; border-bottom:1px solid #dbeafe;">
-<p style="margin:0 0 14px; color:#3b82f6; font-size:13px; letter-spacing:4px; text-transform:uppercase;">
-  Research. Quality. Confidence.
-</p>
+                <p style="margin:0 0 14px; color:#3b82f6; font-size:13px; letter-spacing:4px; text-transform:uppercase;">
+                  Research. Quality. Confidence.
+                </p>
 
-<h1 style="margin:0; color:#06111f; font-size:34px; letter-spacing:3px;">
-  APEXX BIOLABS
-</h1>
+                <h1 style="margin:0; color:#06111f; font-size:34px; letter-spacing:3px;">
+                  APEXX BIOLABS
+                </h1>
 
-<p style="margin:12px 0 0; color:#475569; font-size:13px; letter-spacing:2px; text-transform:uppercase;">
-  Premium Research Materials
-</p>
+                <p style="margin:12px 0 0; color:#475569; font-size:13px; letter-spacing:2px; text-transform:uppercase;">
+                  Premium Research Materials
+                </p>
               </div>
 
               <div style="padding:32px 24px; color:#0f172a;">
                 <div style="background:#ffffff; border:1px solid #bfdbfe; border-radius:22px; padding:30px 24px; text-align:center; margin-bottom:28px;">
-<p style="margin:0 0 14px;color:#3b82f6;font-size:13px;letter-spacing:4px;text-transform:uppercase;">
-  Shipment Confirmation
-</p>
+                  <p style="margin:0 0 14px;color:#3b82f6;font-size:13px;letter-spacing:4px;text-transform:uppercase;">
+                    Shipment Confirmation
+                  </p>
 
-<h2 style="margin:0;color:#06111f;font-size:34px;font-weight:800;line-height:1.1;">
-  Your Order Has Shipped
-</h2>
+                  <h2 style="margin:0;color:#06111f;font-size:34px;font-weight:800;line-height:1.1;">
+                    Your Order Has Shipped
+                  </h2>
 
-<p style="margin:14px 0 0;color:#16a34a;font-size:18px;font-weight:700;">
-  Package In Transit
-</p>
+                  <p style="margin:14px 0 0;color:#16a34a;font-size:18px;font-weight:700;">
+                    Package In Transit
+                  </p>
 
-<p style="margin:18px auto 0;max-width:500px;color:#475569;font-size:15px;line-height:1.7;">
-  Great news. Your Apexx Biolabs order has been packaged, shipped, and is now in transit.
-  Tracking information is provided below.
-</p>
+                  <p style="margin:18px auto 0;max-width:500px;color:#475569;font-size:15px;line-height:1.7;">
+                    Great news. Your Apexx Biolabs order has been packaged,
+                    shipped, and is now in transit. Tracking information is
+                    provided below.
+                  </p>
                 </div>
 
-<div style="background:linear-gradient(135deg,#eaf4ff,#f8fbff);border:1px solid #bfdbfe;border-radius:22px;padding:28px;text-align:center;margin-bottom:30px;">
+                <div style="background:linear-gradient(135deg,#eaf4ff,#f8fbff);border:1px solid #bfdbfe;border-radius:22px;padding:28px;text-align:center;margin-bottom:30px;">
+                  <p style="margin:0 0 8px;color:#1e3a8a;font-size:13px;text-transform:uppercase;letter-spacing:2px;font-weight:bold;">
+                    Tracking Number
+                  </p>
 
-  <p style="margin:0 0 8px;color:#1e3a8a;font-size:13px;text-transform:uppercase;letter-spacing:2px;font-weight:bold;">
-    Tracking Number
-  </p>
+                  <p style="margin:0;color:#06111f;font-size:28px;font-weight:900;word-break:break-all;">
+                    ${cleanedTrackingNumber}
+                  </p>
 
-  <p style="margin:0;color:#06111f;font-size:28px;font-weight:900;word-break:break-all;">
-    ${trackingNumber}
-  </p>
+                  <p style="margin:12px 0 0;color:#64748b;">
+                    Carrier: <strong>${cleanedCarrier}</strong>
+                  </p>
 
-  <p style="margin:12px 0 0;color:#64748b;">
-    Carrier: <strong>${carrier}</strong>
-  </p>
+                  ${
+                    trackingUrl
+                      ? `
+                        <a
+                          href="${trackingUrl}"
+                          style="
+                            display:inline-block;
+                            margin-top:22px;
+                            background:#06111f;
+                            color:#ffffff;
+                            padding:16px 30px;
+                            border-radius:999px;
+                            text-decoration:none;
+                            font-weight:900;
+                            letter-spacing:1px;
+                            text-transform:uppercase;
+                          "
+                        >
+                          Track Package
+                        </a>
+                      `
+                      : ""
+                  }
+                </div>
 
-  ${
-    trackingUrl
-      ? `
-        <a
-          href="${trackingUrl}"
-          style="
-            display:inline-block;
-            margin-top:22px;
-            background:#06111f;
-            color:#ffffff;
-            padding:16px 30px;
-            border-radius:999px;
-            text-decoration:none;
-            font-weight:900;
-            letter-spacing:1px;
-            text-transform:uppercase;
-          "
-        >
-          Track Package
-        </a>
-      `
-      : ""
-  }
+                ${
+                  pointsAwarded > 0
+                    ? `
+                      <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #93c5fd;border-radius:22px;padding:26px;text-align:center;margin-bottom:30px;">
+                        <p style="margin:0 0 8px;color:#1e3a8a;font-size:12px;text-transform:uppercase;letter-spacing:3px;font-weight:bold;">
+                          Apexx Rewards
+                        </p>
 
-</div>
+                        <p style="margin:0;color:#06111f;font-size:32px;font-weight:900;">
+                          +${pointsAwarded} Points
+                        </p>
 
-<div style="background:#ffffff;border:1px solid #dbeafe;border-radius:20px;padding:22px;margin-bottom:30px;">
+                        <p style="margin:12px auto 0;max-width:480px;color:#475569;font-size:14px;line-height:1.7;">
+                          These points have been added to your Apexx Biolabs
+                          account. Every 100 points can be redeemed for $10 off
+                          a future purchase.
+                        </p>
+                      </div>
+                    `
+                    : ""
+                }
 
-  <h3 style="margin:0 0 12px;color:#06111f;font-size:18px;">
-    What Happens Next?
-  </h3>
+                <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:20px;padding:22px;margin-bottom:30px;">
+                  <h3 style="margin:0 0 12px;color:#06111f;font-size:18px;">
+                    What Happens Next?
+                  </h3>
 
-  <p style="margin:0;color:#475569;line-height:1.8;">
-    Your package has been handed off to the carrier and is currently making its way to you.
-    Please allow up to 24 hours for tracking updates to appear after label creation.
-  </p>
-
-</div>
+                  <p style="margin:0;color:#475569;line-height:1.8;">
+                    Your package has been handed off to the carrier and is
+                    currently making its way to you. Please allow up to 24 hours
+                    for tracking updates to appear after label creation.
+                  </p>
+                </div>
 
                 <div style="border-top:1px solid #dbeafe; padding-top:22px;">
                   <p style="font-size:12px; color:#64748b; line-height:1.6; margin:0;">
-                    Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only.
-                    Not for human consumption, medical use, veterinary use, diagnosis, treatment, cure, or prevention of disease.
+                    Products sold by Apexx Biolabs are intended strictly for
+                    lawful laboratory research use only. Not for human
+                    consumption, medical use, veterinary use, diagnosis,
+                    treatment, cure, or prevention of disease.
                   </p>
 
                   <p style="margin:22px 0 0; color:#334155; line-height:1.6;">
@@ -150,22 +356,42 @@ const { data: order, error } = await supabaseAdmin
                   </p>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
       `,
     });
 
+    if (emailError) {
+      console.error("Shipping email error:", emailError);
+
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Order was marked shipped, but the shipping email could not be sent.",
+          order,
+          pointsAwarded,
+          pointsMessage,
+        },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({
       success: true,
       order,
+      pointsAwarded,
+      pointsMessage,
     });
   } catch (error) {
     console.error("Send tracking error:", error);
 
     return NextResponse.json(
-      { success: false, error: "Failed to send tracking email" },
+      {
+        success: false,
+        error: "Failed to process shipment.",
+      },
       { status: 500 }
     );
   }

@@ -118,9 +118,9 @@ export default function CheckoutPage() {
 
         setLoggedInEmail(normalizedEmail);
         setCustomerEmail(normalizedEmail);
-        setAccessToken(
-          session.access_token || ""
-        );
+setAccessToken(
+  session?.access_token || ""
+);
 
         const [
           profileResult,

@@ -6,12 +6,26 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  }
 );
 
 const PROMO_CODES: Record<string, number> = {
   FREEDOM10: 0.1,
   PEPTIDEALS: 0.15,
+};
+
+type CartItem = {
+  id?: string;
+  name?: string;
+  price?: number;
+  quantity?: number;
+  image?: string;
 };
 
 export async function POST(request: Request) {
@@ -29,62 +43,450 @@ export async function POST(request: Request) {
       paymentMethod,
       cart,
       promoCode,
+      redeemedPoints,
     } = body;
+
+    /*
+     * Validate the required checkout information.
+     */
+    if (
+      !customerEmail ||
+      !firstName ||
+      !lastName ||
+      !address ||
+      !city ||
+      !state ||
+      !zipCode ||
+      !paymentMethod ||
+      !Array.isArray(cart) ||
+      cart.length === 0
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Missing required checkout information.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const normalizedCustomerEmail = String(customerEmail)
+      .trim()
+      .toLowerCase();
+
+    const normalizedFirstName = String(firstName).trim();
+    const normalizedLastName = String(lastName).trim();
+    const normalizedAddress = String(address).trim();
+    const normalizedCity = String(city).trim();
+    const normalizedState = String(state).trim().toUpperCase();
+    const normalizedZipCode = String(zipCode).trim();
+    const normalizedPaymentMethod = String(paymentMethod)
+      .trim()
+      .toLowerCase();
+
+    if (!/^\d{5}$/.test(normalizedZipCode)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "ZIP code must contain exactly 5 digits.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (
+      normalizedPaymentMethod !== "venmo" &&
+      normalizedPaymentMethod !== "zelle"
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid payment method.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const requestedRedeemedPoints = Number(redeemedPoints || 0);
+
+    if (
+      !Number.isInteger(requestedRedeemedPoints) ||
+      requestedRedeemedPoints < 0 ||
+      requestedRedeemedPoints % 100 !== 0
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Rewards must be redeemed in increments of 100 points.",
+        },
+        { status: 400 }
+      );
+    }
+
+    /*
+     * Validate every cart item before calculations.
+     */
+    const normalizedCart: CartItem[] = cart.map(
+      (item: CartItem) => ({
+        id: item.id,
+        name: String(item.name || "Product").trim(),
+        price: Number(item.price || 0),
+        quantity: Number(item.quantity || 0),
+        image: item.image,
+      })
+    );
+
+    const invalidCartItem = normalizedCart.some(
+      (item) =>
+        !item.name ||
+        !Number.isFinite(item.price) ||
+        Number(item.price) < 0 ||
+        !Number.isInteger(item.quantity) ||
+        Number(item.quantity) <= 0
+    );
+
+    if (invalidCartItem) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "One or more cart items are invalid.",
+        },
+        { status: 400 }
+      );
+    }
 
     const orderNumber = `APX-${Date.now()}`;
 
-    const serverSubtotal = cart.reduce(
-      (sum: number, item: any) =>
-        sum + Number(item.price || 0) * Number(item.quantity || 0),
-      0
+    /*
+     * Recalculate subtotal on the server.
+     */
+    const serverSubtotal = Number(
+      normalizedCart
+        .reduce(
+          (sum, item) =>
+            sum +
+            Number(item.price || 0) *
+              Number(item.quantity || 0),
+          0
+        )
+        .toFixed(2)
     );
 
-    const normalizedPromoCode = String(promoCode || "").trim().toUpperCase();
-    const discountRate = PROMO_CODES[normalizedPromoCode] || 0;
+    /*
+     * Validate and calculate promo code.
+     */
+    const normalizedPromoCode = String(promoCode || "")
+      .trim()
+      .toUpperCase();
+
+    const discountRate =
+      PROMO_CODES[normalizedPromoCode] || 0;
 
     const serverDiscount = Number(
       (serverSubtotal * discountRate).toFixed(2)
     );
 
-    const appliedPromoCode = discountRate > 0 ? normalizedPromoCode : "";
+    const appliedPromoCode =
+      discountRate > 0 ? normalizedPromoCode : "";
 
+    /*
+     * Calculate shipping.
+     */
     const freeShippingThreshold = 200;
     const standardShipping = 5.99;
 
     const serverShipping =
-      serverSubtotal > 0 && serverSubtotal < freeShippingThreshold
+      serverSubtotal > 0 &&
+      serverSubtotal < freeShippingThreshold
         ? standardShipping
         : 0;
 
+    /*
+     * Rewards values.
+     */
+    let authenticatedUserId: string | null = null;
+    let recordedPointBalance = 0;
+    let reservedPoints = 0;
+    let availablePoints = 0;
+    let validatedRedeemedPoints = 0;
+    let rewardDiscount = 0;
+
+    /*
+     * Only authenticate and validate points when the customer
+     * requests a reward.
+     */
+    if (requestedRedeemedPoints > 0) {
+      const authorizationHeader =
+        request.headers.get("authorization");
+
+      const accessToken =
+        authorizationHeader?.startsWith("Bearer ")
+          ? authorizationHeader.slice(7)
+          : null;
+
+      if (!accessToken) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "You must be signed in to redeem Apexx Rewards.",
+          },
+          { status: 401 }
+        );
+      }
+
+      const {
+        data: { user },
+        error: userError,
+      } = await supabaseAdmin.auth.getUser(accessToken);
+
+      if (userError || !user?.email) {
+        console.error(
+          "Reward authentication error:",
+          userError
+        );
+
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "Your account session could not be verified. Please log in again.",
+          },
+          { status: 401 }
+        );
+      }
+
+      const authenticatedEmail = user.email
+        .trim()
+        .toLowerCase();
+
+      if (
+        authenticatedEmail !== normalizedCustomerEmail
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "The checkout email must match your signed-in Apexx account.",
+          },
+          { status: 403 }
+        );
+      }
+
+      authenticatedUserId = user.id;
+
+      /*
+       * Calculate the actual point balance from the ledger.
+       */
+      const {
+        data: pointTransactions,
+        error: pointsError,
+      } = await supabaseAdmin
+        .from("point_transactions")
+        .select("points")
+        .eq("user_id", user.id);
+
+      if (pointsError) {
+        console.error(
+          "Point balance lookup error:",
+          pointsError
+        );
+
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "Your rewards balance could not be verified.",
+          },
+          { status: 500 }
+        );
+      }
+
+      recordedPointBalance = (
+        pointTransactions || []
+      ).reduce(
+        (sum, transaction) =>
+          sum + Number(transaction.points || 0),
+        0
+      );
+
+      /*
+       * Find points already reserved on active orders.
+       *
+       * This prevents the customer from using the same points
+       * on multiple awaiting-payment orders.
+       */
+      const {
+        data: reservedOrders,
+        error: reservedOrdersError,
+      } = await supabaseAdmin
+        .from("orders")
+        .select("redeemed_points, status")
+        .eq(
+          "customer_email",
+          normalizedCustomerEmail
+        )
+        .in("status", [
+          "awaiting_payment",
+          "paid",
+          "processing",
+        ]);
+
+      if (reservedOrdersError) {
+        console.error(
+          "Reserved rewards lookup error:",
+          reservedOrdersError
+        );
+
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "Reserved rewards could not be verified.",
+          },
+          { status: 500 }
+        );
+      }
+
+      reservedPoints = (
+        reservedOrders || []
+      ).reduce(
+        (sum, reservedOrder) =>
+          sum +
+          Number(
+            reservedOrder.redeemed_points || 0
+          ),
+        0
+      );
+
+      availablePoints = Math.max(
+        0,
+        recordedPointBalance - reservedPoints
+      );
+
+      if (
+        requestedRedeemedPoints > availablePoints
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: `You currently have ${availablePoints} available reward points.`,
+          },
+          { status: 400 }
+        );
+      }
+
+      /*
+       * Rewards apply after promotional discounts.
+       *
+       * Rewards cannot reduce the merchandise amount below $0
+       * and do not cover shipping.
+       */
+      const merchandiseAfterPromo = Math.max(
+        0,
+        serverSubtotal - serverDiscount
+      );
+
+      const maximumPointsForOrder =
+        Math.floor(
+          merchandiseAfterPromo / 10
+        ) * 100;
+
+      if (
+        requestedRedeemedPoints >
+        maximumPointsForOrder
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: `This order can use a maximum of ${maximumPointsForOrder} reward points.`,
+          },
+          { status: 400 }
+        );
+      }
+
+      validatedRedeemedPoints =
+        requestedRedeemedPoints;
+
+      /*
+       * 100 points = $10.
+       * Therefore 10 points = $1.
+       */
+      rewardDiscount = Number(
+        (
+          validatedRedeemedPoints / 10
+        ).toFixed(2)
+      );
+    }
+
+    /*
+     * Calculate final server total.
+     */
     const serverTotal = Number(
-      (serverSubtotal - serverDiscount + serverShipping).toFixed(2)
+      Math.max(
+        0,
+        serverSubtotal -
+          serverDiscount -
+          rewardDiscount +
+          serverShipping
+      ).toFixed(2)
     );
 
-    const vialCount = cart.reduce((total: number, item: any) => {
-      const isBacWater = String(item.name || "").toLowerCase().includes("bac");
-      return isBacWater ? total : total + Number(item.quantity || 0);
-    }, 0);
+    /*
+     * Determine whether the order receives complimentary
+     * bacteriostatic water.
+     */
+    const vialCount = normalizedCart.reduce(
+      (total: number, item: CartItem) => {
+        const isBacWater = String(
+          item.name || ""
+        )
+          .toLowerCase()
+          .includes("bac");
 
-    const serverFreeBacWater = vialCount >= 4;
+        return isBacWater
+          ? total
+          : total + Number(item.quantity || 0);
+      },
+      0
+    );
 
-    const { data: order, error: orderInsertError } = await supabaseAdmin
+    const serverFreeBacWater =
+      vialCount >= 4;
+
+    /*
+     * Create the order.
+     *
+     * Points are reserved on the order but are not deducted
+     * from point_transactions until shipment.
+     */
+    const {
+      data: order,
+      error: orderInsertError,
+    } = await supabaseAdmin
       .from("orders")
       .insert([
         {
           order_number: orderNumber,
-          customer_email: customerEmail.trim().toLowerCase(),
-          first_name: firstName,
-          last_name: lastName,
-          address,
-          city,
-          state,
-          zip_code: zipCode,
-          payment_method: paymentMethod,
-          cart,
+          customer_email:
+            normalizedCustomerEmail,
+          first_name: normalizedFirstName,
+          last_name: normalizedLastName,
+          address: normalizedAddress,
+          city: normalizedCity,
+          state: normalizedState,
+          zip_code: normalizedZipCode,
+          payment_method:
+            normalizedPaymentMethod,
+          cart: normalizedCart,
           subtotal: serverSubtotal,
           shipping: serverShipping,
           discount: serverDiscount,
           promo_code: appliedPromoCode,
+          redeemed_points:
+            validatedRedeemedPoints,
+          reward_discount: rewardDiscount,
           total: serverTotal,
           status: "awaiting_payment",
         },
@@ -92,39 +494,78 @@ export async function POST(request: Request) {
       .select()
       .single();
 
-    if (orderInsertError) {
-      console.error("Supabase order insert error:", orderInsertError);
+    if (orderInsertError || !order) {
+      console.error(
+        "Supabase order insert error:",
+        orderInsertError
+      );
 
       return NextResponse.json(
-        { success: false, error: orderInsertError.message },
+        {
+          success: false,
+          error:
+            orderInsertError?.message ||
+            "Failed to create order.",
+        },
         { status: 500 }
       );
     }
 
-    const itemsHtml = cart
+    /*
+     * Build order item HTML.
+     */
+    const itemsHtml = normalizedCart
       .map(
-        (item: any) =>
-          `<li style="margin-bottom:8px;">${item.name} x ${
-            item.quantity
-          } — $${(Number(item.price || 0) * Number(item.quantity || 0)).toFixed(
-            2
-          )}</li>`
+        (item: CartItem) =>
+          `<li style="margin-bottom:8px;">
+            ${item.name} x ${item.quantity}
+            — $${(
+              Number(item.price || 0) *
+              Number(item.quantity || 0)
+            ).toFixed(2)}
+          </li>`
       )
       .join("");
 
     const promoHtml = appliedPromoCode
       ? `
-        <p style="margin:0;"><strong>Promo Code:</strong> ${appliedPromoCode}</p>
-        <p style="margin:0;"><strong>Discount:</strong> -$${Number(
-          serverDiscount
-        ).toFixed(2)}</p>
+        <p style="margin:0;">
+          <strong>Promo Code:</strong>
+          ${appliedPromoCode}
+        </p>
+
+        <p style="margin:0;">
+          <strong>Promo Discount:</strong>
+          -$${serverDiscount.toFixed(2)}
+        </p>
       `
       : "";
 
-    await resend.emails.send({
+    const rewardHtml =
+      validatedRedeemedPoints > 0
+        ? `
+          <p style="margin:0; color:#16a34a;">
+            <strong>Apexx Rewards:</strong>
+            ${validatedRedeemedPoints} points
+          </p>
+
+          <p style="margin:0; color:#16a34a;">
+            <strong>Reward Discount:</strong>
+            -$${rewardDiscount.toFixed(2)}
+          </p>
+        `
+        : "";
+
+    /*
+     * Send customer order confirmation.
+     */
+    const {
+      error: customerEmailError,
+    } = await resend.emails.send({
       from: "Apexx Biolabs <orders@apexxbiolabs.com>",
-      to: customerEmail,
-      subject: `Apexx Biolabs Order Confirmation • Payment Awaiting`,
+      to: normalizedCustomerEmail,
+      subject:
+        "Apexx Biolabs Order Confirmation • Payment Awaiting",
       html: `
         <div style="margin:0; padding:0; background:#f8fbff; font-family:Arial, Helvetica, sans-serif;">
           <div style="max-width:720px; margin:0 auto; padding:28px 16px;">
@@ -169,7 +610,7 @@ export async function POST(request: Request) {
                   </p>
 
                   <p style="margin:0; color:#0f172a !important; font-size:50px; font-weight:900;">
-                    $${Number(serverTotal).toFixed(2)}
+                    $${serverTotal.toFixed(2)}
                   </p>
                 </div>
 
@@ -179,14 +620,15 @@ export async function POST(request: Request) {
                   </h3>
 
                   ${
-                    paymentMethod === "venmo"
+                    normalizedPaymentMethod ===
+                    "venmo"
                       ? `
                         <div style="text-align:center;">
                           <p style="color:#475569; line-height:1.6; margin:0 0 16px;">
                             Tap below to complete your Venmo payment.
                           </p>
 
-                          <a 
+                          <a
                             href="https://venmo.com/u/apexx-biolabs"
                             style="display:inline-block; background:#06111f; color:#ffffff; padding:16px 30px; border-radius:999px; text-decoration:none; font-weight:900; font-size:15px; letter-spacing:1px; text-transform:uppercase; margin:12px 0;"
                           >
@@ -194,7 +636,8 @@ export async function POST(request: Request) {
                           </a>
 
                           <p style="margin:16px 0 0; color:#2563eb; font-size:15px;">
-                            Venmo: <strong>@apexx-biolabs</strong>
+                            Venmo:
+                            <strong>@apexx-biolabs</strong>
                           </p>
                         </div>
                       `
@@ -202,7 +645,8 @@ export async function POST(request: Request) {
                   }
 
                   ${
-                    paymentMethod === "zelle"
+                    normalizedPaymentMethod ===
+                    "zelle"
                       ? `
                         <div style="text-align:center;">
                           <p style="color:#475569; line-height:1.6; margin:0 0 18px;">
@@ -218,7 +662,7 @@ export async function POST(request: Request) {
                               Scan Zelle QR Code
                             </h4>
 
-                            <img 
+                            <img
                               src="https://apexxbiolabs.com/images/zelle-qr.png"
                               alt="Apexx Biolabs Zelle QR Code"
                               width="200"
@@ -226,7 +670,10 @@ export async function POST(request: Request) {
                             />
 
                             <p style="margin:0; color:#64748b; font-size:13px; line-height:1.5;">
-                              Recipient should show as <strong style="color:#06111f;">APEXX BIOLABS LLC</strong>.
+                              Recipient should show as
+                              <strong style="color:#06111f;">
+                                APEXX BIOLABS LLC
+                              </strong>.
                             </p>
                           </div>
 
@@ -288,9 +735,18 @@ export async function POST(request: Request) {
                   </ul>
 
                   <div style="border-top:1px solid #dbeafe; padding-top:16px; color:#334155; line-height:1.8;">
-                    <p style="margin:0;"><strong>Subtotal:</strong> $${Number(serverSubtotal).toFixed(2)}</p>
-                    <p style="margin:0;"><strong>Shipping:</strong> $${Number(serverShipping).toFixed(2)}</p>
+                    <p style="margin:0;">
+                      <strong>Subtotal:</strong>
+                      $${serverSubtotal.toFixed(2)}
+                    </p>
+
+                    <p style="margin:0;">
+                      <strong>Shipping:</strong>
+                      $${serverShipping.toFixed(2)}
+                    </p>
+
                     ${promoHtml}
+                    ${rewardHtml}
 
                     ${
                       serverFreeBacWater
@@ -303,10 +759,29 @@ export async function POST(request: Request) {
                     }
 
                     <p style="margin:12px 0 0; color:#06111f; font-size:19px;">
-                      <strong>Total:</strong> $${Number(serverTotal).toFixed(2)}
+                      <strong>Total:</strong>
+                      $${serverTotal.toFixed(2)}
                     </p>
                   </div>
                 </div>
+
+                ${
+                  validatedRedeemedPoints > 0
+                    ? `
+                      <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe); border:1px solid #93c5fd; border-radius:20px; padding:22px; margin-bottom:30px;">
+                        <h3 style="margin:0 0 10px; color:#06111f; font-size:18px;">
+                          Apexx Rewards Applied
+                        </h3>
+
+                        <p style="margin:0; color:#475569; line-height:1.7;">
+                          You selected ${validatedRedeemedPoints} points for a $${rewardDiscount.toFixed(
+                        2
+                      )} discount. These points are reserved for this order and will be finalized once the order ships.
+                        </p>
+                      </div>
+                    `
+                    : ""
+                }
 
                 <div style="background:#ffffff; border:1px solid #dbeafe; border-radius:20px; padding:22px; margin-bottom:30px;">
                   <h3 style="margin:0 0 12px; color:#06111f; font-size:18px;">
@@ -341,60 +816,152 @@ export async function POST(request: Request) {
       `,
     });
 
-    await resend.emails.send({
+    if (customerEmailError) {
+      console.error(
+        "Customer confirmation email error:",
+        customerEmailError
+      );
+    }
+
+    /*
+     * Send administrator order notification.
+     */
+    const {
+      error: adminEmailError,
+    } = await resend.emails.send({
       from: "Apexx Biolabs <orders@apexxbiolabs.com>",
       to: "orders@apexxbiolabs.com",
       subject: `New Apexx Order ${orderNumber}`,
       html: `
         <h2>New Order Received</h2>
 
-        <p><strong>Order Number:</strong> ${orderNumber}</p>
-        <p><strong>Customer:</strong> ${firstName} ${lastName}</p>
-        <p><strong>Email:</strong> ${customerEmail}</p>
-
-        <h3>Shipping Address</h3>
         <p>
-          ${address}<br/>
-          ${city}, ${state} ${zipCode}
+          <strong>Order Number:</strong>
+          ${orderNumber}
         </p>
 
-        <p><strong>Payment Method:</strong> ${paymentMethod}</p>
+        <p>
+          <strong>Customer:</strong>
+          ${normalizedFirstName} ${normalizedLastName}
+        </p>
+
+        <p>
+          <strong>Email:</strong>
+          ${normalizedCustomerEmail}
+        </p>
+
+        <h3>Shipping Address</h3>
+
+        <p>
+          ${normalizedAddress}<br/>
+          ${normalizedCity}, ${normalizedState}
+          ${normalizedZipCode}
+        </p>
+
+        <p>
+          <strong>Payment Method:</strong>
+          ${normalizedPaymentMethod}
+        </p>
 
         <h3>Order Items</h3>
-        <ul>${itemsHtml}</ul>
 
-        <p><strong>Subtotal:</strong> $${Number(serverSubtotal).toFixed(2)}</p>
-        <p><strong>Shipping:</strong> $${Number(serverShipping).toFixed(2)}</p>
+        <ul>
+          ${itemsHtml}
+        </ul>
+
+        <p>
+          <strong>Subtotal:</strong>
+          $${serverSubtotal.toFixed(2)}
+        </p>
+
+        <p>
+          <strong>Shipping:</strong>
+          $${serverShipping.toFixed(2)}
+        </p>
 
         ${
           appliedPromoCode
             ? `
-              <p><strong>Promo Code:</strong> ${appliedPromoCode}</p>
-              <p><strong>Discount:</strong> -$${Number(serverDiscount).toFixed(2)}</p>
+              <p>
+                <strong>Promo Code:</strong>
+                ${appliedPromoCode}
+              </p>
+
+              <p>
+                <strong>Promo Discount:</strong>
+                -$${serverDiscount.toFixed(2)}
+              </p>
             `
             : ""
         }
 
-        <p><strong>Total:</strong> $${Number(serverTotal).toFixed(2)}</p>
+        ${
+          validatedRedeemedPoints > 0
+            ? `
+              <p>
+                <strong>Rewards Redeemed:</strong>
+                ${validatedRedeemedPoints} points
+              </p>
+
+              <p>
+                <strong>Reward Discount:</strong>
+                -$${rewardDiscount.toFixed(2)}
+              </p>
+
+              <p style="color:#2563eb; font-weight:bold;">
+                Reward points are reserved and should be finalized when this order ships.
+              </p>
+            `
+            : ""
+        }
+
+        <p>
+          <strong>Total:</strong>
+          $${serverTotal.toFixed(2)}
+        </p>
 
         ${
           serverFreeBacWater
-            ? `<p style="color:green; font-weight:bold;">✓ INCLUDE 1 FREE BAC WATER WITH THIS ORDER</p>`
+            ? `
+              <p style="color:green; font-weight:bold;">
+                ✓ INCLUDE 1 FREE BAC WATER WITH THIS ORDER
+              </p>
+            `
             : ""
         }
       `,
     });
 
+    if (adminEmailError) {
+      console.error(
+        "Admin order email error:",
+        adminEmailError
+      );
+    }
+
     return NextResponse.json({
       success: true,
       orderNumber,
       order,
+      redeemedPoints:
+        validatedRedeemedPoints,
+      rewardDiscount,
+      total: serverTotal,
+      remainingAvailablePoints:
+        authenticatedUserId &&
+        validatedRedeemedPoints > 0
+          ? availablePoints -
+            validatedRedeemedPoints
+          : null,
     });
   } catch (error) {
-    console.error("Order email error:", error);
+    console.error("Order submission error:", error);
 
     return NextResponse.json(
-      { success: false, error: "Failed to submit order" },
+      {
+        success: false,
+        error: "Failed to submit order.",
+      },
       { status: 500 }
     );
   }

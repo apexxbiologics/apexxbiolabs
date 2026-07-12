@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     } = body;
 
     /*
-     * Validate the required checkout information.
+     * Validate checkout information.
      */
     if (
       !customerEmail ||
@@ -80,6 +80,7 @@ export async function POST(request: Request) {
     const normalizedCity = String(city).trim();
     const normalizedState = String(state).trim().toUpperCase();
     const normalizedZipCode = String(zipCode).trim();
+
     const normalizedPaymentMethod = String(paymentMethod)
       .trim()
       .toLowerCase();
@@ -107,6 +108,9 @@ export async function POST(request: Request) {
       );
     }
 
+    /*
+     * Validate the requested rewards amount.
+     */
     const requestedRedeemedPoints = Number(redeemedPoints || 0);
 
     if (
@@ -125,17 +129,15 @@ export async function POST(request: Request) {
     }
 
     /*
-     * Validate every cart item before calculations.
+     * Validate cart items.
      */
-    const normalizedCart: CartItem[] = cart.map(
-      (item: CartItem) => ({
-        id: item.id,
-        name: String(item.name || "Product").trim(),
-        price: Number(item.price || 0),
-        quantity: Number(item.quantity || 0),
-        image: item.image,
-      })
-    );
+    const normalizedCart: CartItem[] = cart.map((item: CartItem) => ({
+      id: item.id,
+      name: String(item.name || "Product").trim(),
+      price: Number(item.price || 0),
+      quantity: Number(item.quantity || 0),
+      image: item.image,
+    }));
 
     const invalidCartItem = normalizedCart.some(
       (item) =>
@@ -159,7 +161,7 @@ export async function POST(request: Request) {
     const orderNumber = `APX-${Date.now()}`;
 
     /*
-     * Recalculate subtotal on the server.
+     * Calculate the subtotal on the server.
      */
     const serverSubtotal = Number(
       normalizedCart
@@ -174,7 +176,7 @@ export async function POST(request: Request) {
     );
 
     /*
-     * Validate and calculate promo code.
+     * Validate and calculate the promo code.
      */
     const normalizedPromoCode = String(promoCode || "")
       .trim()
@@ -207,14 +209,12 @@ export async function POST(request: Request) {
      */
     let authenticatedUserId: string | null = null;
     let recordedPointBalance = 0;
-    let reservedPoints = 0;
     let availablePoints = 0;
     let validatedRedeemedPoints = 0;
     let rewardDiscount = 0;
 
     /*
-     * Only authenticate and validate points when the customer
-     * requests a reward.
+     * Authenticate and validate the account when rewards are used.
      */
     if (requestedRedeemedPoints > 0) {
       const authorizationHeader =
@@ -261,9 +261,7 @@ export async function POST(request: Request) {
         .trim()
         .toLowerCase();
 
-      if (
-        authenticatedEmail !== normalizedCustomerEmail
-      ) {
+      if (authenticatedEmail !== normalizedCustomerEmail) {
         return NextResponse.json(
           {
             success: false,
@@ -277,7 +275,7 @@ export async function POST(request: Request) {
       authenticatedUserId = user.id;
 
       /*
-       * Calculate the actual point balance from the ledger.
+       * Calculate the customer's current point balance.
        */
       const {
         data: pointTransactions,
@@ -311,63 +309,12 @@ export async function POST(request: Request) {
         0
       );
 
-      /*
-       * Find points already reserved on active orders.
-       *
-       * This prevents the customer from using the same points
-       * on multiple awaiting-payment orders.
-       */
-      const {
-        data: reservedOrders,
-        error: reservedOrdersError,
-      } = await supabaseAdmin
-        .from("orders")
-        .select("redeemed_points, status")
-        .eq(
-          "customer_email",
-          normalizedCustomerEmail
-        )
-        .in("status", [
-          "awaiting_payment",
-          "paid",
-          "processing",
-        ]);
-
-      if (reservedOrdersError) {
-        console.error(
-          "Reserved rewards lookup error:",
-          reservedOrdersError
-        );
-
-        return NextResponse.json(
-          {
-            success: false,
-            error:
-              "Reserved rewards could not be verified.",
-          },
-          { status: 500 }
-        );
-      }
-
-      reservedPoints = (
-        reservedOrders || []
-      ).reduce(
-        (sum, reservedOrder) =>
-          sum +
-          Number(
-            reservedOrder.redeemed_points || 0
-          ),
-        0
-      );
-
       availablePoints = Math.max(
         0,
-        recordedPointBalance - reservedPoints
+        recordedPointBalance
       );
 
-      if (
-        requestedRedeemedPoints > availablePoints
-      ) {
+      if (requestedRedeemedPoints > availablePoints) {
         return NextResponse.json(
           {
             success: false,
@@ -378,10 +325,8 @@ export async function POST(request: Request) {
       }
 
       /*
-       * Rewards apply after promotional discounts.
-       *
-       * Rewards cannot reduce the merchandise amount below $0
-       * and do not cover shipping.
+       * Rewards apply after the promotional discount.
+       * Rewards cannot cover shipping or reduce merchandise below $0.
        */
       const merchandiseAfterPromo = Math.max(
         0,
@@ -389,9 +334,7 @@ export async function POST(request: Request) {
       );
 
       const maximumPointsForOrder =
-        Math.floor(
-          merchandiseAfterPromo / 10
-        ) * 100;
+        Math.floor(merchandiseAfterPromo / 10) * 100;
 
       if (
         requestedRedeemedPoints >
@@ -411,17 +354,14 @@ export async function POST(request: Request) {
 
       /*
        * 100 points = $10.
-       * Therefore 10 points = $1.
        */
       rewardDiscount = Number(
-        (
-          validatedRedeemedPoints / 10
-        ).toFixed(2)
+        (validatedRedeemedPoints / 10).toFixed(2)
       );
     }
 
     /*
-     * Calculate final server total.
+     * Calculate the final total.
      */
     const serverTotal = Number(
       Math.max(
@@ -434,14 +374,11 @@ export async function POST(request: Request) {
     );
 
     /*
-     * Determine whether the order receives complimentary
-     * bacteriostatic water.
+     * Determine whether free Bac Water applies.
      */
     const vialCount = normalizedCart.reduce(
       (total: number, item: CartItem) => {
-        const isBacWater = String(
-          item.name || ""
-        )
+        const isBacWater = String(item.name || "")
           .toLowerCase()
           .includes("bac");
 
@@ -452,14 +389,10 @@ export async function POST(request: Request) {
       0
     );
 
-    const serverFreeBacWater =
-      vialCount >= 4;
+    const serverFreeBacWater = vialCount >= 4;
 
     /*
      * Create the order.
-     *
-     * Points are reserved on the order but are not deducted
-     * from point_transactions until shipment.
      */
     const {
       data: order,
@@ -469,23 +402,20 @@ export async function POST(request: Request) {
       .insert([
         {
           order_number: orderNumber,
-          customer_email:
-            normalizedCustomerEmail,
+          customer_email: normalizedCustomerEmail,
           first_name: normalizedFirstName,
           last_name: normalizedLastName,
           address: normalizedAddress,
           city: normalizedCity,
           state: normalizedState,
           zip_code: normalizedZipCode,
-          payment_method:
-            normalizedPaymentMethod,
+          payment_method: normalizedPaymentMethod,
           cart: normalizedCart,
           subtotal: serverSubtotal,
           shipping: serverShipping,
           discount: serverDiscount,
           promo_code: appliedPromoCode,
-          redeemed_points:
-            validatedRedeemedPoints,
+          redeemed_points: validatedRedeemedPoints,
           reward_discount: rewardDiscount,
           total: serverTotal,
           status: "awaiting_payment",
@@ -509,6 +439,142 @@ export async function POST(request: Request) {
         },
         { status: 500 }
       );
+    }
+
+    /*
+     * Immediately deduct redeemed points after the order is created.
+     */
+    if (
+      validatedRedeemedPoints > 0 &&
+      authenticatedUserId
+    ) {
+      /*
+       * Recheck the balance before inserting the redemption.
+       */
+      const {
+        data: latestTransactions,
+        error: latestBalanceError,
+      } = await supabaseAdmin
+        .from("point_transactions")
+        .select("points")
+        .eq("user_id", authenticatedUserId);
+
+      if (latestBalanceError) {
+        console.error(
+          "Final rewards balance lookup error:",
+          latestBalanceError
+        );
+
+        await supabaseAdmin
+          .from("orders")
+          .delete()
+          .eq("id", order.id);
+
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "Your rewards balance could not be confirmed. Please try again.",
+          },
+          { status: 500 }
+        );
+      }
+
+      const latestPointBalance = (
+        latestTransactions || []
+      ).reduce(
+        (sum, transaction) =>
+          sum + Number(transaction.points || 0),
+        0
+      );
+
+      if (
+        validatedRedeemedPoints >
+        Math.max(0, latestPointBalance)
+      ) {
+        await supabaseAdmin
+          .from("orders")
+          .delete()
+          .eq("id", order.id);
+
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "Your available rewards balance changed. Please refresh checkout and try again.",
+          },
+          { status: 400 }
+        );
+      }
+
+      const {
+        error: redemptionInsertError,
+      } = await supabaseAdmin
+        .from("point_transactions")
+        .insert({
+          user_id: authenticatedUserId,
+          order_id: order.id,
+          points: -validatedRedeemedPoints,
+          type: "redeemed",
+          description: `Rewards redeemed on order ${order.order_number}`,
+        });
+
+      if (redemptionInsertError) {
+        console.error(
+          "Immediate reward redemption error:",
+          redemptionInsertError
+        );
+
+        /*
+         * Delete the order if the points could not be deducted.
+         * This prevents a discounted order from existing without
+         * a matching redemption transaction.
+         */
+        await supabaseAdmin
+          .from("orders")
+          .delete()
+          .eq("id", order.id);
+
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "Your reward points could not be redeemed. Please try again.",
+          },
+          { status: 500 }
+        );
+      }
+    }
+
+    /*
+     * Calculate the updated rewards balance.
+     */
+    let updatedPointsBalance: number | null = null;
+
+    if (authenticatedUserId) {
+      const {
+        data: updatedTransactions,
+        error: updatedBalanceError,
+      } = await supabaseAdmin
+        .from("point_transactions")
+        .select("points")
+        .eq("user_id", authenticatedUserId);
+
+      if (updatedBalanceError) {
+        console.error(
+          "Updated reward balance error:",
+          updatedBalanceError
+        );
+      } else {
+        updatedPointsBalance = Math.max(
+          0,
+          (updatedTransactions || []).reduce(
+            (sum, transaction) =>
+              sum + Number(transaction.points || 0),
+            0
+          )
+        );
+      }
     }
 
     /*
@@ -553,11 +619,22 @@ export async function POST(request: Request) {
             <strong>Reward Discount:</strong>
             -$${rewardDiscount.toFixed(2)}
           </p>
+
+          ${
+            updatedPointsBalance !== null
+              ? `
+                <p style="margin:0; color:#2563eb;">
+                  <strong>Remaining Balance:</strong>
+                  ${updatedPointsBalance} points
+                </p>
+              `
+              : ""
+          }
         `
         : "";
 
     /*
-     * Send customer order confirmation.
+     * Send the customer confirmation email.
      */
     const {
       error: customerEmailError,
@@ -600,7 +677,9 @@ export async function POST(request: Request) {
                   </p>
 
                   <p style="margin:18px auto 0; max-width:500px; color:#475569; font-size:15px; line-height:1.7;">
-                    Thank you for choosing Apexx Biolabs. Your order has been successfully received and is awaiting payment verification before processing and fulfillment.
+                    Thank you for choosing Apexx Biolabs. Your order has
+                    been successfully received and is awaiting payment
+                    verification before processing and fulfillment.
                   </p>
                 </div>
 
@@ -620,8 +699,7 @@ export async function POST(request: Request) {
                   </h3>
 
                   ${
-                    normalizedPaymentMethod ===
-                    "venmo"
+                    normalizedPaymentMethod === "venmo"
                       ? `
                         <div style="text-align:center;">
                           <p style="color:#475569; line-height:1.6; margin:0 0 16px;">
@@ -645,12 +723,13 @@ export async function POST(request: Request) {
                   }
 
                   ${
-                    normalizedPaymentMethod ===
-                    "zelle"
+                    normalizedPaymentMethod === "zelle"
                       ? `
                         <div style="text-align:center;">
                           <p style="color:#475569; line-height:1.6; margin:0 0 18px;">
-                            You can complete your Zelle payment by scanning the QR code or by sending payment manually using the email below.
+                            You can complete your Zelle payment by scanning
+                            the QR code or by sending payment manually using
+                            the email below.
                           </p>
 
                           <div style="background:#ffffff; border:1px solid #bfdbfe; border-radius:18px; padding:22px; margin:18px 0;">
@@ -710,7 +789,8 @@ export async function POST(request: Request) {
                     </p>
 
                     <p style="margin:10px 0 0; color:#64748b; font-size:13px; line-height:1.5;">
-                      Do not include product names, product descriptions, or extra details in the payment notes.
+                      Do not include product names, product descriptions,
+                      or extra details in the payment notes.
                     </p>
                   </div>
                 </div>
@@ -770,14 +850,25 @@ export async function POST(request: Request) {
                     ? `
                       <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe); border:1px solid #93c5fd; border-radius:20px; padding:22px; margin-bottom:30px;">
                         <h3 style="margin:0 0 10px; color:#06111f; font-size:18px;">
-                          Apexx Rewards Applied
+                          Apexx Rewards Redeemed
                         </h3>
 
                         <p style="margin:0; color:#475569; line-height:1.7;">
-                          You selected ${validatedRedeemedPoints} points for a $${rewardDiscount.toFixed(
-                        2
-                      )} discount. These points are reserved for this order and will be finalized once the order ships.
+                          ${validatedRedeemedPoints} points were deducted
+                          from your rewards balance for a
+                          $${rewardDiscount.toFixed(2)} discount.
                         </p>
+
+                        ${
+                          updatedPointsBalance !== null
+                            ? `
+                              <p style="margin:12px 0 0; color:#1e3a8a; font-weight:bold;">
+                                Remaining balance:
+                                ${updatedPointsBalance} points
+                              </p>
+                            `
+                            : ""
+                        }
                       </div>
                     `
                     : ""
@@ -789,7 +880,9 @@ export async function POST(request: Request) {
                   </h3>
 
                   <p style="margin:0; color:#475569; line-height:1.7;">
-                    Once payment is verified, your order will be prepared for shipment. Tracking information will be emailed once your order has been dispatched.
+                    Once payment is verified, your order will be prepared
+                    for shipment. Tracking information will be emailed once
+                    your order has been dispatched.
                   </p>
                 </div>
 
@@ -799,8 +892,10 @@ export async function POST(request: Request) {
 
                 <div style="border-top:1px solid #dbeafe; padding-top:24px;">
                   <p style="font-size:12px; color:#64748b; line-height:1.6; margin:0;">
-                    Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only.
-                    Not for human consumption, medical use, veterinary use, diagnosis, treatment, cure, or prevention of disease.
+                    Products sold by Apexx Biolabs are intended strictly
+                    for lawful laboratory research use only. Not for human
+                    consumption, medical use, veterinary use, diagnosis,
+                    treatment, cure, or prevention of disease.
                   </p>
 
                   <p style="margin:24px 0 0; color:#334155; line-height:1.6;">
@@ -824,7 +919,7 @@ export async function POST(request: Request) {
     }
 
     /*
-     * Send administrator order notification.
+     * Send the administrator notification.
      */
     const {
       error: adminEmailError,
@@ -908,8 +1003,8 @@ export async function POST(request: Request) {
                 -$${rewardDiscount.toFixed(2)}
               </p>
 
-              <p style="color:#2563eb; font-weight:bold;">
-                Reward points are reserved and should be finalized when this order ships.
+              <p style="color:#16a34a; font-weight:bold;">
+                Reward points were deducted immediately when the order was placed.
               </p>
             `
             : ""
@@ -943,19 +1038,17 @@ export async function POST(request: Request) {
       success: true,
       orderNumber,
       order,
-      redeemedPoints:
-        validatedRedeemedPoints,
+      redeemedPoints: validatedRedeemedPoints,
       rewardDiscount,
       total: serverTotal,
       remainingAvailablePoints:
-        authenticatedUserId &&
-        validatedRedeemedPoints > 0
-          ? availablePoints -
-            validatedRedeemedPoints
-          : null,
+        updatedPointsBalance,
     });
   } catch (error) {
-    console.error("Order submission error:", error);
+    console.error(
+      "Order submission error:",
+      error
+    );
 
     return NextResponse.json(
       {

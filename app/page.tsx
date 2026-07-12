@@ -37,6 +37,20 @@ const [searchTerm, setSearchTerm] = useState("");
 const [promoEmail, setPromoEmail] = useState("");
 const [promoStatus, setPromoStatus] = useState("");
 const [reviews, setReviews] = useState<any[]>([]);
+
+// Prevent the homepage from shifting horizontally on mobile browsers.
+useEffect(() => {
+  const previousHtmlOverflowX = document.documentElement.style.overflowX;
+  const previousBodyOverflowX = document.body.style.overflowX;
+
+  document.documentElement.style.overflowX = "hidden";
+  document.body.style.overflowX = "hidden";
+
+  return () => {
+    document.documentElement.style.overflowX = previousHtmlOverflowX;
+    document.body.style.overflowX = previousBodyOverflowX;
+  };
+}, []);
 const startProductScroll = (direction: "left" | "right") => {
   stopProductScroll();
 
@@ -200,13 +214,13 @@ const handlePromoSignup = async (e: React.FormEvent) => {
   return (
     <>
 {!accepted && (
-  <div className="fixed inset-0 z-[9999] bg-[#020817] overflow-y-auto px-4 py-8">
+  <div className="fixed inset-0 z-[9999] w-full max-w-[100vw] overflow-x-hidden overflow-y-auto bg-[#020817] px-4 py-8">
 
     <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.18),transparent_55%)]" />
 
-    <div className="relative min-h-screen flex items-start md:items-center justify-center">
+    <div className="relative flex min-h-screen w-full min-w-0 items-start justify-center md:items-center">
 
-      <div className="w-full max-w-3xl rounded-[36px] border border-blue-400/20 bg-gradient-to-b from-[#0f1d33] to-[#081526] shadow-[0_0_80px_rgba(59,130,246,0.22)] overflow-hidden">
+      <div className="w-full min-w-0 max-w-3xl overflow-hidden rounded-[36px] border border-blue-400/20 bg-gradient-to-b from-[#0f1d33] to-[#081526] shadow-[0_0_80px_rgba(59,130,246,0.22)]">
 
         {/* Glow */}
 <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.18),transparent_55%)]" />
@@ -312,10 +326,10 @@ const handlePromoSignup = async (e: React.FormEvent) => {
   </div>
 )}
 
-<div className="min-h-screen bg-[#081526] text-white">
+<div className="min-h-screen w-full max-w-[100vw] overflow-x-clip bg-[#081526] text-white">
 
 {/* HERO */}
-<section className="relative pt-8 pb-24 px-6 bg-[#081526] overflow-hidden">
+<section className="relative w-full max-w-full overflow-hidden bg-[#081526] px-4 pb-24 pt-8 sm:px-6">
   {/* Free Shipping Banner */}
   <div className="relative z-20 mb-4 rounded-full border border-blue-400/30 bg-blue-500/10 px-6 py-4 text-center backdrop-blur-sm max-w-5xl mx-auto">
     <p className="text-blue-100 font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
@@ -356,9 +370,9 @@ const handlePromoSignup = async (e: React.FormEvent) => {
   <div className="absolute inset-0 z-[1] bg-gradient-to-r from-[#081526] via-[#081526]/92 to-transparent" />
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_55%)]" />
 
-  <div className="relative z-10 max-w-7xl mx-auto py-20 flex items-center">
+  <div className="relative z-10 mx-auto flex w-full min-w-0 max-w-7xl items-center py-20">
     <Reveal>
-      <div className="max-w-3xl">
+      <div className="w-full min-w-0 max-w-3xl">
         <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
           Research. Quality. Confidence.
         </p>
@@ -413,10 +427,10 @@ const handlePromoSignup = async (e: React.FormEvent) => {
 </section>
 
 {/* PRODUCTS */}
-<section className="relative py-20">
+<section className="relative w-full max-w-full overflow-hidden px-4 py-20 sm:px-6">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
 
-  <div className="relative z-10 max-w-7xl mx-auto">
+  <div className="relative z-10 mx-auto w-full min-w-0 max-w-7xl">
 
     <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-14">
       <div>
@@ -441,7 +455,7 @@ const handlePromoSignup = async (e: React.FormEvent) => {
       </a>
     </div>
 
-    <div className="relative">
+    <div className="relative w-full min-w-0 max-w-full overflow-hidden">
 
       <button
         onMouseEnter={() => startProductScroll("left")}
@@ -459,7 +473,7 @@ const handlePromoSignup = async (e: React.FormEvent) => {
 
       <div
         ref={productScrollRef}
-        className="flex gap-7 overflow-x-auto scroll-smooth pb-6 px-1 md:px-20 no-scrollbar"
+        className="no-scrollbar flex w-full max-w-full touch-pan-x gap-5 overflow-x-auto overscroll-x-contain scroll-smooth px-1 pb-6 md:gap-7 md:px-20"
       >
         {[
           {
@@ -611,7 +625,7 @@ price: "$75.00",
         ].map((product) => (
           <div
             key={product.name}
-            className="min-w-[290px] md:min-w-[340px] group"
+            className="group w-[82vw] min-w-[82vw] max-w-[290px] sm:w-[290px] sm:min-w-[290px] md:w-[340px] md:min-w-[340px] md:max-w-[340px]"
           >
             <a href={product.href} className="block">
               <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-3 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all">
@@ -676,7 +690,7 @@ price: "$75.00",
 <section className="relative py-20 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
-  <div className="relative z-10 max-w-7xl mx-auto">
+  <div className="relative z-10 mx-auto w-full min-w-0 max-w-7xl">
     <div className="text-center mb-10">
       <p className="uppercase tracking-[0.35em] text-blue-300 text-xs mb-4">
         Why Researchers Choose Apexx Biolabs
@@ -828,7 +842,7 @@ price: "$75.00",
 <section className="relative py-24 px-6 bg-[#081526] border-b border-white/10 overflow-hidden">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
-  <div className="relative z-10 max-w-7xl mx-auto">
+  <div className="relative z-10 mx-auto w-full min-w-0 max-w-7xl">
     <div className="text-center mb-14">
       <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
         Customer Experiences
@@ -1003,20 +1017,20 @@ price: "$75.00",
         research-focused consistency, purity, and transparency.
       </p>
 
-      <div className="grid grid-cols-3 gap-6 mb-10 border-y border-white/10 py-8">
+      <div className="mb-10 grid min-w-0 grid-cols-3 gap-3 border-y border-white/10 py-8 sm:gap-6">
 
         <div>
-          <p className="text-4xl font-black text-white">99%+</p>
+          <p className="text-2xl font-black text-white sm:text-4xl">99%+</p>
           <p className="text-white/50 text-sm mt-2">Purity Target</p>
         </div>
 
         <div>
-          <p className="text-4xl font-black text-white">HPLC</p>
+          <p className="text-2xl font-black text-white sm:text-4xl">HPLC</p>
           <p className="text-white/50 text-sm mt-2">Analysis</p>
         </div>
 
         <div>
-          <p className="text-4xl font-black text-white">COA</p>
+          <p className="text-2xl font-black text-white sm:text-4xl">COA</p>
           <p className="text-white/50 text-sm mt-2">Batch Records</p>
         </div>
       </div>
@@ -1138,7 +1152,7 @@ price: "$75.00",
       </div>
     </div>
 
-    <div className="relative rounded-[40px] overflow-hidden min-h-[650px]">
+    <div className="relative min-h-[520px] w-full min-w-0 max-w-full overflow-hidden rounded-[40px] sm:min-h-[650px]">
       <img
         src="/images/tb500hex.png"
         alt="TB-500"
@@ -1152,7 +1166,7 @@ price: "$75.00",
 
       <a
         href="/coas"
-className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-between bg-[#04111f]/90 rounded-[28px] px-8 py-6"      >
+className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justify-between gap-4 rounded-[28px] bg-[#04111f]/90 px-5 py-5 sm:left-8 sm:right-8 sm:px-8 sm:py-6"      >
         <div>
           <p className="text-white text-2xl font-bold">See the Proof</p>
           <p className="text-white/70">View batch documentation</p>
@@ -1169,7 +1183,7 @@ className="absolute bottom-2 left-8 right-8 z-20 flex items-center justify-betwe
   <section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_55%)]" />
 
-    <div className="relative z-10 max-w-7xl mx-auto">
+    <div className="relative z-10 mx-auto w-full min-w-0 max-w-7xl">
 
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center mb-16">
 

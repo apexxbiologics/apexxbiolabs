@@ -17,26 +17,31 @@ const supabaseAdmin = createClient(
 
 export async function POST(request: Request) {
   try {
-    const { orderId, trackingNumber, carrier } = await request.json();
+    const { orderId, trackingNumber, carrier } =
+      await request.json();
 
     if (!orderId || !trackingNumber || !carrier) {
       return NextResponse.json(
         {
           success: false,
-          error: "Order ID, tracking number, and carrier are required.",
+          error:
+            "Order ID, tracking number, and carrier are required.",
         },
         { status: 400 }
       );
     }
 
-    const cleanedTrackingNumber = String(trackingNumber).trim();
+    const cleanedTrackingNumber =
+      String(trackingNumber).trim();
+
     const cleanedCarrier = String(carrier).trim();
 
     if (!cleanedTrackingNumber) {
       return NextResponse.json(
         {
           success: false,
-          error: "Please enter a valid tracking number.",
+          error:
+            "Please enter a valid tracking number.",
         },
         { status: 400 }
       );
@@ -44,17 +49,21 @@ export async function POST(request: Request) {
 
     /*
      * Load the order before changing it.
-     * This lets us see whether it was already shipped.
      */
-    const { data: existingOrder, error: existingOrderError } =
-      await supabaseAdmin
-        .from("orders")
-        .select("*")
-        .eq("id", orderId)
-        .single();
+    const {
+      data: existingOrder,
+      error: existingOrderError,
+    } = await supabaseAdmin
+      .from("orders")
+      .select("*")
+      .eq("id", orderId)
+      .single();
 
     if (existingOrderError || !existingOrder) {
-      console.error("Order lookup error:", existingOrderError);
+      console.error(
+        "Order lookup error:",
+        existingOrderError
+      );
 
       return NextResponse.json(
         {
@@ -66,7 +75,11 @@ export async function POST(request: Request) {
     }
 
     /*
-     * Only paid or already-shipped orders should be processed.
+     * Only paid or already-shipped orders can be processed.
+     *
+     * Allowing already-shipped orders means tracking can be
+     * updated later, while duplicate point transactions remain
+     * protected by the checks below.
      */
     if (
       existingOrder.status !== "paid" &&
@@ -75,16 +88,20 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          error: "The order must be marked paid before it can be shipped.",
+          error:
+            "The order must be marked paid before it can be shipped.",
         },
         { status: 400 }
       );
     }
 
     /*
-     * Update the tracking information and mark the order shipped.
+     * Mark the order shipped and save tracking information.
      */
-    const { data: order, error: updateError } = await supabaseAdmin
+    const {
+      data: order,
+      error: updateError,
+    } = await supabaseAdmin
       .from("orders")
       .update({
         status: "shipped",
@@ -96,86 +113,200 @@ export async function POST(request: Request) {
       .single();
 
     if (updateError || !order) {
-      console.error("Tracking update error:", updateError);
+      console.error(
+        "Tracking update error:",
+        updateError
+      );
 
       return NextResponse.json(
         {
           success: false,
-          error: "Failed to update tracking information.",
+          error:
+            "Failed to update tracking information.",
         },
         { status: 500 }
       );
     }
 
+    const normalizedCustomerEmail = String(
+      order.customer_email || ""
+    )
+      .trim()
+      .toLowerCase();
+
+    let customerUserId: string | null = null;
+
     let pointsAwarded = 0;
+    let pointsRedeemed = 0;
+
     let pointsMessage = "No points awarded.";
+    let redemptionMessage =
+      "No reward points were redeemed.";
 
     /*
-     * Check whether this order has already earned points.
+     * Find the customer's Supabase account.
      *
-     * Your unique database index also prevents duplicates,
-     * but checking first gives us a cleaner response.
+     * Guest orders still ship, but cannot earn or redeem points.
      */
-    const { data: existingPointsTransaction } = await supabaseAdmin
-      .from("point_transactions")
-      .select("id, points")
-      .eq("order_id", order.id)
-      .eq("type", "earned")
-      .maybeSingle();
+    const {
+      data: usersData,
+      error: usersError,
+    } =
+      await supabaseAdmin.auth.admin.listUsers({
+        page: 1,
+        perPage: 1000,
+      });
 
-    if (existingPointsTransaction) {
-      pointsAwarded = Number(existingPointsTransaction.points || 0);
-      pointsMessage = "Points were already awarded for this order.";
+    if (usersError) {
+      console.error(
+        "Customer account lookup error:",
+        usersError
+      );
+
+      pointsMessage =
+        "Order shipped, but the customer account could not be checked.";
+
+      redemptionMessage =
+        "Order shipped, but reward redemption could not be checked.";
     } else {
-      /*
-       * Locate the customer's Supabase account using their email.
-       */
-      const { data: usersData, error: usersError } =
-        await supabaseAdmin.auth.admin.listUsers({
-          page: 1,
-          perPage: 1000,
-        });
-
-      if (usersError) {
-        console.error("Customer account lookup error:", usersError);
-        pointsMessage =
-          "Order shipped, but the customer account could not be checked.";
-      } else {
-        const normalizedCustomerEmail = String(
-          order.customer_email || ""
-        )
-          .trim()
-          .toLowerCase();
-
-        const customerUser = usersData.users.find(
+      const customerUser =
+        usersData.users.find(
           (user) =>
             String(user.email || "")
               .trim()
-              .toLowerCase() === normalizedCustomerEmail
+              .toLowerCase() ===
+            normalizedCustomerEmail
         );
 
-        if (!customerUser) {
-          /*
-           * Guest orders do not earn points because there is no account
-           * to attach the points to.
-           */
+      if (!customerUser) {
+        pointsMessage =
+          "Order shipped, but no customer account matched the order email.";
+
+        redemptionMessage =
+          "No customer account matched the order email.";
+      } else {
+        customerUserId = customerUser.id;
+
+        /*
+         * REDEEM EXISTING POINTS
+         *
+         * The selected points were stored on the order during
+         * checkout. They are finalized here as a negative ledger
+         * transaction.
+         */
+        const redeemedPointsOnOrder = Math.max(
+          0,
+          Math.floor(
+            Number(order.redeemed_points || 0)
+          )
+        );
+
+        if (redeemedPointsOnOrder > 0) {
+          const {
+            data: existingRedemptionTransaction,
+            error: redemptionLookupError,
+          } = await supabaseAdmin
+            .from("point_transactions")
+            .select("id, points")
+            .eq("order_id", order.id)
+            .eq("type", "redeemed")
+            .maybeSingle();
+
+          if (redemptionLookupError) {
+            console.error(
+              "Redemption lookup error:",
+              redemptionLookupError
+            );
+
+            redemptionMessage =
+              "The reward redemption could not be checked.";
+          } else if (
+            existingRedemptionTransaction
+          ) {
+            pointsRedeemed = Math.abs(
+              Number(
+                existingRedemptionTransaction.points ||
+                  0
+              )
+            );
+
+            redemptionMessage =
+              "Reward points were already deducted for this order.";
+          } else {
+            const {
+              error: redemptionInsertError,
+            } = await supabaseAdmin
+              .from("point_transactions")
+              .insert({
+                user_id: customerUser.id,
+                order_id: order.id,
+                points:
+                  -redeemedPointsOnOrder,
+                type: "redeemed",
+                description: `Rewards redeemed on order ${order.order_number}`,
+              });
+
+            if (redemptionInsertError) {
+              console.error(
+                "Reward redemption error:",
+                redemptionInsertError
+              );
+
+              redemptionMessage =
+                "Order shipped, but redeemed points could not be deducted.";
+            } else {
+              pointsRedeemed =
+                redeemedPointsOnOrder;
+
+              redemptionMessage = `${redeemedPointsOnOrder} reward points deducted.`;
+            }
+          }
+        }
+
+        /*
+         * AWARD NEW POINTS
+         *
+         * Customers earn one point for each full dollar paid.
+         * The order total already includes promo and reward
+         * discounts.
+         */
+        const {
+          data: existingEarnedTransaction,
+          error: earnedLookupError,
+        } = await supabaseAdmin
+          .from("point_transactions")
+          .select("id, points")
+          .eq("order_id", order.id)
+          .eq("type", "earned")
+          .maybeSingle();
+
+        if (earnedLookupError) {
+          console.error(
+            "Earned points lookup error:",
+            earnedLookupError
+          );
+
           pointsMessage =
-            "Order shipped, but no customer account matched the order email.";
+            "The earned-points transaction could not be checked.";
+        } else if (existingEarnedTransaction) {
+          pointsAwarded = Number(
+            existingEarnedTransaction.points || 0
+          );
+
+          pointsMessage =
+            "Points were already awarded for this order.";
         } else {
-          /*
-           * One point per dollar based on the final order total.
-           *
-           * Example:
-           * $99.99 = 99 points
-           * $100.00 = 100 points
-           */
           const earnedPoints = Math.max(
             0,
-            Math.floor(Number(order.total || 0))
+            Math.floor(
+              Number(order.total || 0)
+            )
           );
 
           if (earnedPoints > 0) {
-            const { error: pointsError } = await supabaseAdmin
+            const {
+              error: pointsInsertError,
+            } = await supabaseAdmin
               .from("point_transactions")
               .insert({
                 user_id: customerUser.id,
@@ -185,25 +316,71 @@ export async function POST(request: Request) {
                 description: `Points earned from order ${order.order_number}`,
               });
 
-            if (pointsError) {
+            if (pointsInsertError) {
               /*
-               * PostgreSQL error 23505 means the unique index blocked
-               * a duplicate points transaction.
+               * PostgreSQL error 23505 means the unique index
+               * prevented duplicate earned points.
                */
-              if (pointsError.code === "23505") {
+              if (
+                pointsInsertError.code === "23505"
+              ) {
                 pointsMessage =
                   "Points were already awarded for this order.";
               } else {
-                console.error("Points award error:", pointsError);
+                console.error(
+                  "Points award error:",
+                  pointsInsertError
+                );
+
                 pointsMessage =
                   "Order shipped, but points could not be awarded.";
               }
             } else {
               pointsAwarded = earnedPoints;
+
               pointsMessage = `${earnedPoints} points awarded.`;
             }
+          } else {
+            pointsMessage =
+              "This order did not earn any points.";
           }
         }
+      }
+    }
+
+    /*
+     * Calculate the customer's new balance for the email.
+     */
+    let updatedPointsBalance:
+      | number
+      | null = null;
+
+    if (customerUserId) {
+      const {
+        data: updatedTransactions,
+        error: updatedBalanceError,
+      } = await supabaseAdmin
+        .from("point_transactions")
+        .select("points")
+        .eq("user_id", customerUserId);
+
+      if (updatedBalanceError) {
+        console.error(
+          "Updated point balance error:",
+          updatedBalanceError
+        );
+      } else {
+        updatedPointsBalance = Math.max(
+          0,
+          (updatedTransactions || []).reduce(
+            (sum, transaction) =>
+              sum +
+              Number(
+                transaction.points || 0
+              ),
+            0
+          )
+        );
       }
     }
 
@@ -223,156 +400,193 @@ export async function POST(request: Request) {
         : "";
 
     /*
+     * Rewards summary shown in the shipping email.
+     */
+    const rewardsEmailHtml =
+      pointsAwarded > 0 ||
+      pointsRedeemed > 0
+        ? `
+          <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #93c5fd;border-radius:22px;padding:26px;text-align:center;margin-bottom:30px;">
+            <p style="margin:0 0 8px;color:#1e3a8a;font-size:12px;text-transform:uppercase;letter-spacing:3px;font-weight:bold;">
+              Apexx Rewards
+            </p>
+
+            ${
+              pointsRedeemed > 0
+                ? `
+                  <p style="margin:0 0 10px;color:#dc2626;font-size:20px;font-weight:800;">
+                    -${pointsRedeemed} Points Redeemed
+                  </p>
+                `
+                : ""
+            }
+
+            ${
+              pointsAwarded > 0
+                ? `
+                  <p style="margin:0;color:#06111f;font-size:32px;font-weight:900;">
+                    +${pointsAwarded} Points Earned
+                  </p>
+                `
+                : ""
+            }
+
+            ${
+              updatedPointsBalance !== null
+                ? `
+                  <p style="margin:16px 0 0;color:#1e3a8a;font-size:16px;font-weight:800;">
+                    New Balance: ${updatedPointsBalance} Points
+                  </p>
+                `
+                : ""
+            }
+
+            <p style="margin:12px auto 0;max-width:480px;color:#475569;font-size:14px;line-height:1.7;">
+              Every 100 points can be redeemed for $10 off a future purchase.
+            </p>
+          </div>
+        `
+        : "";
+
+    /*
      * Send the shipment confirmation email.
      */
-    const { error: emailError } = await resend.emails.send({
-      from: "Apexx Biolabs <orders@apexxbiolabs.com>",
-      to: order.customer_email,
-      subject: `Your Apexx Biolabs Order Has Shipped • ${order.order_number}`,
-      html: `
-        <div style="margin:0; padding:0; background:#f8fbff; font-family:Arial, Helvetica, sans-serif;">
-          <div style="max-width:700px; margin:0 auto; padding:28px 16px;">
-            <div style="background:#ffffff; border:1px solid #dbeafe; border-radius:28px; overflow:hidden; box-shadow:0 18px 45px rgba(30,58,138,0.12);">
+    const { error: emailError } =
+      await resend.emails.send({
+        from: "Apexx Biolabs <orders@apexxbiolabs.com>",
+        to: order.customer_email,
+        subject: `Your Apexx Biolabs Order Has Shipped • ${order.order_number}`,
+        html: `
+          <div style="margin:0; padding:0; background:#f8fbff; font-family:Arial, Helvetica, sans-serif;">
+            <div style="max-width:700px; margin:0 auto; padding:28px 16px;">
+              <div style="background:#ffffff; border:1px solid #dbeafe; border-radius:28px; overflow:hidden; box-shadow:0 18px 45px rgba(30,58,138,0.12);">
 
-              <div style="background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff); padding:36px 24px; text-align:center; border-bottom:1px solid #dbeafe;">
-                <p style="margin:0 0 14px; color:#3b82f6; font-size:13px; letter-spacing:4px; text-transform:uppercase;">
-                  Research. Quality. Confidence.
-                </p>
-
-                <h1 style="margin:0; color:#06111f; font-size:34px; letter-spacing:3px;">
-                  APEXX BIOLABS
-                </h1>
-
-                <p style="margin:12px 0 0; color:#475569; font-size:13px; letter-spacing:2px; text-transform:uppercase;">
-                  Premium Research Materials
-                </p>
-              </div>
-
-              <div style="padding:32px 24px; color:#0f172a;">
-                <div style="background:#ffffff; border:1px solid #bfdbfe; border-radius:22px; padding:30px 24px; text-align:center; margin-bottom:28px;">
-                  <p style="margin:0 0 14px;color:#3b82f6;font-size:13px;letter-spacing:4px;text-transform:uppercase;">
-                    Shipment Confirmation
+                <div style="background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff); padding:36px 24px; text-align:center; border-bottom:1px solid #dbeafe;">
+                  <p style="margin:0 0 14px; color:#3b82f6; font-size:13px; letter-spacing:4px; text-transform:uppercase;">
+                    Research. Quality. Confidence.
                   </p>
 
-                  <h2 style="margin:0;color:#06111f;font-size:34px;font-weight:800;line-height:1.1;">
-                    Your Order Has Shipped
-                  </h2>
+                  <h1 style="margin:0; color:#06111f; font-size:34px; letter-spacing:3px;">
+                    APEXX BIOLABS
+                  </h1>
 
-                  <p style="margin:14px 0 0;color:#16a34a;font-size:18px;font-weight:700;">
-                    Package In Transit
-                  </p>
-
-                  <p style="margin:18px auto 0;max-width:500px;color:#475569;font-size:15px;line-height:1.7;">
-                    Great news. Your Apexx Biolabs order has been packaged,
-                    shipped, and is now in transit. Tracking information is
-                    provided below.
+                  <p style="margin:12px 0 0; color:#475569; font-size:13px; letter-spacing:2px; text-transform:uppercase;">
+                    Premium Research Materials
                   </p>
                 </div>
 
-                <div style="background:linear-gradient(135deg,#eaf4ff,#f8fbff);border:1px solid #bfdbfe;border-radius:22px;padding:28px;text-align:center;margin-bottom:30px;">
-                  <p style="margin:0 0 8px;color:#1e3a8a;font-size:13px;text-transform:uppercase;letter-spacing:2px;font-weight:bold;">
-                    Tracking Number
-                  </p>
+                <div style="padding:32px 24px; color:#0f172a;">
+                  <div style="background:#ffffff; border:1px solid #bfdbfe; border-radius:22px; padding:30px 24px; text-align:center; margin-bottom:28px;">
+                    <p style="margin:0 0 14px;color:#3b82f6;font-size:13px;letter-spacing:4px;text-transform:uppercase;">
+                      Shipment Confirmation
+                    </p>
 
-                  <p style="margin:0;color:#06111f;font-size:28px;font-weight:900;word-break:break-all;">
-                    ${cleanedTrackingNumber}
-                  </p>
+                    <h2 style="margin:0;color:#06111f;font-size:34px;font-weight:800;line-height:1.1;">
+                      Your Order Has Shipped
+                    </h2>
 
-                  <p style="margin:12px 0 0;color:#64748b;">
-                    Carrier: <strong>${cleanedCarrier}</strong>
-                  </p>
+                    <p style="margin:14px 0 0;color:#16a34a;font-size:18px;font-weight:700;">
+                      Package In Transit
+                    </p>
 
-                  ${
-                    trackingUrl
-                      ? `
-                        <a
-                          href="${trackingUrl}"
-                          style="
-                            display:inline-block;
-                            margin-top:22px;
-                            background:#06111f;
-                            color:#ffffff;
-                            padding:16px 30px;
-                            border-radius:999px;
-                            text-decoration:none;
-                            font-weight:900;
-                            letter-spacing:1px;
-                            text-transform:uppercase;
-                          "
-                        >
-                          Track Package
-                        </a>
-                      `
-                      : ""
-                  }
-                </div>
+                    <p style="margin:18px auto 0;max-width:500px;color:#475569;font-size:15px;line-height:1.7;">
+                      Great news. Your Apexx Biolabs order has been packaged,
+                      shipped, and is now in transit. Tracking information is
+                      provided below.
+                    </p>
+                  </div>
 
-                ${
-                  pointsAwarded > 0
-                    ? `
-                      <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #93c5fd;border-radius:22px;padding:26px;text-align:center;margin-bottom:30px;">
-                        <p style="margin:0 0 8px;color:#1e3a8a;font-size:12px;text-transform:uppercase;letter-spacing:3px;font-weight:bold;">
-                          Apexx Rewards
-                        </p>
+                  <div style="background:linear-gradient(135deg,#eaf4ff,#f8fbff);border:1px solid #bfdbfe;border-radius:22px;padding:28px;text-align:center;margin-bottom:30px;">
+                    <p style="margin:0 0 8px;color:#1e3a8a;font-size:13px;text-transform:uppercase;letter-spacing:2px;font-weight:bold;">
+                      Tracking Number
+                    </p>
 
-                        <p style="margin:0;color:#06111f;font-size:32px;font-weight:900;">
-                          +${pointsAwarded} Points
-                        </p>
+                    <p style="margin:0;color:#06111f;font-size:28px;font-weight:900;word-break:break-all;">
+                      ${cleanedTrackingNumber}
+                    </p>
 
-                        <p style="margin:12px auto 0;max-width:480px;color:#475569;font-size:14px;line-height:1.7;">
-                          These points have been added to your Apexx Biolabs
-                          account. Every 100 points can be redeemed for $10 off
-                          a future purchase.
-                        </p>
-                      </div>
-                    `
-                    : ""
-                }
+                    <p style="margin:12px 0 0;color:#64748b;">
+                      Carrier:
+                      <strong>${cleanedCarrier}</strong>
+                    </p>
 
-                <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:20px;padding:22px;margin-bottom:30px;">
-                  <h3 style="margin:0 0 12px;color:#06111f;font-size:18px;">
-                    What Happens Next?
-                  </h3>
+                    ${
+                      trackingUrl
+                        ? `
+                          <a
+                            href="${trackingUrl}"
+                            style="
+                              display:inline-block;
+                              margin-top:22px;
+                              background:#06111f;
+                              color:#ffffff;
+                              padding:16px 30px;
+                              border-radius:999px;
+                              text-decoration:none;
+                              font-weight:900;
+                              letter-spacing:1px;
+                              text-transform:uppercase;
+                            "
+                          >
+                            Track Package
+                          </a>
+                        `
+                        : ""
+                    }
+                  </div>
 
-                  <p style="margin:0;color:#475569;line-height:1.8;">
-                    Your package has been handed off to the carrier and is
-                    currently making its way to you. Please allow up to 24 hours
-                    for tracking updates to appear after label creation.
-                  </p>
-                </div>
+                  ${rewardsEmailHtml}
 
-                <div style="border-top:1px solid #dbeafe; padding-top:22px;">
-                  <p style="font-size:12px; color:#64748b; line-height:1.6; margin:0;">
-                    Products sold by Apexx Biolabs are intended strictly for
-                    lawful laboratory research use only. Not for human
-                    consumption, medical use, veterinary use, diagnosis,
-                    treatment, cure, or prevention of disease.
-                  </p>
+                  <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:20px;padding:22px;margin-bottom:30px;">
+                    <h3 style="margin:0 0 12px;color:#06111f;font-size:18px;">
+                      What Happens Next?
+                    </h3>
 
-                  <p style="margin:22px 0 0; color:#334155; line-height:1.6;">
-                    Apexx Biolabs<br/>
-                    orders@apexxbiolabs.com<br/>
-                    apexxbiolabs.com
-                  </p>
+                    <p style="margin:0;color:#475569;line-height:1.8;">
+                      Your package has been handed off to the carrier and is
+                      currently making its way to you. Please allow up to 24
+                      hours for tracking updates to appear after label creation.
+                    </p>
+                  </div>
+
+                  <div style="border-top:1px solid #dbeafe; padding-top:22px;">
+                    <p style="font-size:12px; color:#64748b; line-height:1.6; margin:0;">
+                      Products sold by Apexx Biolabs are intended strictly for
+                      lawful laboratory research use only. Not for human
+                      consumption, medical use, veterinary use, diagnosis,
+                      treatment, cure, or prevention of disease.
+                    </p>
+
+                    <p style="margin:22px 0 0; color:#334155; line-height:1.6;">
+                      Apexx Biolabs<br/>
+                      orders@apexxbiolabs.com<br/>
+                      apexxbiolabs.com
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      `,
-    });
+        `,
+      });
 
     if (emailError) {
-      console.error("Shipping email error:", emailError);
+      console.error(
+        "Shipping email error:",
+        emailError
+      );
 
       return NextResponse.json(
         {
           success: false,
           error:
-            "Order was marked shipped, but the shipping email could not be sent.",
+            "Order was marked shipped and rewards were processed, but the shipping email could not be sent.",
           order,
           pointsAwarded,
+          pointsRedeemed,
+          updatedPointsBalance,
           pointsMessage,
+          redemptionMessage,
         },
         { status: 500 }
       );
@@ -382,15 +596,22 @@ export async function POST(request: Request) {
       success: true,
       order,
       pointsAwarded,
+      pointsRedeemed,
+      updatedPointsBalance,
       pointsMessage,
+      redemptionMessage,
     });
   } catch (error) {
-    console.error("Send tracking error:", error);
+    console.error(
+      "Send tracking error:",
+      error
+    );
 
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to process shipment.",
+        error:
+          "Failed to process shipment.",
       },
       { status: 500 }
     );

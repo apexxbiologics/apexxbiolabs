@@ -40,16 +40,12 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          error:
-            "Please enter a valid tracking number.",
+          error: "Please enter a valid tracking number.",
         },
         { status: 400 }
       );
     }
 
-    /*
-     * Load the order before changing it.
-     */
     const {
       data: existingOrder,
       error: existingOrderError,
@@ -74,13 +70,6 @@ export async function POST(request: Request) {
       );
     }
 
-    /*
-     * Only paid or already-shipped orders can be processed.
-     *
-     * Allowing already-shipped orders means tracking can be
-     * updated later, while duplicate point transactions remain
-     * protected by the checks below.
-     */
     if (
       existingOrder.status !== "paid" &&
       existingOrder.status !== "shipped"
@@ -95,9 +84,6 @@ export async function POST(request: Request) {
       );
     }
 
-    /*
-     * Mark the order shipped and save tracking information.
-     */
     const {
       data: order,
       error: updateError,
@@ -135,27 +121,16 @@ export async function POST(request: Request) {
       .toLowerCase();
 
     let customerUserId: string | null = null;
-
     let pointsAwarded = 0;
-    let pointsRedeemed = 0;
-
     let pointsMessage = "No points awarded.";
-    let redemptionMessage =
-      "No reward points were redeemed.";
 
-    /*
-     * Find the customer's Supabase account.
-     *
-     * Guest orders still ship, but cannot earn or redeem points.
-     */
     const {
       data: usersData,
       error: usersError,
-    } =
-      await supabaseAdmin.auth.admin.listUsers({
-        page: 1,
-        perPage: 1000,
-      });
+    } = await supabaseAdmin.auth.admin.listUsers({
+      page: 1,
+      perPage: 1000,
+    });
 
     if (usersError) {
       console.error(
@@ -165,9 +140,6 @@ export async function POST(request: Request) {
 
       pointsMessage =
         "Order shipped, but the customer account could not be checked.";
-
-      redemptionMessage =
-        "Order shipped, but reward redemption could not be checked.";
     } else {
       const customerUser =
         usersData.users.find(
@@ -181,95 +153,9 @@ export async function POST(request: Request) {
       if (!customerUser) {
         pointsMessage =
           "Order shipped, but no customer account matched the order email.";
-
-        redemptionMessage =
-          "No customer account matched the order email.";
       } else {
         customerUserId = customerUser.id;
 
-        /*
-         * REDEEM EXISTING POINTS
-         *
-         * The selected points were stored on the order during
-         * checkout. They are finalized here as a negative ledger
-         * transaction.
-         */
-        const redeemedPointsOnOrder = Math.max(
-          0,
-          Math.floor(
-            Number(order.redeemed_points || 0)
-          )
-        );
-
-        if (redeemedPointsOnOrder > 0) {
-          const {
-            data: existingRedemptionTransaction,
-            error: redemptionLookupError,
-          } = await supabaseAdmin
-            .from("point_transactions")
-            .select("id, points")
-            .eq("order_id", order.id)
-            .eq("type", "redeemed")
-            .maybeSingle();
-
-          if (redemptionLookupError) {
-            console.error(
-              "Redemption lookup error:",
-              redemptionLookupError
-            );
-
-            redemptionMessage =
-              "The reward redemption could not be checked.";
-          } else if (
-            existingRedemptionTransaction
-          ) {
-            pointsRedeemed = Math.abs(
-              Number(
-                existingRedemptionTransaction.points ||
-                  0
-              )
-            );
-
-            redemptionMessage =
-              "Reward points were already deducted for this order.";
-          } else {
-            const {
-              error: redemptionInsertError,
-            } = await supabaseAdmin
-              .from("point_transactions")
-              .insert({
-                user_id: customerUser.id,
-                order_id: order.id,
-                points:
-                  -redeemedPointsOnOrder,
-                type: "redeemed",
-                description: `Rewards redeemed on order ${order.order_number}`,
-              });
-
-            if (redemptionInsertError) {
-              console.error(
-                "Reward redemption error:",
-                redemptionInsertError
-              );
-
-              redemptionMessage =
-                "Order shipped, but redeemed points could not be deducted.";
-            } else {
-              pointsRedeemed =
-                redeemedPointsOnOrder;
-
-              redemptionMessage = `${redeemedPointsOnOrder} reward points deducted.`;
-            }
-          }
-        }
-
-        /*
-         * AWARD NEW POINTS
-         *
-         * Customers earn one point for each full dollar paid.
-         * The order total already includes promo and reward
-         * discounts.
-         */
         const {
           data: existingEarnedTransaction,
           error: earnedLookupError,
@@ -317,10 +203,6 @@ export async function POST(request: Request) {
               });
 
             if (pointsInsertError) {
-              /*
-               * PostgreSQL error 23505 means the unique index
-               * prevented duplicate earned points.
-               */
               if (
                 pointsInsertError.code === "23505"
               ) {
@@ -338,7 +220,8 @@ export async function POST(request: Request) {
             } else {
               pointsAwarded = earnedPoints;
 
-              pointsMessage = `${earnedPoints} points awarded.`;
+              pointsMessage =
+                `${earnedPoints} points awarded.`;
             }
           } else {
             pointsMessage =
@@ -348,9 +231,6 @@ export async function POST(request: Request) {
       }
     }
 
-    /*
-     * Calculate the customer's new balance for the email.
-     */
     let updatedPointsBalance:
       | number
       | null = null;
@@ -399,37 +279,17 @@ export async function POST(request: Request) {
           )}`
         : "";
 
-    /*
-     * Rewards summary shown in the shipping email.
-     */
     const rewardsEmailHtml =
-      pointsAwarded > 0 ||
-      pointsRedeemed > 0
+      pointsAwarded > 0
         ? `
           <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #93c5fd;border-radius:22px;padding:26px;text-align:center;margin-bottom:30px;">
             <p style="margin:0 0 8px;color:#1e3a8a;font-size:12px;text-transform:uppercase;letter-spacing:3px;font-weight:bold;">
               Apexx Rewards
             </p>
 
-            ${
-              pointsRedeemed > 0
-                ? `
-                  <p style="margin:0 0 10px;color:#dc2626;font-size:20px;font-weight:800;">
-                    -${pointsRedeemed} Points Redeemed
-                  </p>
-                `
-                : ""
-            }
-
-            ${
-              pointsAwarded > 0
-                ? `
-                  <p style="margin:0;color:#06111f;font-size:32px;font-weight:900;">
-                    +${pointsAwarded} Points Earned
-                  </p>
-                `
-                : ""
-            }
+            <p style="margin:0;color:#06111f;font-size:32px;font-weight:900;">
+              +${pointsAwarded} Points Earned
+            </p>
 
             ${
               updatedPointsBalance !== null
@@ -448,12 +308,10 @@ export async function POST(request: Request) {
         `
         : "";
 
-    /*
-     * Send the shipment confirmation email.
-     */
     const { error: emailError } =
       await resend.emails.send({
-        from: "Apexx Biolabs <orders@apexxbiolabs.com>",
+        from:
+          "Apexx Biolabs <orders@apexxbiolabs.com>",
         to: order.customer_email,
         subject: `Your Apexx Biolabs Order Has Shipped • ${order.order_number}`,
         html: `
@@ -580,13 +438,11 @@ export async function POST(request: Request) {
         {
           success: false,
           error:
-            "Order was marked shipped and rewards were processed, but the shipping email could not be sent.",
+            "Order was marked shipped and points were processed, but the shipping email could not be sent.",
           order,
           pointsAwarded,
-          pointsRedeemed,
           updatedPointsBalance,
           pointsMessage,
-          redemptionMessage,
         },
         { status: 500 }
       );
@@ -596,10 +452,8 @@ export async function POST(request: Request) {
       success: true,
       order,
       pointsAwarded,
-      pointsRedeemed,
       updatedPointsBalance,
       pointsMessage,
-      redemptionMessage,
     });
   } catch (error) {
     console.error(
@@ -610,8 +464,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: false,
-        error:
-          "Failed to process shipment.",
+        error: "Failed to process shipment.",
       },
       { status: 500 }
     );

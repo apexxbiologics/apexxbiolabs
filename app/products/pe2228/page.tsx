@@ -274,7 +274,7 @@ export default function PE2228Page() {
                   href="/coas"
                   className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
                 >
-                  View COA
+                  View All COAs
                 </a>
               </div>
             </div>

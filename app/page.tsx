@@ -19,6 +19,8 @@ import { Check } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { Gift, BadgePercent } from "lucide-react";
 import { Star } from "lucide-react";
+import Link from "next/link";
+
 export default function Home() {
   const [search, setSearch] = useState("");
 const [openFAQ, setOpenFAQ] = useState<number | null>(null);
@@ -838,164 +840,6 @@ price: "$75.00",
 </section>
 </Reveal>
 
-{/* CUSTOMER REVIEWS */}
-<section className="relative py-24 px-6 bg-[#081526] border-b border-white/10 overflow-hidden">
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
-
-  <div className="relative z-10 mx-auto w-full min-w-0 max-w-7xl">
-    <div className="text-center mb-14">
-      <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
-        Customer Experiences
-      </p>
-
-      <h2 className="text-5xl md:text-7xl font-black tracking-tight text-white leading-[0.95] mb-6">
-        Verified Customer Reviews
-      </h2>
-
-      <p className="text-white/70 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
-        Feedback from Apexx customers about ordering, support, shipping,
-        packaging, and product quality.
-      </p>
-    </div>
-
-    {reviews.length > 0 ? (
-      <>
-        <div className="rounded-[2.5rem] border border-blue-400/20 bg-white/[0.04] backdrop-blur-sm p-8 md:p-12 mb-12">
-          <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-10 items-center">
-            <div className="text-center lg:text-left">
-              <p className="uppercase tracking-[0.3em] text-blue-300 text-xs mb-4">
-                Overall Rating
-              </p>
-
-              <div className="flex items-center justify-center lg:justify-start gap-2 mb-5">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    size={30}
-                    className="fill-blue-300 text-blue-300"
-                  />
-                ))}
-              </div>
-
-              <div className="flex items-end justify-center lg:justify-start gap-3">
-                <span className="text-6xl md:text-7xl font-black text-white">
-                  5.0
-                </span>
-
-                <span className="text-white/50 text-xl pb-3">/ 5</span>
-              </div>
-
-              <p className="text-white/50 mt-4">
-                Based on approved customer reviews.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {[
-                "Product Quality",
-                "Packaging",
-                "Shipping",
-                "Ordering Experience",
-                "Customer Support",
-              ].map((item) => (
-                <div
-                  key={item}
-                  className="rounded-[1.5rem] border border-white/10 bg-[#081526]/60 p-5"
-                >
-                  <p className="text-white/70 text-sm uppercase tracking-widest mb-3">
-                    {item}
-                  </p>
-
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        size={18}
-                        className="fill-blue-300 text-blue-300"
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
-
-              <a
-                href="/reviews"
-                className="rounded-[1.5rem] border border-blue-400/30 bg-blue-500/10 p-5 flex items-center justify-between text-blue-100 hover:bg-blue-500/20 transition-all"
-              >
-                <span className="font-bold uppercase tracking-widest text-sm">
-                  View All Reviews
-                </span>
-
-                <span className="text-2xl">→</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {reviews.slice(0, 3).map((item) => (
-            <div
-              key={item.id}
-              className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 hover:bg-white/[0.07] hover:border-blue-400/40 transition-all"
-            >
-              <div className="flex gap-1 mb-6">
-                {Array.from({ length: item.rating }).map((_, index) => (
-                  <Star
-                    key={index}
-                    size={20}
-                    className="fill-blue-300 text-blue-300"
-                  />
-                ))}
-              </div>
-
-              <p className="text-white/70 leading-relaxed mb-8">
-                “{item.review}”
-              </p>
-
-              <div className="border-t border-white/10 pt-5">
-                <p className="text-white font-bold">{item.name}</p>
-
-                <p className="text-blue-300 text-xs uppercase tracking-widest mt-1">
-                  Verified Customer
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="text-center mt-12 flex flex-col sm:flex-row gap-4 justify-center">
-          <a
-            href="/reviews"
-            className="inline-flex justify-center rounded-full border border-blue-400/30 bg-blue-500/10 px-8 py-4 text-sm font-bold uppercase tracking-widest text-blue-100 hover:bg-blue-500/20 transition-all"
-          >
-            View All Reviews
-          </a>
-
-          <a
-            href="/reviews#leave-review"
-            className="inline-flex justify-center rounded-full bg-white text-[#081526] px-8 py-4 text-sm font-bold uppercase tracking-widest hover:bg-blue-100 transition-all"
-          >
-            Leave a Review
-          </a>
-        </div>
-      </>
-    ) : (
-      <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-10 text-center max-w-3xl mx-auto">
-        <p className="text-white/60 mb-6">
-          Customer reviews will appear here once approved.
-        </p>
-
-        <a
-          href="/reviews#leave-review"
-          className="inline-flex rounded-full bg-white text-[#081526] px-8 py-4 font-bold uppercase tracking-widest hover:bg-blue-100 transition-all"
-        >
-          Leave a Review
-        </a>
-      </div>
-    )}
-  </div>
-</section>
-
 {/* QUALITY VERIFICATION */}
 
 <section className="relative py-24 px-6 bg-[#081526] border-b border-white/10 overflow-hidden">
@@ -1269,9 +1113,563 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
   </section>
 </Reveal>
 
+{/* ABOUT + WHY CHOOSE APEXX */}
 <Reveal>
-  <section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
+  <section className="relative overflow-hidden border-y border-white/10 bg-[#081526] px-4 py-20 sm:px-6 md:py-24">
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_58%)]" />
+
+    <div className="relative z-10 mx-auto w-full min-w-0 max-w-7xl">
+      {/* ABOUT HEADER */}
+      <div className="mb-14 grid min-w-0 grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-14">
+        <div className="min-w-0">
+          <p className="mb-5 text-xs font-black uppercase tracking-[0.25em] text-blue-300 sm:text-sm sm:tracking-[0.35em]">
+            About Apexx
+          </p>
+
+          <h2 className="break-words text-4xl font-black leading-[0.95] tracking-tight text-white sm:text-5xl md:text-7xl">
+            Scientific Precision.
+            <span className="block text-blue-300">
+              Trusted Quality.
+            </span>
+          </h2>
+        </div>
+
+        <div className="min-w-0">
+          <p className="max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg md:text-xl">
+            Apexx Biolabs specializes in high-purity research compounds
+            supported by analytical review, batch documentation, and
+            research-focused quality standards.
+          </p>
+
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/55">
+            Our goal is to provide a clear, dependable ordering experience
+            with accessible documentation, responsive support, and transparent
+            product information.
+          </p>
+        </div>
+      </div>
+
+      {/* CORE QUALITY CARDS */}
+      <div className="mb-14 grid min-w-0 grid-cols-1 gap-5 md:grid-cols-3">
+        <div className="group min-w-0 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 transition-all hover:border-blue-400/50 hover:bg-white/[0.07] sm:p-8">
+          <div className="mb-7 flex h-12 w-12 items-center justify-center rounded-full border border-blue-300/30 bg-blue-400/10">
+            <Check
+              size={24}
+              strokeWidth={3}
+              className="text-blue-300"
+            />
+          </div>
+
+          <h3 className="mb-4 break-words text-2xl font-bold text-white">
+            Third-Party Testing
+          </h3>
+
+          <p className="break-words leading-relaxed text-white/60">
+            Independent analytical verification supports transparency,
+            consistency, and confidence in available product documentation.
+          </p>
+        </div>
+
+        <div className="group min-w-0 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 transition-all hover:border-blue-400/50 hover:bg-white/[0.07] sm:p-8">
+          <div className="mb-7 flex h-12 w-12 items-center justify-center rounded-full border border-blue-300/30 bg-blue-400/10">
+            <FlaskConical
+              size={24}
+              strokeWidth={2.25}
+              className="text-blue-300"
+            />
+          </div>
+
+          <h3 className="mb-4 break-words text-2xl font-bold text-white">
+            Research Standards
+          </h3>
+
+          <p className="break-words leading-relaxed text-white/60">
+            Products are handled and documented with laboratory research,
+            consistency, and responsible research-use standards in mind.
+          </p>
+        </div>
+
+        <div className="group min-w-0 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 transition-all hover:border-blue-400/50 hover:bg-white/[0.07] sm:p-8">
+          <div className="mb-7 flex h-12 w-12 items-center justify-center rounded-full border border-blue-300/30 bg-blue-400/10">
+            <Microscope
+              size={24}
+              strokeWidth={2.25}
+              className="text-blue-300"
+            />
+          </div>
+
+          <h3 className="mb-4 break-words text-2xl font-bold text-white">
+            Batch Transparency
+          </h3>
+
+          <p className="break-words leading-relaxed text-white/60">
+            COAs and supporting documentation are made available for verified
+            batches whenever testing documentation has been completed.
+          </p>
+        </div>
+      </div>
+
+      {/* WHY CHOOSE APEXX */}
+      <div className="mb-10 text-center">
+        <p className="mb-4 text-xs font-black uppercase tracking-[0.25em] text-blue-300 sm:tracking-[0.35em]">
+          Why Researchers Choose Apexx Biolabs
+        </p>
+
+        <h3 className="mx-auto max-w-3xl break-words text-3xl font-black leading-tight text-white sm:text-4xl md:text-5xl">
+          More than a product catalog.
+        </h3>
+
+        <p className="mx-auto mt-5 max-w-3xl text-base leading-relaxed text-white/60 sm:text-lg">
+          Clear documentation, responsive support, accessible research
+          information, and straightforward ordering from one place.
+        </p>
+      </div>
+
+      <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* RESEARCH CUSTOMERS */}
+        <div className="min-w-0 rounded-[2rem] border border-blue-400/25 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:bg-white/[0.07] sm:p-8 md:p-10">
+          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-8">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-300">
+              <Users size={30} strokeWidth={2.2} />
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <h3 className="mb-4 break-words text-2xl font-black text-white md:text-3xl">
+                Built for Research Customers
+              </h3>
+
+              <p className="mb-6 break-words leading-relaxed text-white/70">
+                Apexx Biolabs provides research-use products with clear
+                documentation, transparent product pages, and a straightforward
+                ordering experience.
+              </p>
+
+              <a
+                href="/products"
+                className="inline-flex w-full items-center justify-center rounded-full border border-blue-400/30 bg-white/[0.04] px-6 py-3 text-center text-sm font-semibold uppercase tracking-[0.16em] text-white transition-all hover:bg-white/[0.08] sm:w-fit sm:tracking-widest"
+              >
+                Shop Products
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* QUALITY REVIEW */}
+        <div className="min-w-0 rounded-[2rem] border border-blue-400/25 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:bg-white/[0.07] sm:p-8 md:p-10">
+          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-8">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-300">
+              <ShieldCheck size={30} strokeWidth={2.2} />
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <h3 className="mb-4 break-words text-2xl font-black text-white md:text-3xl">
+                Batch Documentation & Quality Review
+              </h3>
+
+              <p className="mb-6 break-words leading-relaxed text-white/70">
+                Available analytical documentation helps researchers review
+                product identity, purity, and relevant batch information before
+                use.
+              </p>
+
+              <a
+                href="/coas"
+                className="inline-flex w-full items-center justify-center rounded-full border border-blue-400/30 bg-white/[0.04] px-6 py-3 text-center text-sm font-semibold uppercase tracking-[0.16em] text-white transition-all hover:bg-white/[0.08] sm:w-fit sm:tracking-widest"
+              >
+                View COAs
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* SUPPORT */}
+        <div className="min-w-0 rounded-[2rem] border border-blue-400/25 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:bg-white/[0.07] sm:p-8 md:p-10">
+          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-8">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-300">
+              <Headphones size={30} strokeWidth={2.2} />
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <h3 className="mb-4 break-words text-2xl font-black text-white md:text-3xl">
+                Support When You Need It
+              </h3>
+
+              <p className="mb-6 break-words leading-relaxed text-white/70">
+                Questions about an order, shipment, product page, or available
+                COA? Our support team typically responds within 24–48 business
+                hours.
+              </p>
+
+              <a
+                href="/contact"
+                className="inline-flex w-full items-center justify-center rounded-full border border-blue-400/30 bg-white/[0.04] px-6 py-3 text-center text-sm font-semibold uppercase tracking-[0.16em] text-white transition-all hover:bg-white/[0.08] sm:w-fit sm:tracking-widest"
+              >
+                Contact Support
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* RESEARCH INFORMATION */}
+        <div className="min-w-0 rounded-[2rem] border border-blue-400/25 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:bg-white/[0.07] sm:p-8 md:p-10">
+          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-8">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-300">
+              <BookOpen size={30} strokeWidth={2.2} />
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <h3 className="mb-4 break-words text-2xl font-black text-white md:text-3xl">
+                Research Information Available
+              </h3>
+
+              <p className="mb-6 break-words leading-relaxed text-white/70">
+                Review product information, research-use disclaimers, policies,
+                FAQs, and educational resources before placing an order.
+              </p>
+
+              <a
+                href="/peptide-info"
+                className="inline-flex w-full items-center justify-center rounded-full border border-blue-400/30 bg-white/[0.04] px-6 py-3 text-center text-sm font-semibold uppercase tracking-[0.16em] text-white transition-all hover:bg-white/[0.08] sm:w-fit sm:tracking-widest"
+              >
+                Peptide Info
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ORDER PROTECTION */}
+      <div className="mt-6 min-w-0 rounded-[2rem] border border-blue-400/25 bg-gradient-to-r from-white/[0.04] to-blue-500/[0.08] p-6 backdrop-blur-sm sm:p-8 md:p-10">
+        <div className="grid min-w-0 grid-cols-1 items-center gap-8 lg:grid-cols-[minmax(0,1fr)_auto]">
+          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-8">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-300">
+              <Truck size={30} strokeWidth={2.2} />
+            </div>
+
+            <div className="min-w-0">
+              <h3 className="mb-4 break-words text-2xl font-black text-white md:text-3xl">
+                Order Protection on Every Shipment
+              </h3>
+
+              <p className="max-w-3xl break-words leading-relaxed text-white/70">
+                If your order arrives damaged, incorrect, or incomplete,
+                contact us within 48 hours. We will review the issue and work
+                toward a fair resolution when the claim falls within our
+                policy.
+              </p>
+            </div>
+          </div>
+
+          <a
+            href="/refunds"
+            className="inline-flex w-full items-center justify-center rounded-full bg-white px-8 py-4 text-center text-sm font-bold uppercase tracking-[0.16em] text-[#081526] transition-all hover:bg-blue-100 sm:tracking-widest lg:w-fit"
+          >
+            Shop With Confidence
+          </a>
+        </div>
+      </div>
+    </div>
   </section>
+</Reveal>
+
+  {/* CUSTOMER REVIEWS */}
+<section className="relative py-24 px-6 bg-[#081526] border-b border-white/10 overflow-hidden">
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
+
+  <div className="relative z-10 mx-auto w-full min-w-0 max-w-7xl">
+    <div className="text-center mb-14">
+      <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
+        Customer Experiences
+      </p>
+
+      <h2 className="text-5xl md:text-7xl font-black tracking-tight text-white leading-[0.95] mb-6">
+        Verified Customer Reviews
+      </h2>
+
+      <p className="text-white/70 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
+        Feedback from Apexx customers about ordering, support, shipping,
+        packaging, and product quality.
+      </p>
+    </div>
+
+    {reviews.length > 0 ? (
+      <>
+        <div className="rounded-[2.5rem] border border-blue-400/20 bg-white/[0.04] backdrop-blur-sm p-8 md:p-12 mb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-10 items-center">
+            <div className="text-center lg:text-left">
+              <p className="uppercase tracking-[0.3em] text-blue-300 text-xs mb-4">
+                Overall Rating
+              </p>
+
+              <div className="flex items-center justify-center lg:justify-start gap-2 mb-5">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    size={30}
+                    className="fill-blue-300 text-blue-300"
+                  />
+                ))}
+              </div>
+
+              <div className="flex items-end justify-center lg:justify-start gap-3">
+                <span className="text-6xl md:text-7xl font-black text-white">
+                  5.0
+                </span>
+
+                <span className="text-white/50 text-xl pb-3">/ 5</span>
+              </div>
+
+              <p className="text-white/50 mt-4">
+                Based on approved customer reviews.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[
+                "Product Quality",
+                "Packaging",
+                "Shipping",
+                "Ordering Experience",
+                "Customer Support",
+              ].map((item) => (
+                <div
+                  key={item}
+                  className="rounded-[1.5rem] border border-white/10 bg-[#081526]/60 p-5"
+                >
+                  <p className="text-white/70 text-sm uppercase tracking-widest mb-3">
+                    {item}
+                  </p>
+
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star
+                        key={star}
+                        size={18}
+                        className="fill-blue-300 text-blue-300"
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              <a
+                href="/reviews"
+                className="rounded-[1.5rem] border border-blue-400/30 bg-blue-500/10 p-5 flex items-center justify-between text-blue-100 hover:bg-blue-500/20 transition-all"
+              >
+                <span className="font-bold uppercase tracking-widest text-sm">
+                  View All Reviews
+                </span>
+
+                <span className="text-2xl">→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {reviews.slice(0, 3).map((item) => (
+            <div
+              key={item.id}
+              className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 hover:bg-white/[0.07] hover:border-blue-400/40 transition-all"
+            >
+              <div className="flex gap-1 mb-6">
+                {Array.from({ length: item.rating }).map((_, index) => (
+                  <Star
+                    key={index}
+                    size={20}
+                    className="fill-blue-300 text-blue-300"
+                  />
+                ))}
+              </div>
+
+              <p className="text-white/70 leading-relaxed mb-8">
+                “{item.review}”
+              </p>
+
+              <div className="border-t border-white/10 pt-5">
+                <p className="text-white font-bold">{item.name}</p>
+
+                <p className="text-blue-300 text-xs uppercase tracking-widest mt-1">
+                  Verified Customer
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center mt-12 flex flex-col sm:flex-row gap-4 justify-center">
+          <a
+            href="/reviews"
+            className="inline-flex justify-center rounded-full border border-blue-400/30 bg-blue-500/10 px-8 py-4 text-sm font-bold uppercase tracking-widest text-blue-100 hover:bg-blue-500/20 transition-all"
+          >
+            View All Reviews
+          </a>
+
+          <a
+            href="/reviews#leave-review"
+            className="inline-flex justify-center rounded-full bg-white text-[#081526] px-8 py-4 text-sm font-bold uppercase tracking-widest hover:bg-blue-100 transition-all"
+          >
+            Leave a Review
+          </a>
+        </div>
+      </>
+    ) : (
+      <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-10 text-center max-w-3xl mx-auto">
+        <p className="text-white/60 mb-6">
+          Customer reviews will appear here once approved.
+        </p>
+
+        <a
+          href="/reviews#leave-review"
+          className="inline-flex rounded-full bg-white text-[#081526] px-8 py-4 font-bold uppercase tracking-widest hover:bg-blue-100 transition-all"
+        >
+          Leave a Review
+        </a>
+      </div>
+    )}
+  </div>
+</section>
+
+  {/* CREATE ACCOUNT + REWARDS */}
+<Reveal>
+  <section className="relative overflow-hidden bg-[#081526] px-4 py-20 sm:px-6 md:py-24">
+    {/* Background glow */}
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.14),transparent_58%)]" />
+
+    <div className="relative z-10 mx-auto w-full max-w-6xl">
+      <div className="overflow-hidden rounded-[2rem] border border-blue-300/20 bg-gradient-to-br from-[#102743] via-[#12345A] to-[#0B1B30] shadow-[0_0_70px_rgba(96,165,250,0.14)] sm:rounded-[2.75rem]">
+        <div className="grid min-w-0 grid-cols-1 lg:grid-cols-[1.15fr_0.85fr]">
+          {/* LEFT SIDE */}
+          <div className="min-w-0 p-6 sm:p-8 md:p-12 lg:p-14">
+            <div className="mb-6 flex items-center gap-3">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-blue-300/20 bg-blue-400/10 text-blue-200">
+                <Gift size={24} />
+              </div>
+
+              <p className="break-words text-xs font-black uppercase tracking-[0.25em] text-blue-300 sm:tracking-[0.35em]">
+                Apexx Rewards
+              </p>
+            </div>
+
+            <h2 className="max-w-3xl break-words text-4xl font-black leading-[1] tracking-tight text-white sm:text-5xl md:text-6xl">
+              Create an account.
+              <span className="mt-2 block text-blue-300">
+                Get rewarded.
+              </span>
+            </h2>
+
+            <p className="mt-6 max-w-2xl text-base leading-relaxed text-blue-100/70 md:text-lg">
+              Create your free Apexx account to earn points on eligible
+              purchases, track orders, save favorite products, and manage
+              everything from your customer dashboard.
+            </p>
+
+            <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {[
+                "Earn 1 point for every $1 spent",
+                "Redeem 100 points for $10 off",
+                "Track orders and shipments",
+                "Save your favorite products",
+              ].map((benefit) => (
+                <div
+                  key={benefit}
+                  className="flex min-w-0 items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-4"
+                >
+                  <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-400/15 text-blue-300">
+                    <Check size={15} strokeWidth={3} />
+                  </div>
+
+                  <p className="break-words text-sm font-semibold leading-relaxed text-white/75">
+                    {benefit}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/account/signup"
+                className="inline-flex w-full items-center justify-center rounded-full bg-white px-8 py-4 text-center text-sm font-black uppercase tracking-[0.2em] text-[#081526] transition hover:bg-blue-100 sm:w-fit"
+              >
+                Create Free Account
+              </Link>
+
+              <Link
+                href="/account/login"
+                className="inline-flex w-full items-center justify-center rounded-full border border-white/15 bg-white/[0.05] px-8 py-4 text-center text-sm font-black uppercase tracking-[0.2em] text-white transition hover:border-blue-300/40 hover:bg-white/[0.09] sm:w-fit"
+              >
+                Sign In
+              </Link>
+            </div>
+          </div>
+
+          {/* RIGHT SIDE — CONDITIONS */}
+          <div className="min-w-0 border-t border-white/10 bg-[#081526]/55 p-6 sm:p-8 md:p-10 lg:border-l lg:border-t-0 lg:p-12">
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.25em] text-blue-300">
+              Rewards Conditions
+            </p>
+
+            <h3 className="break-words text-2xl font-black text-white md:text-3xl">
+              How rewards work
+            </h3>
+
+            <div className="mt-7 space-y-4">
+              {[
+                {
+                  number: "01",
+                  title: "Create an account",
+                  text: "Customers must have an Apexx account and use the same account email when placing an order.",
+                },
+                {
+                  number: "02",
+                  title: "Earn eligible points",
+                  text: "One point is awarded for every eligible dollar spent. Shipping, taxes, discounts, and canceled or refunded amounts may not earn points.",
+                },
+                {
+                  number: "03",
+                  title: "Points are added after fulfillment",
+                  text: "Reward points are credited after an eligible order has been completed or shipped.",
+                },
+                {
+                  number: "04",
+                  title: "Redeem future rewards",
+                  text: "Every 100 available points may be redeemed for $10 off an eligible future order.",
+                },
+              ].map((condition) => (
+                <div
+                  key={condition.number}
+                  className="flex min-w-0 items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-300/20 bg-blue-400/10 text-xs font-black text-blue-300">
+                    {condition.number}
+                  </div>
+
+                  <div className="min-w-0">
+                    <p className="break-words font-black text-white">
+                      {condition.title}
+                    </p>
+
+                    <p className="mt-1 break-words text-sm leading-relaxed text-white/55">
+                      {condition.text}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <p className="mt-6 break-words text-xs leading-relaxed text-white/35">
+              Rewards have no cash value and cannot be transferred. Apexx
+              Biolabs may correct balances resulting from canceled, refunded,
+              duplicate, fraudulent, or otherwise ineligible transactions.
+              Additional account and rewards terms may apply.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Reveal>
+
 {/* HOMEPAGE FAQ */}
 <section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
@@ -1358,7 +1756,6 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
     </div>
   </div>
 </section>
-</Reveal>
 
 <Reveal>
   <section className="relative px-6 md:px-10 py-24 bg-[#081526] overflow-hidden">

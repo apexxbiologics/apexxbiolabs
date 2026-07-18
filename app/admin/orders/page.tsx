@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+type Carrier = "AUTO" | "USPS" | "UPS" | "FedEx" | "DHL";
+
 type Order = {
   id: string;
   order_number: string;
@@ -9,391 +11,759 @@ type Order = {
   first_name: string;
   last_name: string;
   payment_method: string;
-total: number;
-promo_code: string | null;
-discount: number | null;
-status: string;
+  total: number;
+  promo_code: string | null;
+  discount: number | null;
+  status: string;
   tracking_number: string | null;
   created_at: string;
 };
 
-export default function AdminOrdersPage() {
+function detectCarrier(
+  trackingNumber: string
+): Exclude<Carrier, "AUTO"> | null {
+  const tracking = trackingNumber
+    .trim()
+    .replace(/[\s-]+/g, "")
+    .toUpperCase();
 
-    const markPaymentReceived = async (orderNumber: string) => {
-  const response = await fetch("/api/orders/payment-received", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ orderNumber }),
-  });
-
-  const data = await response.json();
-
-  if (!response.ok || !data.success) {
-    alert("Failed to mark payment received.");
-    return;
+  if (!tracking) {
+    return null;
   }
 
-  alert("Payment received. Inventory updated.");
-  window.location.reload();
-};
+  // UPS tracking numbers commonly begin with 1Z.
+  if (/^1Z[A-Z0-9]{16}$/.test(tracking) || tracking.startsWith("1Z")) {
+    return "UPS";
+  }
 
+  // USPS domestic and international tracking formats.
+  if (
+    /^(92|93|94|95)\d{18,20}$/.test(tracking) ||
+    /^[A-Z]{2}\d{9}US$/.test(tracking)
+  ) {
+    return "USPS";
+  }
+
+  // DHL commonly uses 10 digits or JD/JJD prefixes.
+  if (
+    /^\d{10}$/.test(tracking) ||
+    /^JD\d+$/.test(tracking) ||
+    /^JJD\d+$/.test(tracking)
+  ) {
+    return "DHL";
+  }
+
+  // FedEx commonly uses 12, 15, 20, or 22 digits.
+  if (
+    /^\d{12}$/.test(tracking) ||
+    /^\d{15}$/.test(tracking) ||
+    /^\d{20}$/.test(tracking) ||
+    /^\d{22}$/.test(tracking)
+  ) {
+    return "FedEx";
+  }
+
+  return null;
+}
+
+export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-const [trackingInputs, setTrackingInputs] = useState<Record<string, string>>({});
-const [enteredUsername, setEnteredUsername] = useState("");
-const [enteredPassword, setEnteredPassword] = useState("");
-const [unlocked, setUnlocked] = useState(false);
-const [lockedOut, setLockedOut] = useState(false);
-const [loginError, setLoginError] = useState("");
-const [searchTerm, setSearchTerm] = useState("");
 
-const fetchOrders = async () => {
-  try {
-    const response = await fetch("/api/admin/orders");
-    const result = await response.json();
+  const [trackingInputs, setTrackingInputs] = useState<
+    Record<string, string>
+  >({});
 
-    if (!response.ok || !result.success) {
-      console.error("Error fetching orders:", result.error);
-      setOrders([]);
-    } else {
+  const [carrierInputs, setCarrierInputs] = useState<
+    Record<string, Carrier>
+  >({});
+
+  const [sendingTracking, setSendingTracking] = useState<
+    Record<string, boolean>
+  >({});
+
+  const [markingPaid, setMarkingPaid] = useState<
+    Record<string, boolean>
+  >({});
+
+  const [enteredUsername, setEnteredUsername] = useState("");
+  const [enteredPassword, setEnteredPassword] = useState("");
+  const [unlocked, setUnlocked] = useState(false);
+  const [lockedOut, setLockedOut] = useState(false);
+  const [loginError, setLoginError] = useState("");
+  const [loggingIn, setLoggingIn] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const fetchOrders = async () => {
+    try {
+      const response = await fetch("/api/admin/orders", {
+        cache: "no-store",
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        console.error("Error fetching orders:", result.error);
+        setOrders([]);
+        return;
+      }
+
       setOrders(result.orders || []);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      setOrders([]);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Error fetching orders:", error);
-    setOrders([]);
-  }
-
-  setLoading(false);
-};
+  };
 
   useEffect(() => {
     fetchOrders();
   }, []);
 
-const filteredOrders = orders.filter((order) => {
-  const search = searchTerm.trim().toLowerCase();
+  const handleLogin = async () => {
+    if (!enteredUsername.trim() || !enteredPassword.trim()) {
+      setLoginError("Please enter your username and password.");
+      return;
+    }
 
-  if (!search) return true;
+    try {
+      setLoggingIn(true);
+      setLoginError("");
 
-  return (
-    order.order_number?.toLowerCase().includes(search) ||
-    order.customer_email?.toLowerCase().includes(search) ||
-    order.first_name?.toLowerCase().includes(search) ||
-    order.last_name?.toLowerCase().includes(search) ||
-    order.payment_method?.toLowerCase().includes(search) ||
-    order.status?.toLowerCase().includes(search)
-  );
-});
-const totalOrders = orders.length;
-const awaitingPayment = orders.filter((o) => o.status === "awaiting_payment").length;
-const paidOrders = orders.filter((o) => o.status === "paid").length;
-const shippedOrders = orders.filter((o) => o.status === "shipped").length;
-const totalRevenue = orders.reduce((sum, order) => sum + Number(order.total || 0), 0);
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: enteredUsername.trim(),
+          password: enteredPassword,
+        }),
+      });
 
-  if (!unlocked) {
-  return (
-    <main className="min-h-screen bg-[#081526] text-white flex items-center justify-center px-6">
-      <div className="w-full max-w-md rounded-[32px] border border-blue-400/20 bg-white/[0.04] p-8 shadow-[0_0_50px_rgba(59,130,246,0.18)]">
-        <p className="uppercase tracking-[0.35em] text-blue-300 text-xs mb-4">
-          Apexx Admin
-        </p>
+      const result = await response.json();
 
-        <h1 className="text-4xl font-black mb-4">Admin Access</h1>
+      if (response.ok && result.success) {
+        setUnlocked(true);
+        setLoginError("");
+        return;
+      }
 
-        <p className="text-white/60 mb-6">
-          Enter your username and password to view orders.
-        </p>
+      if (result.locked) {
+        setLockedOut(true);
+        setLoginError("Too many failed attempts. Access locked.");
+        return;
+      }
 
-        {loginError && (
-          <p className="mb-4 text-sm text-red-300 font-bold">
-            {loginError}
-          </p>
-        )}
+      setLoginError(
+        typeof result.attemptsLeft === "number"
+          ? `Incorrect login. Attempts left: ${result.attemptsLeft}`
+          : result.error || "Incorrect username or password."
+      );
+    } catch (error) {
+      console.error("Admin login error:", error);
+      setLoginError("Unable to log in. Please try again.");
+    } finally {
+      setLoggingIn(false);
+    }
+  };
 
-        {lockedOut ? (
-          <p className="text-red-300 font-bold">
-            Too many failed attempts. Access has been locked.
-          </p>
-        ) : (
-          <>
-            <input
-              type="text"
-              value={enteredUsername}
-              onChange={(e) => setEnteredUsername(e.target.value)}
-              placeholder="Username"
-              className="w-full rounded-full bg-white/[0.06] border border-white/10 px-5 py-4 text-white outline-none mb-4"
-            />
+  const handleMarkPaid = async (orderId: string) => {
+    try {
+      setMarkingPaid((current) => ({
+        ...current,
+        [orderId]: true,
+      }));
 
-            <input
-              type="password"
-              value={enteredPassword}
-              onChange={(e) => setEnteredPassword(e.target.value)}
-              placeholder="Password"
-              className="w-full rounded-full bg-white/[0.06] border border-white/10 px-5 py-4 text-white outline-none mb-5"
-            />
+      const response = await fetch("/api/admin/mark-paid", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderId,
+        }),
+      });
 
-            <button
-              onClick={async () => {
-                const response = await fetch("/api/admin/login", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    username: enteredUsername,
-                    password: enteredPassword,
-                  }),
-                });
+      const result = await response.json();
 
-                const result = await response.json();
+      if (!response.ok || !result.success) {
+        alert(result.error || "Failed to mark the order as paid.");
+        return;
+      }
 
-                if (result.success) {
-                  setUnlocked(true);
-                  setLoginError("");
-                } else if (result.locked) {
-                  setLockedOut(true);
-                  setLoginError("Too many failed attempts. Access locked.");
-                } else {
-                  setLoginError(
-                    `Incorrect login. Attempts left: ${result.attemptsLeft}`
-                  );
-                }
-              }}
-              className="w-full rounded-full bg-blue-400 text-[#081526] font-black py-4 uppercase tracking-widest"
-            >
-              Enter Dashboard
-            </button>
-          </>
-        )}
-      </div>
-    </main>
-  );
-}
+      alert("Order marked as paid. Inventory updated.");
+      await fetchOrders();
+    } catch (error) {
+      console.error("Error marking order paid:", error);
+      alert("Something went wrong while marking the order as paid.");
+    } finally {
+      setMarkingPaid((current) => ({
+        ...current,
+        [orderId]: false,
+      }));
+    }
+  };
 
-  return (
+  const handleSendTracking = async (order: Order) => {
+    const trackingNumber = (
+      trackingInputs[order.id] || ""
+    ).trim();
 
-    <main className="min-h-screen bg-[#081526] text-white px-6 py-10">
-      <div className="max-w-7xl mx-auto">
-        <a
-          href="/admin"
-          className="inline-flex mb-8 text-blue-300 hover:text-white text-sm uppercase tracking-widest transition-all"
-        >
-          ← Back to Dashboard
-        </a>
-      </div>
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-10">
-          <div>
-            <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
-              Apexx Biolabs
-            </p>
+    if (!trackingNumber) {
+      alert("Please enter a tracking number.");
+      return;
+    }
 
-            <h1 className="text-5xl font-black">
-              Admin Orders
-            </h1>
+    const selectedCarrier =
+      carrierInputs[order.id] || "AUTO";
 
-            <p className="text-white/60 mt-4">
-              View customer orders, payment status, and shipment progress.
-            </p>
+    const carrier =
+      selectedCarrier === "AUTO"
+        ? detectCarrier(trackingNumber)
+        : selectedCarrier;
 
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-8">
-  <div className="rounded-2xl border border-blue-300/20 bg-white/[0.04] p-5">
-    <p className="text-white/50 text-xs uppercase tracking-widest">Total Orders</p>
-    <p className="text-3xl font-black text-white mt-2">{totalOrders}</p>
-  </div>
+    if (!carrier) {
+      alert(
+        "The carrier could not be detected. Please select USPS, UPS, FedEx, or DHL manually."
+      );
+      return;
+    }
 
-  <div className="rounded-2xl border border-yellow-300/20 bg-white/[0.04] p-5">
-    <p className="text-white/50 text-xs uppercase tracking-widest">Awaiting</p>
-    <p className="text-3xl font-black text-yellow-300 mt-2">{awaitingPayment}</p>
-  </div>
+    try {
+      setSendingTracking((current) => ({
+        ...current,
+        [order.id]: true,
+      }));
 
-  <div className="rounded-2xl border border-green-300/20 bg-white/[0.04] p-5">
-    <p className="text-white/50 text-xs uppercase tracking-widest">Paid</p>
-    <p className="text-3xl font-black text-green-300 mt-2">{paidOrders}</p>
-  </div>
-
-  <div className="rounded-2xl border border-blue-300/20 bg-white/[0.04] p-5">
-    <p className="text-white/50 text-xs uppercase tracking-widest">Shipped</p>
-    <p className="text-3xl font-black text-blue-300 mt-2">{shippedOrders}</p>
-  </div>
-
-  <div className="rounded-2xl border border-blue-300/20 bg-white/[0.04] p-5">
-    <p className="text-white/50 text-xs uppercase tracking-widest">Revenue</p>
-    <p className="text-3xl font-black text-blue-300 mt-2">
-      ${totalRevenue.toFixed(2)}
-    </p>
-  </div>
-</div>
-
-          </div>
-
-          <a
-            href="/"
-            className="rounded-full border border-blue-300/30 px-6 py-3 text-blue-200 hover:bg-blue-500/10 transition-all"
-          >
-            Back to Site
-          </a>
-        </div>
-
-<div className="mb-6">
-  <input
-    type="text"
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-    placeholder="Search by order number, name, email, or status..."
-    className="w-full rounded-full border border-blue-300/20 bg-white/[0.06] px-6 py-4 text-white placeholder:text-white/40 outline-none focus:border-blue-300/50"
-  />
-</div>
-
-        <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] overflow-hidden">
-          {loading ? (
-            <div className="p-10 text-white/60">Loading orders...</div>
-          ) : filteredOrders.length === 0 ? (
-            <div className="p-10 text-white/60">No orders found.</div>
-          ) : (
-            <div className="overflow-x-auto">
-<table className="min-w-[1300px] w-full text-left">
-                    <thead className="bg-white/[0.06] text-blue-200 uppercase tracking-widest text-xs">
-                  <tr>
-                    <th className="p-5">Order</th>
-                    <th className="p-5">Customer</th>
-                    <th className="p-5">Payment</th>
-<th className="p-5">Total</th>
-<th className="p-5">Promo</th>
-<th className="p-5">Status</th>
-<th className="p-5">Created</th>
-<th className="p-5">Tracking</th>
-<th className="p-5">Actions</th>                  
-</tr>
-                </thead>
-
-                <tbody>
-{filteredOrders.map((order) => (
-                            <tr
-                      key={order.id}
-                      className="border-t border-white/10 hover:bg-white/[0.03]"
-                    >
-                      <td className="p-5 font-bold text-white">
-                        {order.order_number}
-                      </td>
-
-                      <td className="p-5">
-                        <p className="font-semibold">
-                          {order.first_name} {order.last_name}
-                        </p>
-                        <p className="text-white/50 text-sm">
-                          {order.customer_email}
-                        </p>
-                      </td>
-
-                      <td className="p-5 capitalize text-blue-200">
-                        {order.payment_method}
-                      </td>
-
-                      <td className="p-5 font-black text-blue-300">
-                        ${Number(order.total).toFixed(2)}
-                      </td>
-
-                      <td className="p-5">
-  {order.promo_code ? (
-    <div>
-      <p className="font-bold text-green-300">{order.promo_code}</p>
-      <p className="text-sm text-white/50">
-        -${Number(order.discount || 0).toFixed(2)}
-      </p>
-    </div>
-  ) : (
-    <span className="text-white/30 text-sm">None</span>
-  )}
-</td>
-
-
-                      <td className="p-5">
-                        <span className="inline-flex rounded-full border border-blue-300/30 bg-blue-500/10 px-4 py-2 text-xs uppercase tracking-widest text-blue-200">
-                          {order.status}
-                        </span>
-                      </td>
-
-                      <td className="p-5 text-white/50 text-sm">
-                        {new Date(order.created_at).toLocaleString()}
-                      </td>
-
-{/* Tracking column */}
-<td className="p-5">
-  {order.status === "paid" ? (
-    <div className="flex gap-2">
-      <input
-        value={trackingInputs[order.id] || ""}
-        onChange={(e) =>
-          setTrackingInputs({
-            ...trackingInputs,
-            [order.id]: e.target.value,
-          })
-        }
-        placeholder="Tracking #"
-        className="w-44 rounded-full bg-white/10 border border-white/10 px-4 py-2 text-sm text-white outline-none"
-      />
-
-      <button
-        onClick={async () => {
-          await fetch("/api/admin/send-tracking", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              orderId: order.id,
-              trackingNumber: trackingInputs[order.id],
-              carrier: "USPS",
-            }),
-          });
-
-          fetchOrders();
-        }}
-        className="rounded-full bg-blue-400 px-5 py-2 text-sm font-black text-[#081526] hover:bg-blue-300 transition-all"
-      >
-        Send
-      </button>
-    </div>
-  ) : order.status === "shipped" ? (
-    <span className="text-blue-300 font-bold">Shipped</span>
-  ) : (
-    <span className="text-white/40 text-sm">Mark paid first</span>
-  )}
-</td>
-
-{/* Actions column */}
-<td className="p-5">
-  {order.status === "awaiting_payment" ? (
-    <button
-      onClick={async () => {
-        await fetch("/api/admin/mark-paid", {
+      const response = await fetch(
+        "/api/admin/send-tracking",
+        {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             orderId: order.id,
+            trackingNumber,
+            carrier,
           }),
-        });
+        }
+      );
 
-        fetchOrders();
-      }}
-      className="rounded-full bg-blue-400 px-5 py-2 text-sm font-black text-[#081526] hover:bg-blue-300 transition-all"
-    >
-      Mark Paid
-    </button>
-  ) : order.status === "paid" ? (
-    <span className="text-green-400 font-bold">Paid</span>
-  ) : (
-    <span className="text-blue-300 font-bold">Shipped</span>
-  )}
-</td>
+      const result = await response.json();
 
-                    </tr>
-                  ))}
+      if (!response.ok || !result.success) {
+        alert(
+          result.error ||
+            "The tracking information could not be sent."
+        );
+        return;
+      }
+
+      alert(
+        `Tracking information sent successfully through ${carrier}.`
+      );
+
+      setTrackingInputs((current) => {
+        const updated = { ...current };
+        delete updated[order.id];
+        return updated;
+      });
+
+      setCarrierInputs((current) => {
+        const updated = { ...current };
+        delete updated[order.id];
+        return updated;
+      });
+
+      await fetchOrders();
+    } catch (error) {
+      console.error("Error sending tracking:", error);
+
+      alert(
+        "Something went wrong while sending the tracking information."
+      );
+    } finally {
+      setSendingTracking((current) => ({
+        ...current,
+        [order.id]: false,
+      }));
+    }
+  };
+
+  const filteredOrders = orders.filter((order) => {
+    const search = searchTerm.trim().toLowerCase();
+
+    if (!search) {
+      return true;
+    }
+
+    const customerName =
+      `${order.first_name || ""} ${order.last_name || ""}`.toLowerCase();
+
+    return (
+      order.order_number?.toLowerCase().includes(search) ||
+      order.customer_email?.toLowerCase().includes(search) ||
+      customerName.includes(search) ||
+      order.payment_method?.toLowerCase().includes(search) ||
+      order.status?.toLowerCase().includes(search) ||
+      order.promo_code?.toLowerCase().includes(search) ||
+      order.tracking_number?.toLowerCase().includes(search)
+    );
+  });
+
+  const totalOrders = orders.length;
+
+  const awaitingPayment = orders.filter(
+    (order) => order.status === "awaiting_payment"
+  ).length;
+
+  const paidOrders = orders.filter(
+    (order) => order.status === "paid"
+  ).length;
+
+  const shippedOrders = orders.filter(
+    (order) => order.status === "shipped"
+  ).length;
+
+  const totalRevenue = orders
+    .filter(
+      (order) =>
+        order.status === "paid" ||
+        order.status === "shipped" ||
+        order.status === "Payment Received"
+    )
+    .reduce(
+      (sum, order) => sum + Number(order.total || 0),
+      0
+    );
+
+  if (!unlocked) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#081526] px-6 text-white">
+        <div className="w-full max-w-md rounded-[32px] border border-blue-400/20 bg-white/[0.04] p-8 shadow-[0_0_50px_rgba(59,130,246,0.18)]">
+          <p className="mb-4 text-xs uppercase tracking-[0.35em] text-blue-300">
+            Apexx Admin
+          </p>
+
+          <h1 className="mb-4 text-4xl font-black">
+            Admin Access
+          </h1>
+
+          <p className="mb-6 text-white/60">
+            Enter your username and password to view orders.
+          </p>
+
+          {loginError && (
+            <p className="mb-4 text-sm font-bold text-red-300">
+              {loginError}
+            </p>
+          )}
+
+          {lockedOut ? (
+            <p className="font-bold text-red-300">
+              Too many failed attempts. Access has been locked.
+            </p>
+          ) : (
+            <>
+              <input
+                type="text"
+                value={enteredUsername}
+                onChange={(event) =>
+                  setEnteredUsername(event.target.value)
+                }
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    handleLogin();
+                  }
+                }}
+                placeholder="Username"
+                autoComplete="username"
+                className="mb-4 w-full rounded-full border border-white/10 bg-white/[0.06] px-5 py-4 text-white outline-none placeholder:text-white/40 focus:border-blue-300/50"
+              />
+
+              <input
+                type="password"
+                value={enteredPassword}
+                onChange={(event) =>
+                  setEnteredPassword(event.target.value)
+                }
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    handleLogin();
+                  }
+                }}
+                placeholder="Password"
+                autoComplete="current-password"
+                className="mb-5 w-full rounded-full border border-white/10 bg-white/[0.06] px-5 py-4 text-white outline-none placeholder:text-white/40 focus:border-blue-300/50"
+              />
+
+              <button
+                type="button"
+                onClick={handleLogin}
+                disabled={loggingIn}
+                className="w-full rounded-full bg-blue-400 py-4 font-black uppercase tracking-widest text-[#081526] transition-all hover:bg-blue-300 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {loggingIn
+                  ? "Checking..."
+                  : "Enter Dashboard"}
+              </button>
+            </>
+          )}
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-[#081526] px-4 py-8 text-white sm:px-6 sm:py-10">
+      <div className="mx-auto max-w-7xl">
+        <a
+          href="/admin"
+          className="mb-8 inline-flex text-sm uppercase tracking-widest text-blue-300 transition-all hover:text-white"
+        >
+          ← Back to Dashboard
+        </a>
+
+        <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0 flex-1">
+            <p className="mb-4 text-sm uppercase tracking-[0.35em] text-blue-300">
+              Apexx Biolabs
+            </p>
+
+            <h1 className="text-4xl font-black sm:text-5xl">
+              Admin Orders
+            </h1>
+
+            <p className="mt-4 text-white/60">
+              View customer orders, payment status, and
+              shipment progress.
+            </p>
+
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+              <div className="rounded-2xl border border-blue-300/20 bg-white/[0.04] p-5">
+                <p className="text-xs uppercase tracking-widest text-white/50">
+                  Total Orders
+                </p>
+
+                <p className="mt-2 text-3xl font-black text-white">
+                  {totalOrders}
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-yellow-300/20 bg-white/[0.04] p-5">
+                <p className="text-xs uppercase tracking-widest text-white/50">
+                  Awaiting
+                </p>
+
+                <p className="mt-2 text-3xl font-black text-yellow-300">
+                  {awaitingPayment}
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-green-300/20 bg-white/[0.04] p-5">
+                <p className="text-xs uppercase tracking-widest text-white/50">
+                  Paid
+                </p>
+
+                <p className="mt-2 text-3xl font-black text-green-300">
+                  {paidOrders}
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-blue-300/20 bg-white/[0.04] p-5">
+                <p className="text-xs uppercase tracking-widest text-white/50">
+                  Shipped
+                </p>
+
+                <p className="mt-2 text-3xl font-black text-blue-300">
+                  {shippedOrders}
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-blue-300/20 bg-white/[0.04] p-5">
+                <p className="text-xs uppercase tracking-widest text-white/50">
+                  Revenue
+                </p>
+
+                <p className="mt-2 text-3xl font-black text-blue-300">
+                  ${totalRevenue.toFixed(2)}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <a
+            href="/"
+            className="inline-flex w-fit rounded-full border border-blue-300/30 px-6 py-3 text-blue-200 transition-all hover:bg-blue-500/10"
+          >
+            Back to Site
+          </a>
+        </div>
+
+        <div className="mb-6">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(event) =>
+              setSearchTerm(event.target.value)
+            }
+            placeholder="Search by order number, name, email, promo, tracking, or status..."
+            className="w-full rounded-full border border-blue-300/20 bg-white/[0.06] px-6 py-4 text-white outline-none placeholder:text-white/40 focus:border-blue-300/50"
+          />
+        </div>
+
+        <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04]">
+          {loading ? (
+            <div className="p-10 text-white/60">
+              Loading orders...
+            </div>
+          ) : filteredOrders.length === 0 ? (
+            <div className="p-10 text-white/60">
+              No orders found.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[1500px] text-left">
+                <thead className="bg-white/[0.06] text-xs uppercase tracking-widest text-blue-200">
+                  <tr>
+                    <th className="p-5">Order</th>
+                    <th className="p-5">Customer</th>
+                    <th className="p-5">Payment</th>
+                    <th className="p-5">Total</th>
+                    <th className="p-5">Promo</th>
+                    <th className="p-5">Status</th>
+                    <th className="p-5">Created</th>
+                    <th className="p-5">Tracking</th>
+                    <th className="p-5">Actions</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {filteredOrders.map((order) => {
+                    const enteredTracking =
+                      trackingInputs[order.id] || "";
+
+                    const selectedCarrier =
+                      carrierInputs[order.id] || "AUTO";
+
+                    const detectedCarrier =
+                      selectedCarrier === "AUTO"
+                        ? detectCarrier(enteredTracking)
+                        : selectedCarrier;
+
+                    return (
+                      <tr
+                        key={order.id}
+                        className="border-t border-white/10 transition-colors hover:bg-white/[0.03]"
+                      >
+                        <td className="p-5 font-bold text-white">
+                          {order.order_number}
+                        </td>
+
+                        <td className="p-5">
+                          <p className="font-semibold">
+                            {order.first_name}{" "}
+                            {order.last_name}
+                          </p>
+
+                          <p className="text-sm text-white/50">
+                            {order.customer_email}
+                          </p>
+                        </td>
+
+                        <td className="p-5 capitalize text-blue-200">
+                          {order.payment_method}
+                        </td>
+
+                        <td className="p-5 font-black text-blue-300">
+                          ${Number(order.total || 0).toFixed(2)}
+                        </td>
+
+                        <td className="p-5">
+                          {order.promo_code ? (
+                            <div>
+                              <p className="font-bold text-green-300">
+                                {order.promo_code}
+                              </p>
+
+                              <p className="text-sm text-white/50">
+                                -$
+                                {Number(
+                                  order.discount || 0
+                                ).toFixed(2)}
+                              </p>
+                            </div>
+                          ) : (
+                            <span className="text-sm text-white/30">
+                              None
+                            </span>
+                          )}
+                        </td>
+
+                        <td className="p-5">
+                          <span className="inline-flex rounded-full border border-blue-300/30 bg-blue-500/10 px-4 py-2 text-xs uppercase tracking-widest text-blue-200">
+                            {order.status.replaceAll("_", " ")}
+                          </span>
+                        </td>
+
+                        <td className="p-5 text-sm text-white/50">
+                          {new Date(
+                            order.created_at
+                          ).toLocaleString()}
+                        </td>
+
+                        <td className="p-5">
+                          {order.status === "paid" ? (
+                            <div className="flex min-w-[430px] flex-col gap-3">
+                              <div className="flex gap-2">
+                                <input
+                                  value={enteredTracking}
+                                  onChange={(event) => {
+                                    const trackingNumber =
+                                      event.target.value;
+
+                                    setTrackingInputs(
+                                      (current) => ({
+                                        ...current,
+                                        [order.id]:
+                                          trackingNumber,
+                                      })
+                                    );
+                                  }}
+                                  placeholder="Tracking number"
+                                  className="w-56 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm text-white outline-none placeholder:text-white/40 focus:border-blue-300/50"
+                                />
+
+                                <select
+                                  value={selectedCarrier}
+                                  onChange={(event) => {
+                                    setCarrierInputs(
+                                      (current) => ({
+                                        ...current,
+                                        [order.id]:
+                                          event.target
+                                            .value as Carrier,
+                                      })
+                                    );
+                                  }}
+                                  className="rounded-full border border-white/10 bg-[#10223a] px-4 py-2 text-sm text-white outline-none focus:border-blue-300/50"
+                                >
+                                  <option value="AUTO">
+                                    Auto Detect
+                                  </option>
+
+                                  <option value="USPS">
+                                    USPS
+                                  </option>
+
+                                  <option value="UPS">
+                                    UPS
+                                  </option>
+
+                                  <option value="FedEx">
+                                    FedEx
+                                  </option>
+
+                                  <option value="DHL">
+                                    DHL
+                                  </option>
+                                </select>
+                              </div>
+
+                              <div className="flex items-center gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleSendTracking(order)
+                                  }
+                                  disabled={
+                                    sendingTracking[order.id]
+                                  }
+                                  className="rounded-full bg-blue-400 px-5 py-2 text-sm font-black text-[#081526] transition-all hover:bg-blue-300 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                  {sendingTracking[order.id]
+                                    ? "Sending..."
+                                    : "Send Tracking"}
+                                </button>
+
+                                {enteredTracking.trim() && (
+                                  <span
+                                    className={`text-xs ${
+                                      detectedCarrier
+                                        ? "text-green-300"
+                                        : "text-yellow-300"
+                                    }`}
+                                  >
+                                    {selectedCarrier !==
+                                    "AUTO"
+                                      ? `Selected: ${selectedCarrier}`
+                                      : detectedCarrier
+                                        ? `Detected: ${detectedCarrier}`
+                                        : "Select carrier manually"}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          ) : order.status === "shipped" ? (
+                            <div>
+                              <p className="font-bold text-blue-300">
+                                Shipped
+                              </p>
+
+                              {order.tracking_number && (
+                                <p className="mt-1 max-w-[220px] break-all text-xs text-white/50">
+                                  {order.tracking_number}
+                                </p>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-sm text-white/40">
+                              Mark paid first
+                            </span>
+                          )}
+                        </td>
+
+                        <td className="p-5">
+                          {order.status ===
+                          "awaiting_payment" ? (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleMarkPaid(order.id)
+                              }
+                              disabled={
+                                markingPaid[order.id]
+                              }
+                              className="rounded-full bg-blue-400 px-5 py-2 text-sm font-black text-[#081526] transition-all hover:bg-blue-300 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              {markingPaid[order.id]
+                                ? "Updating..."
+                                : "Mark Paid"}
+                            </button>
+                          ) : order.status === "paid" ? (
+                            <span className="font-bold text-green-400">
+                              Paid
+                            </span>
+                          ) : order.status ===
+                            "shipped" ? (
+                            <span className="font-bold text-blue-300">
+                              Shipped
+                            </span>
+                          ) : (
+                            <span className="text-sm text-white/40">
+                              {order.status.replaceAll(
+                                "_",
+                                " "
+                              )}
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

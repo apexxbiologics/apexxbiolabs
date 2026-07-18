@@ -391,12 +391,12 @@ const handlePromoSignup = async (e: React.FormEvent) => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 mt-10">
-          <a
-            href="#shop"
-            className="bg-white text-[#081526] px-9 py-4 rounded-full text-sm uppercase tracking-widest font-semibold text-center hover:bg-blue-100 transition-all"
-          >
-            Shop Products
-          </a>
+<a
+  href="/products"
+  className="bg-white text-[#081526] px-9 py-4 rounded-full text-sm uppercase tracking-widest font-semibold text-center hover:bg-blue-100 transition-all"
+>
+  Shop Products
+</a>
 
           <a
             href="/coas"

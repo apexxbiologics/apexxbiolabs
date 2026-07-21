@@ -177,11 +177,14 @@ export default function COAsPage() {
   content: "5.48 mg",
   coa: "/images/coas/tesamorelincoa7-10-26.pdf",
 },
-    {
-      name: "NAD+",
-      batch: "Pending",
-      status: "Awaiting Testing",
-    },
+{
+  name: "NAD+",
+  batch: "Black Cap-1",
+  status: "Verified",
+  purity: "99.95%",
+  content: "1119.71 mg",
+  coa: "/images/coas/nadcoa7-20-26.pdf",
+},
     {
       name: "AOD-9604",
       batch: "Pending",

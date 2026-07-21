@@ -311,13 +311,7 @@ export default function APX3Page() {
                 </a>
 
                 <a
-                  href={
-                    selectedMg === "20mg"
-                      ? "/images/coas/apx3-20mg-blue-cap-coa.pdf"
-                      : "/images/coas/apx3-10mg-blue-cap-1-coa.pdf"
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/coas"
                   className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
                 >
                   View All COAs

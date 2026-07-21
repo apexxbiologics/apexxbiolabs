@@ -156,11 +156,14 @@ export default function COAsPage() {
       batch: "Pending",
       status: "Awaiting Testing",
     },
-    {
-      name: "Adamax",
-      batch: "Pending",
-      status: "Awaiting Testing",
-    },
+{
+  name: "Adamax",
+  batch: "Black Cap-1",
+  status: "Verified",
+  purity: "99.21%",
+  content: "13.71 mg",
+  coa: "/images/coas/adamaxcoa7-20-26.pdf",
+},
     {
       name: "CJC/IPA without DAC",
       batch: "CJCIPA504292026-09",

@@ -25,14 +25,22 @@ export default function COAsPage() {
   );
 
   const products: ProductCOA[] = [
-    {
-      name: "APX-3",
-      batch: "Blue Cap-1",
-      status: "Verified",
-      purity: "99.92%",
-      content: "23.89 mg",
-      coa: "/images/coas/apx3-20mg-blue-cap-coa.pdf",
-    },
+{
+  name: "APX-3 10mg",
+  batch: "Blue Cap-1",
+  status: "Verified",
+  purity: "99.89%",
+  content: "13.24 mg",
+  coa: "/images/coas/apx3-10mg-blue-cap-1-coa.pdf",
+},
+{
+  name: "APX-3 20mg",
+  batch: "Blue Cap-1",
+  status: "Verified",
+  purity: "99.92%",
+  content: "23.89 mg",
+  coa: "/images/coas/apx3-20mg-blue-cap-coa.pdf",
+},
 {
   name: "BPC-157",
   batch: "Blue Cap-2",
@@ -234,7 +242,7 @@ export default function COAsPage() {
 
           <div className="mb-10 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70">
             <span className="text-green-400">✓</span>
-            <span>Last Updated: July 10, 2026</span>
+            <span>Last Updated: July 21, 2026</span>
           </div>
 
           <p className="mx-auto mb-10 max-w-3xl text-lg leading-relaxed text-white/70 md:text-xl">

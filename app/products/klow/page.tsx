@@ -17,8 +17,8 @@ export default function KlowPage() {
   const [price, setPrice] = useState(55);
 
   const product = {
-    id: "klow-10mg",
-    name: "KLOW 10mg",
+    id: "klow-80mg",
+    name: "KLOW 80mg",
     image: "/images/klowblue.png",
     path: "/products/klow",
   };
@@ -171,7 +171,7 @@ export default function KlowPage() {
                   </p>
 
                   <div className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-7 py-4 text-sm font-semibold uppercase tracking-widest text-white">
-                    10mg
+                    80mg
                   </div>
                 </div>
 

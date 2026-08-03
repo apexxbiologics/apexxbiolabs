@@ -213,11 +213,14 @@ export default function COAsPage() {
       batch: "Pending",
       status: "Awaiting Testing",
     },
-    {
-      name: "KLOW",
-      batch: "Pending",
-      status: "Awaiting Testing",
-    },
+ {
+  name: "KLOW",
+  batch: "Dark Blue Cap",
+  status: "Verified",
+  purity: "99.82%",
+  content: "57.66 mg GHK-Cu / 11.53 mg KPV / 12.36 mg BPC-157 / 12.93 mg TB-4",
+  coa: "/images/coas/7-31-klow-coa.pdf",
+},
     {
       name: "Wolverine",
       batch: "Pending",

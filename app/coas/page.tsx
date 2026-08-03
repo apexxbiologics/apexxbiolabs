@@ -221,11 +221,14 @@ export default function COAsPage() {
   content: "57.66 mg GHK-Cu / 11.53 mg KPV / 12.36 mg BPC-157 / 12.93 mg TB-4",
   coa: "/images/coas/7-31-klow-coa.pdf",
 },
-    {
-      name: "Wolverine",
-      batch: "Pending",
-      status: "Awaiting Testing",
-    },
+{
+  name: "Wolverine",
+  batch: "Clear Cap / Blue Crimp",
+  status: "Verified",
+  purity: "99.34%",
+  content: "11.84 mg BPC-157 / 12.93 mg Thymosin Beta-4",
+  coa: "/images/coas/7-31-wolverine-coa.pdf",
+},
   ];
 
   function togglePreviousCoas(productName: string) {

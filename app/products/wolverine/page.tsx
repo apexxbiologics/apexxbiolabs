@@ -287,7 +287,7 @@ export default function WolverinePage() {
         </p>
 
         <h3 className="text-2xl font-black text-white mb-5">
-          Certificate of Analysis
+          Latest Certificate of Analysis
         </h3>
 
         <div className="flex flex-wrap gap-3">
@@ -303,28 +303,16 @@ export default function WolverinePage() {
             </span>
           </div>
 
+          <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+            <span className="text-[#A5D8FF] font-semibold">
+              24.77mg Total Content
+            </span>
+          </div>
+
           <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
             <span className="text-white/70">
               Lot: Clear Cap / Blue Crimp
             </span>
-          </div>
-        </div>
-
-        <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-            <p className="text-xs uppercase tracking-wider text-white/40 mb-1">
-              BPC-157
-            </p>
-
-            <p className="text-white font-semibold">11.84 mg</p>
-          </div>
-
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-            <p className="text-xs uppercase tracking-wider text-white/40 mb-1">
-              Thymosin Beta-4
-            </p>
-
-            <p className="text-white font-semibold">12.93 mg</p>
           </div>
         </div>
       </div>

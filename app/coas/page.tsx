@@ -203,11 +203,14 @@ export default function COAsPage() {
       batch: "Pending",
       status: "Awaiting Testing",
     },
-    {
-      name: "5-Amino-1MQ",
-      batch: "Pending",
-      status: "Awaiting Testing",
-    },
+{
+  name: "5-Amino-1MQ",
+  batch: "Orange Cap",
+  status: "Verified",
+  purity: "99.90%",
+  content: "59.02 mg",
+  coa: "/images/coas/7-31-5-amino-1mq-coa.pdf",
+},
     {
       name: "Kisspeptin-10",
       batch: "Pending",

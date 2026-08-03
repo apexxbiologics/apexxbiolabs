@@ -251,7 +251,7 @@ export default function COAsPage() {
 
           <div className="mb-10 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70">
             <span className="text-green-400">✓</span>
-            <span>Last Updated: July 21, 2026</span>
+            <span>Last Updated: August 3, 2026</span>
           </div>
 
           <p className="mx-auto mb-10 max-w-3xl text-lg leading-relaxed text-white/70 md:text-xl">

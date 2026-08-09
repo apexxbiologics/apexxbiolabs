@@ -190,11 +190,6 @@ export default function COAsPage() {
       batch: "Pending",
       status: "Awaiting Testing",
     },
-    {
-      name: "Acetic Acid",
-      batch: "Pending",
-      status: "Awaiting Testing",
-    },
 {
   name: "5-Amino-1MQ",
   batch: "Orange Cap",

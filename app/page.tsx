@@ -354,7 +354,7 @@ const handlePromoSignup = async (e: React.FormEvent) => {
         FREE GIFT
       </p>
       <p className="text-blue-100 text-xs mt-1">
-Receive a Complimentary Gift With Any 6 Vials
+Receive a Complimentary Gift With Any 8 Vials
       </p>
     </div>
   </div>

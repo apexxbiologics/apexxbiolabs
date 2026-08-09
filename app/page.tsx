@@ -610,13 +610,6 @@ price: "$55.00",
   image: "/images/pt141.png",
   href: "/products/pt141",
 },
-{
-  name: "Acetic Acid",
-  desc: "Research Reconstitution Solution",
-  price: "$15.00",
-  image: "/images/aceticacid.png",
-  href: "/products/aceticacid",
-},
 
         ].map((product) => (
           <div

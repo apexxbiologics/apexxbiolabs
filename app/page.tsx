@@ -74,7 +74,6 @@ const products = [
   { name: "APX-3", href: "/products/apx3" },
   { name: "BPC-157", href: "/products/bpc157" },
   { name: "TB-500", href: "/products/tb500" },
-  { name: "Bacteriostatic Water", href: "/products/bacwater" },
   { name: "KPV", href: "/products/kpv" },
   { name: "GHK-Cu", href: "/products/ghkcu" },
   { name: "Pinealon", href: "/products/pinealon" },
@@ -618,12 +617,7 @@ price: "$55.00",
   image: "/images/aceticacid.png",
   href: "/products/aceticacid",
 },
-          {
-            name: "Bacteriostatic Water",
-            desc: "Research Reconstitution Solution",
-            image: "/images/bacwater.PNG",
-            href: "/products/bacwater",
-          },
+
         ].map((product) => (
           <div
             key={product.name}

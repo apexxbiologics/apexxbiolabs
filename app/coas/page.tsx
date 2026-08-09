@@ -82,14 +82,6 @@ export default function COAsPage() {
   ],
 },
     {
-      name: "Bacteriostatic Water",
-      batch: "PRX-2026-04-A",
-      status: "Verified",
-      purity: "Pass",
-      content: "30 mL",
-      coa: "/images/coas/bacwater-coa.pdf",
-    },
-    {
       name: "KPV",
       batch: "Purple Cap-1",
       status: "Verified",

@@ -168,13 +168,6 @@ export default function ProductsPage() {
       href: "/products/pt141",
     },
     {
-      name: "Acetic Acid",
-      desc: "Research Solution",
-      category: "Research Solutions",
-      image: "/images/aceticacid.png",
-      href: "/products/aceticacid",
-    },
-    {
       name: "Bacteriostatic Water",
       desc: "Research Reconstitution Solution",
       category: "Research Solutions",

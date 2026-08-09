@@ -351,10 +351,10 @@ const handlePromoSignup = async (e: React.FormEvent) => {
 
     <div className="rounded-full border border-blue-400/30 bg-blue-500/10 backdrop-blur-sm px-8 py-5 text-center">
       <p className="text-white font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
-        FREE BAC WATER
+        FREE GIFT
       </p>
       <p className="text-blue-100 text-xs mt-1">
-        Buy Any 4 Vials & Receive Complimentary Bac Water
+Receive a Complimentary Gift With Any 6 Vials
       </p>
     </div>
   </div>

@@ -168,10 +168,7 @@ export default function APX3Page() {
               </h1>
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                High-purity APX-3 research peptide studied in laboratory models
-                involving GIP, GLP-1, and glucagon receptor pathways, metabolic
-                signaling, energy regulation, and body composition research.
-              </p>
+High-purity APX-3 research peptide for laboratory investigation of GIP, GLP-1, and glucagon receptor signaling pathways and associated molecular mechanisms.              </p>
 
               <p className="text-5xl font-black text-white mb-3">
                 ${selectedPrice.toFixed(2)}

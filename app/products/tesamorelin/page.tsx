@@ -271,8 +271,7 @@ export default function TesamorelinPage() {
 
               <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
                 <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider text-center">
-                  FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
-                </p>
+Receive a Complimentary Gift With Any 8 Vials                </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">

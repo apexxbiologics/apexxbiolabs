@@ -270,8 +270,7 @@ High-purity APX-3 research peptide for laboratory investigation of GIP, GLP-1, a
                   </svg>
 
                   <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
-                    FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
-                  </p>
+Receive a Complimentary Gift With Any 8 Vials                  </p>
                 </div>
               </div>
 

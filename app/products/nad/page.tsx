@@ -229,8 +229,7 @@ export default function NADPage() {
                   </svg>
 
                   <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider">
-                    FREE BACTERIOSTATIC WATER WITH PURCHASE OF ANY 4 VIALS
-                  </p>
+Receive a Complimentary Gift With Any 8 Vials                  </p>
                 </div>
               </div>
 

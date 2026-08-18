@@ -9,6 +9,11 @@ type AffiliateRowActionsProps = {
   status: string;
 };
 
+type AffiliateAction =
+  | "archive"
+  | "unarchive"
+  | "delete";
+
 export default function AffiliateRowActions({
   affiliateId,
   affiliateName,
@@ -23,7 +28,7 @@ export default function AffiliateRowActions({
     useState("");
 
   async function runAction(
-    action: "archive" | "delete"
+    action: AffiliateAction
   ) {
     setMessage("");
     setLoading(action);
@@ -89,6 +94,19 @@ export default function AffiliateRowActions({
     await runAction("archive");
   }
 
+  async function handleUnarchive() {
+    const confirmed =
+      window.confirm(
+        `Unarchive ${affiliateName}? Their affiliate account will become active again and dashboard access will be restored.`
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    await runAction("unarchive");
+  }
+
   async function handleDelete() {
     const confirmed =
       window.confirm(
@@ -116,7 +134,18 @@ export default function AffiliateRowActions({
 
       <div className="flex flex-wrap justify-end gap-2">
 
-        {status !== "archived" && (
+        {status === "archived" ? (
+          <button
+            type="button"
+            onClick={handleUnarchive}
+            disabled={Boolean(loading)}
+            className="rounded-full border border-green-400/20 bg-green-500/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-green-200 transition hover:bg-green-500/20 disabled:opacity-40"
+          >
+            {loading === "unarchive"
+              ? "Unarchiving..."
+              : "Unarchive"}
+          </button>
+        ) : (
           <button
             type="button"
             onClick={handleArchive}

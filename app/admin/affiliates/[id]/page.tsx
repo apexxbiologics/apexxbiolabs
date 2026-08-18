@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
 import PayoutButton from "./PayoutButton";
+import AffiliateControls from "./AffiliateControls";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -389,6 +390,19 @@ export default async function AdminAffiliateDashboardPage({
 
           </div>
         </section>
+
+        <div className="mb-8">
+          <AffiliateControls
+            affiliateId={affiliate.id}
+            status={affiliate.status}
+            discountRate={Number(
+              affiliate.discount_rate || 0
+            )}
+            commissionRate={Number(
+              affiliate.commission_rate || 0
+            )}
+          />
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-5 mb-8">
 

@@ -21,16 +21,8 @@ const supabaseAdmin = createClient(
 const INVITE_EXPIRATION_HOURS = 24;
 
 /*
- * Find an existing Supabase Auth user
- * by email.
- *
- * If they already have an Apexx points/customer
- * account, we can pre-link the pending affiliate
- * profile to their existing Auth user.
- *
- * If no Auth user exists, user_id remains null
- * until they create an Apexx account and claim
- * the invitation.
+ * Find an existing Apexx Supabase Auth
+ * account by email.
  */
 async function findExistingAuthUser(
   email: string
@@ -98,21 +90,36 @@ export async function POST(
     const formData =
       await request.formData();
 
-    const name = String(
-      formData.get("name") || ""
-    ).trim();
+    /*
+     * This is present only when the affiliate
+     * is being created from an approved
+     * Research Referral application.
+     */
+    const applicationId =
+      String(
+        formData.get(
+          "application_id"
+        ) || ""
+      ).trim();
 
-    const email = String(
-      formData.get("email") || ""
-    )
-      .trim()
-      .toLowerCase();
+    const name =
+      String(
+        formData.get("name") || ""
+      ).trim();
 
-    const code = String(
-      formData.get("code") || ""
-    )
-      .trim()
-      .toUpperCase();
+    const email =
+      String(
+        formData.get("email") || ""
+      )
+        .trim()
+        .toLowerCase();
+
+    const code =
+      String(
+        formData.get("code") || ""
+      )
+        .trim()
+        .toUpperCase();
 
     const discountPercent =
       Number(
@@ -130,7 +137,7 @@ export async function POST(
 
     /*
      * ==========================================
-     * VALIDATION
+     * BASIC VALIDATION
      * ==========================================
      */
     if (
@@ -142,7 +149,7 @@ export async function POST(
         {
           success: false,
           error:
-            "Name, email, and affiliate code are required.",
+            "Name, email, and referral code are required.",
         },
         { status: 400 }
       );
@@ -160,12 +167,17 @@ export async function POST(
         {
           success: false,
           error:
-            "Please enter a valid affiliate email address.",
+            "Please enter a valid referral partner email address.",
         },
         { status: 400 }
       );
     }
 
+    /*
+     * Referral codes:
+     * 3–30 characters
+     * letters / numbers / - / _
+     */
     if (
       !/^[A-Z0-9_-]{3,30}$/.test(
         code
@@ -175,7 +187,7 @@ export async function POST(
         {
           success: false,
           error:
-            "Affiliate code must be 3–30 characters and contain only letters, numbers, hyphens, or underscores.",
+            "Referral code must be 3–30 characters and contain only letters, numbers, hyphens, or underscores.",
         },
         { status: 400 }
       );
@@ -209,7 +221,7 @@ export async function POST(
         {
           success: false,
           error:
-            "Invalid affiliate commission percentage.",
+            "Invalid referral commission percentage.",
         },
         { status: 400 }
       );
@@ -223,11 +235,133 @@ export async function POST(
 
     /*
      * ==========================================
-     * CHECK FOR EXISTING AFFILIATE
+     * VALIDATE REFERRAL APPLICATION
      * ==========================================
      *
-     * Email and affiliate code must both
-     * remain unique.
+     * If this invitation came from an approved
+     * application, verify the application BEFORE
+     * creating the affiliate.
+     */
+    let referralApplication:
+      | {
+          id: string;
+          email: string;
+          name: string;
+          status: string;
+          affiliate_id:
+            | string
+            | null;
+        }
+      | null = null;
+
+    if (applicationId) {
+      const {
+        data,
+        error,
+      } = await supabaseAdmin
+        .from(
+          "affiliate_applications"
+        )
+        .select(`
+          id,
+          name,
+          email,
+          status,
+          affiliate_id
+        `)
+        .eq(
+          "id",
+          applicationId
+        )
+        .maybeSingle();
+
+      if (error) {
+        console.error(
+          "Referral application lookup error:",
+          error
+        );
+
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "Unable to verify the approved referral application.",
+          },
+          { status: 500 }
+        );
+      }
+
+      if (!data) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "The referral application could not be found.",
+          },
+          { status: 404 }
+        );
+      }
+
+      if (
+        data.status !==
+        "approved"
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "This referral application has not been approved.",
+          },
+          { status: 409 }
+        );
+      }
+
+      if (
+        data.affiliate_id
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "This referral application is already connected to an affiliate account.",
+          },
+          { status: 409 }
+        );
+      }
+
+      const applicationEmail =
+        String(
+          data.email || ""
+        )
+          .trim()
+          .toLowerCase();
+
+      /*
+       * Prevent the approved applicant's
+       * email from being changed.
+       */
+      if (
+        applicationEmail !==
+        email
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "The affiliate email must match the email on the approved referral application.",
+          },
+          { status: 403 }
+        );
+      }
+
+      referralApplication =
+        data;
+    }
+
+    /*
+     * ==========================================
+     * CHECK FOR EXISTING AFFILIATE
+     * ==========================================
      */
     const {
       data:
@@ -236,9 +370,12 @@ export async function POST(
         existingAffiliateError,
     } = await supabaseAdmin
       .from("affiliates")
-      .select(
-        "id, email, code, status"
-      )
+      .select(`
+        id,
+        email,
+        code,
+        status
+      `)
       .or(
         `email.eq.${email},code.eq.${code}`
       )
@@ -256,7 +393,7 @@ export async function POST(
         {
           success: false,
           error:
-            "Unable to verify affiliate information.",
+            "Unable to verify referral partner information.",
         },
         { status: 500 }
       );
@@ -271,7 +408,7 @@ export async function POST(
         {
           success: false,
           error:
-            "An affiliate with this email or code already exists.",
+            "An affiliate with this email or referral code already exists.",
         },
         { status: 409 }
       );
@@ -308,7 +445,7 @@ export async function POST(
 
     /*
      * ==========================================
-     * GENERATE ONE-TIME INVITATION
+     * GENERATE SECURE INVITATION
      * ==========================================
      */
     const inviteToken =
@@ -330,14 +467,11 @@ export async function POST(
      * ==========================================
      *
      * Existing Apexx account:
-     * user_id = their existing Auth ID
+     * user_id is pre-linked.
      *
-     * Brand-new person:
-     * user_id = null
-     *
-     * When a brand-new person creates an
-     * Apexx account and claims the invitation,
-     * /api/affiliate/claim sets user_id.
+     * New Apexx customer:
+     * user_id remains null until the person
+     * creates their account and claims the invite.
      */
     const {
       data:
@@ -396,7 +530,7 @@ export async function POST(
           success: false,
           error:
             affiliateInsertError?.message ||
-            "Unable to create affiliate invitation.",
+            "Unable to create referral invitation.",
         },
         { status: 500 }
       );
@@ -414,18 +548,12 @@ export async function POST(
 
     /*
      * ==========================================
-     * SEND AFFILIATE INVITATION
+     * SEND REFERRAL INVITATION EMAIL
      * ==========================================
-     *
-     * EVERY affiliate now receives the same
-     * invitation regardless of whether they
-     * already have an Apexx account.
-     *
-     * The claim page handles both situations.
      */
     const {
       error:
-        affiliateInviteEmailError,
+        invitationEmailError,
     } =
       await resend.emails.send({
         from:
@@ -435,7 +563,7 @@ export async function POST(
           email,
 
         subject:
-          "You're Invited • Apexx Biolabs Affiliate Program",
+          "You're Invited • Apexx Biolabs Research Referral Program",
 
         html: `
           <div style="margin:0;padding:0;background:#f8fbff;font-family:Arial,Helvetica,sans-serif;">
@@ -445,150 +573,399 @@ export async function POST(
               <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:28px;overflow:hidden;box-shadow:0 18px 45px rgba(30,58,138,0.12);">
 
                 <!-- HEADER -->
+                <div
+                  style="
+                    background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff);
+                    padding:38px 24px;
+                    text-align:center;
+                    border-bottom:1px solid #dbeafe;
+                  "
+                >
 
-                <div style="background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff);padding:38px 24px;text-align:center;border-bottom:1px solid #dbeafe;">
-
-                  <p style="margin:0 0 14px;color:#3b82f6;font-size:13px;letter-spacing:4px;text-transform:uppercase;">
+                  <p
+                    style="
+                      margin:0 0 14px;
+                      color:#3b82f6;
+                      font-size:13px;
+                      letter-spacing:4px;
+                      text-transform:uppercase;
+                    "
+                  >
                     Research. Quality. Confidence.
                   </p>
 
-                  <h1 style="margin:0;color:#06111f;font-size:34px;letter-spacing:3px;">
+                  <h1
+                    style="
+                      margin:0;
+                      color:#06111f;
+                      font-size:34px;
+                      letter-spacing:3px;
+                    "
+                  >
                     APEXX BIOLABS
                   </h1>
 
-                  <p style="margin:12px 0 0;color:#475569;font-size:13px;letter-spacing:2px;text-transform:uppercase;">
-                    Affiliate Program
+                  <p
+                    style="
+                      margin:12px 0 0;
+                      color:#475569;
+                      font-size:13px;
+                      letter-spacing:2px;
+                      text-transform:uppercase;
+                    "
+                  >
+                    Research Referral Program
                   </p>
 
                 </div>
 
                 <!-- BODY -->
+                <div
+                  style="
+                    padding:32px 24px;
+                    color:#0f172a;
+                  "
+                >
 
-                <div style="padding:32px 24px;color:#0f172a;">
+                  <!-- INVITATION -->
+                  <div
+                    style="
+                      background:#ffffff;
+                      border:1px solid #bfdbfe;
+                      border-radius:22px;
+                      padding:32px 24px;
+                      text-align:center;
+                      margin-bottom:30px;
+                      box-shadow:0 12px 30px rgba(59,130,246,0.10);
+                    "
+                  >
 
-                  <div style="background:#ffffff;border:1px solid #bfdbfe;border-radius:22px;padding:32px 24px;text-align:center;margin-bottom:30px;box-shadow:0 12px 30px rgba(59,130,246,0.10);">
-
-                    <p style="margin:0 0 14px;color:#3b82f6;font-size:13px;letter-spacing:4px;text-transform:uppercase;">
-                      Affiliate Invitation
+                    <p
+                      style="
+                        margin:0 0 14px;
+                        color:#3b82f6;
+                        font-size:13px;
+                        letter-spacing:4px;
+                        text-transform:uppercase;
+                      "
+                    >
+                      Research Referral Invitation
                     </p>
 
-                    <h2 style="margin:0;color:#06111f;font-size:34px;font-weight:800;line-height:1.1;">
-                      You're Invited
+                    <h2
+                      style="
+                        margin:0;
+                        color:#06111f;
+                        font-size:34px;
+                        font-weight:800;
+                        line-height:1.1;
+                      "
+                    >
+                      You're Approved
                     </h2>
 
-                    <p style="margin:14px 0 0;color:#2563eb;font-size:18px;font-weight:700;">
-                      Join the Apexx Biolabs Affiliate Program
+                    <p
+                      style="
+                        margin:14px 0 0;
+                        color:#2563eb;
+                        font-size:18px;
+                        font-weight:700;
+                      "
+                    >
+                      Join the Apexx Biolabs Research Referral Program
                     </p>
 
-                    <p style="margin:18px auto 0;max-width:500px;color:#475569;font-size:15px;line-height:1.7;">
-                      Hi ${name}. You've been selected to join the
-                      Apexx Biolabs Affiliate Program.
+                    <p
+                      style="
+                        margin:18px auto 0;
+                        max-width:500px;
+                        color:#475569;
+                        font-size:15px;
+                        line-height:1.7;
+                      "
+                    >
+                      Hi ${name}. Your Research Referral access is ready
+                      to activate.
                     </p>
 
                   </div>
 
                   <!-- CODE -->
+                  <div
+                    style="
+                      background:linear-gradient(135deg,#eaf4ff,#f8fbff);
+                      border:1px solid #bfdbfe;
+                      border-radius:22px;
+                      padding:28px;
+                      text-align:center;
+                      margin-bottom:24px;
+                    "
+                  >
 
-                  <div style="background:linear-gradient(135deg,#eaf4ff,#f8fbff);border:1px solid #bfdbfe;border-radius:22px;padding:28px;text-align:center;margin-bottom:24px;">
-
-                    <p style="margin:0 0 8px;color:#1e3a8a;font-size:13px;text-transform:uppercase;letter-spacing:2px;font-weight:bold;">
-                      Your Affiliate Code
+                    <p
+                      style="
+                        margin:0 0 8px;
+                        color:#1e3a8a;
+                        font-size:13px;
+                        text-transform:uppercase;
+                        letter-spacing:2px;
+                        font-weight:bold;
+                      "
+                    >
+                      Your Referral Code
                     </p>
 
-                    <p style="margin:0;color:#2563eb;font-size:32px;font-weight:900;">
+                    <p
+                      style="
+                        margin:0;
+                        color:#2563eb;
+                        font-size:32px;
+                        font-weight:900;
+                      "
+                    >
                       ${code}
                     </p>
 
                   </div>
 
-                  <!-- ACCOUNT OPTIONS -->
+                  <!-- EXISTING ACCOUNT -->
+                  <div
+                    style="
+                      background:#ffffff;
+                      border:1px solid #dbeafe;
+                      border-radius:20px;
+                      padding:24px;
+                      margin-bottom:18px;
+                    "
+                  >
 
-                  <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:20px;padding:24px;margin-bottom:18px;">
-
-                    <p style="margin:0;color:#06111f;font-size:18px;font-weight:800;">
+                    <p
+                      style="
+                        margin:0;
+                        color:#06111f;
+                        font-size:18px;
+                        font-weight:800;
+                      "
+                    >
                       Already have an Apexx account?
                     </p>
 
-                    <p style="margin:10px 0 0;color:#64748b;font-size:14px;line-height:1.7;">
+                    <p
+                      style="
+                        margin:10px 0 0;
+                        color:#64748b;
+                        font-size:14px;
+                        line-height:1.7;
+                      "
+                    >
                       Sign in using the same email address and password
-                      you use for your Apexx Points account.
-                      Your rewards account and Affiliate Dashboard will
-                      remain separate while using the same secure login.
+                      you use for your Apexx Points account. Your referral
+                      access will be connected to the same secure login.
                     </p>
 
                   </div>
 
-                  <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:20px;padding:24px;margin-bottom:26px;">
+                  <!-- NEW ACCOUNT -->
+                  <div
+                    style="
+                      background:#ffffff;
+                      border:1px solid #dbeafe;
+                      border-radius:20px;
+                      padding:24px;
+                      margin-bottom:26px;
+                    "
+                  >
 
-                    <p style="margin:0;color:#06111f;font-size:18px;font-weight:800;">
+                    <p
+                      style="
+                        margin:0;
+                        color:#06111f;
+                        font-size:18px;
+                        font-weight:800;
+                      "
+                    >
                       New to Apexx?
                     </p>
 
-                    <p style="margin:10px 0 0;color:#64748b;font-size:14px;line-height:1.7;">
+                    <p
+                      style="
+                        margin:10px 0 0;
+                        color:#64748b;
+                        font-size:14px;
+                        line-height:1.7;
+                      "
+                    >
                       Create an Apexx account using the same email address
-                      where you received this invitation.
-                      After confirming your account, you'll be able to
-                      activate your Affiliate Dashboard.
+                      that received this invitation. After confirming your
+                      account, you'll be able to activate your referral
+                      dashboard.
                     </p>
 
                   </div>
 
                   <!-- CTA -->
-
-                  <div style="text-align:center;margin-bottom:30px;">
+                  <div
+                    style="
+                      text-align:center;
+                      margin-bottom:30px;
+                    "
+                  >
 
                     <a
                       href="${claimUrl}"
-                      style="display:inline-block;background:#06111f;color:#ffffff;padding:16px 30px;border-radius:999px;text-decoration:none;font-weight:900;font-size:15px;letter-spacing:1px;text-transform:uppercase;"
+                      style="
+                        display:inline-block;
+                        background:#06111f;
+                        color:#ffffff;
+                        padding:16px 30px;
+                        border-radius:999px;
+                        text-decoration:none;
+                        font-weight:900;
+                        font-size:15px;
+                        letter-spacing:1px;
+                        text-transform:uppercase;
+                      "
                     >
-                      Accept Affiliate Invitation
+                      Accept Referral Invitation
                     </a>
 
-                    <!-- FALLBACK LINK -->
-
-                    <p style="margin:20px auto 0;max-width:520px;color:#64748b;font-size:12px;line-height:1.6;word-break:break-all;">
+                    <p
+                      style="
+                        margin:20px auto 0;
+                        max-width:520px;
+                        color:#64748b;
+                        font-size:12px;
+                        line-height:1.6;
+                        word-break:break-all;
+                      "
+                    >
                       If the button above does not appear or work,
                       use this secure invitation link:
                     </p>
 
-                    <p style="margin:10px auto 0;max-width:520px;font-size:12px;line-height:1.6;word-break:break-all;">
+                    <p
+                      style="
+                        margin:10px auto 0;
+                        max-width:520px;
+                        font-size:12px;
+                        line-height:1.6;
+                        word-break:break-all;
+                      "
+                    >
+
                       <a
                         href="${claimUrl}"
-                        style="color:#2563eb;text-decoration:underline;"
+                        style="
+                          color:#2563eb;
+                          text-decoration:underline;
+                        "
                       >
                         ${claimUrl}
                       </a>
+
                     </p>
 
                   </div>
 
                   <!-- EXPIRATION -->
+                  <div
+                    style="
+                      background:#fff7ed;
+                      border-left:4px solid #f59e0b;
+                      padding:18px;
+                      border-radius:14px;
+                      margin-bottom:24px;
+                    "
+                  >
 
-                  <div style="background:#fff7ed;border-left:4px solid #f59e0b;padding:18px;border-radius:14px;margin-bottom:30px;">
-
-                    <p style="margin:0;color:#92400e;font-weight:bold;">
-                      Invitation Expires in 24 Hours
+                    <p
+                      style="
+                        margin:0;
+                        color:#92400e;
+                        font-weight:bold;
+                      "
+                    >
+                      Invitation Expires in ${INVITE_EXPIRATION_HOURS} Hours
                     </p>
 
-                    <p style="margin:8px 0 0;color:#92400e;font-size:13px;line-height:1.6;">
-                      For security, this invitation can only be used once
-                      and expires ${INVITE_EXPIRATION_HOURS} hours after it was sent.
+                    <p
+                      style="
+                        margin:8px 0 0;
+                        color:#92400e;
+                        font-size:13px;
+                        line-height:1.6;
+                      "
+                    >
+                      For security, this invitation can only be used once.
+                    </p>
+
+                  </div>
+
+                  <!-- RESEARCH POLICY -->
+                  <div
+                    style="
+                      background:#f8fbff;
+                      border:1px solid #dbeafe;
+                      border-radius:18px;
+                      padding:18px;
+                      margin-bottom:28px;
+                    "
+                  >
+
+                    <p
+                      style="
+                        margin:0;
+                        color:#1e3a8a;
+                        font-weight:bold;
+                      "
+                    >
+                      Research Referral Standards
+                    </p>
+
+                    <p
+                      style="
+                        margin:8px 0 0;
+                        color:#64748b;
+                        font-size:13px;
+                        line-height:1.7;
+                      "
+                    >
+                      Apexx Biolabs products are intended strictly for
+                      lawful laboratory research use and are not for
+                      human or veterinary use. Referral partners may not
+                      promote personal use or make medical, therapeutic,
+                      dosing, or administration claims.
                     </p>
 
                   </div>
 
                   <!-- FOOTER -->
+                  <div
+                    style="
+                      border-top:1px solid #dbeafe;
+                      padding-top:24px;
+                    "
+                  >
 
-                  <div style="border-top:1px solid #dbeafe;padding-top:24px;">
-
-                    <p style="font-size:12px;color:#64748b;line-height:1.6;margin:0;">
-                      This invitation was sent because you were selected
-                      to join the Apexx Biolabs Affiliate Program.
+                    <p
+                      style="
+                        font-size:12px;
+                        color:#64748b;
+                        line-height:1.6;
+                        margin:0;
+                      "
+                    >
                       If you were not expecting this invitation,
                       you may safely ignore this email.
                     </p>
 
-                    <p style="margin:24px 0 0;color:#334155;line-height:1.6;">
+                    <p
+                      style="
+                        margin:24px 0 0;
+                        color:#334155;
+                        line-height:1.6;
+                      "
+                    >
                       Apexx Biolabs<br/>
                       support@apexxbiolabs.com<br/>
                       apexxbiolabs.com
@@ -608,18 +985,16 @@ export async function POST(
      * EMAIL FAILURE CLEANUP
      * ==========================================
      *
-     * If the email cannot be delivered through
-     * Resend, remove the pending affiliate profile
-     * so you can try again cleanly.
-     *
-     * We do NOT delete any Apexx Auth user.
+     * Your existing system already cleans up
+     * the affiliate row if Resend fails.
+     * We keep that behavior here.
      */
     if (
-      affiliateInviteEmailError
+      invitationEmailError
     ) {
       console.error(
-        "Affiliate invitation email error:",
-        affiliateInviteEmailError
+        "Referral invitation email error:",
+        invitationEmailError
       );
 
       const {
@@ -633,9 +1008,11 @@ export async function POST(
           createdAffiliate.id
         );
 
-      if (cleanupError) {
+      if (
+        cleanupError
+      ) {
         console.error(
-          "Affiliate invite cleanup error:",
+          "Referral affiliate cleanup error:",
           cleanupError
         );
       }
@@ -644,7 +1021,7 @@ export async function POST(
         {
           success: false,
           error:
-            "Affiliate invitation could not be sent.",
+            "Referral invitation could not be sent.",
         },
         { status: 500 }
       );
@@ -652,8 +1029,99 @@ export async function POST(
 
     /*
      * ==========================================
+     * CONNECT APPROVED APPLICATION
+     * ==========================================
+     *
+     * Only do this AFTER the invitation email
+     * succeeds.
+     *
+     * That way an application does not show
+     * a connected affiliate when the invite
+     * never actually went out.
+     */
+    if (
+      referralApplication
+    ) {
+      const {
+        error:
+          applicationLinkError,
+      } = await supabaseAdmin
+        .from(
+          "affiliate_applications"
+        )
+        .update({
+          affiliate_id:
+            createdAffiliate.id,
+
+          updated_at:
+            new Date().toISOString(),
+        })
+        .eq(
+          "id",
+          referralApplication.id
+        )
+        .eq(
+          "status",
+          "approved"
+        )
+        .is(
+          "affiliate_id",
+          null
+        );
+
+      if (
+        applicationLinkError
+      ) {
+        console.error(
+          "Referral application linking error:",
+          applicationLinkError
+        );
+
+        /*
+         * The affiliate invitation itself has
+         * already been sent successfully.
+         *
+         * Therefore we DO NOT delete the affiliate.
+         * We return an error so the admin knows
+         * the application connection needs review.
+         */
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "The referral invitation was sent, but the application could not be linked to the affiliate record.",
+          },
+          { status: 500 }
+        );
+      }
+    }
+
+    /*
+     * ==========================================
      * SUCCESS
      * ==========================================
+     */
+
+    /*
+     * If created from an approved application,
+     * return to that application so the admin
+     * can immediately see the linked affiliate.
+     */
+    if (
+      referralApplication
+    ) {
+      return NextResponse.redirect(
+        new URL(
+          `/admin/affiliate-applications/${referralApplication.id}?invite=sent`,
+          request.url
+        ),
+        303
+      );
+    }
+
+    /*
+     * Keep the existing manual affiliate
+     * invitation redirect behavior.
      */
     return NextResponse.redirect(
       new URL(
@@ -664,10 +1132,9 @@ export async function POST(
       ),
       303
     );
-
   } catch (error) {
     console.error(
-      "Affiliate invitation error:",
+      "Referral invitation error:",
       error
     );
 
@@ -675,7 +1142,7 @@ export async function POST(
       {
         success: false,
         error:
-          "Unable to create affiliate invitation.",
+          "Unable to create referral invitation.",
       },
       { status: 500 }
     );

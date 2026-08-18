@@ -80,7 +80,7 @@ const { error } = await supabaseAdmin.from("promo_subscribers").insert([
 
             <div style="display:inline-block; max-width:100%; box-sizing:border-box; background:#eef7ff; border:1px solid #bfdbfe; border-radius:18px; padding:14px 18px; margin:0 auto;">
               <p style="margin:0; color:#2563eb; font-size:26px; font-weight:900; letter-spacing:2px; line-height:1.1; word-break:break-word;">
-                FREEDOM10
+                WELCOME10
               </p>
             </div>
 

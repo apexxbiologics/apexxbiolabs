@@ -56,6 +56,7 @@ export async function POST(request: Request) {
       cart,
       promoCode,
       redeemedPoints,
+      marketingConsent,
     } = body;
 
     /*
@@ -112,6 +113,13 @@ export async function POST(request: Request) {
       String(paymentMethod)
         .trim()
         .toLowerCase();
+
+    /*
+     * Marketing consent comes from the checkout checkbox.
+     * Only an explicit boolean true counts as consent.
+     */
+    const normalizedMarketingConsent =
+      marketingConsent === true;
 
     if (
       !/^\d{5}$/.test(
@@ -696,6 +704,13 @@ export async function POST(request: Request) {
           reward_discount:
             rewardDiscount,
 
+          /*
+           * Keep the checkout consent on the order
+           * as an audit trail.
+           */
+          marketing_consent:
+            normalizedMarketingConsent,
+
           total:
             serverTotal,
 
@@ -724,6 +739,82 @@ export async function POST(request: Request) {
         },
         { status: 500 }
       );
+    }
+
+    /*
+     * Add checkout opt-ins to the promo subscriber list.
+     *
+     * This does NOT require a unique constraint on email:
+     * - existing subscriber -> update consent/name
+     * - new subscriber -> insert with source "checkout"
+     *
+     * If this secondary action fails, the customer's order
+     * remains valid; the error is logged for debugging.
+     */
+    if (normalizedMarketingConsent) {
+      const {
+        data: existingSubscriber,
+        error: subscriberLookupError,
+      } = await supabaseAdmin
+        .from("promo_subscribers")
+        .select("email")
+        .eq(
+          "email",
+          normalizedCustomerEmail
+        )
+        .maybeSingle();
+
+      if (subscriberLookupError) {
+        console.error(
+          "Promo subscriber lookup error:",
+          subscriberLookupError
+        );
+      } else if (existingSubscriber) {
+        const {
+          error: subscriberUpdateError,
+        } = await supabaseAdmin
+          .from("promo_subscribers")
+          .update({
+            first_name:
+              normalizedFirstName,
+            last_name:
+              normalizedLastName,
+            consent: true,
+          })
+          .eq(
+            "email",
+            normalizedCustomerEmail
+          );
+
+        if (subscriberUpdateError) {
+          console.error(
+            "Promo subscriber update error:",
+            subscriberUpdateError
+          );
+        }
+      } else {
+        const {
+          error: subscriberInsertError,
+        } = await supabaseAdmin
+          .from("promo_subscribers")
+          .insert({
+            email:
+              normalizedCustomerEmail,
+            first_name:
+              normalizedFirstName,
+            last_name:
+              normalizedLastName,
+            source: "checkout",
+            consent: true,
+          });
+
+        if (subscriberInsertError) {
+          console.error(
+            "Promo subscriber insert error:",
+            subscriberInsertError
+          );
+        }
+      }
     }
 
     /*

@@ -16,12 +16,19 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
 
-    const name = String(formData.get("name") || "").trim();
-    const email = String(formData.get("email") || "")
+    const name = String(
+      formData.get("name") || ""
+    ).trim();
+
+    const email = String(
+      formData.get("email") || ""
+    )
       .trim()
       .toLowerCase();
 
-    const code = String(formData.get("code") || "")
+    const code = String(
+      formData.get("code") || ""
+    )
       .trim()
       .toUpperCase();
 
@@ -33,56 +40,151 @@ export async function POST(request: Request) {
       formData.get("commission") || 0
     );
 
-    // Validate required fields
+    /*
+     * Validate required fields.
+     */
     if (!name || !email || !code) {
       return NextResponse.json(
         {
           success: false,
-          error: "Name, email, and affiliate code are required.",
+          error:
+            "Name, email, and affiliate code are required.",
         },
         { status: 400 }
       );
     }
 
+    /*
+     * Validate email format.
+     */
+    const emailPattern =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(email)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Please enter a valid affiliate email address.",
+        },
+        { status: 400 }
+      );
+    }
+
+    /*
+     * Validate affiliate code.
+     *
+     * Allows:
+     * A-Z
+     * 0-9
+     * hyphens
+     * underscores
+     *
+     * 3-30 characters total.
+     */
     if (
-      !Number.isFinite(discountPercent) ||
+      !/^[A-Z0-9_-]{3,30}$/.test(code)
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Affiliate code must be 3–30 characters and contain only letters, numbers, hyphens, or underscores.",
+        },
+        { status: 400 }
+      );
+    }
+
+    /*
+     * Validate customer discount.
+     */
+    if (
+      !Number.isFinite(
+        discountPercent
+      ) ||
       discountPercent < 0 ||
       discountPercent > 100
     ) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid customer discount percentage.",
+          error:
+            "Invalid customer discount percentage.",
         },
         { status: 400 }
       );
     }
 
+    /*
+     * Validate affiliate commission.
+     */
     if (
-      !Number.isFinite(commissionPercent) ||
+      !Number.isFinite(
+        commissionPercent
+      ) ||
       commissionPercent < 0 ||
       commissionPercent > 100
     ) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid affiliate commission percentage.",
+          error:
+            "Invalid affiliate commission percentage.",
         },
         { status: 400 }
       );
     }
 
-    const discountRate = discountPercent / 100;
-    const commissionRate = commissionPercent / 100;
+    /*
+     * Convert percentages into
+     * decimal values for Supabase.
+     *
+     * Example:
+     * 15 -> 0.15
+     */
+    const discountRate =
+      discountPercent / 100;
 
-    // Make sure affiliate email/code do not already exist
-    const { data: existingAffiliate } = await supabaseAdmin
+    const commissionRate =
+      commissionPercent / 100;
+
+    /*
+     * Make sure neither the email
+     * nor affiliate code already exists.
+     */
+    const {
+      data: existingAffiliates,
+      error: existingError,
+    } = await supabaseAdmin
       .from("affiliates")
-      .select("id, email, code")
-      .or(`email.eq.${email},code.eq.${code}`)
-      .maybeSingle();
+      .select(
+        "id, email, code"
+      )
+      .or(
+        `email.eq.${email},code.eq.${code}`
+      )
+      .limit(1);
 
-    if (existingAffiliate) {
+    if (existingError) {
+      console.error(
+        "Affiliate duplicate check error:",
+        existingError
+      );
+
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Unable to verify affiliate information.",
+        },
+        { status: 500 }
+      );
+    }
+
+    if (
+      existingAffiliates &&
+      existingAffiliates.length > 0
+    ) {
       return NextResponse.json(
         {
           success: false,
@@ -93,13 +195,23 @@ export async function POST(request: Request) {
       );
     }
 
-    // Send Supabase invite
-    const { data: inviteData, error: inviteError } =
+    /*
+     * Send the affiliate a secure
+     * Supabase invitation email.
+     *
+     * They will be sent to the
+     * Apexx setup-password page.
+     */
+    const {
+      data: inviteData,
+      error: inviteError,
+    } =
       await supabaseAdmin.auth.admin.inviteUserByEmail(
         email,
         {
           redirectTo:
             "https://apexxbiolabs.com/affiliate/setup-password",
+
           data: {
             name,
             role: "affiliate",
@@ -107,7 +219,10 @@ export async function POST(request: Request) {
         }
       );
 
-    if (inviteError || !inviteData.user) {
+    if (
+      inviteError ||
+      !inviteData.user
+    ) {
       console.error(
         "Affiliate invite error:",
         inviteError
@@ -124,33 +239,65 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create affiliate database record
-    const { error: affiliateInsertError } =
-      await supabaseAdmin
-        .from("affiliates")
-        .insert({
-          user_id: inviteData.user.id,
-          name,
-          email,
-          code,
-          discount_rate: discountRate,
-          commission_rate: commissionRate,
-          status: "invited",
-        });
+    /*
+     * Create the affiliate database row.
+     *
+     * The Supabase Auth user ID is stored
+     * as user_id so this affiliate login
+     * can only access its own affiliate data.
+     */
+    const {
+      error: affiliateInsertError,
+    } = await supabaseAdmin
+      .from("affiliates")
+      .insert({
+        user_id:
+          inviteData.user.id,
 
-    if (affiliateInsertError) {
+        name,
+
+        email,
+
+        code,
+
+        discount_rate:
+          discountRate,
+
+        commission_rate:
+          commissionRate,
+
+        status: "invited",
+      });
+
+    /*
+     * If the affiliate database row
+     * fails, clean up the Auth user
+     * that was just created.
+     *
+     * This prevents an orphaned
+     * affiliate login.
+     */
+    if (
+      affiliateInsertError
+    ) {
       console.error(
         "Affiliate insert error:",
         affiliateInsertError
       );
 
-      /*
-       * Clean up the auth account if the affiliate
-       * database record failed.
-       */
-      await supabaseAdmin.auth.admin.deleteUser(
-        inviteData.user.id
-      );
+      const {
+        error: cleanupError,
+      } =
+        await supabaseAdmin.auth.admin.deleteUser(
+          inviteData.user.id
+        );
+
+      if (cleanupError) {
+        console.error(
+          "Affiliate auth cleanup error:",
+          cleanupError
+        );
+      }
 
       return NextResponse.json(
         {
@@ -163,7 +310,11 @@ export async function POST(request: Request) {
       );
     }
 
-    // Send admin back to affiliate dashboard
+    /*
+     * Send the admin back to the
+     * Affiliates page after the invite
+     * was successfully created.
+     */
     return NextResponse.redirect(
       new URL(
         "/admin/affiliates?invite=success",
@@ -180,7 +331,8 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: false,
-        error: "Unable to create affiliate invitation.",
+        error:
+          "Unable to create affiliate invitation.",
       },
       { status: 500 }
     );

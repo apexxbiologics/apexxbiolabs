@@ -374,24 +374,6 @@ export async function POST(request: Request) {
     );
 
     /*
-     * Determine whether free Bac Water applies.
-     */
-    const vialCount = normalizedCart.reduce(
-      (total: number, item: CartItem) => {
-        const isBacWater = String(item.name || "")
-          .toLowerCase()
-          .includes("bac");
-
-        return isBacWater
-          ? total
-          : total + Number(item.quantity || 0);
-      },
-      0
-    );
-
-    const serverFreeBacWater = vialCount >= 4;
-
-    /*
      * Create the order.
      */
     const {
@@ -828,16 +810,6 @@ export async function POST(request: Request) {
                     ${promoHtml}
                     ${rewardHtml}
 
-                    ${
-                      serverFreeBacWater
-                        ? `
-                          <p style="margin:8px 0 0; color:#16a34a; font-weight:bold;">
-                            ✓ Complimentary Bac Water Included
-                          </p>
-                        `
-                        : ""
-                    }
-
                     <p style="margin:12px 0 0; color:#06111f; font-size:19px;">
                       <strong>Total:</strong>
                       $${serverTotal.toFixed(2)}
@@ -1014,16 +986,6 @@ export async function POST(request: Request) {
           <strong>Total:</strong>
           $${serverTotal.toFixed(2)}
         </p>
-
-        ${
-          serverFreeBacWater
-            ? `
-              <p style="color:green; font-weight:bold;">
-                ✓ INCLUDE 1 FREE BAC WATER WITH THIS ORDER
-              </p>
-            `
-            : ""
-        }
       `,
     });
 

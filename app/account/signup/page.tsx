@@ -52,10 +52,6 @@ export default function SignupPage() {
       /*
        * Check whether this signup came from
        * an affiliate invitation.
-       *
-       * We intentionally read this in the browser
-       * instead of useSearchParams so this page
-       * does not need another Suspense wrapper.
        */
       const params =
         new URLSearchParams(
@@ -68,12 +64,12 @@ export default function SignupPage() {
         ) || "";
 
       /*
-       * Normal customers confirm their email
-       * and go to /account.
+       * Normal customers:
+       * confirm email → /account
        *
-       * New affiliates confirm their email
-       * and return to the original affiliate
-       * claim page with the invite token intact.
+       * New affiliates:
+       * confirm email → return to the original
+       * affiliate claim page with the invite token.
        */
       const emailRedirectTo =
         affiliateToken
@@ -114,59 +110,16 @@ export default function SignupPage() {
       }
 
       /*
-       * Your profiles table previously used
-       * a username field.
+       * IMPORTANT:
+       * Do not manually insert into profiles here.
        *
-       * Even though customers no longer use
-       * usernames to log in, generate an internal
-       * username so older database constraints
-       * continue working.
+       * The previous version created the Auth user
+       * successfully and then failed while trying
+       * to create a profile row.
+       *
+       * Account creation should succeed based on
+       * Supabase Auth itself.
        */
-      const emailPrefix =
-        cleanEmail
-          .split("@")[0]
-          .replace(
-            /[^a-z0-9]/g,
-            ""
-          )
-          .slice(0, 20) ||
-        "apexx";
-
-      const hiddenUsername =
-        `${emailPrefix}_${crypto
-          .randomUUID()
-          .replaceAll("-", "")
-          .slice(0, 8)}`;
-
-      const {
-        error:
-          profileError,
-      } = await supabase
-        .from("profiles")
-        .insert({
-          id:
-            data.user.id,
-
-          email:
-            cleanEmail,
-
-          username:
-            hiddenUsername,
-        });
-
-      if (profileError) {
-        console.error(
-          "Profile creation error:",
-          profileError
-        );
-
-        setMessage(
-          "Your login was created, but we could not finish setting up your account profile. Please contact support."
-        );
-
-        return;
-      }
-
       setSuccess(true);
 
       if (affiliateToken) {
@@ -192,6 +145,11 @@ export default function SignupPage() {
     }
   }
 
+  /*
+   * Read the affiliate token without
+   * useSearchParams so we do not introduce
+   * another Next.js Suspense requirement.
+   */
   const params =
     typeof window !== "undefined"
       ? new URLSearchParams(

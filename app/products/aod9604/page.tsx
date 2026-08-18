@@ -17,8 +17,8 @@ export default function AOD9604Page() {
   const [price, setPrice] = useState(50);
 
   const product = {
-    id: "aod9604-5mg",
-    name: "AOD-9604 5mg",
+    id: "aod9604-10mg",
+    name: "AOD-9604 10mg",
     image: "/images/aod9604blue.png",
     path: "/products/aod9604",
   };
@@ -48,10 +48,10 @@ export default function AOD9604Page() {
         const aod = data.products.find(
           (item: any) =>
             item.slug === "aod9604" ||
-            item.slug === "aod9604-5mg" ||
+            item.slug === "aod9604-10mg" ||
             item.id === "aod9604" ||
-            item.id === "aod9604-5mg" ||
-            item.id === "AOD-9604-5mg" ||
+            item.id === "aod9604-10mg" ||
+            item.id === "AOD-9604-10mg" ||
             item.name?.toLowerCase().includes("aod")
         );
 
@@ -169,7 +169,7 @@ export default function AOD9604Page() {
                   </p>
 
                   <div className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-7 py-4 text-sm font-semibold uppercase tracking-widest text-white">
-                    5mg
+                    10mg
                   </div>
                 </div>
 

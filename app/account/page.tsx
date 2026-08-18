@@ -99,6 +99,7 @@ export default function AccountPage() {
     PointTransaction[]
   >([]);
   const [favoritesCount, setFavoritesCount] = useState(0);
+  const [isAffiliate, setIsAffiliate] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -122,6 +123,7 @@ export default function AccountPage() {
           ordersResult,
           favoritesResult,
           pointsResult,
+          affiliateResult,
         ] = await Promise.all([
           supabase
             .from("profiles")
@@ -154,6 +156,13 @@ export default function AccountPage() {
             .order("created_at", {
               ascending: false,
             }),
+
+          supabase
+            .from("affiliates")
+            .select("id, status")
+            .eq("user_id", user.id)
+            .eq("status", "active")
+            .maybeSingle(),
         ]);
 
         if (profileResult.error) {
@@ -199,6 +208,15 @@ export default function AccountPage() {
             pointsResult.data as PointTransaction[]
           );
         }
+
+        if (affiliateResult.error) {
+          console.error(
+            "Affiliate loading error:",
+            affiliateResult.error
+          );
+        }
+
+        setIsAffiliate(Boolean(affiliateResult.data));
       } catch (error) {
         console.error("Account loading error:", error);
       } finally {
@@ -816,6 +834,15 @@ export default function AccountPage() {
                   title="Favorites"
                   description="View saved products"
                 />
+
+                {isAffiliate && (
+                  <QuickAction
+                    href="/affiliate/dashboard"
+                    icon={<TrendingUp />}
+                    title="Affiliate Dashboard"
+                    description="View sales and commissions"
+                  />
+                )}
 
                 <QuickAction
                   href="/account/settings"

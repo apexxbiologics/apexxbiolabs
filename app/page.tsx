@@ -1305,15 +1305,13 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
 
           <div className="shrink-0">
 
-            <Link
-              href="/affiliate/apply"
-              className="inline-flex w-full items-center justify-center gap-3 rounded-full bg-white px-7 py-4 text-center text-xs font-black uppercase tracking-[0.2em] text-[#081526] transition hover:bg-blue-100 sm:w-auto"
-            >
-              Apply to Partner
-              <span className="text-lg leading-none">
-                →
-              </span>
-            </Link>
+<Link
+  href="/research-referral"
+  className="inline-flex w-full items-center justify-center gap-3 rounded-full bg-white px-7 py-4 text-center text-xs font-black uppercase tracking-[0.2em] text-[#081526] transition hover:bg-blue-100 sm:w-auto"
+>
+  Learn More
+  <span className="text-lg leading-none">→</span>
+</Link>
 
           </div>
 

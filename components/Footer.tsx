@@ -1,46 +1,121 @@
 import { HiOutlineMail } from "react-icons/hi";
 import { FaTiktok } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import { Heart, LayoutDashboard, ShieldCheck, ShoppingBag } from "lucide-react";
+
+import {
+  Heart,
+  LayoutDashboard,
+  ShieldCheck,
+  ShoppingBag,
+  Handshake,
+} from "lucide-react";
 
 const footerSections = [
   {
     title: "Shop",
     links: [
-      { label: "All Products", href: "/products" },
-      { label: "Certificates of Analysis", href: "/coas" },
-      { label: "Cart", href: "/cart" },
+      {
+        label: "All Products",
+        href: "/products",
+      },
+      {
+        label: "Certificates of Analysis",
+        href: "/coas",
+      },
+      {
+        label: "Cart",
+        href: "/cart",
+      },
     ],
   },
+
   {
     title: "Account",
     links: [
-      { label: "Dashboard", href: "/account" },
-      { label: "Favorites", href: "/account/favorites" },
-      { label: "Security Settings", href: "/account/settings" },
-      { label: "Order Status", href: "/order-status" },
+      {
+        label: "Dashboard",
+        href: "/account",
+      },
+      {
+        label: "Favorites",
+        href: "/account/favorites",
+      },
+      {
+        label: "Security Settings",
+        href: "/account/settings",
+      },
+      {
+        label: "Order Status",
+        href: "/order-status",
+      },
     ],
   },
+
   {
     title: "Resources",
     links: [
-      { label: "Research Library", href: "/peptide-info" },
-      { label: "FAQ", href: "/faq" },
+      {
+        label: "Research Library",
+        href: "/peptide-info",
+      },
+      {
+        label: "FAQ",
+        href: "/faq",
+      },
     ],
   },
+
+  {
+    title: "Research Referral",
+    links: [
+      {
+        label: "Program Overview",
+        href: "/research-referral",
+      },
+      {
+        label: "Apply to Partner",
+        href: "/research-referral#apply",
+      },
+      {
+        label: "Program Terms",
+        href: "/research-referral/terms",
+      },
+    ],
+  },
+
   {
     title: "Support",
     links: [
-      { label: "Contact Us", href: "/contact" },
-      { label: "Shipping Info", href: "/shipping" },
-      { label: "Returns & Refunds", href: "/refunds" },
+      {
+        label: "Contact Us",
+        href: "/contact",
+      },
+      {
+        label: "Shipping Info",
+        href: "/shipping",
+      },
+      {
+        label: "Returns & Refunds",
+        href: "/refunds",
+      },
     ],
   },
+
   {
     title: "Legal",
     links: [
-      { label: "Privacy Policy", href: "/privacy" },
-      { label: "Terms of Service", href: "/terms" },
+      {
+        label: "Privacy Policy",
+        href: "/privacy",
+      },
+      {
+        label: "Terms of Service",
+        href: "/terms",
+      },
+      {
+        label: "Research Referral Terms",
+        href: "/research-referral/terms",
+      },
     ],
   },
 ];
@@ -48,8 +123,12 @@ const footerSections = [
 export default function Footer() {
   return (
     <footer className="border-t border-white/10 bg-[#081526] px-6 pb-8 pt-16 md:px-10">
-      <div className="mx-auto mb-14 grid max-w-7xl grid-cols-1 gap-12 lg:grid-cols-[1.3fr_repeat(5,1fr)]">
+
+      <div className="mx-auto mb-14 grid max-w-7xl grid-cols-1 gap-12 lg:grid-cols-[1.3fr_repeat(6,1fr)]">
+
+        {/* BRAND */}
         <div>
+
           <img
             src="/images/logo.png"
             alt="Apexx Biolabs"
@@ -57,11 +136,13 @@ export default function Footer() {
           />
 
           <p className="max-w-sm text-sm leading-relaxed text-white/60">
-            Premium research-grade compounds built on science, quality, and
-            transparency.
+            Premium research-grade compounds built on science,
+            quality, and transparency.
           </p>
 
+          {/* QUICK LINKS */}
           <div className="mt-6 grid gap-3">
+
             <a
               href="/account"
               className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-bold text-white/70 transition hover:border-blue-400/40 hover:bg-white/[0.07] hover:text-white"
@@ -70,6 +151,7 @@ export default function Footer() {
                 size={18}
                 className="text-blue-300 transition group-hover:scale-110"
               />
+
               Customer Dashboard
             </a>
 
@@ -81,6 +163,7 @@ export default function Footer() {
                 size={18}
                 className="text-blue-300 transition group-hover:scale-110"
               />
+
               Saved Favorites
             </a>
 
@@ -92,11 +175,27 @@ export default function Footer() {
                 size={18}
                 className="text-blue-300 transition group-hover:scale-110"
               />
+
               Shop Products
             </a>
+
+            <a
+              href="/research-referral"
+              className="group flex items-center gap-3 rounded-2xl border border-blue-400/15 bg-blue-500/[0.05] px-4 py-3 text-sm font-bold text-white/70 transition hover:border-blue-400/40 hover:bg-blue-500/[0.08] hover:text-white"
+            >
+              <Handshake
+                size={18}
+                className="text-blue-300 transition group-hover:scale-110"
+              />
+
+              Research Referral Program
+            </a>
+
           </div>
 
+          {/* SOCIALS */}
           <div className="mt-6 flex gap-3">
+
             <a
               href="https://www.tiktok.com/@apexx.nyc"
               target="_blank"
@@ -124,42 +223,68 @@ export default function Footer() {
             >
               <HiOutlineMail size={18} />
             </a>
+
           </div>
+
         </div>
 
-        {footerSections.map((section) => (
-          <div key={section.title}>
-            <h4 className="mb-5 text-sm font-bold uppercase tracking-widest text-white">
-              {section.title}
-            </h4>
+        {/* FOOTER COLUMNS */}
+        {footerSections.map(
+          (section) => (
+            <div key={section.title}>
 
-            <div className="space-y-3 text-white/50">
-              {section.links.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="block transition-all hover:text-blue-300"
-                >
-                  {link.label}
-                </a>
-              ))}
+              <h4 className="mb-5 text-sm font-bold uppercase tracking-widest text-white">
+                {section.title}
+              </h4>
+
+              <div className="space-y-3 text-white/50">
+
+                {section.links.map(
+                  (link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      className="block transition-all hover:text-blue-300"
+                    >
+                      {link.label}
+                    </a>
+                  )
+                )}
+
+              </div>
+
             </div>
-          </div>
-        ))}
+          )
+        )}
+
       </div>
 
+      {/* BOTTOM BAR */}
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-sm text-white/40 md:flex-row">
-        <p>© 2026 Apexx Biolabs. All rights reserved.</p>
+
+        <p>
+          © 2026 Apexx Biolabs. All rights reserved.
+        </p>
 
         <div className="flex flex-wrap items-center justify-center gap-3 text-center">
+
           <span className="inline-flex items-center gap-2">
-            <ShieldCheck size={15} className="text-blue-300" />
+            <ShieldCheck
+              size={15}
+              className="text-blue-300"
+            />
+
             SSL Secured
           </span>
 
-          <span>99%+ Purity</span>
+          <span>
+            99%+ Purity
+          </span>
 
-          <span>Research Use Only</span>
+          <span>
+            Research Use Only
+          </span>
+
         </div>
 
         <a
@@ -170,7 +295,9 @@ export default function Footer() {
         >
           Crafted by Jovavo →
         </a>
+
       </div>
+
     </footer>
   );
 }

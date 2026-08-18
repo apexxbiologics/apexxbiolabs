@@ -68,10 +68,16 @@ export async function POST(request: Request) {
       affiliateError ||
       !affiliate
     ) {
+      console.error(
+        "Affiliate lookup error:",
+        affiliateError
+      );
+
       return NextResponse.json(
         {
           success: false,
           error:
+            affiliateError?.message ||
             "Affiliate not found.",
         },
         { status: 404 }
@@ -80,27 +86,37 @@ export async function POST(request: Request) {
 
     /*
      * ==========================================
-     * ARCHIVE
+     * ARCHIVE AFFILIATE
      * ==========================================
      *
      * Keep the affiliate record and all
-     * financial history, but disable affiliate
-     * dashboard access.
+     * historical information.
+     *
+     * Their dashboard API only permits
+     * status === "active", so changing this
+     * to "archived" blocks affiliate access.
      */
     if (action === "archive") {
       const {
+        data: archivedAffiliate,
         error: archiveError,
       } = await supabaseAdmin
         .from("affiliates")
         .update({
           status: "archived",
-          invite_token: null,
-          invite_expires_at: null,
         })
         .eq(
           "id",
           affiliateId
-        );
+        )
+        .select(`
+          id,
+          name,
+          email,
+          code,
+          status
+        `)
+        .single();
 
       if (archiveError) {
         console.error(
@@ -112,6 +128,7 @@ export async function POST(request: Request) {
           {
             success: false,
             error:
+              archiveError.message ||
               "Unable to archive affiliate.",
           },
           { status: 500 }
@@ -121,17 +138,22 @@ export async function POST(request: Request) {
       return NextResponse.json({
         success: true,
         action: "archived",
+        affiliate:
+          archivedAffiliate,
       });
     }
 
     /*
      * ==========================================
-     * DELETE
+     * PERMANENT DELETE
      * ==========================================
      *
-     * Only allow permanent deletion when the
-     * affiliate has NO linked affiliate orders
-     * and NO payout history.
+     * Before allowing permanent deletion,
+     * make sure the affiliate has NO linked
+     * orders and NO payout records.
+     *
+     * If they have financial history,
+     * they should be archived instead.
      */
 
     const {
@@ -161,6 +183,7 @@ export async function POST(request: Request) {
         {
           success: false,
           error:
+            linkedOrdersError.message ||
             "Unable to verify affiliate order history.",
         },
         { status: 500 }
@@ -194,19 +217,29 @@ export async function POST(request: Request) {
         {
           success: false,
           error:
+            payoutCountError.message ||
             "Unable to verify affiliate payout history.",
         },
         { status: 500 }
       );
     }
 
-    if (
+    const hasLinkedOrders =
       Number(
         linkedOrdersCount || 0
-      ) > 0 ||
+      ) > 0;
+
+    const hasPayoutHistory =
       Number(
         payoutCount || 0
-      ) > 0
+      ) > 0;
+
+    /*
+     * Preserve financial history.
+     */
+    if (
+      hasLinkedOrders ||
+      hasPayoutHistory
     ) {
       return NextResponse.json(
         {
@@ -219,12 +252,12 @@ export async function POST(request: Request) {
     }
 
     /*
-     * Delete only the affiliate profile.
+     * Delete ONLY the affiliate profile.
      *
-     * IMPORTANT:
-     * We do NOT delete their Supabase Auth user.
-     * Their normal Apexx points/customer account
-     * stays intact.
+     * Their Supabase Auth user is intentionally
+     * left untouched so their normal Apexx
+     * customer / rewards account continues
+     * to work.
      */
     const {
       error: deleteError,
@@ -246,6 +279,7 @@ export async function POST(request: Request) {
         {
           success: false,
           error:
+            deleteError.message ||
             "Unable to permanently delete affiliate.",
         },
         { status: 500 }
@@ -266,7 +300,9 @@ export async function POST(request: Request) {
       {
         success: false,
         error:
-          "Unable to update affiliate.",
+          error instanceof Error
+            ? error.message
+            : "Unable to update affiliate.",
       },
       { status: 500 }
     );

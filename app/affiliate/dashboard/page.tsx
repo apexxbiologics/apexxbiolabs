@@ -421,6 +421,7 @@ export default function AffiliateDashboardPage() {
               </table>
             </div>
           )}
+          
         </section>
 
         <p className="text-white/40 text-sm mt-6">

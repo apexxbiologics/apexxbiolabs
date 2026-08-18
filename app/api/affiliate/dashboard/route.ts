@@ -33,7 +33,7 @@ export async function GET(request: Request) {
     }
 
     /*
-     * Verify the user with Supabase Auth.
+     * Verify the logged-in Supabase user.
      */
     const {
       data: { user },
@@ -42,7 +42,10 @@ export async function GET(request: Request) {
       accessToken
     );
 
-    if (userError || !user) {
+    if (
+      userError ||
+      !user
+    ) {
       return NextResponse.json(
         {
           success: false,
@@ -54,7 +57,8 @@ export async function GET(request: Request) {
     }
 
     /*
-     * Find the affiliate tied to this login.
+     * Find the affiliate profile tied
+     * to this authenticated user.
      */
     const {
       data: affiliate,
@@ -71,7 +75,10 @@ export async function GET(request: Request) {
         status,
         created_at
       `)
-      .eq("user_id", user.id)
+      .eq(
+        "user_id",
+        user.id
+      )
       .maybeSingle();
 
     if (
@@ -88,8 +95,13 @@ export async function GET(request: Request) {
       );
     }
 
+    /*
+     * Only active affiliates can access
+     * the affiliate dashboard.
+     */
     if (
-      affiliate.status !== "active"
+      affiliate.status !==
+      "active"
     ) {
       return NextResponse.json(
         {
@@ -105,13 +117,13 @@ export async function GET(request: Request) {
     }
 
     /*
-     * Pull ONLY the order fields needed
+     * Pull ONLY the order fields required
      * for affiliate reporting.
      *
-     * No names.
+     * No customer names.
      * No customer emails.
      * No addresses.
-     * No cart/product information.
+     * No product/cart information.
      */
     const {
       data: orders,
@@ -126,7 +138,10 @@ export async function GET(request: Request) {
         discount,
         total,
         status,
-        affiliate_commission
+        affiliate_commission,
+        affiliate_paid_out,
+        affiliate_paid_at,
+        affiliate_payout_id
       `)
       .eq(
         "affiliate_id",
@@ -134,7 +149,9 @@ export async function GET(request: Request) {
       )
       .order(
         "created_at",
-        { ascending: false }
+        {
+          ascending: false,
+        }
       );
 
     if (ordersError) {
@@ -153,12 +170,59 @@ export async function GET(request: Request) {
       );
     }
 
+    /*
+     * Load this affiliate's payout history.
+     */
+    const {
+      data: payouts,
+      error: payoutsError,
+    } = await supabaseAdmin
+      .from("affiliate_payouts")
+      .select(`
+        id,
+        amount,
+        payment_method,
+        paid_at,
+        notes,
+        created_at
+      `)
+      .eq(
+        "affiliate_id",
+        affiliate.id
+      )
+      .order(
+        "paid_at",
+        {
+          ascending: false,
+        }
+      );
+
+    if (payoutsError) {
+      console.error(
+        "Affiliate dashboard payout error:",
+        payoutsError
+      );
+
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Unable to load affiliate payout history.",
+        },
+        { status: 500 }
+      );
+    }
+
     const safeOrders =
       orders || [];
 
+    const safePayouts =
+      payouts || [];
+
     /*
-     * These statuses count as
-     * confirmed/earned commission.
+     * These statuses mean the customer
+     * has paid and the commission has
+     * been earned.
      */
     const confirmedStatuses = [
       "paid",
@@ -167,8 +231,8 @@ export async function GET(request: Request) {
     ];
 
     /*
-     * These should not count toward
-     * pending or confirmed commission.
+     * These statuses do not count toward
+     * sales or affiliate commission.
      */
     const excludedStatuses = [
       "cancelled",
@@ -177,72 +241,203 @@ export async function GET(request: Request) {
     ];
 
     let generatedSales = 0;
+
+    /*
+     * Customer has not yet paid.
+     */
     let pendingCommission = 0;
-    let confirmedCommission = 0;
+
+    /*
+     * Customer paid, but affiliate
+     * has not yet received their Zelle payout.
+     */
+    let amountOwed = 0;
+
+    /*
+     * Historical total of commissions
+     * that have already been paid out.
+     */
+    let paidOutFromOrders = 0;
 
     const sanitizedOrders =
-      safeOrders.map((order) => {
-        const status = String(
-          order.status || ""
-        ).toLowerCase();
+      safeOrders.map(
+        (order) => {
+          const status =
+            String(
+              order.status || ""
+            ).toLowerCase();
 
-        const commission =
-          Number(
-            order.affiliate_commission ||
-              0
-          );
-
-        const qualifyingSale =
-          Math.max(
-            0,
+          const commission =
             Number(
-              order.subtotal || 0
-            ) -
+              order.affiliate_commission ||
+                0
+            );
+
+          const qualifyingSale =
+            Math.max(
+              0,
               Number(
-                order.discount || 0
-              )
-          );
+                order.subtotal || 0
+              ) -
+                Number(
+                  order.discount || 0
+                )
+            );
 
-        if (
-          !excludedStatuses.includes(
-            status
-          )
-        ) {
-          generatedSales +=
-            qualifyingSale;
+          const isExcluded =
+            excludedStatuses.includes(
+              status
+            );
+
+          const isConfirmed =
+            confirmedStatuses.includes(
+              status
+            );
+
+          const isPaidOut =
+            Boolean(
+              order.affiliate_paid_out
+            );
+
+          /*
+           * Sales generated.
+           */
+          if (!isExcluded) {
+            generatedSales +=
+              qualifyingSale;
+          }
+
+          /*
+           * Pending commission.
+           */
+          if (
+            !isExcluded &&
+            !isConfirmed
+          ) {
+            pendingCommission +=
+              commission;
+          }
+
+          /*
+           * Confirmed and still owed.
+           */
+          if (
+            !isExcluded &&
+            isConfirmed &&
+            !isPaidOut
+          ) {
+            amountOwed +=
+              commission;
+          }
+
+          /*
+           * Already paid to affiliate.
+           */
+          if (
+            !isExcluded &&
+            isConfirmed &&
+            isPaidOut
+          ) {
+            paidOutFromOrders +=
+              commission;
+          }
+
+          let commissionStatus =
+            "Pending";
+
+          if (isExcluded) {
+            commissionStatus =
+              "Excluded";
+          } else if (
+            isConfirmed &&
+            isPaidOut
+          ) {
+            commissionStatus =
+              "Paid Out";
+          } else if (
+            isConfirmed &&
+            !isPaidOut
+          ) {
+            commissionStatus =
+              "Owed";
+          }
+
+          return {
+            orderNumber:
+              order.order_number,
+
+            createdAt:
+              order.created_at,
+
+            qualifyingSale,
+
+            commission,
+
+            status:
+              order.status,
+
+            commissionStatus,
+
+            paidOut:
+              isPaidOut,
+
+            paidAt:
+              order.affiliate_paid_at,
+          };
         }
+      );
 
-        if (
-          confirmedStatuses.includes(
-            status
+    /*
+     * Calculate lifetime paid out from
+     * actual payout-history records.
+     *
+     * This is the authoritative payout total.
+     */
+    const paidOutLifetime =
+      Number(
+        safePayouts
+          .reduce(
+            (
+              sum,
+              payout
+            ) =>
+              sum +
+              Number(
+                payout.amount ||
+                  0
+              ),
+            0
           )
-        ) {
-          confirmedCommission +=
-            commission;
-        } else if (
-          !excludedStatuses.includes(
-            status
-          )
-        ) {
-          pendingCommission +=
-            commission;
-        }
+          .toFixed(2)
+      );
 
-        return {
-          orderNumber:
-            order.order_number,
+    /*
+     * Sanitize payout records before
+     * returning them to the affiliate.
+     */
+    const sanitizedPayouts =
+      safePayouts.map(
+        (payout) => ({
+          id:
+            payout.id,
 
-          createdAt:
-            order.created_at,
+          amount:
+            Number(
+              payout.amount ||
+                0
+            ),
 
-          qualifyingSale,
+          paymentMethod:
+            payout.payment_method ||
+            "zelle",
 
-          commission,
+          paidAt:
+            payout.paid_at,
 
-          status:
-            order.status,
-        };
-      });
+          notes:
+            payout.notes,
+        })
+      );
 
     return NextResponse.json({
       success: true,
@@ -282,7 +477,9 @@ export async function GET(request: Request) {
 
         generatedSales:
           Number(
-            generatedSales.toFixed(2)
+            generatedSales.toFixed(
+              2
+            )
           ),
 
         pendingCommission:
@@ -292,9 +489,43 @@ export async function GET(request: Request) {
             )
           ),
 
+        /*
+         * Commission that has been earned
+         * but has not yet been paid to
+         * the affiliate.
+         */
+        amountOwed:
+          Number(
+            amountOwed.toFixed(
+              2
+            )
+          ),
+
+        /*
+         * Kept for compatibility with your
+         * current dashboard until we update
+         * its UI in the next step.
+         *
+         * This now represents currently
+         * confirmed/unpaid commission.
+         */
         confirmedCommission:
           Number(
-            confirmedCommission.toFixed(
+            amountOwed.toFixed(
+              2
+            )
+          ),
+
+        paidOutLifetime,
+
+        /*
+         * Internal comparison value.
+         * Useful for debugging if payout
+         * history and order flags ever differ.
+         */
+        paidOutFromOrders:
+          Number(
+            paidOutFromOrders.toFixed(
               2
             )
           ),
@@ -302,6 +533,9 @@ export async function GET(request: Request) {
 
       orders:
         sanitizedOrders,
+
+      payouts:
+        sanitizedPayouts,
     });
   } catch (error) {
     console.error(

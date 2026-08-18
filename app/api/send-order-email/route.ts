@@ -2,7 +2,9 @@ import { Resend } from "resend";
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(
+  process.env.RESEND_API_KEY
+);
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -15,7 +17,17 @@ const supabaseAdmin = createClient(
   }
 );
 
-const PROMO_CODES: Record<string, number> = {
+/*
+ * Regular Apexx promo codes.
+ *
+ * Affiliate codes are NOT stored here.
+ * Affiliate codes are pulled securely
+ * from the Supabase affiliates table.
+ */
+const REGULAR_PROMO_CODES: Record<
+  string,
+  number
+> = {
   FREEDOM10: 0.1,
   PEPTIDEALS: 0.15,
 };
@@ -64,59 +76,87 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          error: "Missing required checkout information.",
+          error:
+            "Missing required checkout information.",
         },
         { status: 400 }
       );
     }
 
-    const normalizedCustomerEmail = String(customerEmail)
-      .trim()
-      .toLowerCase();
+    const normalizedCustomerEmail =
+      String(customerEmail)
+        .trim()
+        .toLowerCase();
 
-    const normalizedFirstName = String(firstName).trim();
-    const normalizedLastName = String(lastName).trim();
-    const normalizedAddress = String(address).trim();
-    const normalizedCity = String(city).trim();
-    const normalizedState = String(state).trim().toUpperCase();
-    const normalizedZipCode = String(zipCode).trim();
+    const normalizedFirstName =
+      String(firstName).trim();
 
-    const normalizedPaymentMethod = String(paymentMethod)
-      .trim()
-      .toLowerCase();
+    const normalizedLastName =
+      String(lastName).trim();
 
-    if (!/^\d{5}$/.test(normalizedZipCode)) {
+    const normalizedAddress =
+      String(address).trim();
+
+    const normalizedCity =
+      String(city).trim();
+
+    const normalizedState =
+      String(state)
+        .trim()
+        .toUpperCase();
+
+    const normalizedZipCode =
+      String(zipCode).trim();
+
+    const normalizedPaymentMethod =
+      String(paymentMethod)
+        .trim()
+        .toLowerCase();
+
+    if (
+      !/^\d{5}$/.test(
+        normalizedZipCode
+      )
+    ) {
       return NextResponse.json(
         {
           success: false,
-          error: "ZIP code must contain exactly 5 digits.",
+          error:
+            "ZIP code must contain exactly 5 digits.",
         },
         { status: 400 }
       );
     }
 
     if (
-      normalizedPaymentMethod !== "venmo" &&
-      normalizedPaymentMethod !== "zelle"
+      normalizedPaymentMethod !==
+        "venmo" &&
+      normalizedPaymentMethod !==
+        "zelle"
     ) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid payment method.",
+          error:
+            "Invalid payment method.",
         },
         { status: 400 }
       );
     }
 
     /*
-     * Validate the requested rewards amount.
+     * Validate requested rewards.
      */
-    const requestedRedeemedPoints = Number(redeemedPoints || 0);
+    const requestedRedeemedPoints =
+      Number(redeemedPoints || 0);
 
     if (
-      !Number.isInteger(requestedRedeemedPoints) ||
+      !Number.isInteger(
+        requestedRedeemedPoints
+      ) ||
       requestedRedeemedPoints < 0 ||
-      requestedRedeemedPoints % 100 !== 0
+      requestedRedeemedPoints % 100 !==
+        0
     ) {
       return NextResponse.json(
         {
@@ -131,98 +171,279 @@ export async function POST(request: Request) {
     /*
      * Validate cart items.
      */
-    const normalizedCart: CartItem[] = cart.map((item: CartItem) => ({
-      id: item.id,
-      name: String(item.name || "Product").trim(),
-      price: Number(item.price || 0),
-      quantity: Number(item.quantity || 0),
-      image: item.image,
-    }));
+    const normalizedCart: CartItem[] =
+      cart.map(
+        (item: CartItem) => ({
+          id: item.id,
+          name: String(
+            item.name || "Product"
+          ).trim(),
+          price: Number(
+            item.price || 0
+          ),
+          quantity: Number(
+            item.quantity || 0
+          ),
+          image: item.image,
+        })
+      );
 
-    const invalidCartItem = normalizedCart.some(
-      (item) =>
-        !item.name ||
-        !Number.isFinite(item.price) ||
-        Number(item.price) < 0 ||
-        !Number.isInteger(item.quantity) ||
-        Number(item.quantity) <= 0
-    );
+    const invalidCartItem =
+      normalizedCart.some(
+        (item) =>
+          !item.name ||
+          !Number.isFinite(
+            item.price
+          ) ||
+          Number(item.price) < 0 ||
+          !Number.isInteger(
+            item.quantity
+          ) ||
+          Number(item.quantity) <= 0
+      );
 
     if (invalidCartItem) {
       return NextResponse.json(
         {
           success: false,
-          error: "One or more cart items are invalid.",
+          error:
+            "One or more cart items are invalid.",
         },
         { status: 400 }
       );
     }
 
-    const orderNumber = `APX-${Date.now()}`;
+    const orderNumber =
+      `APX-${Date.now()}`;
 
     /*
-     * Calculate the subtotal on the server.
+     * Calculate subtotal securely
+     * on the server.
      */
     const serverSubtotal = Number(
       normalizedCart
         .reduce(
           (sum, item) =>
             sum +
-            Number(item.price || 0) *
-              Number(item.quantity || 0),
+            Number(
+              item.price || 0
+            ) *
+              Number(
+                item.quantity || 0
+              ),
           0
         )
         .toFixed(2)
     );
 
     /*
-     * Validate and calculate the promo code.
+     * Normalize promo code.
      */
-    const normalizedPromoCode = String(promoCode || "")
-      .trim()
-      .toUpperCase();
+    const normalizedPromoCode =
+      String(promoCode || "")
+        .trim()
+        .toUpperCase();
 
-    const discountRate =
-      PROMO_CODES[normalizedPromoCode] || 0;
+    /*
+     * Promo / Affiliate tracking.
+     */
+    let discountRate = 0;
+    let appliedPromoCode = "";
 
+    let affiliateId:
+      | string
+      | null = null;
+
+    let affiliateName = "";
+    let affiliateEmail = "";
+    let affiliateCode = "";
+
+    let affiliateCommissionRate = 0;
+
+    /*
+     * Check regular Apexx promo
+     * codes first.
+     */
+    const regularPromoRate =
+      REGULAR_PROMO_CODES[
+        normalizedPromoCode
+      ];
+
+    if (regularPromoRate) {
+      discountRate =
+        regularPromoRate;
+
+      appliedPromoCode =
+        normalizedPromoCode;
+    }
+
+    /*
+     * If this is not a regular
+     * Apexx promo code, check
+     * whether it belongs to an
+     * ACTIVE affiliate.
+     */
+    if (
+      !regularPromoRate &&
+      normalizedPromoCode
+    ) {
+      const {
+        data: affiliate,
+        error:
+          affiliateLookupError,
+      } = await supabaseAdmin
+        .from("affiliates")
+        .select(
+          `
+            id,
+            name,
+            email,
+            code,
+            discount_rate,
+            commission_rate,
+            status
+          `
+        )
+        .eq(
+          "code",
+          normalizedPromoCode
+        )
+        .eq("status", "active")
+        .maybeSingle();
+
+      if (
+        affiliateLookupError
+      ) {
+        console.error(
+          "Affiliate promo lookup error:",
+          affiliateLookupError
+        );
+      }
+
+      if (affiliate) {
+        affiliateId =
+          affiliate.id;
+
+        affiliateName =
+          String(
+            affiliate.name || ""
+          ).trim();
+
+        affiliateEmail =
+          String(
+            affiliate.email || ""
+          )
+            .trim()
+            .toLowerCase();
+
+        affiliateCode =
+          String(
+            affiliate.code || ""
+          )
+            .trim()
+            .toUpperCase();
+
+        discountRate =
+          Number(
+            affiliate.discount_rate ||
+              0
+          );
+
+        affiliateCommissionRate =
+          Number(
+            affiliate.commission_rate ||
+              0
+          );
+
+        appliedPromoCode =
+          affiliateCode;
+      }
+    }
+
+    /*
+     * Calculate customer promo
+     * discount.
+     */
     const serverDiscount = Number(
-      (serverSubtotal * discountRate).toFixed(2)
+      (
+        serverSubtotal *
+        discountRate
+      ).toFixed(2)
     );
 
-    const appliedPromoCode =
-      discountRate > 0 ? normalizedPromoCode : "";
+    /*
+     * Affiliate commission is
+     * calculated on merchandise
+     * after the promo discount.
+     *
+     * Shipping is NOT commissionable.
+     *
+     * This amount remains PENDING
+     * until you verify payment.
+     */
+    const affiliateCommission =
+      affiliateId
+        ? Number(
+            (
+              Math.max(
+                0,
+                serverSubtotal -
+                  serverDiscount
+              ) *
+              affiliateCommissionRate
+            ).toFixed(2)
+          )
+        : 0;
 
     /*
      * Calculate shipping.
      */
-    const freeShippingThreshold = 200;
+    const freeShippingThreshold =
+      200;
+
     const standardShipping = 5.99;
 
     const serverShipping =
       serverSubtotal > 0 &&
-      serverSubtotal < freeShippingThreshold
+      serverSubtotal <
+        freeShippingThreshold
         ? standardShipping
         : 0;
 
     /*
      * Rewards values.
      */
-    let authenticatedUserId: string | null = null;
+    let authenticatedUserId:
+      | string
+      | null = null;
+
     let recordedPointBalance = 0;
     let availablePoints = 0;
-    let validatedRedeemedPoints = 0;
+
+    let validatedRedeemedPoints =
+      0;
+
     let rewardDiscount = 0;
 
     /*
-     * Authenticate and validate the account when rewards are used.
+     * Authenticate and validate
+     * customer when rewards are used.
      */
-    if (requestedRedeemedPoints > 0) {
+    if (
+      requestedRedeemedPoints > 0
+    ) {
       const authorizationHeader =
-        request.headers.get("authorization");
+        request.headers.get(
+          "authorization"
+        );
 
       const accessToken =
-        authorizationHeader?.startsWith("Bearer ")
-          ? authorizationHeader.slice(7)
+        authorizationHeader?.startsWith(
+          "Bearer "
+        )
+          ? authorizationHeader.slice(
+              7
+            )
           : null;
 
       if (!accessToken) {
@@ -239,9 +460,15 @@ export async function POST(request: Request) {
       const {
         data: { user },
         error: userError,
-      } = await supabaseAdmin.auth.getUser(accessToken);
+      } =
+        await supabaseAdmin.auth.getUser(
+          accessToken
+        );
 
-      if (userError || !user?.email) {
+      if (
+        userError ||
+        !user?.email
+      ) {
         console.error(
           "Reward authentication error:",
           userError
@@ -257,11 +484,15 @@ export async function POST(request: Request) {
         );
       }
 
-      const authenticatedEmail = user.email
-        .trim()
-        .toLowerCase();
+      const authenticatedEmail =
+        user.email
+          .trim()
+          .toLowerCase();
 
-      if (authenticatedEmail !== normalizedCustomerEmail) {
+      if (
+        authenticatedEmail !==
+        normalizedCustomerEmail
+      ) {
         return NextResponse.json(
           {
             success: false,
@@ -272,10 +503,11 @@ export async function POST(request: Request) {
         );
       }
 
-      authenticatedUserId = user.id;
+      authenticatedUserId =
+        user.id;
 
       /*
-       * Calculate the customer's current point balance.
+       * Calculate current points.
        */
       const {
         data: pointTransactions,
@@ -283,7 +515,10 @@ export async function POST(request: Request) {
       } = await supabaseAdmin
         .from("point_transactions")
         .select("points")
-        .eq("user_id", user.id);
+        .eq(
+          "user_id",
+          user.id
+        );
 
       if (pointsError) {
         console.error(
@@ -304,17 +539,27 @@ export async function POST(request: Request) {
       recordedPointBalance = (
         pointTransactions || []
       ).reduce(
-        (sum, transaction) =>
-          sum + Number(transaction.points || 0),
+        (
+          sum,
+          transaction
+        ) =>
+          sum +
+          Number(
+            transaction.points || 0
+          ),
         0
       );
 
-      availablePoints = Math.max(
-        0,
-        recordedPointBalance
-      );
+      availablePoints =
+        Math.max(
+          0,
+          recordedPointBalance
+        );
 
-      if (requestedRedeemedPoints > availablePoints) {
+      if (
+        requestedRedeemedPoints >
+        availablePoints
+      ) {
         return NextResponse.json(
           {
             success: false,
@@ -325,16 +570,24 @@ export async function POST(request: Request) {
       }
 
       /*
-       * Rewards apply after the promotional discount.
-       * Rewards cannot cover shipping or reduce merchandise below $0.
+       * Rewards apply after
+       * promotional discount.
+       *
+       * Rewards cannot cover
+       * shipping.
        */
-      const merchandiseAfterPromo = Math.max(
-        0,
-        serverSubtotal - serverDiscount
-      );
+      const merchandiseAfterPromo =
+        Math.max(
+          0,
+          serverSubtotal -
+            serverDiscount
+        );
 
       const maximumPointsForOrder =
-        Math.floor(merchandiseAfterPromo / 10) * 100;
+        Math.floor(
+          merchandiseAfterPromo /
+            10
+        ) * 100;
 
       if (
         requestedRedeemedPoints >
@@ -356,12 +609,15 @@ export async function POST(request: Request) {
        * 100 points = $10.
        */
       rewardDiscount = Number(
-        (validatedRedeemedPoints / 10).toFixed(2)
+        (
+          validatedRedeemedPoints /
+          10
+        ).toFixed(2)
       );
     }
 
     /*
-     * Calculate the final total.
+     * Final order total.
      */
     const serverTotal = Number(
       Math.max(
@@ -374,7 +630,7 @@ export async function POST(request: Request) {
     );
 
     /*
-     * Create the order.
+     * Create order.
      */
     const {
       data: order,
@@ -383,30 +639,77 @@ export async function POST(request: Request) {
       .from("orders")
       .insert([
         {
-          order_number: orderNumber,
-          customer_email: normalizedCustomerEmail,
-          first_name: normalizedFirstName,
-          last_name: normalizedLastName,
-          address: normalizedAddress,
-          city: normalizedCity,
-          state: normalizedState,
-          zip_code: normalizedZipCode,
-          payment_method: normalizedPaymentMethod,
-          cart: normalizedCart,
-          subtotal: serverSubtotal,
-          shipping: serverShipping,
-          discount: serverDiscount,
-          promo_code: appliedPromoCode,
-          redeemed_points: validatedRedeemedPoints,
-          reward_discount: rewardDiscount,
-          total: serverTotal,
-          status: "awaiting_payment",
+          order_number:
+            orderNumber,
+
+          customer_email:
+            normalizedCustomerEmail,
+
+          first_name:
+            normalizedFirstName,
+
+          last_name:
+            normalizedLastName,
+
+          address:
+            normalizedAddress,
+
+          city:
+            normalizedCity,
+
+          state:
+            normalizedState,
+
+          zip_code:
+            normalizedZipCode,
+
+          payment_method:
+            normalizedPaymentMethod,
+
+          cart:
+            normalizedCart,
+
+          subtotal:
+            serverSubtotal,
+
+          shipping:
+            serverShipping,
+
+          discount:
+            serverDiscount,
+
+          promo_code:
+            appliedPromoCode,
+
+          /*
+           * Affiliate attribution.
+           */
+          affiliate_id:
+            affiliateId,
+
+          affiliate_commission:
+            affiliateCommission,
+
+          redeemed_points:
+            validatedRedeemedPoints,
+
+          reward_discount:
+            rewardDiscount,
+
+          total:
+            serverTotal,
+
+          status:
+            "awaiting_payment",
         },
       ])
       .select()
       .single();
 
-    if (orderInsertError || !order) {
+    if (
+      orderInsertError ||
+      !order
+    ) {
       console.error(
         "Supabase order insert error:",
         orderInsertError
@@ -424,24 +727,32 @@ export async function POST(request: Request) {
     }
 
     /*
-     * Immediately deduct redeemed points after the order is created.
+     * Immediately deduct
+     * redeemed points.
      */
     if (
-      validatedRedeemedPoints > 0 &&
+      validatedRedeemedPoints >
+        0 &&
       authenticatedUserId
     ) {
-      /*
-       * Recheck the balance before inserting the redemption.
-       */
       const {
-        data: latestTransactions,
-        error: latestBalanceError,
+        data:
+          latestTransactions,
+        error:
+          latestBalanceError,
       } = await supabaseAdmin
-        .from("point_transactions")
+        .from(
+          "point_transactions"
+        )
         .select("points")
-        .eq("user_id", authenticatedUserId);
+        .eq(
+          "user_id",
+          authenticatedUserId
+        );
 
-      if (latestBalanceError) {
+      if (
+        latestBalanceError
+      ) {
         console.error(
           "Final rewards balance lookup error:",
           latestBalanceError
@@ -465,14 +776,23 @@ export async function POST(request: Request) {
       const latestPointBalance = (
         latestTransactions || []
       ).reduce(
-        (sum, transaction) =>
-          sum + Number(transaction.points || 0),
+        (
+          sum,
+          transaction
+        ) =>
+          sum +
+          Number(
+            transaction.points || 0
+          ),
         0
       );
 
       if (
         validatedRedeemedPoints >
-        Math.max(0, latestPointBalance)
+        Math.max(
+          0,
+          latestPointBalance
+        )
       ) {
         await supabaseAdmin
           .from("orders")
@@ -490,28 +810,35 @@ export async function POST(request: Request) {
       }
 
       const {
-        error: redemptionInsertError,
+        error:
+          redemptionInsertError,
       } = await supabaseAdmin
-        .from("point_transactions")
+        .from(
+          "point_transactions"
+        )
         .insert({
-          user_id: authenticatedUserId,
+          user_id:
+            authenticatedUserId,
+
           order_id: order.id,
-          points: -validatedRedeemedPoints,
+
+          points:
+            -validatedRedeemedPoints,
+
           type: "redeemed",
-          description: `Rewards redeemed on order ${order.order_number}`,
+
+          description:
+            `Rewards redeemed on order ${order.order_number}`,
         });
 
-      if (redemptionInsertError) {
+      if (
+        redemptionInsertError
+      ) {
         console.error(
           "Immediate reward redemption error:",
           redemptionInsertError
         );
 
-        /*
-         * Delete the order if the points could not be deducted.
-         * This prevents a discounted order from existing without
-         * a matching redemption transaction.
-         */
         await supabaseAdmin
           .from("orders")
           .delete()
@@ -529,68 +856,116 @@ export async function POST(request: Request) {
     }
 
     /*
-     * Calculate the updated rewards balance.
+     * Calculate updated rewards
+     * balance.
      */
-    let updatedPointsBalance: number | null = null;
+    let updatedPointsBalance:
+      | number
+      | null = null;
 
-    if (authenticatedUserId) {
+    if (
+      authenticatedUserId
+    ) {
       const {
-        data: updatedTransactions,
-        error: updatedBalanceError,
+        data:
+          updatedTransactions,
+        error:
+          updatedBalanceError,
       } = await supabaseAdmin
-        .from("point_transactions")
+        .from(
+          "point_transactions"
+        )
         .select("points")
-        .eq("user_id", authenticatedUserId);
+        .eq(
+          "user_id",
+          authenticatedUserId
+        );
 
-      if (updatedBalanceError) {
+      if (
+        updatedBalanceError
+      ) {
         console.error(
           "Updated reward balance error:",
           updatedBalanceError
         );
       } else {
-        updatedPointsBalance = Math.max(
-          0,
-          (updatedTransactions || []).reduce(
-            (sum, transaction) =>
-              sum + Number(transaction.points || 0),
-            0
-          )
-        );
+        updatedPointsBalance =
+          Math.max(
+            0,
+            (
+              updatedTransactions ||
+              []
+            ).reduce(
+              (
+                sum,
+                transaction
+              ) =>
+                sum +
+                Number(
+                  transaction.points ||
+                    0
+                ),
+              0
+            )
+          );
       }
     }
 
     /*
-     * Build order item HTML.
+     * Build order item HTML
+     * for customer/admin only.
+     *
+     * We DO NOT include this
+     * in the affiliate email.
      */
-    const itemsHtml = normalizedCart
-      .map(
-        (item: CartItem) =>
-          `<li style="margin-bottom:8px;">
-            ${item.name} x ${item.quantity}
-            — $${(
-              Number(item.price || 0) *
-              Number(item.quantity || 0)
-            ).toFixed(2)}
-          </li>`
-      )
-      .join("");
+    const itemsHtml =
+      normalizedCart
+        .map(
+          (item: CartItem) =>
+            `<li style="margin-bottom:8px;">
+              ${item.name} x ${item.quantity}
+              — $${(
+                Number(
+                  item.price || 0
+                ) *
+                Number(
+                  item.quantity || 0
+                )
+              ).toFixed(2)}
+            </li>`
+        )
+        .join("");
 
-    const promoHtml = appliedPromoCode
-      ? `
-        <p style="margin:0;">
-          <strong>Promo Code:</strong>
-          ${appliedPromoCode}
-        </p>
+    /*
+     * CUSTOMER promo information.
+     *
+     * This ONLY tells them:
+     * - promo code
+     * - amount saved
+     *
+     * No affiliate commission
+     * information is shown.
+     */
+    const promoHtml =
+      appliedPromoCode
+        ? `
+          <p style="margin:0;">
+            <strong>Promo Code:</strong>
+            ${appliedPromoCode}
+          </p>
 
-        <p style="margin:0;">
-          <strong>Promo Discount:</strong>
-          -$${serverDiscount.toFixed(2)}
-        </p>
-      `
-      : "";
+          <p style="margin:0;">
+            <strong>Promo Discount:</strong>
+            -$${serverDiscount.toFixed(
+              2
+            )}
+          </p>
+        `
+        : "";
 
     const rewardHtml =
-      validatedRedeemedPoints > 0
+      validatedRedeemedPoints >
+      0
         ? `
           <p style="margin:0; color:#16a34a;">
             <strong>Apexx Rewards:</strong>
@@ -599,11 +974,14 @@ export async function POST(request: Request) {
 
           <p style="margin:0; color:#16a34a;">
             <strong>Reward Discount:</strong>
-            -$${rewardDiscount.toFixed(2)}
+            -$${rewardDiscount.toFixed(
+              2
+            )}
           </p>
 
           ${
-            updatedPointsBalance !== null
+            updatedPointsBalance !==
+            null
               ? `
                 <p style="margin:0; color:#2563eb;">
                   <strong>Remaining Balance:</strong>
@@ -616,21 +994,31 @@ export async function POST(request: Request) {
         : "";
 
     /*
-     * Send the customer confirmation email.
+     * CUSTOMER CONFIRMATION EMAIL.
+     *
+     * Affiliate commission is
+     * intentionally NOT shown.
      */
     const {
-      error: customerEmailError,
+      error:
+        customerEmailError,
     } = await resend.emails.send({
-      from: "Apexx Biolabs <orders@apexxbiolabs.com>",
-      to: normalizedCustomerEmail,
+      from:
+        "Apexx Biolabs <orders@apexxbiolabs.com>",
+
+      to:
+        normalizedCustomerEmail,
+
       subject:
         "Apexx Biolabs Order Confirmation • Payment Awaiting",
+
       html: `
         <div style="margin:0; padding:0; background:#f8fbff; font-family:Arial, Helvetica, sans-serif;">
           <div style="max-width:720px; margin:0 auto; padding:28px 16px;">
             <div style="background:#ffffff; border:1px solid #dbeafe; border-radius:28px; overflow:hidden; box-shadow:0 18px 45px rgba(30,58,138,0.12);">
 
               <div style="background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff); padding:38px 24px; text-align:center; border-bottom:1px solid #dbeafe;">
+
                 <p style="margin:0 0 14px; color:#3b82f6; font-size:13px; letter-spacing:4px; text-transform:uppercase;">
                   Research. Quality. Confidence.
                 </p>
@@ -642,10 +1030,13 @@ export async function POST(request: Request) {
                 <p style="margin:12px 0 0; color:#475569; font-size:13px; letter-spacing:2px; text-transform:uppercase;">
                   Premium Research Materials
                 </p>
+
               </div>
 
               <div style="padding:32px 24px; color:#0f172a;">
+
                 <div style="background:#ffffff; border:1px solid #bfdbfe; border-radius:22px; padding:32px 24px; text-align:center; margin-bottom:30px; box-shadow:0 12px 30px rgba(59,130,246,0.10);">
+
                   <p style="margin:0 0 14px; color:#3b82f6; font-size:13px; letter-spacing:4px; text-transform:uppercase;">
                     Order Received
                   </p>
@@ -659,31 +1050,40 @@ export async function POST(request: Request) {
                   </p>
 
                   <p style="margin:18px auto 0; max-width:500px; color:#475569; font-size:15px; line-height:1.7;">
-                    Thank you for choosing Apexx Biolabs. Your order has
-                    been successfully received and is awaiting payment
-                    verification before processing and fulfillment.
+                    Thank you for choosing Apexx Biolabs.
+                    Your order has been successfully received
+                    and is awaiting payment verification before
+                    processing and fulfillment.
                   </p>
+
                 </div>
 
                 <div style="background:linear-gradient(135deg,#eaf4ff,#f8fbff); border:1px solid #bfdbfe; border-radius:22px; padding:28px; text-align:center; margin-bottom:30px;">
+
                   <p style="margin:0 0 8px; color:#1e3a8a; font-size:13px; text-transform:uppercase; letter-spacing:2px; font-weight:bold;">
                     Total Due
                   </p>
 
                   <p style="margin:0; color:#0f172a !important; font-size:50px; font-weight:900;">
-                    $${serverTotal.toFixed(2)}
+                    $${serverTotal.toFixed(
+                      2
+                    )}
                   </p>
+
                 </div>
 
                 <div style="background:#f8fbff; border:1px solid #bfdbfe; border-radius:22px; padding:24px; margin-bottom:30px;">
+
                   <h3 style="margin:0 0 18px; color:#06111f; font-size:22px;">
                     Complete Payment Verification
                   </h3>
 
                   ${
-                    normalizedPaymentMethod === "venmo"
+                    normalizedPaymentMethod ===
+                    "venmo"
                       ? `
                         <div style="text-align:center;">
+
                           <p style="color:#475569; line-height:1.6; margin:0 0 16px;">
                             Tap below to complete your Venmo payment.
                           </p>
@@ -699,15 +1099,18 @@ export async function POST(request: Request) {
                             Venmo:
                             <strong>@apexx-biolabs</strong>
                           </p>
+
                         </div>
                       `
                       : ""
                   }
 
                   ${
-                    normalizedPaymentMethod === "zelle"
+                    normalizedPaymentMethod ===
+                    "zelle"
                       ? `
                         <div style="text-align:center;">
+
                           <p style="color:#475569; line-height:1.6; margin:0 0 18px;">
                             You can complete your Zelle payment by scanning
                             the QR code or by sending payment manually using
@@ -715,6 +1118,7 @@ export async function POST(request: Request) {
                           </p>
 
                           <div style="background:#ffffff; border:1px solid #bfdbfe; border-radius:18px; padding:22px; margin:18px 0;">
+
                             <p style="margin:0 0 10px; color:#3b82f6; font-size:13px; text-transform:uppercase; letter-spacing:1.5px;">
                               Option 1
                             </p>
@@ -736,9 +1140,11 @@ export async function POST(request: Request) {
                                 APEXX BIOLABS LLC
                               </strong>.
                             </p>
+
                           </div>
 
                           <div style="background:linear-gradient(135deg,#eaf4ff,#ffffff); border:1px solid #bfdbfe; border-radius:18px; padding:22px; margin:18px 0;">
+
                             <p style="margin:0 0 10px; color:#2563eb; font-size:13px; text-transform:uppercase; letter-spacing:1.5px; font-weight:bold;">
                               Option 2
                             </p>
@@ -754,13 +1160,16 @@ export async function POST(request: Request) {
                             <p style="margin:0; color:#0f172a !important; font-size:22px; font-weight:900;">
                               apexxbiolabs7@gmail.com
                             </p>
+
                           </div>
+
                         </div>
                       `
                       : ""
                   }
 
                   <div style="background:#ffffff; border-left:4px solid #60a5fa; padding:18px; border-radius:14px; margin-top:24px;">
+
                     <p style="margin:0; color:#06111f; font-weight:bold;">
                       Payment Note
                     </p>
@@ -774,10 +1183,13 @@ export async function POST(request: Request) {
                       Do not include product names, product descriptions,
                       or extra details in the payment notes.
                     </p>
+
                   </div>
+
                 </div>
 
                 <div style="margin-bottom:30px; background:#ffffff; border:1px solid #dbeafe; border-radius:18px; padding:20px;">
+
                   <p style="margin:0 0 8px; color:#3b82f6; font-size:13px; text-transform:uppercase; letter-spacing:2px;">
                     Order Number
                   </p>
@@ -785,9 +1197,11 @@ export async function POST(request: Request) {
                   <p style="margin:0; color:#06111f; font-size:21px; font-weight:bold;">
                     ${orderNumber}
                   </p>
+
                 </div>
 
                 <div style="background:#ffffff; border:1px solid #dbeafe; border-radius:20px; padding:22px; margin-bottom:30px;">
+
                   <h3 style="margin:0 0 16px; color:#06111f; font-size:22px;">
                     Order Summary
                   </h3>
@@ -797,14 +1211,19 @@ export async function POST(request: Request) {
                   </ul>
 
                   <div style="border-top:1px solid #dbeafe; padding-top:16px; color:#334155; line-height:1.8;">
+
                     <p style="margin:0;">
                       <strong>Subtotal:</strong>
-                      $${serverSubtotal.toFixed(2)}
+                      $${serverSubtotal.toFixed(
+                        2
+                      )}
                     </p>
 
                     <p style="margin:0;">
                       <strong>Shipping:</strong>
-                      $${serverShipping.toFixed(2)}
+                      $${serverShipping.toFixed(
+                        2
+                      )}
                     </p>
 
                     ${promoHtml}
@@ -812,15 +1231,21 @@ export async function POST(request: Request) {
 
                     <p style="margin:12px 0 0; color:#06111f; font-size:19px;">
                       <strong>Total:</strong>
-                      $${serverTotal.toFixed(2)}
+                      $${serverTotal.toFixed(
+                        2
+                      )}
                     </p>
+
                   </div>
+
                 </div>
 
                 ${
-                  validatedRedeemedPoints > 0
+                  validatedRedeemedPoints >
+                  0
                     ? `
                       <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe); border:1px solid #93c5fd; border-radius:20px; padding:22px; margin-bottom:30px;">
+
                         <h3 style="margin:0 0 10px; color:#06111f; font-size:18px;">
                           Apexx Rewards Redeemed
                         </h3>
@@ -828,11 +1253,14 @@ export async function POST(request: Request) {
                         <p style="margin:0; color:#475569; line-height:1.7;">
                           ${validatedRedeemedPoints} points were deducted
                           from your rewards balance for a
-                          $${rewardDiscount.toFixed(2)} discount.
+                          $${rewardDiscount.toFixed(
+                            2
+                          )} discount.
                         </p>
 
                         ${
-                          updatedPointsBalance !== null
+                          updatedPointsBalance !==
+                          null
                             ? `
                               <p style="margin:12px 0 0; color:#1e3a8a; font-weight:bold;">
                                 Remaining balance:
@@ -841,21 +1269,24 @@ export async function POST(request: Request) {
                             `
                             : ""
                         }
+
                       </div>
                     `
                     : ""
                 }
 
                 <div style="background:#ffffff; border:1px solid #dbeafe; border-radius:20px; padding:22px; margin-bottom:30px;">
+
                   <h3 style="margin:0 0 12px; color:#06111f; font-size:18px;">
                     What Happens Next?
                   </h3>
 
                   <p style="margin:0; color:#475569; line-height:1.7;">
-                    Once payment is verified, your order will be prepared
-                    for shipment. Tracking information will be emailed once
-                    your order has been dispatched.
+                    Once payment is verified, your order will
+                    be prepared for shipment. Tracking information
+                    will be emailed once your order has been dispatched.
                   </p>
+
                 </div>
 
                 <p style="margin:0 0 24px; color:#2563eb; font-size:14px; line-height:1.6;">
@@ -863,6 +1294,7 @@ export async function POST(request: Request) {
                 </p>
 
                 <div style="border-top:1px solid #dbeafe; padding-top:24px;">
+
                   <p style="font-size:12px; color:#64748b; line-height:1.6; margin:0;">
                     Products sold by Apexx Biolabs are intended strictly
                     for lawful laboratory research use only. Not for human
@@ -875,7 +1307,9 @@ export async function POST(request: Request) {
                     orders@apexxbiolabs.com<br/>
                     apexxbiolabs.com
                   </p>
+
                 </div>
+
               </div>
             </div>
           </div>
@@ -891,14 +1325,24 @@ export async function POST(request: Request) {
     }
 
     /*
-     * Send the administrator notification.
+     * ADMIN notification.
+     *
+     * You CAN see affiliate
+     * information here.
      */
     const {
-      error: adminEmailError,
+      error:
+        adminEmailError,
     } = await resend.emails.send({
-      from: "Apexx Biolabs <orders@apexxbiolabs.com>",
-      to: "orders@apexxbiolabs.com",
-      subject: `New Apexx Order ${orderNumber}`,
+      from:
+        "Apexx Biolabs <orders@apexxbiolabs.com>",
+
+      to:
+        "orders@apexxbiolabs.com",
+
+      subject:
+        `New Apexx Order ${orderNumber}`,
+
       html: `
         <h2>New Order Received</h2>
 
@@ -909,7 +1353,8 @@ export async function POST(request: Request) {
 
         <p>
           <strong>Customer:</strong>
-          ${normalizedFirstName} ${normalizedLastName}
+          ${normalizedFirstName}
+          ${normalizedLastName}
         </p>
 
         <p>
@@ -921,7 +1366,8 @@ export async function POST(request: Request) {
 
         <p>
           ${normalizedAddress}<br/>
-          ${normalizedCity}, ${normalizedState}
+          ${normalizedCity},
+          ${normalizedState}
           ${normalizedZipCode}
         </p>
 
@@ -938,12 +1384,16 @@ export async function POST(request: Request) {
 
         <p>
           <strong>Subtotal:</strong>
-          $${serverSubtotal.toFixed(2)}
+          $${serverSubtotal.toFixed(
+            2
+          )}
         </p>
 
         <p>
           <strong>Shipping:</strong>
-          $${serverShipping.toFixed(2)}
+          $${serverShipping.toFixed(
+            2
+          )}
         </p>
 
         ${
@@ -956,14 +1406,44 @@ export async function POST(request: Request) {
 
               <p>
                 <strong>Promo Discount:</strong>
-                -$${serverDiscount.toFixed(2)}
+                -$${serverDiscount.toFixed(
+                  2
+                )}
               </p>
             `
             : ""
         }
 
         ${
-          validatedRedeemedPoints > 0
+          affiliateId
+            ? `
+              <hr/>
+
+              <h3>Affiliate Attribution</h3>
+
+              <p>
+                <strong>Affiliate:</strong>
+                ${affiliateName}
+              </p>
+
+              <p>
+                <strong>Affiliate Code:</strong>
+                ${affiliateCode}
+              </p>
+
+              <p>
+                <strong>Pending Commission:</strong>
+                $${affiliateCommission.toFixed(
+                  2
+                )}
+              </p>
+            `
+            : ""
+        }
+
+        ${
+          validatedRedeemedPoints >
+          0
             ? `
               <p>
                 <strong>Rewards Redeemed:</strong>
@@ -972,7 +1452,9 @@ export async function POST(request: Request) {
 
               <p>
                 <strong>Reward Discount:</strong>
-                -$${rewardDiscount.toFixed(2)}
+                -$${rewardDiscount.toFixed(
+                  2
+                )}
               </p>
 
               <p style="color:#16a34a; font-weight:bold;">
@@ -984,7 +1466,9 @@ export async function POST(request: Request) {
 
         <p>
           <strong>Total:</strong>
-          $${serverTotal.toFixed(2)}
+          $${serverTotal.toFixed(
+            2
+          )}
         </p>
       `,
     });
@@ -996,11 +1480,196 @@ export async function POST(request: Request) {
       );
     }
 
+    /*
+     * AFFILIATE EMAIL.
+     *
+     * Only sent when an active
+     * affiliate code generated
+     * this order.
+     *
+     * NO customer name.
+     * NO customer email.
+     * NO address.
+     * NO products.
+     */
+    if (
+      affiliateId &&
+      affiliateEmail
+    ) {
+      const commissionableSale =
+        Math.max(
+          0,
+          serverSubtotal -
+            serverDiscount
+        );
+
+      const {
+        error:
+          affiliateEmailError,
+      } =
+        await resend.emails.send({
+          from:
+            "Apexx Biolabs <orders@apexxbiolabs.com>",
+
+          to:
+            affiliateEmail,
+
+          subject:
+            `Your ${affiliateCode} Code Was Used • Apexx Biolabs`,
+
+          html: `
+            <div style="margin:0; padding:0; background:#f8fbff; font-family:Arial, Helvetica, sans-serif;">
+              <div style="max-width:650px; margin:0 auto; padding:30px 16px;">
+
+                <div style="background:#ffffff; border:1px solid #dbeafe; border-radius:28px; overflow:hidden; box-shadow:0 18px 45px rgba(30,58,138,0.10);">
+
+                  <div style="background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff); padding:36px 24px; text-align:center; border-bottom:1px solid #dbeafe;">
+
+                    <p style="margin:0 0 12px; color:#3b82f6; font-size:12px; letter-spacing:4px; text-transform:uppercase;">
+                      Apexx Affiliate Program
+                    </p>
+
+                    <h1 style="margin:0; color:#06111f; font-size:30px; letter-spacing:2px;">
+                      APEXX BIOLABS
+                    </h1>
+
+                  </div>
+
+                  <div style="padding:32px 24px; color:#0f172a;">
+
+                    <div style="text-align:center; margin-bottom:28px;">
+
+                      <p style="margin:0 0 12px; color:#2563eb; font-size:13px; font-weight:bold; letter-spacing:3px; text-transform:uppercase;">
+                        Affiliate Activity
+                      </p>
+
+                      <h2 style="margin:0; font-size:30px; color:#06111f;">
+                        Your Code Was Used!
+                      </h2>
+
+                      <p style="margin:14px auto 0; max-width:470px; color:#64748b; line-height:1.7;">
+                        Great news${
+                          affiliateName
+                            ? `, ${affiliateName}`
+                            : ""
+                        }. An Apexx Biolabs order was placed using your affiliate code.
+                      </p>
+
+                    </div>
+
+                    <div style="background:#f8fbff; border:1px solid #bfdbfe; border-radius:22px; padding:24px; margin-bottom:20px;">
+
+                      <p style="margin:0 0 6px; color:#64748b; font-size:12px; text-transform:uppercase; letter-spacing:2px;">
+                        Affiliate Code
+                      </p>
+
+                      <p style="margin:0; color:#2563eb; font-size:25px; font-weight:900;">
+                        ${affiliateCode}
+                      </p>
+
+                    </div>
+
+                    <div style="display:block; background:#ffffff; border:1px solid #dbeafe; border-radius:22px; padding:24px; margin-bottom:20px;">
+
+                      <p style="margin:0 0 6px; color:#64748b; font-size:12px; text-transform:uppercase; letter-spacing:2px;">
+                        Order
+                      </p>
+
+                      <p style="margin:0; color:#06111f; font-size:18px; font-weight:bold;">
+                        ${orderNumber}
+                      </p>
+
+                    </div>
+
+                    <div style="background:#ffffff; border:1px solid #dbeafe; border-radius:22px; padding:24px; margin-bottom:20px;">
+
+                      <p style="margin:0 0 6px; color:#64748b; font-size:12px; text-transform:uppercase; letter-spacing:2px;">
+                        Qualifying Sale
+                      </p>
+
+                      <p style="margin:0; color:#06111f; font-size:28px; font-weight:900;">
+                        $${commissionableSale.toFixed(
+                          2
+                        )}
+                      </p>
+
+                    </div>
+
+                    <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe); border:1px solid #93c5fd; border-radius:22px; padding:26px; margin-bottom:24px;">
+
+                      <p style="margin:0 0 8px; color:#1e3a8a; font-size:12px; text-transform:uppercase; letter-spacing:2px; font-weight:bold;">
+                        Pending Commission
+                      </p>
+
+                      <p style="margin:0; color:#06111f; font-size:38px; font-weight:900;">
+                        $${affiliateCommission.toFixed(
+                          2
+                        )}
+                      </p>
+
+                    </div>
+
+                    <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:18px; padding:20px;">
+
+                      <p style="margin:0 0 6px; color:#9a3412; font-weight:bold;">
+                        Awaiting Payment
+                      </p>
+
+                      <p style="margin:0; color:#7c2d12; font-size:14px; line-height:1.6;">
+                        This commission is currently pending.
+                        It will be confirmed after payment for
+                        the order has been received and verified.
+                      </p>
+
+                    </div>
+
+                    <div style="border-top:1px solid #dbeafe; padding-top:22px; margin-top:28px; text-align:center;">
+
+                      <p style="margin:0; color:#64748b; font-size:13px; line-height:1.6;">
+                        You can review your affiliate activity in your Apexx Affiliate Dashboard.
+                      </p>
+
+                      <a
+                        href="https://apexxbiolabs.com/affiliate/dashboard"
+                        style="display:inline-block; margin-top:18px; background:#06111f; color:#ffffff; padding:14px 26px; border-radius:999px; text-decoration:none; font-size:13px; font-weight:bold; text-transform:uppercase; letter-spacing:1.5px;"
+                      >
+                        View Affiliate Dashboard
+                      </a>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+          `,
+        });
+
+      if (
+        affiliateEmailError
+      ) {
+        console.error(
+          "Affiliate notification email error:",
+          affiliateEmailError
+        );
+      }
+    }
+
+    /*
+     * Customer response.
+     *
+     * We intentionally do NOT
+     * return affiliate commission
+     * information to the browser.
+     */
     return NextResponse.json({
       success: true,
       orderNumber,
       order,
-      redeemedPoints: validatedRedeemedPoints,
+      redeemedPoints:
+        validatedRedeemedPoints,
       rewardDiscount,
       total: serverTotal,
       remainingAvailablePoints:
@@ -1015,7 +1684,8 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to submit order.",
+        error:
+          "Failed to submit order.",
       },
       { status: 500 }
     );

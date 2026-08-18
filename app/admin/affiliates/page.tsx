@@ -26,9 +26,24 @@ export default async function AffiliatesAdminPage() {
 
   const safeAffiliates = affiliates || [];
 
+  const totalAffiliates =
+    safeAffiliates.length;
+
+  const activeAffiliates =
+    safeAffiliates.filter(
+      (affiliate) =>
+        affiliate.status === "active"
+    ).length;
+
+  const invitedAffiliates =
+    safeAffiliates.filter(
+      (affiliate) =>
+        affiliate.status === "invited"
+    ).length;
+
   return (
     <main className="min-h-screen bg-[#081526] text-white px-6 py-12">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
 
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
           <div>
@@ -41,22 +56,23 @@ export default async function AffiliatesAdminPage() {
             </h1>
 
             <p className="text-white/60 mt-4 max-w-2xl">
-              Manage affiliate accounts, codes, discounts, commissions,
-              and account status.
+              Manage affiliate accounts, promo codes,
+              discounts, commissions, account status,
+              and affiliate performance.
             </p>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <a
               href="/admin"
-              className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-white/70 text-sm uppercase tracking-widest hover:bg-white/[0.08] transition-all"
+              className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-center text-white/70 text-sm uppercase tracking-widest hover:bg-white/[0.08] transition-all"
             >
               Back
             </a>
 
             <a
               href="/admin/affiliates/new"
-              className="rounded-full bg-blue-500 px-6 py-3 text-white text-sm font-bold uppercase tracking-widest hover:bg-blue-400 transition-all"
+              className="rounded-full bg-blue-500 px-6 py-3 text-center text-white text-sm font-bold uppercase tracking-widest hover:bg-blue-400 transition-all"
             >
               + Add Affiliate
             </a>
@@ -76,7 +92,7 @@ export default async function AffiliatesAdminPage() {
             </p>
 
             <p className="text-4xl font-black mt-3">
-              {safeAffiliates.length}
+              {totalAffiliates}
             </p>
           </div>
 
@@ -86,11 +102,7 @@ export default async function AffiliatesAdminPage() {
             </p>
 
             <p className="text-4xl font-black text-blue-300 mt-3">
-              {
-                safeAffiliates.filter(
-                  (affiliate) => affiliate.status === "active"
-                ).length
-              }
+              {activeAffiliates}
             </p>
           </div>
 
@@ -100,11 +112,7 @@ export default async function AffiliatesAdminPage() {
             </p>
 
             <p className="text-4xl font-black text-blue-300 mt-3">
-              {
-                safeAffiliates.filter(
-                  (affiliate) => affiliate.status === "invited"
-                ).length
-              }
+              {invitedAffiliates}
             </p>
           </div>
         </div>
@@ -129,9 +137,10 @@ export default async function AffiliatesAdminPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[900px]">
+              <table className="w-full min-w-[1100px]">
                 <thead>
                   <tr className="border-b border-white/10 text-left">
+
                     <th className="p-5 text-white/50 text-xs uppercase tracking-widest">
                       Affiliate
                     </th>
@@ -155,57 +164,109 @@ export default async function AffiliatesAdminPage() {
                     <th className="p-5 text-white/50 text-xs uppercase tracking-widest">
                       Joined
                     </th>
+
+                    <th className="p-5 text-white/50 text-xs uppercase tracking-widest text-right">
+                      Dashboard
+                    </th>
+
                   </tr>
                 </thead>
 
                 <tbody>
-                  {safeAffiliates.map((affiliate) => (
-                    <tr
-                      key={affiliate.id}
-                      className="border-b border-white/[0.06] last:border-0"
-                    >
-                      <td className="p-5">
-                        <p className="font-bold">
-                          {affiliate.name}
-                        </p>
+                  {safeAffiliates.map(
+                    (affiliate) => {
+                      const discountPercent =
+                        Number(
+                          affiliate.discount_rate ||
+                            0
+                        ) * 100;
 
-                        <p className="text-white/40 text-sm mt-1">
-                          {affiliate.email}
-                        </p>
-                      </td>
+                      const commissionPercent =
+                        Number(
+                          affiliate.commission_rate ||
+                            0
+                        ) * 100;
 
-                      <td className="p-5">
-                        <span className="rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-blue-200 font-bold">
-                          {affiliate.code}
-                        </span>
-                      </td>
+                      return (
+                        <tr
+                          key={affiliate.id}
+                          className="border-b border-white/[0.06] last:border-0 hover:bg-white/[0.025] transition-colors"
+                        >
 
-                      <td className="p-5">
-                        {Number(affiliate.discount_rate) * 100}%
-                      </td>
+                          <td className="p-5">
+                            <p className="font-bold text-white">
+                              {affiliate.name}
+                            </p>
 
-                      <td className="p-5">
-                        {Number(affiliate.commission_rate) * 100}%
-                      </td>
+                            <p className="text-white/40 text-sm mt-1">
+                              {affiliate.email}
+                            </p>
+                          </td>
 
-                      <td className="p-5">
-                        <span className="capitalize">
-                          {affiliate.status}
-                        </span>
-                      </td>
+                          <td className="p-5">
+                            <span className="rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-blue-200 font-bold">
+                              {affiliate.code}
+                            </span>
+                          </td>
 
-                      <td className="p-5 text-white/60">
-                        {new Date(
-                          affiliate.created_at
-                        ).toLocaleDateString()}
-                      </td>
-                    </tr>
-                  ))}
+                          <td className="p-5">
+                            {discountPercent}%
+                          </td>
+
+                          <td className="p-5">
+                            {commissionPercent}%
+                          </td>
+
+                          <td className="p-5">
+                            <span
+                              className={`inline-flex rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest ${
+                                affiliate.status ===
+                                "active"
+                                  ? "border border-green-400/20 bg-green-500/10 text-green-300"
+                                  : affiliate.status ===
+                                      "invited"
+                                    ? "border border-yellow-400/20 bg-yellow-500/10 text-yellow-200"
+                                    : "border border-white/10 bg-white/[0.05] text-white/60"
+                              }`}
+                            >
+                              {affiliate.status}
+                            </span>
+                          </td>
+
+                          <td className="p-5 text-white/60">
+                            {affiliate.created_at
+                              ? new Date(
+                                  affiliate.created_at
+                                ).toLocaleDateString()
+                              : "—"}
+                          </td>
+
+                          <td className="p-5 text-right">
+                            <a
+                              href={`/admin/affiliates/${affiliate.id}`}
+                              className="inline-flex items-center justify-center gap-2 rounded-full border border-blue-400/20 bg-blue-500/10 px-5 py-3 text-xs font-bold uppercase tracking-widest text-blue-200 transition hover:border-blue-300/40 hover:bg-blue-500/20"
+                            >
+                              View Dashboard
+                              <span>→</span>
+                            </a>
+                          </td>
+
+                        </tr>
+                      );
+                    }
+                  )}
                 </tbody>
               </table>
             </div>
           )}
         </div>
+
+        <p className="mt-6 text-sm text-white/35">
+          Open an affiliate dashboard to review
+          their sales activity, pending commissions,
+          confirmed commissions, and attributed orders.
+        </p>
+
       </div>
     </main>
   );

@@ -226,12 +226,21 @@ export default function AffiliateDashboardPage() {
             </p>
           </div>
 
-          <button
-            onClick={handleLogout}
-            className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-white/70 text-sm uppercase tracking-widest hover:bg-white/[0.08] transition-all w-fit"
-          >
-            Sign Out
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={() => router.push("/account")}
+              className="rounded-full border border-blue-400/20 bg-blue-500/10 px-6 py-3 text-blue-200 text-sm uppercase tracking-widest hover:bg-blue-500/20 transition-all w-fit"
+            >
+              ← Back to Account
+            </button>
+
+            <button
+              onClick={handleLogout}
+              className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-white/70 text-sm uppercase tracking-widest hover:bg-white/[0.08] transition-all w-fit"
+            >
+              Sign Out
+            </button>
+          </div>
         </div>
 
         <section className="rounded-[32px] border border-blue-400/20 bg-gradient-to-br from-blue-500/15 via-white/[0.05] to-white/[0.03] p-8 mb-8">

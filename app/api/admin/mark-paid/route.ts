@@ -35,11 +35,9 @@ export async function POST(
     }
 
     /*
-     * Load the order first.
-     *
-     * This lets us prevent duplicate
-     * inventory deductions and duplicate
-     * commission confirmation emails.
+     * Load the order first so we can prevent
+     * duplicate inventory deductions and
+     * duplicate emails.
      */
     const {
       data: existingOrder,
@@ -51,7 +49,6 @@ export async function POST(
         order_number,
         status,
         cart,
-        items,
         customer_email,
         total,
         subtotal,
@@ -81,8 +78,7 @@ export async function POST(
     }
 
     /*
-     * If already marked paid/payment received,
-     * do not deduct inventory or send emails again.
+     * Prevent duplicate processing.
      */
     const existingStatus = String(
       existingOrder.status || ""
@@ -106,45 +102,56 @@ export async function POST(
      */
     const {
       data: order,
-      error,
+      error: markPaidError,
     } = await supabaseAdmin
       .from("orders")
       .update({
         status: "paid",
       })
       .eq("id", orderId)
-      .select()
+      .select(`
+        id,
+        order_number,
+        status,
+        cart,
+        customer_email,
+        total,
+        subtotal,
+        discount,
+        affiliate_id,
+        affiliate_commission
+      `)
       .single();
 
-    if (error || !order) {
+    if (
+      markPaidError ||
+      !order
+    ) {
       console.error(
         "Mark paid order error:",
-        error
+        markPaidError
       );
 
       return NextResponse.json(
         {
           success: false,
           error:
-            error ||
-            "Unable to mark order paid",
+            "Unable to mark order paid.",
         },
         { status: 500 }
       );
     }
 
     /*
-     * Update inventory.
+     * Update inventory for the actual
+     * products in the order.
      */
     const orderCart =
-      order.cart ||
-      order.items ||
-      [];
+      Array.isArray(order.cart)
+        ? (order.cart as CartItem[])
+        : [];
 
-    if (
-      !Array.isArray(orderCart) ||
-      orderCart.length === 0
-    ) {
+    if (orderCart.length === 0) {
       console.error(
         "No cart found on order:",
         order
@@ -153,11 +160,26 @@ export async function POST(
       for (const item of orderCart) {
         const itemId = String(
           item.id || ""
-        ).toLowerCase();
+        )
+          .trim()
+          .toLowerCase();
 
         const itemName = String(
           item.name || ""
-        ).toLowerCase();
+        )
+          .trim()
+          .toLowerCase();
+
+        const quantity =
+          Number(item.quantity || 0);
+
+        if (
+          quantity <= 0 ||
+          (!itemId &&
+            !itemName)
+        ) {
+          continue;
+        }
 
         const {
           data: products,
@@ -197,11 +219,6 @@ export async function POST(
             product.inventory || 0
           );
 
-        const quantity =
-          Number(
-            item.quantity || 0
-          );
-
         const newInventory =
           Math.max(
             0,
@@ -210,7 +227,8 @@ export async function POST(
           );
 
         const {
-          error: updateError,
+          error:
+            updateInventoryError,
         } = await supabaseAdmin
           .from("products")
           .update({
@@ -222,12 +240,14 @@ export async function POST(
             product.id
           );
 
-        if (updateError) {
+        if (
+          updateInventoryError
+        ) {
           console.error(
             "Inventory update failed:",
             {
               product,
-              updateError,
+              updateInventoryError,
             }
           );
         }
@@ -235,17 +255,12 @@ export async function POST(
     }
 
     /*
-     * IMPORTANT:
-     *
-     * The old complimentary Bac Water
-     * inventory deduction has been removed.
-     *
-     * Only actual products in the customer's
-     * order are deducted from inventory.
+     * Complimentary Bac Water logic
+     * has intentionally been removed.
      */
 
     /*
-     * Send customer Payment Received email.
+     * Customer Payment Received email.
      */
     const {
       error:
@@ -391,9 +406,7 @@ export async function POST(
     }
 
     /*
-     * AFFILIATE COMMISSION CONFIRMATION.
-     *
-     * Only runs for affiliate-attributed orders.
+     * Affiliate Commission Confirmed email.
      */
     if (order.affiliate_id) {
       const {
@@ -453,10 +466,6 @@ export async function POST(
               0
           );
 
-        /*
-         * Merchandise after promo discount.
-         * Shipping is not commissionable.
-         */
         const qualifyingSale =
           Math.max(
             0,
@@ -532,7 +541,7 @@ export async function POST(
 
                       </div>
 
-                      <div style="background:linear-gradient(135deg,#eaf4ff,#f8fbff);border:1px solid #bfdbfe;border-radius:22px;padding:28px;text-align:center;margin-bottom:22px;">
+                      <div style="background:linear-gradient(135deg,#eaf4ff,#f8fbff);border:1px solid #bfdbfe;border-radius:22px;padding:28px;text-align:center;margin-bottom:20px;">
 
                         <p style="margin:0 0 8px;color:#1e3a8a;font-size:13px;text-transform:uppercase;letter-spacing:2px;font-weight:bold;">
                           Affiliate Code
@@ -544,25 +553,25 @@ export async function POST(
 
                       </div>
 
-                      <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:20px;padding:22px;margin-bottom:22px;">
+                      <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:20px;padding:22px;margin-bottom:20px;text-align:center;">
 
                         <p style="margin:0 0 8px;color:#64748b;font-size:12px;text-transform:uppercase;letter-spacing:2px;">
-                          Order
+                          Order Number
                         </p>
 
-                        <p style="margin:0;color:#06111f;font-size:19px;font-weight:bold;">
+                        <p style="margin:0;color:#06111f;font-size:20px;font-weight:800;">
                           ${order.order_number}
                         </p>
 
                       </div>
 
-                      <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:20px;padding:22px;margin-bottom:22px;">
+                      <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:20px;padding:26px;margin-bottom:20px;text-align:center;">
 
                         <p style="margin:0 0 8px;color:#64748b;font-size:12px;text-transform:uppercase;letter-spacing:2px;">
                           Qualifying Sale
                         </p>
 
-                        <p style="margin:0;color:#06111f;font-size:30px;font-weight:900;">
+                        <p style="margin:0;color:#06111f;font-size:38px;font-weight:900;">
                           $${qualifyingSale.toFixed(
                             2
                           )}
@@ -612,7 +621,7 @@ export async function POST(
 
                         <p style="font-size:12px;color:#64748b;line-height:1.6;margin:0;">
                           Customer names, email addresses, shipping information,
-                          and purchased products are never shared through affiliate notifications.
+                          payment information, and purchased products are not shared with affiliates.
                         </p>
 
                         <p style="margin:24px 0 0;color:#334155;line-height:1.6;">

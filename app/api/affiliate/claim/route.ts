@@ -12,8 +12,22 @@ const supabaseAdmin = createClient(
   }
 );
 
+/*
+ * Affiliate invitations expire after 24 hours.
+ *
+ * IMPORTANT:
+ * The invite creation route should set
+ * invite_expires_at when the invitation is created.
+ */
+const INVITE_EXPIRATION_HOURS = 24;
+
 export async function POST(request: Request) {
   try {
+    /*
+     * ==========================================
+     * GET AUTHORIZATION TOKEN
+     * ==========================================
+     */
     const authorizationHeader =
       request.headers.get("authorization");
 
@@ -33,26 +47,36 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
+    /*
+     * ==========================================
+     * GET AFFILIATE INVITE TOKEN
+     * ==========================================
+     */
+    const body =
+      await request.json();
 
-    const token = String(
-      body.token || ""
-    ).trim();
+    const token =
+      String(
+        body.token || ""
+      ).trim();
 
     if (!token) {
       return NextResponse.json(
         {
           success: false,
           error:
-            "Invalid affiliate invitation.",
+            "This affiliate invitation is invalid.",
         },
         { status: 400 }
       );
     }
 
     /*
-     * Verify the real authenticated
-     * Supabase user.
+     * ==========================================
+     * VERIFY LOGGED-IN SUPABASE USER
+     * ==========================================
+     *
+     * We verify the access token server-side.
      */
     const {
       data: { user },
@@ -67,11 +91,16 @@ export async function POST(request: Request) {
       !user ||
       !user.email
     ) {
+      console.error(
+        "Affiliate claim user verification error:",
+        userError
+      );
+
       return NextResponse.json(
         {
           success: false,
           error:
-            "Your Apexx account could not be verified.",
+            "Your Apexx account could not be verified. Please sign in again.",
         },
         { status: 401 }
       );
@@ -83,7 +112,9 @@ export async function POST(request: Request) {
         .toLowerCase();
 
     /*
-     * Find the affiliate invitation.
+     * ==========================================
+     * FIND AFFILIATE INVITATION
+     * ==========================================
      */
     const {
       data: affiliate,
@@ -93,10 +124,13 @@ export async function POST(request: Request) {
       .select(`
         id,
         user_id,
+        name,
         email,
+        code,
         status,
         invite_token,
-        invite_expires_at
+        invite_expires_at,
+        created_at
       `)
       .eq(
         "invite_token",
@@ -105,63 +139,172 @@ export async function POST(request: Request) {
       .maybeSingle();
 
     if (
-      affiliateError ||
-      !affiliate
+      affiliateError
     ) {
+      console.error(
+        "Affiliate invitation lookup error:",
+        affiliateError
+      );
+
       return NextResponse.json(
         {
           success: false,
           error:
-            "This affiliate invitation is invalid or has already been used.",
+            "Unable to verify this affiliate invitation.",
+        },
+        { status: 500 }
+      );
+    }
+
+    if (!affiliate) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "This affiliate invitation is invalid, expired, or has already been used.",
         },
         { status: 404 }
       );
     }
 
     /*
-     * Invitation must still be pending.
+     * ==========================================
+     * CHECK INVITATION STATUS
+     * ==========================================
      */
     if (
       affiliate.status !==
       "invited"
     ) {
+      if (
+        affiliate.status ===
+        "active"
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "This affiliate invitation has already been activated.",
+          },
+          { status: 409 }
+        );
+      }
+
+      if (
+        affiliate.status ===
+        "suspended"
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "This affiliate account is currently suspended.",
+          },
+          { status: 403 }
+        );
+      }
+
+      if (
+        affiliate.status ===
+        "archived"
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "This affiliate invitation is no longer active.",
+          },
+          { status: 403 }
+        );
+      }
+
       return NextResponse.json(
         {
           success: false,
           error:
-            "This affiliate invitation has already been activated.",
+            "This affiliate invitation cannot be activated.",
         },
         { status: 409 }
       );
     }
 
     /*
-     * Make sure the invite has
-     * not expired.
+     * ==========================================
+     * CHECK INVITATION EXPIRATION
+     * ==========================================
+     *
+     * invite_expires_at is the authoritative
+     * expiration timestamp.
+     *
+     * Invitations should expire 24 hours
+     * after they are generated.
      */
     if (
-      !affiliate.invite_expires_at ||
-      new Date(
-        affiliate.invite_expires_at
-      ).getTime() <
-        Date.now()
+      !affiliate.invite_expires_at
     ) {
       return NextResponse.json(
         {
           success: false,
           error:
-            "This affiliate invitation has expired.",
+            `This invitation does not have a valid expiration time. Please request a new affiliate invitation. Invitations expire after ${INVITE_EXPIRATION_HOURS} hours.`,
+        },
+        { status: 410 }
+      );
+    }
+
+    const expiresAt =
+      new Date(
+        affiliate.invite_expires_at
+      );
+
+    /*
+     * Protect against an invalid date
+     * being stored in the database.
+     */
+    if (
+      Number.isNaN(
+        expiresAt.getTime()
+      )
+    ) {
+      console.error(
+        "Invalid affiliate invite expiration:",
+        affiliate.invite_expires_at
+      );
+
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "This invitation has an invalid expiration time. Please request a new invitation.",
+        },
+        { status: 410 }
+      );
+    }
+
+    if (
+      expiresAt.getTime() <=
+      Date.now()
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            `This affiliate invitation has expired. Invitations are valid for ${INVITE_EXPIRATION_HOURS} hours. Please request a new invitation.`,
         },
         { status: 410 }
       );
     }
 
     /*
-     * CRITICAL:
+     * ==========================================
+     * VERIFY EMAIL MATCH
+     * ==========================================
      *
-     * The logged-in Apexx account email
-     * must exactly match the email the
-     * affiliate invitation was sent to.
+     * This is CRITICAL.
+     *
+     * The Apexx account that accepts the
+     * invitation must use the EXACT email
+     * address the invitation was sent to.
      */
     const affiliateEmail =
       String(
@@ -171,6 +314,19 @@ export async function POST(request: Request) {
         .toLowerCase();
 
     if (
+      !affiliateEmail
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "This affiliate invitation does not have a valid email address.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (
       loggedInEmail !==
       affiliateEmail
     ) {
@@ -178,15 +334,20 @@ export async function POST(request: Request) {
         {
           success: false,
           error:
-            "This invitation belongs to a different Apexx account. Please sign in using the email address that received the invitation.",
+            `This invitation was sent to ${affiliateEmail}. Please sign in or create your Apexx account using that same email address.`,
         },
         { status: 403 }
       );
     }
 
     /*
-     * Also make sure the expected
-     * existing user ID matches.
+     * ==========================================
+     * VERIFY EXISTING USER LINK
+     * ==========================================
+     *
+     * If this invite was already associated
+     * with a specific Supabase user ID,
+     * make sure the same user is claiming it.
      */
     if (
       affiliate.user_id &&
@@ -204,26 +365,61 @@ export async function POST(request: Request) {
     }
 
     /*
-     * Activate the affiliate account
-     * and permanently invalidate the token.
+     * ==========================================
+     * ACTIVATE AFFILIATE
+     * ==========================================
+     *
+     * Link the authenticated Apexx account
+     * to this affiliate profile.
+     *
+     * Then permanently invalidate the invite
+     * token so it cannot be reused.
      */
     const {
+      data: activatedAffiliate,
       error: updateError,
     } = await supabaseAdmin
       .from("affiliates")
       .update({
-        user_id: user.id,
-        status: "active",
-        invite_token: null,
+        user_id:
+          user.id,
+
+        status:
+          "active",
+
+        /*
+         * Destroy the invitation after use.
+         */
+        invite_token:
+          null,
+
         invite_expires_at:
           null,
       })
       .eq(
         "id",
         affiliate.id
-      );
+      )
+      .eq(
+        "status",
+        "invited"
+      )
+      .eq(
+        "invite_token",
+        token
+      )
+      .select(`
+        id,
+        name,
+        email,
+        code,
+        status
+      `)
+      .maybeSingle();
 
-    if (updateError) {
+    if (
+      updateError
+    ) {
       console.error(
         "Affiliate claim update error:",
         updateError
@@ -239,8 +435,48 @@ export async function POST(request: Request) {
       );
     }
 
+    /*
+     * If another request somehow claimed
+     * the same token first, the guarded
+     * update above returns no row.
+     */
+    if (
+      !activatedAffiliate
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "This affiliate invitation has already been used or is no longer valid.",
+        },
+        { status: 409 }
+      );
+    }
+
+    /*
+     * ==========================================
+     * SUCCESS
+     * ==========================================
+     */
     return NextResponse.json({
       success: true,
+
+      affiliate: {
+        id:
+          activatedAffiliate.id,
+
+        name:
+          activatedAffiliate.name,
+
+        email:
+          activatedAffiliate.email,
+
+        code:
+          activatedAffiliate.code,
+
+        status:
+          activatedAffiliate.status,
+      },
     });
   } catch (error) {
     console.error(

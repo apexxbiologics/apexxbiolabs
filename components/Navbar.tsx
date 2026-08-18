@@ -25,7 +25,7 @@ export default function Navbar() {
     { name: "MOTS-c", href: "/products/motsc" },
     { name: "KPV", href: "/products/kpv" },
     { name: "Tesamorelin", href: "/products/tesamorelin" },
-    { name: "CJC/IPA", href: "/products/cjcipamorelin" },
+    { name: "CJC/IPA", href: "/products/cjcipa" },
     { name: "Adamax", href: "/products/adamax" },
     { name: "Semax", href: "/products/semax" },
     { name: "Selank", href: "/products/selank" },

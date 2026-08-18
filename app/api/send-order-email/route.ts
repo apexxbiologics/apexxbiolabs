@@ -727,6 +727,88 @@ export async function POST(request: Request) {
     }
 
     /*
+     * ==========================================
+     * PROMO SUBSCRIBER
+     * ==========================================
+     *
+     * Every customer who successfully places an
+     * order is ensured to exist in promo_subscribers.
+     *
+     * Existing email:
+     * - keep the same subscriber row
+     * - refresh first/last name
+     *
+     * New email:
+     * - add one subscriber row
+     *
+     * This happens AFTER the order is successfully
+     * created, so a promo-list issue does not
+     * invalidate the customer's order.
+     */
+    const {
+      data: existingSubscriber,
+      error: subscriberLookupError,
+    } = await supabaseAdmin
+      .from("promo_subscribers")
+      .select("email")
+      .eq(
+        "email",
+        normalizedCustomerEmail
+      )
+      .maybeSingle();
+
+    if (subscriberLookupError) {
+      console.error(
+        "Promo subscriber lookup error:",
+        subscriberLookupError
+      );
+    } else if (existingSubscriber) {
+      const {
+        error: subscriberUpdateError,
+      } = await supabaseAdmin
+        .from("promo_subscribers")
+        .update({
+          first_name:
+            normalizedFirstName,
+          last_name:
+            normalizedLastName,
+        })
+        .eq(
+          "email",
+          normalizedCustomerEmail
+        );
+
+      if (subscriberUpdateError) {
+        console.error(
+          "Promo subscriber update error:",
+          subscriberUpdateError
+        );
+      }
+    } else {
+      const {
+        error: subscriberInsertError,
+      } = await supabaseAdmin
+        .from("promo_subscribers")
+        .insert({
+          email:
+            normalizedCustomerEmail,
+          first_name:
+            normalizedFirstName,
+          last_name:
+            normalizedLastName,
+          source:
+            "checkout",
+        });
+
+      if (subscriberInsertError) {
+        console.error(
+          "Promo subscriber insert error:",
+          subscriberInsertError
+        );
+      }
+    }
+
+    /*
      * Immediately deduct
      * redeemed points.
      */

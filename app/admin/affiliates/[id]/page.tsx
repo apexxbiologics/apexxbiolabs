@@ -482,7 +482,7 @@ export default async function AdminAffiliateDashboardPage({
               </h2>
 
               <p className="text-white/55 mt-3 max-w-2xl">
-                Send the affiliate their bi-monthly payout through Zelle first.
+                Send the affiliate their monthly payout through Zelle first.
                 After you have sent the money, use the button to record the payout
                 and move those commissions into Paid Out history.
               </p>
@@ -528,7 +528,7 @@ export default async function AdminAffiliateDashboardPage({
               </p>
 
               <p className="text-white/50 mt-2">
-                Bi-monthly Zelle payments will appear here after you record them.
+                Monthly Zelle payments will appear here after you record them.
               </p>
             </div>
           ) : (

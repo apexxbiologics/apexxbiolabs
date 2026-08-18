@@ -60,6 +60,11 @@ export default async function AdminPage() {
   description: "Approve, unapprove, or delete customer reviews.",
   href: "/admin/reviews",
 },
+  {
+    title: "Affiliates",
+    description: "Manage affiliates, promo codes, commissions, and payouts.",
+    href: "/admin/affiliates",
+  },
   ];
 
   return (

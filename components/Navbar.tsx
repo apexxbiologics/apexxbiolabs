@@ -25,11 +25,20 @@ export default function Navbar() {
     { name: "AOD-9604", href: "/products/aod9604" },
     { name: "PT-141", href: "/products/pt141" },
     { name: "5-Amino-1MQ", href: "/products/5amino1mq" },
-    { name: "Kisspeptin-10", href: "/products/kisspeptin10" },
+    {
+      name: "Kisspeptin-10",
+      href: "/products/kisspeptin10",
+    },
     { name: "KLOW", href: "/products/klow" },
     { name: "Wolverine", href: "/products/wolverine" },
-    { name: "Bacteriostatic Water", href: "/products/bacwater" },
-    { name: "Acetic Acid", href: "/products/aceticacid" },
+    {
+      name: "Bacteriostatic Water",
+      href: "/products/bacwater",
+    },
+    {
+      name: "Acetic Acid",
+      href: "/products/aceticacid",
+    },
   ];
 
   const filteredProducts = products.filter((product) =>
@@ -37,41 +46,92 @@ export default function Navbar() {
   );
 
   const updateCartCount = () => {
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const cart = JSON.parse(
+      localStorage.getItem("cart") || "[]"
+    );
+
     const count = cart.reduce(
-      (sum: number, item: any) => sum + Number(item.quantity || 0),
+      (sum: number, item: any) =>
+        sum + Number(item.quantity || 0),
       0
     );
+
     setCartCount(count);
   };
 
   useEffect(() => {
     updateCartCount();
 
-    window.addEventListener("cartUpdated", updateCartCount);
-    window.addEventListener("storage", updateCartCount);
+    window.addEventListener(
+      "cartUpdated",
+      updateCartCount
+    );
+
+    window.addEventListener(
+      "storage",
+      updateCartCount
+    );
 
     return () => {
-      window.removeEventListener("cartUpdated", updateCartCount);
-      window.removeEventListener("storage", updateCartCount);
+      window.removeEventListener(
+        "cartUpdated",
+        updateCartCount
+      );
+
+      window.removeEventListener(
+        "storage",
+        updateCartCount
+      );
     };
   }, []);
 
   return (
     <>
+      {/* CUSTOM APEXX SCROLLBAR */}
       <style jsx global>{`
-        .no-scrollbar {
-          scrollbar-width: none;
-          -ms-overflow-style: none;
+        .apexx-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color:
+            rgba(96, 165, 250, 0.7)
+            rgba(255, 255, 255, 0.03);
         }
 
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
+        .apexx-scrollbar::-webkit-scrollbar {
+          width: 7px;
+        }
+
+        .apexx-scrollbar::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.025);
+          border-radius: 999px;
+          margin-top: 18px;
+          margin-bottom: 18px;
+        }
+
+        .apexx-scrollbar::-webkit-scrollbar-thumb {
+          background: linear-gradient(
+            180deg,
+            rgba(147, 197, 253, 0.95),
+            rgba(59, 130, 246, 0.72)
+          );
+
+          border-radius: 999px;
+          border: 2px solid #071323;
+        }
+
+        .apexx-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(
+            180deg,
+            rgba(191, 219, 254, 1),
+            rgba(96, 165, 250, 0.95)
+          );
         }
       `}</style>
 
+      {/* MAIN NAVBAR */}
       <header className="sticky top-0 left-0 z-50 w-full border-b border-blue-900/50 bg-[#071323]/95 px-5 py-4 backdrop-blur-xl md:px-10">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
+
+          {/* LEFT */}
           <div className="flex items-center gap-6">
             <button
               onClick={() => setMenuOpen(true)}
@@ -90,28 +150,43 @@ export default function Navbar() {
             </a>
           </div>
 
+          {/* DESKTOP NAV */}
           <nav className="hidden items-center gap-10 text-sm font-bold uppercase tracking-[0.22em] text-white md:flex">
-            <a href="/" className="pb-2 transition hover:text-blue-300">
+            <a
+              href="/"
+              className="pb-2 transition hover:text-blue-300"
+            >
               Home
             </a>
 
-            <a href="/products" className="pb-2 transition hover:text-blue-300">
+            <a
+              href="/products"
+              className="pb-2 transition hover:text-blue-300"
+            >
               Products
             </a>
 
-            <a href="/coas" className="pb-2 transition hover:text-blue-300">
+            <a
+              href="/coas"
+              className="pb-2 transition hover:text-blue-300"
+            >
               COAs
             </a>
 
-            <a href="/contact" className="pb-2 transition hover:text-blue-300">
+            <a
+              href="/contact"
+              className="pb-2 transition hover:text-blue-300"
+            >
               Contact
             </a>
-
           </nav>
 
+          {/* RIGHT ICONS */}
           <div className="flex items-center gap-4">
             <button
-              onClick={() => setSearchOpen(!searchOpen)}
+              onClick={() =>
+                setSearchOpen(!searchOpen)
+              }
               className="rounded-full border border-white/10 bg-white/[0.04] p-3 text-white transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-300"
               aria-label="Search products"
             >
@@ -150,48 +225,61 @@ export default function Navbar() {
           </div>
         </div>
 
+        {/* SEARCH */}
         {searchOpen && (
           <div className="relative mx-auto mt-5 max-w-3xl">
             <input
               type="text"
               placeholder="Search products..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) =>
+                setSearch(e.target.value)
+              }
               className="w-full rounded-2xl border border-blue-800 bg-[#020817] px-6 py-4 text-base text-white outline-none placeholder:text-gray-400 focus:border-blue-400"
             />
 
-            {search && filteredProducts.length > 0 && (
-              <div className="absolute left-0 right-0 top-full z-[999] mt-3 overflow-hidden rounded-2xl border border-blue-800 bg-[#081526]">
-                {filteredProducts.map((product) => (
-                  <a
-                    key={product.name}
-                    href={product.href}
-                    className="block px-6 py-4 text-white transition hover:bg-[#102A4A]"
-                  >
-                    {product.name}
-                  </a>
-                ))}
-              </div>
-            )}
+            {search &&
+              filteredProducts.length > 0 && (
+                <div className="absolute left-0 right-0 top-full z-[999] mt-3 overflow-hidden rounded-2xl border border-blue-800 bg-[#081526]">
+                  {filteredProducts.map(
+                    (product) => (
+                      <a
+                        key={product.name}
+                        href={product.href}
+                        className="block px-6 py-4 text-white transition hover:bg-[#102A4A]"
+                      >
+                        {product.name}
+                      </a>
+                    )
+                  )}
+                </div>
+              )}
 
-            {search && filteredProducts.length === 0 && (
-              <div className="absolute left-0 right-0 top-full z-[999] mt-3 rounded-2xl border border-blue-800 bg-[#081526] px-6 py-4 text-white/60">
-                No products found.
-              </div>
-            )}
+            {search &&
+              filteredProducts.length === 0 && (
+                <div className="absolute left-0 right-0 top-full z-[999] mt-3 rounded-2xl border border-blue-800 bg-[#081526] px-6 py-4 text-white/60">
+                  No products found.
+                </div>
+              )}
           </div>
         )}
       </header>
 
+      {/* SLIDE-OUT MENU */}
       {menuOpen && (
         <div className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-md">
+
+          {/* DARK BACKDROP */}
           <button
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 h-full w-full cursor-default"
             aria-label="Close menu overlay"
           />
 
-          <aside className="no-scrollbar relative h-full w-[90%] max-w-[520px] overflow-y-auto border-r border-blue-900/50 bg-[#071323] px-7 py-8 shadow-2xl md:px-10">
+          {/* SIDEBAR */}
+          <aside className="apexx-scrollbar relative h-full w-[90%] max-w-[520px] overflow-y-auto border-r border-blue-900/50 bg-[#071323] px-7 py-8 shadow-2xl md:px-10">
+
+            {/* LOGO + CLOSE */}
             <div className="mb-12 flex items-center justify-between">
               <img
                 src="/images/logo.png"
@@ -200,7 +288,9 @@ export default function Navbar() {
               />
 
               <button
-                onClick={() => setMenuOpen(false)}
+                onClick={() =>
+                  setMenuOpen(false)
+                }
                 className="rounded-full border border-white/10 bg-white/[0.04] p-3 text-white transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-300"
                 aria-label="Close menu"
               >
@@ -208,14 +298,25 @@ export default function Navbar() {
               </button>
             </div>
 
+            {/* MENU CONTENT */}
             <div className="space-y-10 pb-10">
+
               <MenuSection
                 title="Account"
                 links={[
                   ["Dashboard", "/account"],
-                  ["Favorites", "/account/favorites"],
-                  ["Security Settings", "/account/settings"],
-                  ["Order Status", "/order-status"],
+                  [
+                    "Favorites",
+                    "/account/favorites",
+                  ],
+                  [
+                    "Security Settings",
+                    "/account/settings",
+                  ],
+                  [
+                    "Order Status",
+                    "/order-status",
+                  ],
                 ]}
               />
 
@@ -223,8 +324,14 @@ export default function Navbar() {
                 title="Navigation"
                 links={[
                   ["Home", "/"],
-                  ["All Products", "/products"],
-                  ["Certificates of Analysis", "/coas"],
+                  [
+                    "All Products",
+                    "/products",
+                  ],
+                  [
+                    "Certificates of Analysis",
+                    "/coas",
+                  ],
                   ["Contact", "/contact"],
                 ]}
               />
@@ -232,7 +339,10 @@ export default function Navbar() {
               <MenuSection
                 title="Research"
                 links={[
-                  ["Research Library", "/peptide-info"],
+                  [
+                    "Research Library",
+                    "/peptide-info",
+                  ],
                   ["FAQ", "/faq"],
                 ]}
               />
@@ -240,10 +350,22 @@ export default function Navbar() {
               <MenuSection
                 title="Products"
                 links={[
-                  ["Metabolic Research", "/products"],
-                  ["Tissue Repair Research", "/products"],
-                  ["Neuro Research", "/products"],
-                  ["Research Solutions", "/products"],
+                  [
+                    "Metabolic Research",
+                    "/products",
+                  ],
+                  [
+                    "Tissue Repair Research",
+                    "/products",
+                  ],
+                  [
+                    "Neuro Research",
+                    "/products",
+                  ],
+                  [
+                    "Research Solutions",
+                    "/products",
+                  ],
                 ]}
               />
 
@@ -251,18 +373,31 @@ export default function Navbar() {
                 title="Support"
                 links={[
                   ["Shipping", "/shipping"],
-                  ["Returns & Refunds", "/refunds"],
-                  ["Contact Support", "/contact"],
+                  [
+                    "Returns & Refunds",
+                    "/refunds",
+                  ],
+                  [
+                    "Contact Support",
+                    "/contact",
+                  ],
                 ]}
               />
 
               <MenuSection
                 title="Legal"
                 links={[
-                  ["Privacy Policy", "/privacy"],
-                  ["Terms of Service", "/terms"],
+                  [
+                    "Privacy Policy",
+                    "/privacy",
+                  ],
+                  [
+                    "Terms of Service",
+                    "/terms",
+                  ],
                 ]}
               />
+
             </div>
           </aside>
         </div>

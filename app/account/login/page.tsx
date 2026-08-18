@@ -8,44 +8,40 @@ import { useRouter } from "next/navigation";
 export default function LoginPage() {
   const router = useRouter();
 
-  const [identifier, setIdentifier] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] =
+    useState("");
 
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [password, setPassword] =
+    useState("");
 
-  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
+  const [loading, setLoading] =
+    useState(false);
+
+  const [message, setMessage] =
+    useState("");
+
+  async function handleLogin(
+    e: React.FormEvent<HTMLFormElement>
+  ) {
     e.preventDefault();
+
     setLoading(true);
     setMessage("");
 
-    let loginEmail = identifier.trim().toLowerCase();
+    const normalizedEmail =
+      email.trim().toLowerCase();
 
-    const isEmail = loginEmail.includes("@");
-
-    if (!isEmail) {
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("email")
-        .eq("username", loginEmail)
-        .single();
-
-      if (profileError || !profile?.email) {
-        setMessage("No account found with that username.");
-        setLoading(false);
-        return;
-      }
-
-      loginEmail = profile.email;
-    }
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email: loginEmail,
-      password,
-    });
+    const { error } =
+      await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password,
+      });
 
     if (error) {
-      setMessage(error.message);
+      setMessage(
+        error.message
+      );
+
       setLoading(false);
       return;
     }
@@ -56,7 +52,9 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen bg-[#081526] px-6 py-28 text-white">
+
       <div className="mx-auto max-w-md rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 shadow-2xl backdrop-blur">
+
         <p className="mb-3 text-xs font-bold uppercase tracking-[0.35em] text-blue-300">
           Customer Portal
         </p>
@@ -66,28 +64,54 @@ export default function LoginPage() {
         </h1>
 
         <p className="mb-8 text-sm leading-6 text-white/60">
-          Log in with your username or email to view orders, payment status,
-          shipping status, and tracking information.
+          Log in with your email to view orders,
+          payment status, shipping status, tracking information,
+          rewards, and affiliate access.
         </p>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Username or email address"
-            className="w-full rounded-xl border border-white/10 bg-white/10 px-5 py-4 text-sm text-white outline-none placeholder:text-white/40 focus:border-blue-400"
-            value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
-            required
-          />
+        <form
+          onSubmit={handleLogin}
+          className="space-y-4"
+        >
 
           <input
-            type="password"
-            placeholder="Password"
+            type="email"
+            placeholder="Email address"
             className="w-full rounded-xl border border-white/10 bg-white/10 px-5 py-4 text-sm text-white outline-none placeholder:text-white/40 focus:border-blue-400"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={email}
+            onChange={(e) =>
+              setEmail(
+                e.target.value
+              )
+            }
             required
+            autoComplete="email"
           />
+
+          <div>
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-full rounded-xl border border-white/10 bg-white/10 px-5 py-4 text-sm text-white outline-none placeholder:text-white/40 focus:border-blue-400"
+              value={password}
+              onChange={(e) =>
+                setPassword(
+                  e.target.value
+                )
+              }
+              required
+              autoComplete="current-password"
+            />
+
+            <div className="mt-3 flex justify-end">
+              <Link
+                href="/forgot-password"
+                className="text-sm font-semibold text-blue-300 transition hover:text-blue-200"
+              >
+                Forgot password?
+              </Link>
+            </div>
+          </div>
 
           {message && (
             <p className="rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
@@ -100,20 +124,33 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full rounded-xl bg-blue-500 px-5 py-4 text-sm font-black uppercase tracking-[0.25em] text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loading ? "Logging in..." : "Log In"}
+            {loading
+              ? "Logging in..."
+              : "Log In"}
           </button>
+
         </form>
 
         <div className="mt-6 flex items-center justify-between text-sm text-white/60">
-          <Link href="/account/signup" className="hover:text-white">
+
+          <Link
+            href="/account/signup"
+            className="hover:text-white"
+          >
             Create account
           </Link>
 
-          <Link href="/" className="hover:text-white">
+          <Link
+            href="/"
+            className="hover:text-white"
+          >
             Back to shop
           </Link>
+
         </div>
+
       </div>
+
     </main>
   );
 }

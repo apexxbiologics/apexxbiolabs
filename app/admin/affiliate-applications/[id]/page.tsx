@@ -42,8 +42,9 @@ export default async function AffiliateApplicationReviewPage({
       website,
       audience,
       description,
-      research_use_acknowledgement,
-      marketing_acknowledgement,
+      terms_acknowledgement,
+      terms_version,
+      terms_accepted_at,
       status,
       reviewed_at,
       review_notes,
@@ -135,11 +136,13 @@ export default async function AffiliateApplicationReviewPage({
               </p>
 
               <div className="mt-3">
+
                 <StatusBadge
                   status={
                     application.status
                   }
                 />
+
               </div>
 
             </div>
@@ -193,7 +196,7 @@ export default async function AffiliateApplicationReviewPage({
                 />
 
                 <InfoCard
-                  label="Organization / Platform"
+                  label="Website / Platform"
                   value={
                     application.organization ||
                     "Not provided"
@@ -215,21 +218,33 @@ export default async function AffiliateApplicationReviewPage({
                 <div className="mt-4">
 
                   <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.22em] text-white/30">
-                    Website / Social
+                    Handle or Link
                   </p>
 
-                  <a
-                    href={
-                      application.website
-                    }
-                    target="_blank"
-                    rel="noreferrer"
-                    className="block break-all rounded-2xl border border-blue-400/15 bg-blue-500/[0.06] px-5 py-4 text-sm font-semibold text-blue-200 transition hover:bg-blue-500/10"
-                  >
-                    {
-                      application.website
-                    }
-                  </a>
+                  {isLikelyUrl(
+                    application.website
+                  ) ? (
+                    <a
+                      href={
+                        normalizeUrl(
+                          application.website
+                        )
+                      }
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block break-all rounded-2xl border border-blue-400/15 bg-blue-500/[0.06] px-5 py-4 text-sm font-semibold text-blue-200 transition hover:bg-blue-500/10"
+                    >
+                      {
+                        application.website
+                      }
+                    </a>
+                  ) : (
+                    <div className="break-all rounded-2xl border border-blue-400/15 bg-blue-500/[0.06] px-5 py-4 text-sm font-semibold text-blue-200">
+                      {
+                        application.website
+                      }
+                    </div>
+                  )}
 
                 </div>
               )}
@@ -259,36 +274,133 @@ export default async function AffiliateApplicationReviewPage({
 
             </section>
 
-            {/* ACKNOWLEDGEMENTS */}
+            {/* PROGRAM TERMS */}
             <section className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6 sm:p-8">
 
-              <p className="mb-5 text-xs font-black uppercase tracking-[0.3em] text-blue-300">
-                Required Acknowledgements
-              </p>
+              <div className="flex items-start justify-between gap-5">
 
-              <div className="space-y-4">
+                <div>
 
-                <AcknowledgementCard
-                  accepted={
-                    Boolean(
-                      application.research_use_acknowledgement
-                    )
-                  }
-                  title="Research Use Acknowledgement"
-                  text="Applicant acknowledged that Apexx Biolabs products are intended strictly for lawful laboratory research use and are not for human or veterinary use."
-                />
+                  <p className="text-xs font-black uppercase tracking-[0.3em] text-blue-300">
+                    Program Terms
+                  </p>
 
-                <AcknowledgementCard
-                  accepted={
-                    Boolean(
-                      application.marketing_acknowledgement
-                    )
-                  }
-                  title="Marketing Standards Acknowledgement"
-                  text="Applicant agreed not to promote personal use, make medical or therapeutic claims, or provide dosing or administration guidance in connection with Apexx Biolabs products."
-                />
+                  <h2 className="mt-3 text-2xl font-black text-white">
+                    Terms & Conditions
+                  </h2>
+
+                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/45">
+                    Confirmation that the applicant accepted the
+                    Apexx Biolabs Research Referral Program Terms
+                    when submitting this application.
+                  </p>
+
+                </div>
+
+                <div
+                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border text-lg font-black ${
+                    application.terms_acknowledgement
+                      ? "border-green-400/20 bg-green-500/10 text-green-300"
+                      : "border-red-400/20 bg-red-500/10 text-red-300"
+                  }`}
+                >
+                  {application.terms_acknowledgement
+                    ? "✓"
+                    : "×"}
+                </div>
 
               </div>
+
+              <div
+                className={`mt-6 rounded-[1.5rem] border p-5 ${
+                  application.terms_acknowledgement
+                    ? "border-green-400/15 bg-green-500/[0.06]"
+                    : "border-red-400/20 bg-red-500/[0.06]"
+                }`}
+              >
+
+                <div className="flex items-start gap-4">
+
+                  <div
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
+                      application.terms_acknowledgement
+                        ? "bg-green-500/10 text-green-300"
+                        : "bg-red-500/10 text-red-300"
+                    }`}
+                  >
+                    {application.terms_acknowledgement
+                      ? "✓"
+                      : "×"}
+                  </div>
+
+                  <div>
+
+                    <p className="font-black text-white">
+                      Research Referral Program Terms
+                    </p>
+
+                    <p className="mt-2 text-sm leading-relaxed text-white/50">
+                      Applicant agreed to the Research Referral Program
+                      Terms & Conditions, including research-use
+                      restrictions, referral marketing standards,
+                      disclosure requirements, commission rules,
+                      and other Program policies.
+                    </p>
+
+                    <p
+                      className={`mt-4 text-xs font-black uppercase tracking-[0.18em] ${
+                        application.terms_acknowledgement
+                          ? "text-green-300"
+                          : "text-red-300"
+                      }`}
+                    >
+                      {application.terms_acknowledgement
+                        ? "Terms Accepted"
+                        : "Terms Not Accepted"}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              {application.terms_acknowledgement && (
+                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                  <InfoCard
+                    label="Terms Version"
+                    value={
+                      application.terms_version ||
+                      "Current Version"
+                    }
+                  />
+
+                  <InfoCard
+                    label="Accepted"
+                    value={
+                      application.terms_accepted_at
+                        ? formatDateTime(
+                            application.terms_accepted_at
+                          )
+                        : "At application submission"
+                    }
+                  />
+
+                </div>
+              )}
+
+              <Link
+                href="/research-referral/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-blue-300 transition hover:text-blue-200"
+              >
+                View Program Terms
+                <span>
+                  ↗
+                </span>
+              </Link>
 
             </section>
 
@@ -308,6 +420,7 @@ export default async function AffiliateApplicationReviewPage({
 
               {isPending && (
                 <>
+
                   <h2 className="mt-4 text-3xl font-black text-white">
                     Make a Decision
                   </h2>
@@ -315,8 +428,24 @@ export default async function AffiliateApplicationReviewPage({
                   <p className="mt-3 text-sm leading-relaxed text-white/55">
                     Approving this application will allow you to
                     create and send a Research Referral invitation.
-                    Rejecting the application will mark it as declined.
+                    Rejecting the application will mark it as declined
+                    and send the applicant an application update email.
                   </p>
+
+                  {!application.terms_acknowledgement && (
+                    <div className="mt-6 rounded-2xl border border-red-400/20 bg-red-500/10 p-4">
+
+                      <p className="text-sm font-bold text-red-200">
+                        Terms acceptance is missing.
+                      </p>
+
+                      <p className="mt-2 text-xs leading-relaxed text-red-100/60">
+                        This application does not contain a recorded
+                        acceptance of the Research Referral Program Terms.
+                      </p>
+
+                    </div>
+                  )}
 
                   <form
                     action="/api/admin/affiliate-applications/review"
@@ -345,6 +474,11 @@ export default async function AffiliateApplicationReviewPage({
                         className="w-full resize-none rounded-2xl border border-white/10 bg-[#081526]/70 px-5 py-4 text-sm leading-relaxed text-white outline-none placeholder:text-white/25 transition focus:border-blue-400/50"
                       />
 
+                      <p className="mt-2 text-[11px] leading-relaxed text-white/25">
+                        Review notes are internal and are not included
+                        in applicant emails.
+                      </p>
+
                     </div>
 
                     <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
@@ -353,7 +487,10 @@ export default async function AffiliateApplicationReviewPage({
                         type="submit"
                         name="action"
                         value="approve"
-                        className="rounded-full border border-green-400/25 bg-green-500/10 px-6 py-4 text-xs font-black uppercase tracking-[0.18em] text-green-200 transition hover:bg-green-500/20"
+                        disabled={
+                          !application.terms_acknowledgement
+                        }
+                        className="rounded-full border border-green-400/25 bg-green-500/10 px-6 py-4 text-xs font-black uppercase tracking-[0.18em] text-green-200 transition hover:bg-green-500/20 disabled:cursor-not-allowed disabled:opacity-35"
                       >
                         Approve
                       </button>
@@ -370,6 +507,7 @@ export default async function AffiliateApplicationReviewPage({
                     </div>
 
                   </form>
+
                 </>
               )}
 
@@ -390,12 +528,29 @@ export default async function AffiliateApplicationReviewPage({
                   </p>
 
                   {application.affiliate_id ? (
-                    <Link
-                      href={`/admin/affiliates/${application.affiliate_id}`}
-                      className="mt-7 flex w-full items-center justify-center rounded-full border border-blue-400/25 bg-blue-500/10 px-6 py-4 text-xs font-black uppercase tracking-[0.18em] text-blue-200 transition hover:bg-blue-500/20"
-                    >
-                      View Affiliate Dashboard
-                    </Link>
+                    <>
+
+                      <div className="mt-6 rounded-2xl border border-green-400/15 bg-green-500/[0.06] p-4">
+
+                        <p className="text-xs font-black uppercase tracking-[0.18em] text-green-300">
+                          Affiliate Connected
+                        </p>
+
+                        <p className="mt-2 text-sm leading-relaxed text-white/50">
+                          The approved application is linked to an
+                          Affiliate account.
+                        </p>
+
+                      </div>
+
+                      <Link
+                        href={`/admin/affiliates/${application.affiliate_id}`}
+                        className="mt-5 flex w-full items-center justify-center rounded-full border border-blue-400/25 bg-blue-500/10 px-6 py-4 text-xs font-black uppercase tracking-[0.18em] text-blue-200 transition hover:bg-blue-500/20"
+                      >
+                        View Affiliate Dashboard
+                      </Link>
+
+                    </>
                   ) : (
                     <div className="mt-7 rounded-2xl border border-yellow-400/20 bg-yellow-500/10 p-4">
 
@@ -404,8 +559,8 @@ export default async function AffiliateApplicationReviewPage({
                       </p>
 
                       <p className="mt-2 text-xs leading-relaxed text-yellow-100/60">
-                        We will connect approval directly to your
-                        affiliate invitation system in the next step.
+                        This application was approved, but it is not
+                        currently linked to an Affiliate record.
                       </p>
 
                     </div>
@@ -429,6 +584,19 @@ export default async function AffiliateApplicationReviewPage({
                     This Research Referral Program application
                     was declined.
                   </p>
+
+                  <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+
+                    <p className="text-xs font-black uppercase tracking-[0.18em] text-white/35">
+                      Applicant Notification
+                    </p>
+
+                    <p className="mt-2 text-sm leading-relaxed text-white/45">
+                      The rejection workflow sends the applicant
+                      an application status update by email.
+                    </p>
+
+                  </div>
 
                 </>
               )}
@@ -483,18 +651,46 @@ export default async function AffiliateApplicationReviewPage({
               </section>
             )}
 
-            {/* APPLICATION ID */}
+            {/* APPLICATION RECORD */}
             <section className="rounded-[2rem] border border-white/[0.07] bg-white/[0.02] p-6">
 
-              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/25">
-                Application ID
+              <p className="text-xs font-black uppercase tracking-[0.25em] text-white/25">
+                Application Record
               </p>
 
-              <p className="mt-2 break-all font-mono text-xs text-white/35">
-                {
-                  application.id
-                }
-              </p>
+              <div className="mt-5 space-y-5">
+
+                <div>
+
+                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/25">
+                    Application ID
+                  </p>
+
+                  <p className="mt-2 break-all font-mono text-xs text-white/35">
+                    {
+                      application.id
+                    }
+                  </p>
+
+                </div>
+
+                <div>
+
+                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/25">
+                    Last Updated
+                  </p>
+
+                  <p className="mt-2 text-xs text-white/35">
+                    {application.updated_at
+                      ? formatDateTime(
+                          application.updated_at
+                        )
+                      : "—"}
+                  </p>
+
+                </div>
+
+              </div>
 
             </section>
 
@@ -529,72 +725,6 @@ function InfoCard({
       <p className="mt-2 break-words font-semibold text-white/75">
         {value || "—"}
       </p>
-
-    </div>
-  );
-}
-
-/* =========================================================
-   ACKNOWLEDGEMENT
-========================================================= */
-
-function AcknowledgementCard({
-  accepted,
-  title,
-  text,
-}: {
-  accepted: boolean;
-  title: string;
-  text: string;
-}) {
-  return (
-    <div
-      className={`rounded-[1.5rem] border p-5 ${
-        accepted
-          ? "border-green-400/15 bg-green-500/[0.06]"
-          : "border-red-400/20 bg-red-500/[0.06]"
-      }`}
-    >
-
-      <div className="flex items-start gap-4">
-
-        <div
-          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
-            accepted
-              ? "bg-green-500/10 text-green-300"
-              : "bg-red-500/10 text-red-300"
-          }`}
-        >
-          {accepted
-            ? "✓"
-            : "×"}
-        </div>
-
-        <div>
-
-          <p className="font-black text-white">
-            {title}
-          </p>
-
-          <p className="mt-2 text-sm leading-relaxed text-white/50">
-            {text}
-          </p>
-
-          <p
-            className={`mt-3 text-xs font-black uppercase tracking-widest ${
-              accepted
-                ? "text-green-300"
-                : "text-red-300"
-            }`}
-          >
-            {accepted
-              ? "Acknowledged"
-              : "Not Acknowledged"}
-          </p>
-
-        </div>
-
-      </div>
 
     </div>
   );
@@ -681,4 +811,43 @@ function formatAudience(
     labels[audience] ||
     audience
   );
+}
+
+function isLikelyUrl(
+  value: string
+) {
+  const cleanValue =
+    value.trim().toLowerCase();
+
+  return (
+    cleanValue.startsWith(
+      "http://"
+    ) ||
+    cleanValue.startsWith(
+      "https://"
+    ) ||
+    cleanValue.startsWith(
+      "www."
+    )
+  );
+}
+
+function normalizeUrl(
+  value: string
+) {
+  const cleanValue =
+    value.trim();
+
+  if (
+    cleanValue.startsWith(
+      "http://"
+    ) ||
+    cleanValue.startsWith(
+      "https://"
+    )
+  ) {
+    return cleanValue;
+  }
+
+  return `https://${cleanValue}`;
 }

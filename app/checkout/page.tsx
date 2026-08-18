@@ -50,6 +50,12 @@ export default function CheckoutPage() {
     setSuccessOrderNumber,
   ] = useState("");
   const [promoCode, setPromoCode] = useState("");
+  const [validatedPromoRate, setValidatedPromoRate] =
+    useState(0);
+  const [promoValidating, setPromoValidating] =
+    useState(false);
+  const [promoIsValid, setPromoIsValid] =
+    useState(false);
 
   const [loggedInEmail, setLoggedInEmail] =
     useState("");
@@ -274,22 +280,106 @@ setAccessToken(
     .toUpperCase();
 
   /*
-   * These values match the secure server route.
+   * Promo codes are validated securely through
+   * /api/validate-promo so regular Apexx codes
+   * and active affiliate codes both work here.
+   *
+   * The customer only receives the discount rate.
+   * Affiliate commission information is never
+   * exposed to this checkout page.
    */
-  const promoDiscounts: Record<
-    string,
-    number
-  > = {
-    FREEDOM10: 0.1,
-    PEPTIDEALS: 0.15,
-  };
-
-  const discountRate =
-    promoDiscounts[normalizedPromoCode] || 0;
+  const discountRate = validatedPromoRate;
 
   const discount = Number(
     (subtotal * discountRate).toFixed(2)
   );
+
+  useEffect(() => {
+    const code = promoCode
+      .trim()
+      .toUpperCase();
+
+    if (!code) {
+      setValidatedPromoRate(0);
+      setPromoIsValid(false);
+      setPromoValidating(false);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const timeout = window.setTimeout(
+      async () => {
+        setPromoValidating(true);
+
+        try {
+          const response = await fetch(
+            "/api/validate-promo",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type":
+                  "application/json",
+              },
+              body: JSON.stringify({
+                code,
+              }),
+              signal: controller.signal,
+            }
+          );
+
+          const data =
+            await response.json();
+
+          if (
+            response.ok &&
+            data.valid &&
+            Number(
+              data.discountRate
+            ) > 0
+          ) {
+            setValidatedPromoRate(
+              Number(
+                data.discountRate
+              )
+            );
+            setPromoIsValid(true);
+          } else {
+            setValidatedPromoRate(0);
+            setPromoIsValid(false);
+          }
+        } catch (error) {
+          if (
+            error instanceof DOMException &&
+            error.name ===
+              "AbortError"
+          ) {
+            return;
+          }
+
+          console.error(
+            "Promo validation error:",
+            error
+          );
+
+          setValidatedPromoRate(0);
+          setPromoIsValid(false);
+        } finally {
+          if (
+            !controller.signal.aborted
+          ) {
+            setPromoValidating(false);
+          }
+        }
+      },
+      500
+    );
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [promoCode]);
 
   const availablePoints = Math.max(
     0,
@@ -362,22 +452,6 @@ setAccessToken(
         shipping
     ).toFixed(2)
   );
-
-  const vialCount = cart.reduce(
-    (count, item) => {
-      const isBacWater = item.name
-        .toLowerCase()
-        .includes("bac");
-
-      return isBacWater
-        ? count
-        : count + item.quantity;
-    },
-    0
-  );
-
-  const qualifiesForFreeBacWater =
-    vialCount >= 4;
 
   const isCheckoutComplete =
     customerEmail.trim() !== "" &&
@@ -1277,16 +1351,32 @@ setAccessToken(
                       className="checkout-input"
                     />
 
-                    {discountRate > 0 && (
-                      <p className="mt-2 text-sm font-semibold text-green-300">
-                        ✓ {normalizedPromoCode}{" "}
-                        Applied (
-                        {Math.round(
-                          discountRate * 100
-                        )}
-                        % Off)
+                    {promoValidating && (
+                      <p className="mt-2 text-sm text-blue-200">
+                        Checking promo code...
                       </p>
                     )}
+
+                    {!promoValidating &&
+                      promoIsValid &&
+                      discountRate > 0 && (
+                        <p className="mt-2 text-sm font-semibold text-green-300">
+                          ✓ {normalizedPromoCode}{" "}
+                          Applied (
+                          {Math.round(
+                            discountRate * 100
+                          )}
+                          % Off)
+                        </p>
+                      )}
+
+                    {!promoValidating &&
+                      promoCode.trim() !== "" &&
+                      !promoIsValid && (
+                        <p className="mt-2 text-sm text-red-300">
+                          Invalid promo code
+                        </p>
+                      )}
                   </div>
 
                   <div className="flex justify-between text-white/60">
@@ -1359,21 +1449,6 @@ setAccessToken(
                         </p>
                       </div>
                     ))}
-
-                  {qualifiesForFreeBacWater && (
-                    <div className="rounded-2xl border border-green-400/20 bg-green-500/10 p-4">
-                      <p className="text-sm font-bold text-green-300">
-                        ✓ Complimentary Bac Water
-                        Included
-                      </p>
-
-                      <p className="mt-1 text-sm text-white/60">
-                        Orders with 4 or more vials
-                        receive one complimentary
-                        bacteriostatic water.
-                      </p>
-                    </div>
-                  )}
 
                   <div className="flex justify-between border-t border-white/10 pt-4 text-2xl font-black text-white">
                     <span>Total Due</span>

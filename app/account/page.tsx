@@ -68,7 +68,9 @@ function safeParseCart(cart: any) {
     try {
       const parsed = JSON.parse(cart);
 
-      return Array.isArray(parsed) ? parsed : [];
+      return Array.isArray(parsed)
+        ? parsed
+        : [];
     } catch {
       return [];
     }
@@ -93,31 +95,78 @@ export default function AccountPage() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [pointTransactions, setPointTransactions] = useState<
-    PointTransaction[]
-  >([]);
-  const [favoritesCount, setFavoritesCount] = useState(0);
-  const [isAffiliate, setIsAffiliate] = useState(false);
-  const [loading, setLoading] = useState(true);
+
+  const [profile, setProfile] =
+    useState<Profile | null>(null);
+
+  const [orders, setOrders] =
+    useState<Order[]>([]);
+
+  const [
+    pointTransactions,
+    setPointTransactions,
+  ] = useState<PointTransaction[]>([]);
+
+  const [
+    favoritesCount,
+    setFavoritesCount,
+  ] = useState(0);
+
+  const [
+    isAffiliate,
+    setIsAffiliate,
+  ] = useState(false);
+
+  /*
+   * Affiliate name is DISPLAY ONLY.
+   *
+   * It does not change the customer's profile,
+   * points account, rewards, orders, or login.
+   *
+   * It is used only when a newly-created
+   * affiliate account does not yet have a
+   * first_name stored in profiles.
+   */
+  const [
+    affiliateName,
+    setAffiliateName,
+  ] = useState("");
+
+  const [loading, setLoading] =
+    useState(true);
 
   useEffect(() => {
     async function loadAccount() {
       try {
         const {
           data: { user },
-        } = await supabase.auth.getUser();
+        } =
+          await supabase.auth.getUser();
 
         if (!user?.email) {
-          router.push("/account/login");
+          router.push(
+            "/account/login"
+          );
+
           return;
         }
 
-        const normalizedEmail = user.email.toLowerCase();
+        const normalizedEmail =
+          user.email
+            .trim()
+            .toLowerCase();
 
-        setEmail(normalizedEmail);
+        setEmail(
+          normalizedEmail
+        );
 
+        /*
+         * All of your existing account data
+         * continues to load exactly the same way.
+         *
+         * The affiliate query now also retrieves
+         * "name" for the greeting fallback.
+         */
         const [
           profileResult,
           ordersResult,
@@ -127,17 +176,25 @@ export default function AccountPage() {
         ] = await Promise.all([
           supabase
             .from("profiles")
-            .select("username, first_name, last_name, created_at")
+            .select(
+              "username, first_name, last_name, created_at"
+            )
             .eq("id", user.id)
             .maybeSingle(),
 
           supabase
             .from("orders")
             .select("*")
-            .eq("customer_email", normalizedEmail)
-            .order("created_at", {
-              ascending: false,
-            }),
+            .eq(
+              "customer_email",
+              normalizedEmail
+            )
+            .order(
+              "created_at",
+              {
+                ascending: false,
+              }
+            ),
 
           supabase
             .from("favorites")
@@ -145,80 +202,177 @@ export default function AccountPage() {
               count: "exact",
               head: true,
             })
-            .eq("user_id", user.id),
+            .eq(
+              "user_id",
+              user.id
+            ),
 
           supabase
-            .from("point_transactions")
+            .from(
+              "point_transactions"
+            )
             .select(
               "id, user_id, order_id, points, type, description, created_at"
             )
-            .eq("user_id", user.id)
-            .order("created_at", {
-              ascending: false,
-            }),
+            .eq(
+              "user_id",
+              user.id
+            )
+            .order(
+              "created_at",
+              {
+                ascending: false,
+              }
+            ),
 
+          /*
+           * SAME affiliate lookup you already had.
+           *
+           * The ONLY addition is "name".
+           */
           supabase
             .from("affiliates")
-            .select("id, status")
-            .eq("user_id", user.id)
-            .eq("status", "active")
+            .select(
+              "id, status, name"
+            )
+            .eq(
+              "user_id",
+              user.id
+            )
+            .eq(
+              "status",
+              "active"
+            )
             .maybeSingle(),
         ]);
 
-        if (profileResult.error) {
+        /*
+         * ==========================================
+         * PROFILE
+         * ==========================================
+         */
+        if (
+          profileResult.error
+        ) {
           console.error(
             "Profile loading error:",
             profileResult.error
           );
         }
 
-        if (ordersResult.error) {
+        if (
+          profileResult.data
+        ) {
+          setProfile(
+            profileResult.data as Profile
+          );
+        }
+
+        /*
+         * ==========================================
+         * ORDERS
+         * ==========================================
+         */
+        if (
+          ordersResult.error
+        ) {
           console.error(
             "Orders loading error:",
             ordersResult.error
           );
         }
 
-        if (favoritesResult.error) {
+        if (
+          ordersResult.data
+        ) {
+          setOrders(
+            ordersResult.data as Order[]
+          );
+        }
+
+        /*
+         * ==========================================
+         * FAVORITES
+         * ==========================================
+         */
+        if (
+          favoritesResult.error
+        ) {
           console.error(
             "Favorites loading error:",
             favoritesResult.error
           );
         }
 
-        if (pointsResult.error) {
+        setFavoritesCount(
+          favoritesResult.count ||
+            0
+        );
+
+        /*
+         * ==========================================
+         * POINTS / REWARDS
+         * ==========================================
+         *
+         * UNCHANGED.
+         */
+        if (
+          pointsResult.error
+        ) {
           console.error(
             "Rewards loading error:",
             pointsResult.error
           );
         }
 
-        if (profileResult.data) {
-          setProfile(profileResult.data as Profile);
-        }
-
-        if (ordersResult.data) {
-          setOrders(ordersResult.data as Order[]);
-        }
-
-        setFavoritesCount(favoritesResult.count || 0);
-
-        if (pointsResult.data) {
+        if (
+          pointsResult.data
+        ) {
           setPointTransactions(
             pointsResult.data as PointTransaction[]
           );
         }
 
-        if (affiliateResult.error) {
+        /*
+         * ==========================================
+         * AFFILIATE
+         * ==========================================
+         */
+        if (
+          affiliateResult.error
+        ) {
           console.error(
             "Affiliate loading error:",
             affiliateResult.error
           );
         }
 
-        setIsAffiliate(Boolean(affiliateResult.data));
+        setIsAffiliate(
+          Boolean(
+            affiliateResult.data
+          )
+        );
+
+        /*
+         * Store affiliate name only as a
+         * greeting fallback.
+         */
+        if (
+          affiliateResult.data?.name
+        ) {
+          setAffiliateName(
+            String(
+              affiliateResult.data.name
+            ).trim()
+          );
+        } else {
+          setAffiliateName("");
+        }
       } catch (error) {
-        console.error("Account loading error:", error);
+        console.error(
+          "Account loading error:",
+          error
+        );
       } finally {
         setLoading(false);
       }
@@ -227,89 +381,209 @@ export default function AccountPage() {
     loadAccount();
   }, [router]);
 
-  const activeOrders = useMemo(() => {
-    return orders.filter((order) =>
-      ["awaiting_payment", "paid", "processing"].includes(
-        String(order.status).toLowerCase()
-      )
-    ).length;
-  }, [orders]);
+  /*
+   * ==========================================
+   * ORDER COUNTS
+   * ==========================================
+   */
+  const activeOrders =
+    useMemo(() => {
+      return orders.filter(
+        (order) =>
+          [
+            "awaiting_payment",
+            "paid",
+            "processing",
+          ].includes(
+            String(
+              order.status
+            ).toLowerCase()
+          )
+      ).length;
+    }, [orders]);
 
-  const inTransitOrders = useMemo(() => {
-    return orders.filter(
-      (order) =>
-        String(order.status).toLowerCase() === "shipped"
-    ).length;
-  }, [orders]);
+  const inTransitOrders =
+    useMemo(() => {
+      return orders.filter(
+        (order) =>
+          String(
+            order.status
+          ).toLowerCase() ===
+          "shipped"
+      ).length;
+    }, [orders]);
 
-  const pointsBalance = useMemo(() => {
-    return pointTransactions.reduce(
-      (sum, transaction) =>
-        sum + Number(transaction.points || 0),
-      0
+  /*
+   * ==========================================
+   * POINTS
+   * ==========================================
+   *
+   * Existing rewards calculations are unchanged.
+   */
+  const pointsBalance =
+    useMemo(() => {
+      return pointTransactions.reduce(
+        (
+          sum,
+          transaction
+        ) =>
+          sum +
+          Number(
+            transaction.points ||
+              0
+          ),
+        0
+      );
+    }, [pointTransactions]);
+
+  const safePointsBalance =
+    Math.max(
+      0,
+      pointsBalance
     );
-  }, [pointTransactions]);
 
-  const safePointsBalance = Math.max(0, pointsBalance);
+  const lifetimePointsEarned =
+    useMemo(() => {
+      return pointTransactions.reduce(
+        (
+          sum,
+          transaction
+        ) => {
+          const points =
+            Number(
+              transaction.points ||
+                0
+            );
 
-  const lifetimePointsEarned = useMemo(() => {
-    return pointTransactions.reduce((sum, transaction) => {
-      const points = Number(transaction.points || 0);
-
-      return points > 0 ? sum + points : sum;
-    }, 0);
-  }, [pointTransactions]);
+          return points > 0
+            ? sum + points
+            : sum;
+        },
+        0
+      );
+    }, [pointTransactions]);
 
   const availableRewardDollars =
-    Math.floor(safePointsBalance / 100) * 10;
+    Math.floor(
+      safePointsBalance /
+        100
+    ) * 10;
 
-  const completedRewardLevels = Math.floor(
-    safePointsBalance / 100
-  );
+  const completedRewardLevels =
+    Math.floor(
+      safePointsBalance /
+        100
+    );
 
-  const rewardRemainder = safePointsBalance % 100;
+  const rewardRemainder =
+    safePointsBalance % 100;
 
   const pointsUntilNextReward =
     rewardRemainder === 0
       ? 100
-      : 100 - rewardRemainder;
+      : 100 -
+        rewardRemainder;
 
-  const rewardProgress = rewardRemainder;
+  const rewardProgress =
+    rewardRemainder;
 
+  /*
+   * ==========================================
+   * CUSTOMER NAME
+   * ==========================================
+   *
+   * IMPORTANT:
+   *
+   * Existing points/customer accounts still
+   * work exactly as before because first_name
+   * remains FIRST priority.
+   *
+   * Priority:
+   *
+   * 1. Normal profile first name
+   * 2. Affiliate name
+   * 3. Existing profile username
+   * 4. Existing order first name
+   * 5. Customer
+   *
+   * Therefore:
+   *
+   * Normal customer:
+   * profile.first_name = "Marcy"
+   * → Welcome back, Marcy
+   *
+   * New affiliate-created account:
+   * profile.first_name = null
+   * affiliate.name = "Ashley Smith"
+   * → Welcome back, Ashley Smith
+   */
   const customerName =
     profile?.first_name ||
+    affiliateName ||
     profile?.username ||
     orders[0]?.first_name ||
     "Customer";
 
-  const customerSince = profile?.created_at
-    ? new Date(profile.created_at).toLocaleDateString()
-    : orders.length > 0
+  const customerSince =
+    profile?.created_at
       ? new Date(
-          orders[orders.length - 1].created_at
+          profile.created_at
         ).toLocaleDateString()
-      : "New account";
+      : orders.length > 0
+        ? new Date(
+            orders[
+              orders.length - 1
+            ].created_at
+          ).toLocaleDateString()
+        : "New account";
 
+  /*
+   * ==========================================
+   * LOGOUT
+   * ==========================================
+   */
   async function handleLogout() {
     await supabase.auth.signOut();
-    router.push("/account/login");
+
+    router.push(
+      "/account/login"
+    );
   }
 
-  function handleReorder(order: Order) {
-    const cartItems = safeParseCart(order.cart);
+  /*
+   * ==========================================
+   * REORDER
+   * ==========================================
+   */
+  function handleReorder(
+    order: Order
+  ) {
+    const cartItems =
+      safeParseCart(
+        order.cart
+      );
 
     localStorage.setItem(
       "cart",
-      JSON.stringify(cartItems)
+      JSON.stringify(
+        cartItems
+      )
     );
 
     window.dispatchEvent(
-      new Event("cartUpdated")
+      new Event(
+        "cartUpdated"
+      )
     );
 
     router.push("/cart");
   }
 
+  /*
+   * ==========================================
+   * LOADING
+   * ==========================================
+   */
   if (loading) {
     return (
       <main className="min-h-screen w-full overflow-x-clip bg-[#081526] px-4 py-28 text-white sm:px-6 md:py-32">
@@ -327,17 +601,24 @@ export default function AccountPage() {
   return (
     <main className="min-h-screen w-full overflow-x-clip bg-[#081526] px-4 py-24 text-white sm:px-6 md:py-28">
       <div className="mx-auto w-full max-w-7xl">
+
         {/* HERO */}
         <section className="relative mb-8 rounded-[2rem] border border-white/10 bg-white/[0.04] shadow-2xl backdrop-blur sm:rounded-[2.5rem]">
+
           <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
+
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(96,165,250,0.24),transparent_45%)]" />
 
             <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl" />
+
           </div>
 
           <div className="relative z-10 p-6 sm:p-8 md:p-12">
+
             <div className="flex min-w-0 flex-col justify-between gap-8 lg:flex-row lg:items-end">
+
               <div className="min-w-0 flex-1">
+
                 <p className="mb-4 break-words text-xs font-black uppercase tracking-[0.22em] text-blue-300 sm:tracking-[0.35em]">
                   Customer Portal
                 </p>
@@ -353,6 +634,7 @@ export default function AccountPage() {
                 </p>
 
                 <div className="mt-6 flex min-w-0 flex-col gap-3 text-xs uppercase tracking-[0.14em] text-white/55 sm:flex-row sm:flex-wrap sm:tracking-[0.18em]">
+
                   <span className="max-w-full break-all rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-2 sm:rounded-full">
                     {email}
                   </span>
@@ -360,7 +642,9 @@ export default function AccountPage() {
                   <span className="max-w-full break-words rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-2 sm:rounded-full">
                     Customer since {customerSince}
                   </span>
+
                 </div>
+
               </div>
 
               <button
@@ -368,24 +652,35 @@ export default function AccountPage() {
                 className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-6 py-4 text-xs font-black uppercase tracking-[0.2em] text-white transition hover:border-blue-400/50 hover:bg-white/[0.10] sm:w-fit sm:tracking-[0.25em]"
               >
                 <LogOut size={16} />
+
                 Log Out
               </button>
+
             </div>
+
           </div>
+
         </section>
 
         {/* REWARDS DASHBOARD */}
         <section className="relative mb-8 rounded-[2rem] border border-blue-300/20 bg-gradient-to-br from-blue-500/15 via-white/[0.05] to-white/[0.03] shadow-[0_25px_90px_rgba(37,99,235,0.14)] sm:rounded-[2.5rem]">
+
           <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
+
             <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-blue-400/10 blur-3xl" />
 
             <div className="absolute bottom-0 left-0 h-56 w-56 rounded-full bg-cyan-300/5 blur-3xl" />
+
           </div>
 
           <div className="relative z-10 p-5 sm:p-7 md:p-10">
+
             <div className="mb-8 flex min-w-0 flex-col justify-between gap-5 lg:flex-row lg:items-end">
+
               <div className="min-w-0 flex-1">
+
                 <div className="mb-4 flex min-w-0 items-center gap-3">
+
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-blue-300/20 bg-blue-400/10 text-blue-200">
                     <Award size={25} />
                   </div>
@@ -393,6 +688,7 @@ export default function AccountPage() {
                   <p className="min-w-0 break-words text-xs font-black uppercase tracking-[0.22em] text-blue-300 sm:tracking-[0.35em]">
                     Apexx Rewards
                   </p>
+
                 </div>
 
                 <h2 className="break-words text-3xl font-black leading-tight sm:text-4xl md:text-5xl">
@@ -404,21 +700,27 @@ export default function AccountPage() {
                   100 points can be redeemed for $10 off a future
                   purchase.
                 </p>
+
               </div>
 
               {availableRewardDollars > 0 ? (
                 <div className="max-w-full break-words rounded-2xl border border-green-300/20 bg-green-400/10 px-5 py-3 text-sm font-bold text-green-200 sm:w-fit sm:rounded-full">
-                  ${availableRewardDollars.toFixed(2)} available
-                  to redeem
+                  $
+                  {availableRewardDollars.toFixed(
+                    2
+                  )}{" "}
+                  available to redeem
                 </div>
               ) : (
                 <div className="max-w-full break-words rounded-2xl border border-blue-300/20 bg-blue-400/10 px-5 py-3 text-sm font-bold text-blue-200 sm:w-fit sm:rounded-full">
                   Keep earning toward your first reward
                 </div>
               )}
+
             </div>
 
             <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+
               <RewardStat
                 icon={<Sparkles />}
                 label="Current Balance"
@@ -429,7 +731,9 @@ export default function AccountPage() {
               <RewardStat
                 icon={<Gift />}
                 label="Reward Value"
-                value={`$${availableRewardDollars.toFixed(2)}`}
+                value={`$${availableRewardDollars.toFixed(
+                  2
+                )}`}
                 description="Available for a future order"
               />
 
@@ -443,14 +747,20 @@ export default function AccountPage() {
               <RewardStat
                 icon={<Award />}
                 label="Rewards Unlocked"
-                value={completedRewardLevels}
+                value={
+                  completedRewardLevels
+                }
                 description="$10 reward levels reached"
               />
+
             </div>
 
             <div className="mt-6 min-w-0 rounded-[1.5rem] border border-white/10 bg-[#0f2035]/90 p-5 sm:rounded-[1.75rem] sm:p-6 md:p-8">
+
               <div className="flex min-w-0 flex-col justify-between gap-3 sm:flex-row sm:items-end">
+
                 <div className="min-w-0">
+
                   <p className="break-words text-xs font-black uppercase tracking-[0.22em] text-blue-300 sm:tracking-[0.3em]">
                     Next Reward
                   </p>
@@ -459,38 +769,53 @@ export default function AccountPage() {
                     {pointsUntilNextReward} points until another
                     $10 reward
                   </h3>
+
                 </div>
 
                 <p className="shrink-0 text-sm font-bold text-white/60">
                   {rewardRemainder} / 100 points
                 </p>
+
               </div>
 
               <div className="mt-5 h-4 w-full overflow-hidden rounded-full border border-white/10 bg-white/[0.06]">
+
                 <div
                   className="h-full max-w-full rounded-full bg-gradient-to-r from-blue-500 to-blue-300 transition-all duration-700"
                   style={{
                     width: `${Math.min(
                       100,
-                      Math.max(0, rewardProgress)
+                      Math.max(
+                        0,
+                        rewardProgress
+                      )
                     )}%`,
                   }}
                 />
+
               </div>
 
               <div className="mt-4 flex flex-col justify-between gap-2 text-sm text-white/50 sm:flex-row">
+
                 <p>
                   1 point earned for every $1 spent
                 </p>
 
-                <p>100 points = $10 off</p>
+                <p>
+                  100 points = $10 off
+                </p>
+
               </div>
+
             </div>
+
           </div>
+
         </section>
 
         {/* DASHBOARD CARDS */}
         <section className="mb-8 grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+
           <DashboardCard
             href="/account"
             icon={<Package />}
@@ -522,13 +847,18 @@ export default function AccountPage() {
             value={favoritesCount}
             description="Saved products and quick access"
           />
+
         </section>
 
         <section className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+
           {/* ORDERS */}
           <div className="min-w-0 rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 sm:p-6 md:p-8">
+
             <div className="mb-6 flex min-w-0 flex-col justify-between gap-4 md:flex-row md:items-end">
+
               <div className="min-w-0">
+
                 <p className="mb-2 break-words text-xs font-black uppercase tracking-[0.22em] text-blue-300 sm:tracking-[0.3em]">
                   Recent Orders
                 </p>
@@ -536,6 +866,7 @@ export default function AccountPage() {
                 <h2 className="text-3xl font-black">
                   Order History
                 </h2>
+
               </div>
 
               <Link
@@ -544,10 +875,12 @@ export default function AccountPage() {
               >
                 Shop Products
               </Link>
+
             </div>
 
             {orders.length === 0 ? (
               <div className="min-w-0 rounded-[1.5rem] border border-white/10 bg-[#0f2035] p-6 text-center sm:rounded-[1.75rem] sm:p-8">
+
                 <ShoppingBag
                   className="mx-auto mb-4 text-blue-300"
                   size={34}
@@ -569,149 +902,201 @@ export default function AccountPage() {
                 >
                   Start Shopping
                 </Link>
+
               </div>
             ) : (
               <div className="min-w-0 space-y-5">
-                {orders.map((order) => {
-                  const cartItems = safeParseCart(
-                    order.cart
-                  );
 
-                  const firstItems =
-                    cartItems.slice(0, 3);
+                {orders.map(
+                  (order) => {
+                    const cartItems =
+                      safeParseCart(
+                        order.cart
+                      );
 
-                  return (
-                    <div
-                      key={order.id}
-                      className="min-w-0 rounded-[1.5rem] border border-white/10 bg-[#0f2035] p-4 sm:rounded-[1.75rem] sm:p-5 md:p-6"
-                    >
-                      <div className="flex min-w-0 flex-col justify-between gap-5 md:flex-row md:items-start">
-                        <div className="min-w-0">
-                          <p className="break-all text-xs uppercase tracking-[0.18em] text-blue-300 sm:tracking-[0.25em]">
-                            {order.order_number}
-                          </p>
+                    const firstItems =
+                      cartItems.slice(
+                        0,
+                        3
+                      );
 
-                          <h3 className="mt-2 text-2xl font-black">
-                            $
-                            {Number(
-                              order.total || 0
-                            ).toFixed(2)}
-                          </h3>
+                    return (
+                      <div
+                        key={order.id}
+                        className="min-w-0 rounded-[1.5rem] border border-white/10 bg-[#0f2035] p-4 sm:rounded-[1.75rem] sm:p-5 md:p-6"
+                      >
 
-                          <p className="mt-2 text-sm text-white/50">
-                            Placed{" "}
-                            {new Date(
-                              order.created_at
-                            ).toLocaleDateString()}
-                          </p>
-                        </div>
+                        <div className="flex min-w-0 flex-col justify-between gap-5 md:flex-row md:items-start">
 
-                        <div className="max-w-full break-words rounded-2xl border border-blue-400/30 bg-blue-500/10 px-5 py-2 text-xs font-bold uppercase tracking-[0.16em] text-blue-200 sm:w-fit sm:rounded-full sm:tracking-[0.2em]">
-                          {formatStatus(order.status)}
-                        </div>
-                      </div>
+                          <div className="min-w-0">
 
-                      <div className="mt-6 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                        {firstItems.map(
-                          (
-                            item: any,
-                            index: number
-                          ) => (
-                            <div
-                              key={index}
-                              className="flex min-w-0 items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3"
-                            >
-                              {item.image && (
-                                <img
-                                  src={item.image}
-                                  alt={
-                                    item.name ||
-                                    "Product image"
-                                  }
-                                  className="h-14 w-14 shrink-0 rounded-full border border-blue-300/20 bg-blue-500/10 object-contain p-1"
-                                />
+                            <p className="break-all text-xs uppercase tracking-[0.18em] text-blue-300 sm:tracking-[0.25em]">
+                              {
+                                order.order_number
+                              }
+                            </p>
+
+                            <h3 className="mt-2 text-2xl font-black">
+                              $
+                              {Number(
+                                order.total ||
+                                  0
+                              ).toFixed(
+                                2
                               )}
+                            </h3>
 
-                              <div className="min-w-0">
-                                <p className="break-words text-sm font-bold">
-                                  {item.name ||
-                                    "Product"}
-                                </p>
+                            <p className="mt-2 text-sm text-white/50">
+                              Placed{" "}
+                              {new Date(
+                                order.created_at
+                              ).toLocaleDateString()}
+                            </p>
 
-                                <p className="mt-1 text-xs text-white/50">
-                                  Qty{" "}
-                                  {item.quantity ||
-                                    1}
-                                </p>
-                              </div>
-                            </div>
-                          )
-                        )}
-
-                        {cartItems.length > 3 && (
-                          <div className="flex min-w-0 items-center rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white/60">
-                            +{cartItems.length - 3} more
                           </div>
-                        )}
-                      </div>
 
-                      <div className="mt-6 grid min-w-0 grid-cols-1 gap-4 border-t border-white/10 pt-5 sm:grid-cols-2 md:grid-cols-3">
-                        <InfoBlock
-                          label="Payment"
-                          value={formatStatus(
-                            order.status
+                          <div className="max-w-full break-words rounded-2xl border border-blue-400/30 bg-blue-500/10 px-5 py-2 text-xs font-bold uppercase tracking-[0.16em] text-blue-200 sm:w-fit sm:rounded-full sm:tracking-[0.2em]">
+                            {formatStatus(
+                              order.status
+                            )}
+                          </div>
+
+                        </div>
+
+                        <div className="mt-6 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+
+                          {firstItems.map(
+                            (
+                              item: any,
+                              index: number
+                            ) => (
+                              <div
+                                key={
+                                  index
+                                }
+                                className="flex min-w-0 items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3"
+                              >
+
+                                {item.image && (
+                                  <img
+                                    src={
+                                      item.image
+                                    }
+                                    alt={
+                                      item.name ||
+                                      "Product image"
+                                    }
+                                    className="h-14 w-14 shrink-0 rounded-full border border-blue-300/20 bg-blue-500/10 object-contain p-1"
+                                  />
+                                )}
+
+                                <div className="min-w-0">
+
+                                  <p className="break-words text-sm font-bold">
+                                    {item.name ||
+                                      "Product"}
+                                  </p>
+
+                                  <p className="mt-1 text-xs text-white/50">
+                                    Qty{" "}
+                                    {item.quantity ||
+                                      1}
+                                  </p>
+
+                                </div>
+
+                              </div>
+                            )
                           )}
-                        />
 
-                        <InfoBlock
-                          label="Carrier"
-                          value={
-                            order.carrier ||
-                            "Not available yet"
-                          }
-                        />
+                          {cartItems.length >
+                            3 && (
+                            <div className="flex min-w-0 items-center rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white/60">
+                              +
+                              {cartItems.length -
+                                3}{" "}
+                              more
+                            </div>
+                          )}
 
-                        <InfoBlock
-                          label="Tracking"
-                          value={
-                            order.tracking_number ||
-                            "Not available yet"
-                          }
-                          breakAll
-                        />
+                        </div>
+
+                        <div className="mt-6 grid min-w-0 grid-cols-1 gap-4 border-t border-white/10 pt-5 sm:grid-cols-2 md:grid-cols-3">
+
+                          <InfoBlock
+                            label="Payment"
+                            value={formatStatus(
+                              order.status
+                            )}
+                          />
+
+                          <InfoBlock
+                            label="Carrier"
+                            value={
+                              order.carrier ||
+                              "Not available yet"
+                            }
+                          />
+
+                          <InfoBlock
+                            label="Tracking"
+                            value={
+                              order.tracking_number ||
+                              "Not available yet"
+                            }
+                            breakAll
+                          />
+
+                        </div>
+
+                        <div className="mt-6 flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
+
+                          <button
+                            onClick={() =>
+                              handleReorder(
+                                order
+                              )
+                            }
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-6 py-3 text-xs font-black uppercase tracking-[0.18em] text-white transition hover:border-blue-300/50 sm:w-fit sm:tracking-[0.2em]"
+                          >
+                            <Repeat
+                              size={
+                                15
+                              }
+                            />
+
+                            Reorder
+                          </button>
+
+                          <Link
+                            href={`/account/orders/${order.order_number}`}
+                            className="w-full rounded-full bg-blue-500 px-6 py-3 text-center text-xs font-black uppercase tracking-[0.2em] text-white transition hover:bg-blue-400 sm:w-fit sm:tracking-[0.25em]"
+                          >
+                            View Details
+                          </Link>
+
+                        </div>
+
                       </div>
+                    );
+                  }
+                )}
 
-                      <div className="mt-6 flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
-                        <button
-                          onClick={() =>
-                            handleReorder(order)
-                          }
-                          className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-6 py-3 text-xs font-black uppercase tracking-[0.18em] text-white transition hover:border-blue-300/50 sm:w-fit sm:tracking-[0.2em]"
-                        >
-                          <Repeat size={15} />
-                          Reorder
-                        </button>
-
-                        <Link
-                          href={`/account/orders/${order.order_number}`}
-                          className="w-full rounded-full bg-blue-500 px-6 py-3 text-center text-xs font-black uppercase tracking-[0.2em] text-white transition hover:bg-blue-400 sm:w-fit sm:tracking-[0.25em]"
-                        >
-                          View Details
-                        </Link>
-                      </div>
-                    </div>
-                  );
-                })}
               </div>
             )}
+
           </div>
 
           {/* SIDEBAR */}
           <aside className="min-w-0 space-y-6">
+
             {/* REWARDS HISTORY */}
             <section className="min-w-0 rounded-[2rem] border border-blue-300/20 bg-white/[0.04] p-5 sm:p-6 md:p-8">
+
               <div className="mb-6 flex min-w-0 items-start justify-between gap-3">
+
                 <div className="min-w-0 flex-1">
+
                   <p className="mb-2 break-words text-xs font-black uppercase tracking-[0.22em] text-blue-300 sm:tracking-[0.3em]">
                     Rewards Activity
                   </p>
@@ -719,15 +1104,19 @@ export default function AccountPage() {
                   <h2 className="break-words text-2xl font-black">
                     Points History
                   </h2>
+
                 </div>
 
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-blue-300/20 bg-blue-400/10 text-blue-300">
                   <Gift size={21} />
                 </div>
+
               </div>
 
-              {pointTransactions.length === 0 ? (
+              {pointTransactions.length ===
+              0 ? (
                 <div className="min-w-0 rounded-2xl border border-white/10 bg-[#0f2035] p-5">
+
                   <p className="text-sm font-bold text-white">
                     No points activity yet
                   </p>
@@ -736,68 +1125,91 @@ export default function AccountPage() {
                     Points will appear here after an
                     eligible order has shipped.
                   </p>
+
                 </div>
               ) : (
                 <div className="min-w-0 space-y-3">
+
                   {pointTransactions
-                    .slice(0, 6)
-                    .map((transaction) => {
-                      const transactionPoints =
-                        Number(
-                          transaction.points ||
-                            0
-                        );
+                    .slice(
+                      0,
+                      6
+                    )
+                    .map(
+                      (
+                        transaction
+                      ) => {
+                        const transactionPoints =
+                          Number(
+                            transaction.points ||
+                              0
+                          );
 
-                      const isPositive =
-                        transactionPoints >= 0;
+                        const isPositive =
+                          transactionPoints >=
+                          0;
 
-                      return (
-                        <div
-                          key={transaction.id}
-                          className="min-w-0 rounded-2xl border border-white/10 bg-[#0f2035] p-4"
-                        >
-                          <div className="flex min-w-0 items-start justify-between gap-4">
-                            <div className="min-w-0 flex-1">
-                              <p className="break-words text-sm font-bold text-white">
-                                {transaction.description ||
-                                  formatTransactionType(
+                        return (
+                          <div
+                            key={
+                              transaction.id
+                            }
+                            className="min-w-0 rounded-2xl border border-white/10 bg-[#0f2035] p-4"
+                          >
+
+                            <div className="flex min-w-0 items-start justify-between gap-4">
+
+                              <div className="min-w-0 flex-1">
+
+                                <p className="break-words text-sm font-bold text-white">
+                                  {transaction.description ||
+                                    formatTransactionType(
+                                      transaction.type
+                                    )}
+                                </p>
+
+                                <p className="mt-1 break-words text-xs capitalize text-white/40">
+                                  {formatTransactionType(
                                     transaction.type
-                                  )}
+                                  )}{" "}
+                                  •{" "}
+                                  {new Date(
+                                    transaction.created_at
+                                  ).toLocaleDateString()}
+                                </p>
+
+                              </div>
+
+                              <p
+                                className={`shrink-0 text-sm font-black ${
+                                  isPositive
+                                    ? "text-green-300"
+                                    : "text-red-300"
+                                }`}
+                              >
+                                {isPositive
+                                  ? "+"
+                                  : ""}
+                                {
+                                  transactionPoints
+                                }
                               </p>
 
-                              <p className="mt-1 break-words text-xs capitalize text-white/40">
-                                {formatTransactionType(
-                                  transaction.type
-                                )}{" "}
-                                •{" "}
-                                {new Date(
-                                  transaction.created_at
-                                ).toLocaleDateString()}
-                              </p>
                             </div>
 
-                            <p
-                              className={`shrink-0 text-sm font-black ${
-                                isPositive
-                                  ? "text-green-300"
-                                  : "text-red-300"
-                              }`}
-                            >
-                              {isPositive
-                                ? "+"
-                                : ""}
-                              {transactionPoints}
-                            </p>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      }
+                    )}
+
                 </div>
               )}
+
             </section>
 
             {/* QUICK ACTIONS */}
             <section className="min-w-0 rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 sm:p-6 md:p-8">
+
               <p className="mb-2 break-words text-xs font-black uppercase tracking-[0.22em] text-blue-300 sm:tracking-[0.3em]">
                 Quick Actions
               </p>
@@ -807,6 +1219,7 @@ export default function AccountPage() {
               </h2>
 
               <div className="min-w-0 space-y-3">
+
                 <QuickAction
                   href="/account"
                   icon={<Home />}
@@ -816,14 +1229,18 @@ export default function AccountPage() {
 
                 <QuickAction
                   href="/products"
-                  icon={<ShoppingBag />}
+                  icon={
+                    <ShoppingBag />
+                  }
                   title="Shop Products"
                   description="Browse current catalog"
                 />
 
                 <QuickAction
                   href="/account/profile"
-                  icon={<UserCircle />}
+                  icon={
+                    <UserCircle />
+                  }
                   title="Profile"
                   description="Manage account details"
                 />
@@ -838,7 +1255,9 @@ export default function AccountPage() {
                 {isAffiliate && (
                   <QuickAction
                     href="/affiliate/dashboard"
-                    icon={<TrendingUp />}
+                    icon={
+                      <TrendingUp />
+                    }
                     title="Affiliate Dashboard"
                     description="View sales and commissions"
                   />
@@ -846,15 +1265,20 @@ export default function AccountPage() {
 
                 <QuickAction
                   href="/account/settings"
-                  icon={<Settings />}
+                  icon={
+                    <Settings />
+                  }
                   title="Security"
                   description="Password and login settings"
                 />
+
               </div>
+
             </section>
 
             {/* RECENT ACTIVITY */}
             <section className="min-w-0 rounded-[2rem] border border-blue-400/20 bg-blue-500/10 p-5 sm:p-6 md:p-8">
+
               <p className="mb-2 break-words text-xs font-black uppercase tracking-[0.22em] text-blue-300 sm:tracking-[0.3em]">
                 Recent Activity
               </p>
@@ -870,31 +1294,48 @@ export default function AccountPage() {
                 </p>
               ) : (
                 <div className="min-w-0 space-y-4">
-                  {orders
-                    .slice(0, 3)
-                    .map((order) => (
-                      <Link
-                        key={order.id}
-                        href={`/account/orders/${order.order_number}`}
-                        className="block min-w-0 rounded-2xl border border-white/10 bg-white/[0.05] p-4 transition hover:border-blue-300/40"
-                      >
-                        <p className="break-all text-sm font-bold text-white">
-                          Order{" "}
-                          {order.order_number}
-                        </p>
 
-                        <p className="mt-1 break-words text-xs uppercase tracking-[0.16em] text-blue-200 sm:tracking-[0.2em]">
-                          {formatStatus(
-                            order.status
-                          )}
-                        </p>
-                      </Link>
-                    ))}
+                  {orders
+                    .slice(
+                      0,
+                      3
+                    )
+                    .map(
+                      (order) => (
+                        <Link
+                          key={
+                            order.id
+                          }
+                          href={`/account/orders/${order.order_number}`}
+                          className="block min-w-0 rounded-2xl border border-white/10 bg-white/[0.05] p-4 transition hover:border-blue-300/40"
+                        >
+
+                          <p className="break-all text-sm font-bold text-white">
+                            Order{" "}
+                            {
+                              order.order_number
+                            }
+                          </p>
+
+                          <p className="mt-1 break-words text-xs uppercase tracking-[0.16em] text-blue-200 sm:tracking-[0.2em]">
+                            {formatStatus(
+                              order.status
+                            )}
+                          </p>
+
+                        </Link>
+                      )
+                    )}
+
                 </div>
               )}
+
             </section>
+
           </aside>
+
         </section>
+
       </div>
     </main>
   );
@@ -918,6 +1359,7 @@ function DashboardCard({
       href={href}
       className="group block min-w-0 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-xl backdrop-blur transition hover:-translate-y-1 hover:border-blue-300/40 hover:bg-white/[0.06]"
     >
+
       <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-blue-400/20 bg-blue-500/10 text-blue-300 transition group-hover:scale-105">
         {icon}
       </div>
@@ -933,6 +1375,7 @@ function DashboardCard({
       <p className="mt-2 break-words text-sm leading-relaxed text-white/50">
         {description}
       </p>
+
     </Link>
   );
 }
@@ -950,6 +1393,7 @@ function RewardStat({
 }) {
   return (
     <div className="min-w-0 rounded-[1.75rem] border border-white/10 bg-[#0f2035]/90 p-6">
+
       <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-2xl border border-blue-300/20 bg-blue-400/10 text-blue-300">
         {icon}
       </div>
@@ -965,6 +1409,7 @@ function RewardStat({
       <p className="mt-2 break-words text-sm leading-relaxed text-white/50">
         {description}
       </p>
+
     </div>
   );
 }
@@ -980,6 +1425,7 @@ function InfoBlock({
 }) {
   return (
     <div className="min-w-0">
+
       <p className="text-xs uppercase tracking-[0.18em] text-white/40 sm:tracking-[0.2em]">
         {label}
       </p>
@@ -993,6 +1439,7 @@ function InfoBlock({
       >
         {value}
       </p>
+
     </div>
   );
 }
@@ -1013,11 +1460,13 @@ function QuickAction({
       href={href}
       className="flex min-w-0 items-center gap-4 rounded-2xl border border-white/10 bg-[#0f2035] p-4 transition hover:border-blue-300/40 hover:bg-white/[0.04]"
     >
+
       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-300">
         {icon}
       </div>
 
       <div className="min-w-0 flex-1">
+
         <p className="break-words font-black text-white">
           {title}
         </p>
@@ -1025,7 +1474,9 @@ function QuickAction({
         <p className="mt-1 break-words text-xs text-white/45">
           {description}
         </p>
+
       </div>
+
     </Link>
   );
 }

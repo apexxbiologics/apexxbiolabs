@@ -7,7 +7,7 @@ const supabaseAdmin = createClient(
 );
 
 const REGULAR_PROMO_CODES: Record<string, number> = {
-  FREEDOM10: 0.1,
+  WELCOME10: 0.1,
   PEPTIDEALS: 0.15,
 };
 

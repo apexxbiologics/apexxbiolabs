@@ -8,10 +8,8 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
-  process.env
-    .NEXT_PUBLIC_SUPABASE_URL!,
-  process.env
-    .NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
 type DashboardOrder = {
@@ -20,6 +18,17 @@ type DashboardOrder = {
   qualifyingSale: number;
   commission: number;
   status: string;
+  commissionStatus: string;
+  paidOut: boolean;
+  paidAt: string | null;
+};
+
+type DashboardPayout = {
+  id: string;
+  amount: number;
+  paymentMethod: string;
+  paidAt: string;
+  notes: string | null;
 };
 
 type DashboardData = {
@@ -37,10 +46,14 @@ type DashboardData = {
     codeUses: number;
     generatedSales: number;
     pendingCommission: number;
+    amountOwed: number;
     confirmedCommission: number;
+    paidOutLifetime: number;
+    paidOutFromOrders: number;
   };
 
   orders: DashboardOrder[];
+  payouts: DashboardPayout[];
 };
 
 export default function AffiliateDashboardPage() {
@@ -69,6 +82,7 @@ export default function AffiliateDashboardPage() {
           router.replace(
             "/affiliate/login"
           );
+
           return;
         }
 
@@ -91,10 +105,8 @@ export default function AffiliateDashboardPage() {
           !result.success
         ) {
           if (
-            response.status ===
-              401 ||
-            response.status ===
-              403
+            response.status === 401 ||
+            response.status === 403
           ) {
             await supabase.auth.signOut({
               scope: "local",
@@ -156,8 +168,12 @@ export default function AffiliateDashboardPage() {
   }
 
   function formatDate(
-    date: string
+    date: string | null
   ) {
+    if (!date) {
+      return "—";
+    }
+
     return new Date(
       date
     ).toLocaleDateString(
@@ -221,14 +237,16 @@ export default function AffiliateDashboardPage() {
 
             <p className="text-white/60 mt-4">
               Track your affiliate code,
-              qualifying sales, and
-              commissions.
+              qualifying sales, commissions,
+              and payout history.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
             <button
-              onClick={() => router.push("/account")}
+              onClick={() =>
+                router.push("/account")
+              }
               className="rounded-full border border-blue-400/20 bg-blue-500/10 px-6 py-3 text-blue-200 text-sm uppercase tracking-widest hover:bg-blue-500/20 transition-all w-fit"
             >
               ← Back to Account
@@ -257,12 +275,10 @@ export default function AffiliateDashboardPage() {
               <p className="text-white/50 mt-3">
                 Customers receive{" "}
                 {Math.round(
-                  data.affiliate
-                    .discountRate *
+                  data.affiliate.discountRate *
                     100
                 )}
-                % off when using your
-                code.
+                % off when using your code.
               </p>
             </div>
 
@@ -273,8 +289,7 @@ export default function AffiliateDashboardPage() {
 
               <p className="text-3xl font-black text-blue-300 mt-2">
                 {Math.round(
-                  data.affiliate
-                    .commissionRate *
+                  data.affiliate.commissionRate *
                     100
                 )}
                 %
@@ -283,7 +298,7 @@ export default function AffiliateDashboardPage() {
           </div>
         </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-5 mb-8">
 
           <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
             <p className="text-xs uppercase tracking-widest text-white/40">
@@ -302,38 +317,136 @@ export default function AffiliateDashboardPage() {
 
             <p className="text-4xl font-black text-blue-300 mt-3">
               {formatMoney(
-                data.stats
-                  .generatedSales
+                data.stats.generatedSales
               )}
             </p>
           </div>
 
           <div className="rounded-[28px] border border-yellow-300/15 bg-yellow-400/[0.06] p-6">
             <p className="text-xs uppercase tracking-widest text-yellow-100/60">
-              Pending Commission
+              Pending
             </p>
 
             <p className="text-4xl font-black text-yellow-200 mt-3">
               {formatMoney(
-                data.stats
-                  .pendingCommission
+                data.stats.pendingCommission
               )}
             </p>
           </div>
 
           <div className="rounded-[28px] border border-green-300/15 bg-green-400/[0.06] p-6">
             <p className="text-xs uppercase tracking-widest text-green-100/60">
-              Confirmed Commission
+              Amount Owed
             </p>
 
             <p className="text-4xl font-black text-green-300 mt-3">
               {formatMoney(
-                data.stats
-                  .confirmedCommission
+                data.stats.amountOwed
               )}
             </p>
           </div>
+
+          <div className="rounded-[28px] border border-blue-300/15 bg-blue-400/[0.06] p-6">
+            <p className="text-xs uppercase tracking-widest text-blue-100/60">
+              Paid Out Lifetime
+            </p>
+
+            <p className="text-4xl font-black text-blue-200 mt-3">
+              {formatMoney(
+                data.stats.paidOutLifetime
+              )}
+            </p>
+          </div>
+
         </div>
+
+        <section className="rounded-[32px] border border-white/10 bg-white/[0.04] overflow-hidden mb-8">
+          <div className="p-7 border-b border-white/10">
+            <h2 className="text-2xl font-black">
+              Payout History
+            </h2>
+
+            <p className="text-white/50 mt-2">
+              Affiliate payments that have been
+              sent and recorded.
+            </p>
+          </div>
+
+          {data.payouts.length === 0 ? (
+            <div className="p-12 text-center">
+              <p className="text-xl font-bold">
+                No payouts yet
+              </p>
+
+              <p className="text-white/50 mt-2">
+                Your Zelle payout history will
+                appear here after your first payout.
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[750px]">
+                <thead>
+                  <tr className="border-b border-white/10 text-left">
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Date
+                    </th>
+
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Method
+                    </th>
+
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Amount
+                    </th>
+
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Status
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {data.payouts.map(
+                    (payout) => (
+                      <tr
+                        key={payout.id}
+                        className="border-b border-white/[0.06] last:border-0"
+                      >
+                        <td className="p-5 text-white/60">
+                          {formatDate(
+                            payout.paidAt
+                          )}
+                        </td>
+
+                        <td className="p-5">
+                          <span className="capitalize rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-blue-200 text-xs font-bold uppercase tracking-widest">
+                            {payout.paymentMethod ||
+                              "zelle"}
+                          </span>
+                        </td>
+
+                        <td className="p-5 font-black text-green-300">
+                          {formatMoney(
+                            Number(
+                              payout.amount || 0
+                            )
+                          )}
+                        </td>
+
+                        <td className="p-5">
+                          <span className="rounded-full border border-green-400/20 bg-green-500/10 px-4 py-2 text-green-300 text-xs font-bold uppercase tracking-widest">
+                            Paid
+                          </span>
+                        </td>
+                      </tr>
+                    )
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
 
         <section className="rounded-[32px] border border-white/10 bg-white/[0.04] overflow-hidden">
           <div className="p-7 border-b border-white/10">
@@ -360,7 +473,7 @@ export default function AffiliateDashboardPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[800px]">
+              <table className="w-full min-w-[1000px]">
                 <thead>
                   <tr className="border-b border-white/10 text-left">
                     <th className="p-5 text-xs uppercase tracking-widest text-white/40">
@@ -380,7 +493,15 @@ export default function AffiliateDashboardPage() {
                     </th>
 
                     <th className="p-5 text-xs uppercase tracking-widest text-white/40">
-                      Status
+                      Order Status
+                    </th>
+
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Commission Status
+                    </th>
+
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Paid Date
                     </th>
                   </tr>
                 </thead>
@@ -389,15 +510,11 @@ export default function AffiliateDashboardPage() {
                   {data.orders.map(
                     (order) => (
                       <tr
-                        key={
-                          order.orderNumber
-                        }
+                        key={order.orderNumber}
                         className="border-b border-white/[0.06] last:border-0"
                       >
                         <td className="p-5 font-bold">
-                          {
-                            order.orderNumber
-                          }
+                          {order.orderNumber}
                         </td>
 
                         <td className="p-5 text-white/60">
@@ -420,8 +537,40 @@ export default function AffiliateDashboardPage() {
 
                         <td className="p-5">
                           <span className="capitalize">
-                            {order.status}
+                            {String(
+                              order.status || ""
+                            ).replaceAll(
+                              "_",
+                              " "
+                            )}
                           </span>
+                        </td>
+
+                        <td className="p-5">
+                          <span
+                            className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest ${
+                              order.commissionStatus ===
+                              "Paid Out"
+                                ? "border border-blue-400/20 bg-blue-500/10 text-blue-200"
+                                : order.commissionStatus ===
+                                  "Owed"
+                                ? "border border-green-400/20 bg-green-500/10 text-green-300"
+                                : order.commissionStatus ===
+                                  "Pending"
+                                ? "border border-yellow-400/20 bg-yellow-500/10 text-yellow-200"
+                                : "border border-white/10 bg-white/[0.05] text-white/50"
+                            }`}
+                          >
+                            {order.commissionStatus}
+                          </span>
+                        </td>
+
+                        <td className="p-5 text-white/60">
+                          {order.paidOut
+                            ? formatDate(
+                                order.paidAt
+                              )
+                            : "—"}
                         </td>
                       </tr>
                     )
@@ -430,14 +579,15 @@ export default function AffiliateDashboardPage() {
               </table>
             </div>
           )}
-          
         </section>
 
         <p className="text-white/40 text-sm mt-6">
-          Pending commissions become
-          confirmed after payment is
-          received and verified.
+          Pending commissions become Amount Owed
+          after customer payment is received and verified.
+          Once a payout is sent and recorded, those commissions
+          move into Paid Out history.
         </p>
+
       </div>
     </main>
   );

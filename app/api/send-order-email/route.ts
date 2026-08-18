@@ -1483,173 +1483,93 @@ export async function POST(request: Request) {
     /*
      * AFFILIATE EMAIL.
      *
-     * Only sent when an active
-     * affiliate code generated
-     * this order.
-     *
-     * NO customer name.
-     * NO customer email.
-     * NO address.
-     * NO products.
+     * Only sent when an active affiliate code generated this order.
+     * No customer name, email, address, payment info, or products are shared.
      */
-    if (
-      affiliateId &&
-      affiliateEmail
-    ) {
-      const commissionableSale =
-        Math.max(
-          0,
-          serverSubtotal -
-            serverDiscount
-        );
+    if (affiliateId && affiliateEmail) {
+      const qualifyingSale = Math.max(
+        0,
+        serverSubtotal - serverDiscount
+      );
 
-      const {
-        error:
-          affiliateEmailError,
-      } =
+      const { error: affiliateEmailError } =
         await resend.emails.send({
-          from:
-            "Apexx Biolabs <orders@apexxbiolabs.com>",
-
-          to:
-            affiliateEmail,
-
-          subject:
-            `Your ${affiliateCode} Code Was Used • Apexx Biolabs`,
-
+          from: "Apexx Biolabs <orders@apexxbiolabs.com>",
+          to: affiliateEmail,
+          subject: `Your ${affiliateCode} Code Was Used • Apexx Biolabs`,
           html: `
-            <div style="margin:0; padding:0; background:#f8fbff; font-family:Arial, Helvetica, sans-serif;">
-              <div style="max-width:650px; margin:0 auto; padding:30px 16px;">
-
-                <div style="background:#ffffff; border:1px solid #dbeafe; border-radius:28px; overflow:hidden; box-shadow:0 18px 45px rgba(30,58,138,0.10);">
-
-                  <div style="background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff); padding:36px 24px; text-align:center; border-bottom:1px solid #dbeafe;">
-
-                    <p style="margin:0 0 12px; color:#3b82f6; font-size:12px; letter-spacing:4px; text-transform:uppercase;">
-                      Apexx Affiliate Program
-                    </p>
-
-                    <h1 style="margin:0; color:#06111f; font-size:30px; letter-spacing:2px;">
-                      APEXX BIOLABS
-                    </h1>
-
+            <div style="margin:0;padding:0;background:#f8fbff;font-family:Arial,Helvetica,sans-serif;">
+              <div style="max-width:720px;margin:0 auto;padding:28px 16px;">
+                <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:28px;overflow:hidden;box-shadow:0 18px 45px rgba(30,58,138,0.12);">
+                  <div style="background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff);padding:38px 24px;text-align:center;border-bottom:1px solid #dbeafe;">
+                    <p style="margin:0 0 14px;color:#3b82f6;font-size:13px;letter-spacing:4px;text-transform:uppercase;">Research. Quality. Confidence.</p>
+                    <h1 style="margin:0;color:#06111f;font-size:34px;letter-spacing:3px;">APEXX BIOLABS</h1>
+                    <p style="margin:12px 0 0;color:#475569;font-size:13px;letter-spacing:2px;text-transform:uppercase;">Affiliate Program</p>
                   </div>
 
-                  <div style="padding:32px 24px; color:#0f172a;">
-
-                    <div style="text-align:center; margin-bottom:28px;">
-
-                      <p style="margin:0 0 12px; color:#2563eb; font-size:13px; font-weight:bold; letter-spacing:3px; text-transform:uppercase;">
-                        Affiliate Activity
+                  <div style="padding:32px 24px;color:#0f172a;">
+                    <div style="background:#ffffff;border:1px solid #bfdbfe;border-radius:22px;padding:32px 24px;text-align:center;margin-bottom:30px;box-shadow:0 12px 30px rgba(59,130,246,0.10);">
+                      <p style="margin:0 0 14px;color:#3b82f6;font-size:13px;letter-spacing:4px;text-transform:uppercase;">Affiliate Activity</p>
+                      <h2 style="margin:0;color:#06111f;font-size:34px;font-weight:800;line-height:1.1;">Your Code Was Used!</h2>
+                      <p style="margin:18px auto 0;max-width:500px;color:#475569;font-size:15px;line-height:1.7;">
+                        ${affiliateName ? `Great news, ${affiliateName}. ` : "Great news. "}
+                        An order was placed using your Apexx Biolabs affiliate code.
                       </p>
-
-                      <h2 style="margin:0; font-size:30px; color:#06111f;">
-                        Your Code Was Used!
-                      </h2>
-
-                      <p style="margin:14px auto 0; max-width:470px; color:#64748b; line-height:1.7;">
-                        Great news${
-                          affiliateName
-                            ? `, ${affiliateName}`
-                            : ""
-                        }. An Apexx Biolabs order was placed using your affiliate code.
-                      </p>
-
                     </div>
 
-                    <div style="background:#f8fbff; border:1px solid #bfdbfe; border-radius:22px; padding:24px; margin-bottom:20px;">
-
-                      <p style="margin:0 0 6px; color:#64748b; font-size:12px; text-transform:uppercase; letter-spacing:2px;">
-                        Affiliate Code
-                      </p>
-
-                      <p style="margin:0; color:#2563eb; font-size:25px; font-weight:900;">
-                        ${affiliateCode}
-                      </p>
-
+                    <div style="background:linear-gradient(135deg,#eaf4ff,#f8fbff);border:1px solid #bfdbfe;border-radius:22px;padding:28px;text-align:center;margin-bottom:20px;">
+                      <p style="margin:0 0 8px;color:#1e3a8a;font-size:13px;text-transform:uppercase;letter-spacing:2px;font-weight:bold;">Affiliate Code</p>
+                      <p style="margin:0;color:#2563eb;font-size:30px;font-weight:900;">${affiliateCode}</p>
                     </div>
 
-                    <div style="display:block; background:#ffffff; border:1px solid #dbeafe; border-radius:22px; padding:24px; margin-bottom:20px;">
-
-                      <p style="margin:0 0 6px; color:#64748b; font-size:12px; text-transform:uppercase; letter-spacing:2px;">
-                        Order
-                      </p>
-
-                      <p style="margin:0; color:#06111f; font-size:18px; font-weight:bold;">
-                        ${orderNumber}
-                      </p>
-
+                    <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:20px;padding:22px;margin-bottom:20px;text-align:center;">
+                      <p style="margin:0 0 8px;color:#64748b;font-size:12px;text-transform:uppercase;letter-spacing:2px;">Order Number</p>
+                      <p style="margin:0;color:#06111f;font-size:20px;font-weight:800;">${orderNumber}</p>
                     </div>
 
-                    <div style="background:#ffffff; border:1px solid #dbeafe; border-radius:22px; padding:24px; margin-bottom:20px;">
-
-                      <p style="margin:0 0 6px; color:#64748b; font-size:12px; text-transform:uppercase; letter-spacing:2px;">
-                        Qualifying Sale
-                      </p>
-
-                      <p style="margin:0; color:#06111f; font-size:28px; font-weight:900;">
-                        $${commissionableSale.toFixed(
-                          2
-                        )}
-                      </p>
-
+                    <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:20px;padding:26px;margin-bottom:20px;text-align:center;">
+                      <p style="margin:0 0 8px;color:#64748b;font-size:12px;text-transform:uppercase;letter-spacing:2px;">Qualifying Sale</p>
+                      <p style="margin:0;color:#06111f;font-size:38px;font-weight:900;">$${qualifyingSale.toFixed(2)}</p>
                     </div>
 
-                    <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe); border:1px solid #93c5fd; border-radius:22px; padding:26px; margin-bottom:24px;">
-
-                      <p style="margin:0 0 8px; color:#1e3a8a; font-size:12px; text-transform:uppercase; letter-spacing:2px; font-weight:bold;">
-                        Pending Commission
-                      </p>
-
-                      <p style="margin:0; color:#06111f; font-size:38px; font-weight:900;">
-                        $${affiliateCommission.toFixed(
-                          2
-                        )}
-                      </p>
-
+                    <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #93c5fd;border-radius:22px;padding:28px;text-align:center;margin-bottom:24px;">
+                      <p style="margin:0 0 8px;color:#1e3a8a;font-size:13px;text-transform:uppercase;letter-spacing:2px;font-weight:bold;">Pending Commission</p>
+                      <p style="margin:0;color:#06111f;font-size:44px;font-weight:900;">$${affiliateCommission.toFixed(2)}</p>
                     </div>
 
-                    <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:18px; padding:20px;">
-
-                      <p style="margin:0 0 6px; color:#9a3412; font-weight:bold;">
-                        Awaiting Payment
+                    <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:18px;padding:20px;margin-bottom:28px;">
+                      <p style="margin:0 0 6px;color:#9a3412;font-weight:800;">Awaiting Payment</p>
+                      <p style="margin:0;color:#7c2d12;font-size:14px;line-height:1.6;">
+                        Your $${affiliateCommission.toFixed(2)} commission is currently pending.
+                        It will move to confirmed earnings once payment for this order is received and verified.
                       </p>
-
-                      <p style="margin:0; color:#7c2d12; font-size:14px; line-height:1.6;">
-                        This commission is currently pending.
-                        It will be confirmed after payment for
-                        the order has been received and verified.
-                      </p>
-
                     </div>
 
-                    <div style="border-top:1px solid #dbeafe; padding-top:22px; margin-top:28px; text-align:center;">
-
-                      <p style="margin:0; color:#64748b; font-size:13px; line-height:1.6;">
-                        You can review your affiliate activity in your Apexx Affiliate Dashboard.
-                      </p>
-
-                      <a
-                        href="https://apexxbiolabs.com/affiliate/dashboard"
-                        style="display:inline-block; margin-top:18px; background:#06111f; color:#ffffff; padding:14px 26px; border-radius:999px; text-decoration:none; font-size:13px; font-weight:bold; text-transform:uppercase; letter-spacing:1.5px;"
-                      >
+                    <div style="text-align:center;margin-bottom:30px;">
+                      <a href="https://apexxbiolabs.com/affiliate/dashboard" style="display:inline-block;background:#06111f;color:#ffffff;padding:16px 30px;border-radius:999px;text-decoration:none;font-weight:900;font-size:14px;letter-spacing:1px;text-transform:uppercase;">
                         View Affiliate Dashboard
                       </a>
-
                     </div>
 
+                    <div style="border-top:1px solid #dbeafe;padding-top:24px;">
+                      <p style="font-size:12px;color:#64748b;line-height:1.6;margin:0;">
+                        Customer names, email addresses, shipping information, payment information,
+                        and purchased products are not shared with affiliates.
+                      </p>
+                      <p style="margin:24px 0 0;color:#334155;line-height:1.6;">
+                        Apexx Biolabs<br/>
+                        support@apexxbiolabs.com<br/>
+                        apexxbiolabs.com
+                      </p>
+                    </div>
                   </div>
-
                 </div>
-
               </div>
             </div>
           `,
         });
 
-      if (
-        affiliateEmailError
-      ) {
+      if (affiliateEmailError) {
         console.error(
           "Affiliate notification email error:",
           affiliateEmailError

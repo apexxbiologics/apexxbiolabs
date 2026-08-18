@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
+import PayoutButton from "./PayoutButton";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -63,7 +64,10 @@ export default async function AdminAffiliateDashboardPage({
       discount,
       total,
       status,
-      affiliate_commission
+      affiliate_commission,
+      affiliate_paid_out,
+      affiliate_paid_at,
+      affiliate_payout_id
     `)
     .eq("affiliate_id", affiliate.id)
     .order("created_at", {
@@ -77,7 +81,33 @@ export default async function AdminAffiliateDashboardPage({
     );
   }
 
+  const {
+    data: payouts,
+    error: payoutsError,
+  } = await supabaseAdmin
+    .from("affiliate_payouts")
+    .select(`
+      id,
+      amount,
+      payment_method,
+      paid_at,
+      notes,
+      created_at
+    `)
+    .eq("affiliate_id", affiliate.id)
+    .order("paid_at", {
+      ascending: false,
+    });
+
+  if (payoutsError) {
+    console.error(
+      "Admin affiliate payouts error:",
+      payoutsError
+    );
+  }
+
   const safeOrders = orders || [];
+  const safePayouts = payouts || [];
 
   const confirmedStatuses = [
     "paid",
@@ -93,7 +123,8 @@ export default async function AdminAffiliateDashboardPage({
 
   let generatedSales = 0;
   let pendingCommission = 0;
-  let confirmedCommission = 0;
+  let amountOwed = 0;
+  let paidOutFromOrders = 0;
 
   const activity = safeOrders.map(
     (order) => {
@@ -113,29 +144,68 @@ export default async function AdminAffiliateDashboardPage({
           order.affiliate_commission || 0
         );
 
-      if (
-        !excludedStatuses.includes(
+      const isExcluded =
+        excludedStatuses.includes(
           normalizedStatus
-        )
-      ) {
+        );
+
+      const isConfirmed =
+        confirmedStatuses.includes(
+          normalizedStatus
+        );
+
+      const isPaidOut =
+        Boolean(order.affiliate_paid_out);
+
+      if (!isExcluded) {
         generatedSales +=
           qualifyingSale;
       }
 
       if (
-        confirmedStatuses.includes(
-          normalizedStatus
-        )
-      ) {
-        confirmedCommission +=
-          commission;
-      } else if (
-        !excludedStatuses.includes(
-          normalizedStatus
-        )
+        !isExcluded &&
+        !isConfirmed
       ) {
         pendingCommission +=
           commission;
+      }
+
+      if (
+        !isExcluded &&
+        isConfirmed &&
+        !isPaidOut
+      ) {
+        amountOwed +=
+          commission;
+      }
+
+      if (
+        !isExcluded &&
+        isConfirmed &&
+        isPaidOut
+      ) {
+        paidOutFromOrders +=
+          commission;
+      }
+
+      let commissionStatus =
+        "Pending";
+
+      if (isExcluded) {
+        commissionStatus =
+          "Excluded";
+      } else if (
+        isConfirmed &&
+        isPaidOut
+      ) {
+        commissionStatus =
+          "Paid Out";
+      } else if (
+        isConfirmed &&
+        !isPaidOut
+      ) {
+        commissionStatus =
+          "Owed";
       }
 
       return {
@@ -148,8 +218,28 @@ export default async function AdminAffiliateDashboardPage({
         commission,
         status:
           order.status,
+        commissionStatus,
+        paidOut:
+          isPaidOut,
+        paidAt:
+          order.affiliate_paid_at,
+        payoutId:
+          order.affiliate_payout_id,
       };
     }
+  );
+
+  const paidOutLifetime = Number(
+    safePayouts
+      .reduce(
+        (sum, payout) =>
+          sum +
+          Number(
+            payout.amount || 0
+          ),
+        0
+      )
+      .toFixed(2)
   );
 
   function formatMoney(
@@ -165,8 +255,12 @@ export default async function AdminAffiliateDashboardPage({
   }
 
   function formatDate(
-    date: string
+    date: string | null
   ) {
+    if (!date) {
+      return "—";
+    }
+
     return new Date(
       date
     ).toLocaleDateString(
@@ -195,12 +289,12 @@ export default async function AdminAffiliateDashboardPage({
 
             <p className="text-white/60 mt-4">
               Admin view of this affiliate&apos;s
-              activity, sales, and commissions.
+              activity, sales, commissions,
+              and payout history.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-
             <a
               href="/admin/affiliates"
               className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-center text-white/70 text-sm uppercase tracking-widest hover:bg-white/[0.08] transition-all"
@@ -214,7 +308,6 @@ export default async function AdminAffiliateDashboardPage({
             >
               Admin Dashboard
             </a>
-
           </div>
         </div>
 
@@ -271,7 +364,6 @@ export default async function AdminAffiliateDashboardPage({
               </div>
 
             </div>
-
           </div>
 
           <div className="mt-6 flex flex-wrap gap-3">
@@ -290,18 +382,15 @@ export default async function AdminAffiliateDashboardPage({
 
             <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs uppercase tracking-widest text-white/50">
               Joined{" "}
-              {affiliate.created_at
-                ? formatDate(
-                    affiliate.created_at
-                  )
-                : "—"}
+              {formatDate(
+                affiliate.created_at
+              )}
             </span>
 
           </div>
-
         </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-5 mb-8">
 
           <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
             <p className="text-xs uppercase tracking-widest text-white/40">
@@ -327,7 +416,7 @@ export default async function AdminAffiliateDashboardPage({
 
           <div className="rounded-[28px] border border-yellow-300/15 bg-yellow-400/[0.06] p-6">
             <p className="text-xs uppercase tracking-widest text-yellow-100/60">
-              Pending Commission
+              Pending
             </p>
 
             <p className="text-4xl font-black text-yellow-200 mt-3">
@@ -339,17 +428,161 @@ export default async function AdminAffiliateDashboardPage({
 
           <div className="rounded-[28px] border border-green-300/15 bg-green-400/[0.06] p-6">
             <p className="text-xs uppercase tracking-widest text-green-100/60">
-              Confirmed Commission
+              Amount Owed
             </p>
 
             <p className="text-4xl font-black text-green-300 mt-3">
               {formatMoney(
-                confirmedCommission
+                amountOwed
+              )}
+            </p>
+          </div>
+
+          <div className="rounded-[28px] border border-blue-300/15 bg-blue-400/[0.06] p-6">
+            <p className="text-xs uppercase tracking-widest text-blue-100/60">
+              Paid Out Lifetime
+            </p>
+
+            <p className="text-4xl font-black text-blue-200 mt-3">
+              {formatMoney(
+                paidOutLifetime
               )}
             </p>
           </div>
 
         </div>
+
+        <section className="rounded-[32px] border border-blue-400/20 bg-blue-500/[0.07] p-7 mb-8">
+
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 lg:items-center">
+
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-blue-300 mb-3">
+                Zelle Payout
+              </p>
+
+              <h2 className="text-3xl font-black">
+                {formatMoney(
+                  amountOwed
+                )} currently owed
+              </h2>
+
+              <p className="text-white/55 mt-3 max-w-2xl">
+                Send the affiliate their bi-monthly payout through Zelle first.
+                After you have sent the money, use the button to record the payout
+                and move those commissions into Paid Out history.
+              </p>
+
+              <p className="text-white/35 text-sm mt-3">
+                This button records the payout only. It does not send money through Zelle.
+              </p>
+            </div>
+
+            <PayoutButton
+              affiliateId={
+                affiliate.id
+              }
+              amountOwed={
+                Number(
+                  amountOwed.toFixed(
+                    2
+                  )
+                )
+              }
+            />
+
+          </div>
+
+        </section>
+
+        <section className="rounded-[32px] border border-white/10 bg-white/[0.04] overflow-hidden mb-8">
+
+          <div className="p-7 border-b border-white/10">
+            <h2 className="text-2xl font-black">
+              Payout History
+            </h2>
+
+            <p className="text-white/50 mt-2">
+              Recorded Zelle payouts for this affiliate.
+            </p>
+          </div>
+
+          {safePayouts.length === 0 ? (
+            <div className="p-12 text-center">
+              <p className="text-xl font-bold">
+                No payouts recorded yet
+              </p>
+
+              <p className="text-white/50 mt-2">
+                Bi-monthly Zelle payments will appear here after you record them.
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[750px]">
+
+                <thead>
+                  <tr className="border-b border-white/10 text-left">
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Paid Date
+                    </th>
+
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Method
+                    </th>
+
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Amount
+                    </th>
+
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Notes
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {safePayouts.map(
+                    (payout) => (
+                      <tr
+                        key={payout.id}
+                        className="border-b border-white/[0.06] last:border-0"
+                      >
+                        <td className="p-5 text-white/60">
+                          {formatDate(
+                            payout.paid_at
+                          )}
+                        </td>
+
+                        <td className="p-5">
+                          <span className="capitalize rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-blue-200 text-xs font-bold uppercase tracking-widest">
+                            {payout.payment_method ||
+                              "zelle"}
+                          </span>
+                        </td>
+
+                        <td className="p-5 font-black text-green-300">
+                          {formatMoney(
+                            Number(
+                              payout.amount || 0
+                            )
+                          )}
+                        </td>
+
+                        <td className="p-5 text-white/50">
+                          {payout.notes ||
+                            "—"}
+                        </td>
+                      </tr>
+                    )
+                  )}
+                </tbody>
+
+              </table>
+            </div>
+          )}
+
+        </section>
 
         <section className="rounded-[32px] border border-white/10 bg-white/[0.04] overflow-hidden">
 
@@ -366,7 +599,6 @@ export default async function AdminAffiliateDashboardPage({
 
           {activity.length === 0 ? (
             <div className="p-12 text-center">
-
               <p className="text-xl font-bold">
                 No affiliate orders yet
               </p>
@@ -375,12 +607,11 @@ export default async function AdminAffiliateDashboardPage({
                 Orders will appear here when
                 this affiliate&apos;s code is used.
               </p>
-
             </div>
           ) : (
             <div className="overflow-x-auto">
 
-              <table className="w-full min-w-[850px]">
+              <table className="w-full min-w-[1050px]">
 
                 <thead>
                   <tr className="border-b border-white/10 text-left">
@@ -402,7 +633,15 @@ export default async function AdminAffiliateDashboardPage({
                     </th>
 
                     <th className="p-5 text-xs uppercase tracking-widest text-white/40">
-                      Status
+                      Order Status
+                    </th>
+
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Commission Status
+                    </th>
+
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Paid Date
                     </th>
 
                   </tr>
@@ -447,6 +686,30 @@ export default async function AdminAffiliateDashboardPage({
                               " "
                             )}
                           </span>
+                        </td>
+
+                        <td className="p-5">
+                          <span
+                            className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest ${
+                              order.commissionStatus === "Paid Out"
+                                ? "border border-blue-400/20 bg-blue-500/10 text-blue-200"
+                                : order.commissionStatus === "Owed"
+                                ? "border border-green-400/20 bg-green-500/10 text-green-300"
+                                : order.commissionStatus === "Pending"
+                                ? "border border-yellow-400/20 bg-yellow-500/10 text-yellow-200"
+                                : "border border-white/10 bg-white/[0.05] text-white/50"
+                            }`}
+                          >
+                            {order.commissionStatus}
+                          </span>
+                        </td>
+
+                        <td className="p-5 text-white/60">
+                          {order.paidOut
+                            ? formatDate(
+                                order.paidAt
+                              )
+                            : "—"}
                         </td>
 
                       </tr>

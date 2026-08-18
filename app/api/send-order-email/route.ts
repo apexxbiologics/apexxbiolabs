@@ -28,6 +28,7 @@ const REGULAR_PROMO_CODES: Record<
   string,
   number
 > = {
+  WELCOME10: 0.1,
   FREEDOM10: 0.1,
   PEPTIDEALS: 0.15,
 };
@@ -56,6 +57,7 @@ export async function POST(request: Request) {
       cart,
       promoCode,
       redeemedPoints,
+      marketingConsent,
     } = body;
 
     /*
@@ -112,6 +114,13 @@ export async function POST(request: Request) {
       String(paymentMethod)
         .trim()
         .toLowerCase();
+
+    /*
+     * Marketing consent comes from the checkout checkbox.
+     * Only an explicit boolean true counts as consent.
+     */
+    const normalizedMarketingConsent =
+      marketingConsent === true;
 
     if (
       !/^\d{5}$/.test(
@@ -728,83 +737,150 @@ export async function POST(request: Request) {
 
     /*
      * ==========================================
-     * PROMO SUBSCRIBER
+     * PROMO SUBSCRIBER + WELCOME EMAIL
      * ==========================================
      *
-     * Every customer who successfully places an
-     * order is ensured to exist in promo_subscribers.
+     * Only customers who explicitly checked the
+     * checkout marketing checkbox are enrolled.
      *
-     * Existing email:
-     * - keep the same subscriber row
-     * - refresh first/last name
+     * Existing subscriber:
+     * - keep the existing row
+     * - refresh their name
+     * - set marketing_consent to true
+     * - DO NOT send another welcome email
      *
-     * New email:
-     * - add one subscriber row
+     * New subscriber:
+     * - insert once with source "checkout"
+     * - set marketing_consent to true
+     * - send the same Apexx List welcome email
+     *   used by /api/promo-signup
      *
-     * This happens AFTER the order is successfully
-     * created, so a promo-list issue does not
-     * invalidate the customer's order.
+     * A promo-list or welcome-email failure does
+     * NOT invalidate the customer's order.
      */
-    const {
-      data: existingSubscriber,
-      error: subscriberLookupError,
-    } = await supabaseAdmin
-      .from("promo_subscribers")
-      .select("email")
-      .eq(
-        "email",
-        normalizedCustomerEmail
-      )
-      .maybeSingle();
-
-    if (subscriberLookupError) {
-      console.error(
-        "Promo subscriber lookup error:",
-        subscriberLookupError
-      );
-    } else if (existingSubscriber) {
+    if (normalizedMarketingConsent) {
       const {
-        error: subscriberUpdateError,
+        data: existingSubscriber,
+        error: subscriberLookupError,
       } = await supabaseAdmin
         .from("promo_subscribers")
-        .update({
-          first_name:
-            normalizedFirstName,
-          last_name:
-            normalizedLastName,
-        })
+        .select("email")
         .eq(
           "email",
           normalizedCustomerEmail
-        );
+        )
+        .maybeSingle();
 
-      if (subscriberUpdateError) {
+      if (subscriberLookupError) {
         console.error(
-          "Promo subscriber update error:",
-          subscriberUpdateError
+          "Promo subscriber lookup error:",
+          subscriberLookupError
         );
-      }
-    } else {
-      const {
-        error: subscriberInsertError,
-      } = await supabaseAdmin
-        .from("promo_subscribers")
-        .insert({
-          email:
-            normalizedCustomerEmail,
-          first_name:
-            normalizedFirstName,
-          last_name:
-            normalizedLastName,
-          source:
-            "checkout",
-        });
+      } else if (existingSubscriber) {
+        const {
+          error: subscriberUpdateError,
+        } = await supabaseAdmin
+          .from("promo_subscribers")
+          .update({
+            first_name:
+              normalizedFirstName,
+            last_name:
+              normalizedLastName,
+            marketing_consent: true,
+          })
+          .eq(
+            "email",
+            normalizedCustomerEmail
+          );
 
-      if (subscriberInsertError) {
-        console.error(
-          "Promo subscriber insert error:",
-          subscriberInsertError
-        );
+        if (subscriberUpdateError) {
+          console.error(
+            "Promo subscriber update error:",
+            subscriberUpdateError
+          );
+        }
+      } else {
+        const {
+          error: subscriberInsertError,
+        } = await supabaseAdmin
+          .from("promo_subscribers")
+          .insert({
+            email:
+              normalizedCustomerEmail,
+            first_name:
+              normalizedFirstName,
+            last_name:
+              normalizedLastName,
+            marketing_consent: true,
+            source: "checkout",
+          });
+
+        if (subscriberInsertError) {
+          console.error(
+            "Promo subscriber insert error:",
+            subscriberInsertError
+          );
+        } else {
+          const {
+            error: promoWelcomeEmailError,
+          } = await resend.emails.send({
+            from:
+              "Apexx Biolabs <orders@apexxbiolabs.com>",
+            to:
+              normalizedCustomerEmail,
+            subject:
+              "Welcome to the Apexx List",
+            html: `
+              <div style="margin:0; padding:0; background:#f4f9ff; font-family:Arial, Helvetica, sans-serif;">
+                <div style="max-width:680px; margin:0 auto; padding:28px 14px;">
+                  <div style="background:#ffffff; border:1px solid #dbeafe; border-radius:28px; overflow:hidden; box-shadow:0 18px 45px rgba(30,58,138,0.10);">
+                    <div style="background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff); padding:34px 22px; text-align:center; border-bottom:1px solid #dbeafe;">
+                      <p style="margin:0 0 12px; color:#3b82f6; font-size:12px; letter-spacing:4px; text-transform:uppercase;">Welcome To</p>
+                      <h1 style="margin:0; color:#06111f; font-size:32px; letter-spacing:2px;">APEXX BIOLABS</h1>
+                      <p style="margin:12px 0 0; color:#475569; font-size:14px; line-height:1.6;">You’re officially on the Apexx List.</p>
+                    </div>
+
+                    <div style="padding:30px 22px; color:#0f172a;">
+                      <h2 style="margin:0 0 14px; color:#06111f; font-size:26px; line-height:1.2;">Thanks for joining us.</h2>
+                      <p style="margin:0 0 18px; color:#475569; font-size:15px; line-height:1.7;">We’re glad to have you here. You’ll receive early access to Apexx Biolabs promo codes, restock alerts, product launches, and important research-use updates.</p>
+
+                      <div style="background:#f8fbff; border:1px solid #bfdbfe; border-radius:22px; padding:22px; margin:26px 0; text-align:center;">
+                        <p style="margin:0 0 10px; color:#1e3a8a; font-size:12px; text-transform:uppercase; letter-spacing:2px; font-weight:bold;">Your Welcome Code</p>
+                        <div style="display:inline-block; max-width:100%; box-sizing:border-box; background:#eef7ff; border:1px solid #bfdbfe; border-radius:18px; padding:14px 18px; margin:0 auto;">
+                          <p style="margin:0; color:#2563eb; font-size:26px; font-weight:900; letter-spacing:2px; line-height:1.1; word-break:break-word;">WELCOME10</p>
+                        </div>
+                        <p style="margin:14px 0 0; color:#64748b; font-size:14px; line-height:1.5;">Save 10% sitewide on your next order.</p>
+                      </div>
+
+                      <div style="text-align:center; margin:28px 0;">
+                        <a href="https://apexxbiolabs.com/products" style="display:inline-block; background:#06111f; color:#ffffff; padding:15px 28px; border-radius:999px; text-decoration:none; font-weight:900; font-size:14px; letter-spacing:1.5px; text-transform:uppercase;">Shop Products</a>
+                      </div>
+
+                      <div style="background:#eef7ff; border:1px solid #dbeafe; border-radius:20px; padding:20px; margin-top:28px;">
+                        <h3 style="margin:0 0 10px; color:#06111f; font-size:17px;">What you can expect:</h3>
+                        <p style="margin:0; color:#475569; font-size:14px; line-height:1.8;">• Exclusive promo codes<br/>• Restock and product launch alerts<br/>• COA and batch documentation updates<br/>• Research-use-only product updates</p>
+                      </div>
+
+                      <p style="margin:24px 0 0; color:#64748b; font-size:13px; line-height:1.6;">Thank you for supporting Apexx Biolabs. We’re committed to quality, transparency, and a clean research-use customer experience.</p>
+
+                      <div style="border-top:1px solid #dbeafe; padding-top:22px; margin-top:28px;">
+                        <p style="font-size:11px; color:#64748b; line-height:1.6; margin:0;">Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only. Not for human consumption, medical use, veterinary use, diagnosis, treatment, cure, or prevention of disease.</p>
+                        <p style="margin:20px 0 0; color:#334155; font-size:13px; line-height:1.6;">Apexx Biolabs<br/>orders@apexxbiolabs.com<br/>apexxbiolabs.com</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `,
+          });
+
+          if (promoWelcomeEmailError) {
+            console.error(
+              "Promo welcome email error:",
+              promoWelcomeEmailError
+            );
+          }
+        }
       }
     }
 

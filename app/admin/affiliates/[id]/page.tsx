@@ -1,0 +1,473 @@
+import { createClient } from "@supabase/supabase-js";
+import { notFound } from "next/navigation";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+type PageProps = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export default async function AdminAffiliateDashboardPage({
+  params,
+}: PageProps) {
+  const { id } = await params;
+
+  const {
+    data: affiliate,
+    error: affiliateError,
+  } = await supabaseAdmin
+    .from("affiliates")
+    .select(`
+      id,
+      created_at,
+      user_id,
+      name,
+      email,
+      code,
+      discount_rate,
+      commission_rate,
+      status
+    `)
+    .eq("id", id)
+    .maybeSingle();
+
+  if (affiliateError) {
+    console.error(
+      "Admin affiliate lookup error:",
+      affiliateError
+    );
+  }
+
+  if (!affiliate) {
+    notFound();
+  }
+
+  const {
+    data: orders,
+    error: ordersError,
+  } = await supabaseAdmin
+    .from("orders")
+    .select(`
+      id,
+      order_number,
+      created_at,
+      subtotal,
+      discount,
+      total,
+      status,
+      affiliate_commission
+    `)
+    .eq("affiliate_id", affiliate.id)
+    .order("created_at", {
+      ascending: false,
+    });
+
+  if (ordersError) {
+    console.error(
+      "Admin affiliate orders error:",
+      ordersError
+    );
+  }
+
+  const safeOrders = orders || [];
+
+  const confirmedStatuses = [
+    "paid",
+    "shipped",
+    "payment received",
+  ];
+
+  const excludedStatuses = [
+    "cancelled",
+    "canceled",
+    "refunded",
+  ];
+
+  let generatedSales = 0;
+  let pendingCommission = 0;
+  let confirmedCommission = 0;
+
+  const activity = safeOrders.map(
+    (order) => {
+      const normalizedStatus = String(
+        order.status || ""
+      ).toLowerCase();
+
+      const qualifyingSale =
+        Math.max(
+          0,
+          Number(order.subtotal || 0) -
+            Number(order.discount || 0)
+        );
+
+      const commission =
+        Number(
+          order.affiliate_commission || 0
+        );
+
+      if (
+        !excludedStatuses.includes(
+          normalizedStatus
+        )
+      ) {
+        generatedSales +=
+          qualifyingSale;
+      }
+
+      if (
+        confirmedStatuses.includes(
+          normalizedStatus
+        )
+      ) {
+        confirmedCommission +=
+          commission;
+      } else if (
+        !excludedStatuses.includes(
+          normalizedStatus
+        )
+      ) {
+        pendingCommission +=
+          commission;
+      }
+
+      return {
+        id: order.id,
+        orderNumber:
+          order.order_number,
+        createdAt:
+          order.created_at,
+        qualifyingSale,
+        commission,
+        status:
+          order.status,
+      };
+    }
+  );
+
+  function formatMoney(
+    amount: number
+  ) {
+    return new Intl.NumberFormat(
+      "en-US",
+      {
+        style: "currency",
+        currency: "USD",
+      }
+    ).format(amount);
+  }
+
+  function formatDate(
+    date: string
+  ) {
+    return new Date(
+      date
+    ).toLocaleDateString(
+      "en-US",
+      {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-[#081526] text-white px-6 py-12">
+      <div className="max-w-7xl mx-auto">
+
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
+          <div>
+            <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
+              Apexx Admin
+            </p>
+
+            <h1 className="text-5xl md:text-6xl font-black">
+              {affiliate.name}
+            </h1>
+
+            <p className="text-white/60 mt-4">
+              Admin view of this affiliate&apos;s
+              activity, sales, and commissions.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+
+            <a
+              href="/admin/affiliates"
+              className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-center text-white/70 text-sm uppercase tracking-widest hover:bg-white/[0.08] transition-all"
+            >
+              Back to Affiliates
+            </a>
+
+            <a
+              href="/admin"
+              className="rounded-full border border-blue-400/20 bg-blue-500/10 px-6 py-3 text-center text-blue-200 text-sm uppercase tracking-widest hover:bg-blue-500/20 transition-all"
+            >
+              Admin Dashboard
+            </a>
+
+          </div>
+        </div>
+
+        <section className="rounded-[32px] border border-blue-400/20 bg-gradient-to-br from-blue-500/15 via-white/[0.05] to-white/[0.03] p-8 mb-8">
+
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-6 lg:items-center">
+
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-blue-300 mb-3">
+                Affiliate Profile
+              </p>
+
+              <p className="text-3xl md:text-4xl font-black">
+                {affiliate.code}
+              </p>
+
+              <p className="text-white/50 mt-3">
+                {affiliate.email}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+
+              <div className="rounded-[22px] border border-white/10 bg-[#081526]/50 px-5 py-4">
+                <p className="text-xs uppercase tracking-widest text-white/40">
+                  Discount
+                </p>
+
+                <p className="text-2xl font-black text-blue-300 mt-2">
+                  {Math.round(
+                    Number(
+                      affiliate.discount_rate ||
+                        0
+                    ) * 100
+                  )}
+                  %
+                </p>
+              </div>
+
+              <div className="rounded-[22px] border border-white/10 bg-[#081526]/50 px-5 py-4">
+                <p className="text-xs uppercase tracking-widest text-white/40">
+                  Commission
+                </p>
+
+                <p className="text-2xl font-black text-blue-300 mt-2">
+                  {Math.round(
+                    Number(
+                      affiliate.commission_rate ||
+                        0
+                    ) * 100
+                  )}
+                  %
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+
+            <span
+              className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest ${
+                affiliate.status === "active"
+                  ? "border border-green-400/20 bg-green-500/10 text-green-300"
+                  : affiliate.status === "invited"
+                  ? "border border-yellow-400/20 bg-yellow-500/10 text-yellow-200"
+                  : "border border-white/10 bg-white/[0.05] text-white/60"
+              }`}
+            >
+              {affiliate.status}
+            </span>
+
+            <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs uppercase tracking-widest text-white/50">
+              Joined{" "}
+              {affiliate.created_at
+                ? formatDate(
+                    affiliate.created_at
+                  )
+                : "—"}
+            </span>
+
+          </div>
+
+        </section>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+
+          <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+            <p className="text-xs uppercase tracking-widest text-white/40">
+              Code Uses
+            </p>
+
+            <p className="text-4xl font-black mt-3">
+              {activity.length}
+            </p>
+          </div>
+
+          <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+            <p className="text-xs uppercase tracking-widest text-white/40">
+              Sales Generated
+            </p>
+
+            <p className="text-4xl font-black text-blue-300 mt-3">
+              {formatMoney(
+                generatedSales
+              )}
+            </p>
+          </div>
+
+          <div className="rounded-[28px] border border-yellow-300/15 bg-yellow-400/[0.06] p-6">
+            <p className="text-xs uppercase tracking-widest text-yellow-100/60">
+              Pending Commission
+            </p>
+
+            <p className="text-4xl font-black text-yellow-200 mt-3">
+              {formatMoney(
+                pendingCommission
+              )}
+            </p>
+          </div>
+
+          <div className="rounded-[28px] border border-green-300/15 bg-green-400/[0.06] p-6">
+            <p className="text-xs uppercase tracking-widest text-green-100/60">
+              Confirmed Commission
+            </p>
+
+            <p className="text-4xl font-black text-green-300 mt-3">
+              {formatMoney(
+                confirmedCommission
+              )}
+            </p>
+          </div>
+
+        </div>
+
+        <section className="rounded-[32px] border border-white/10 bg-white/[0.04] overflow-hidden">
+
+          <div className="p-7 border-b border-white/10">
+            <h2 className="text-2xl font-black">
+              Affiliate Activity
+            </h2>
+
+            <p className="text-white/50 mt-2">
+              Orders attributed to{" "}
+              {affiliate.code}.
+            </p>
+          </div>
+
+          {activity.length === 0 ? (
+            <div className="p-12 text-center">
+
+              <p className="text-xl font-bold">
+                No affiliate orders yet
+              </p>
+
+              <p className="text-white/50 mt-2">
+                Orders will appear here when
+                this affiliate&apos;s code is used.
+              </p>
+
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+
+              <table className="w-full min-w-[850px]">
+
+                <thead>
+                  <tr className="border-b border-white/10 text-left">
+
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Order
+                    </th>
+
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Date
+                    </th>
+
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Qualifying Sale
+                    </th>
+
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Commission
+                    </th>
+
+                    <th className="p-5 text-xs uppercase tracking-widest text-white/40">
+                      Status
+                    </th>
+
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {activity.map(
+                    (order) => (
+                      <tr
+                        key={order.id}
+                        className="border-b border-white/[0.06] last:border-0"
+                      >
+
+                        <td className="p-5 font-bold">
+                          {order.orderNumber}
+                        </td>
+
+                        <td className="p-5 text-white/60">
+                          {formatDate(
+                            order.createdAt
+                          )}
+                        </td>
+
+                        <td className="p-5">
+                          {formatMoney(
+                            order.qualifyingSale
+                          )}
+                        </td>
+
+                        <td className="p-5 font-bold text-blue-300">
+                          {formatMoney(
+                            order.commission
+                          )}
+                        </td>
+
+                        <td className="p-5">
+                          <span className="capitalize">
+                            {String(
+                              order.status || ""
+                            ).replaceAll(
+                              "_",
+                              " "
+                            )}
+                          </span>
+                        </td>
+
+                      </tr>
+                    )
+                  )}
+                </tbody>
+
+              </table>
+
+            </div>
+          )}
+
+        </section>
+
+        <p className="text-white/35 text-sm mt-6">
+          This is your private admin view.
+          Affiliates cannot access other affiliate accounts
+          or this admin page.
+        </p>
+
+      </div>
+    </main>
+  );
+}

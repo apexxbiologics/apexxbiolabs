@@ -29,9 +29,11 @@ export async function POST(request: Request) {
 
     if (
       !affiliateId ||
-      !["archive", "delete"].includes(
-        action
-      )
+      ![
+        "archive",
+        "unarchive",
+        "delete",
+      ].includes(action)
     ) {
       return NextResponse.json(
         {
@@ -43,9 +45,6 @@ export async function POST(request: Request) {
       );
     }
 
-    /*
-     * Confirm the affiliate exists.
-     */
     const {
       data: affiliate,
       error: affiliateError,
@@ -86,15 +85,8 @@ export async function POST(request: Request) {
 
     /*
      * ==========================================
-     * ARCHIVE AFFILIATE
+     * ARCHIVE
      * ==========================================
-     *
-     * Keep the affiliate record and all
-     * historical information.
-     *
-     * Their dashboard API only permits
-     * status === "active", so changing this
-     * to "archived" blocks affiliate access.
      */
     if (action === "archive") {
       const {
@@ -145,15 +137,66 @@ export async function POST(request: Request) {
 
     /*
      * ==========================================
-     * PERMANENT DELETE
+     * UNARCHIVE
      * ==========================================
      *
-     * Before allowing permanent deletion,
-     * make sure the affiliate has NO linked
-     * orders and NO payout records.
+     * Restore the affiliate to active status
+     * so dashboard access works again.
+     */
+    if (action === "unarchive") {
+      const {
+        data: unarchivedAffiliate,
+        error: unarchiveError,
+      } = await supabaseAdmin
+        .from("affiliates")
+        .update({
+          status: "active",
+        })
+        .eq(
+          "id",
+          affiliateId
+        )
+        .select(`
+          id,
+          name,
+          email,
+          code,
+          status
+        `)
+        .single();
+
+      if (unarchiveError) {
+        console.error(
+          "Affiliate unarchive error:",
+          unarchiveError
+        );
+
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              unarchiveError.message ||
+              "Unable to unarchive affiliate.",
+          },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        action: "unarchived",
+        affiliate:
+          unarchivedAffiliate,
+      });
+    }
+
+    /*
+     * ==========================================
+     * DELETE
+     * ==========================================
      *
-     * If they have financial history,
-     * they should be archived instead.
+     * Only allow permanent deletion if
+     * there is no linked order or payout history.
      */
 
     const {
@@ -234,9 +277,6 @@ export async function POST(request: Request) {
         payoutCount || 0
       ) > 0;
 
-    /*
-     * Preserve financial history.
-     */
     if (
       hasLinkedOrders ||
       hasPayoutHistory
@@ -251,14 +291,6 @@ export async function POST(request: Request) {
       );
     }
 
-    /*
-     * Delete ONLY the affiliate profile.
-     *
-     * Their Supabase Auth user is intentionally
-     * left untouched so their normal Apexx
-     * customer / rewards account continues
-     * to work.
-     */
     const {
       error: deleteError,
     } = await supabaseAdmin
@@ -286,6 +318,10 @@ export async function POST(request: Request) {
       );
     }
 
+    /*
+     * Normal Apexx Auth/customer account
+     * remains untouched.
+     */
     return NextResponse.json({
       success: true,
       action: "deleted",

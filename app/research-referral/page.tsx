@@ -115,6 +115,7 @@ export default function ResearchReferralPage() {
               referral activity that complies with Apexx
               Biolabs program policies.
             </p>
+
           </div>
 
           <div className="relative">
@@ -275,6 +276,7 @@ export default function ResearchReferralPage() {
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-14 lg:grid-cols-[0.9fr_1.1fr]">
 
           <div>
+
             <p className="mb-5 text-xs font-black uppercase tracking-[0.35em] text-blue-300">
               Research Standards
             </p>
@@ -290,6 +292,7 @@ export default function ResearchReferralPage() {
               product information, analytical documentation,
               and responsible research-use policies.
             </p>
+
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -478,6 +481,7 @@ export default function ResearchReferralPage() {
                   }
                   className="flex w-full items-center justify-between gap-6 p-6 text-left sm:p-7"
                 >
+
                   <span className="text-lg font-black text-white sm:text-xl">
                     {faq.question}
                   </span>
@@ -490,6 +494,7 @@ export default function ResearchReferralPage() {
                         : ""
                     }`}
                   />
+
                 </button>
 
                 {openFAQ === index && (
@@ -544,6 +549,7 @@ export default function ResearchReferralPage() {
             <div className="flex flex-col gap-4 border-b border-white/10 px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
 
               <div>
+
                 <p className="font-black text-white">
                   Partner Application
                 </p>
@@ -551,14 +557,17 @@ export default function ResearchReferralPage() {
                 <p className="mt-1 text-xs text-white/40">
                   Applications are individually reviewed by Apexx Biolabs.
                 </p>
+
               </div>
 
               <div className="flex w-fit items-center gap-2 rounded-full border border-blue-400/15 bg-blue-500/[0.07] px-4 py-2">
+
                 <span className="h-2 w-2 rounded-full bg-blue-300" />
 
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-200">
                   Research Partners
                 </span>
+
               </div>
 
             </div>
@@ -596,6 +605,7 @@ export default function ResearchReferralPage() {
                       key={item}
                       className="flex items-start gap-3"
                     >
+
                       <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-blue-400/20 bg-blue-500/10 text-blue-300">
                         <Check
                           size={11}
@@ -606,6 +616,7 @@ export default function ResearchReferralPage() {
                       <p className="text-sm leading-relaxed text-white/50">
                         {item}
                       </p>
+
                     </div>
                   ))}
 
@@ -633,6 +644,7 @@ export default function ResearchReferralPage() {
                 className="p-6 sm:p-8 lg:p-10"
               >
 
+                {/* YOUR INFORMATION */}
                 <div>
 
                   <p className="mb-5 text-[10px] font-black uppercase tracking-[0.28em] text-white/30">
@@ -660,6 +672,7 @@ export default function ResearchReferralPage() {
 
                 </div>
 
+                {/* REFERRAL PLATFORM */}
                 <div className="mt-8 border-t border-white/[0.07] pt-7">
 
                   <p className="mb-5 text-[10px] font-black uppercase tracking-[0.28em] text-white/30">
@@ -689,6 +702,7 @@ export default function ResearchReferralPage() {
 
                 </div>
 
+                {/* RESEARCH AUDIENCE */}
                 <div className="mt-8 border-t border-white/[0.07] pt-7">
 
                   <p className="mb-5 text-[10px] font-black uppercase tracking-[0.28em] text-white/30">
@@ -703,10 +717,7 @@ export default function ResearchReferralPage() {
                       defaultValue=""
                       className="w-full appearance-none rounded-2xl border border-white/10 bg-[#102238] px-5 py-4 pr-12 text-sm text-white outline-none transition hover:border-white/20 focus:border-blue-400/50 focus:ring-2 focus:ring-blue-400/10"
                     >
-                      <option
-                        value=""
-                        disabled
-                      >
+                      <option value="" disabled>
                         Select your primary research audience
                       </option>
 
@@ -756,52 +767,54 @@ export default function ResearchReferralPage() {
 
                 </div>
 
+                {/* SINGLE PROGRAM AGREEMENT */}
                 <div className="mt-8 border-t border-white/[0.07] pt-7">
 
                   <p className="mb-5 text-[10px] font-black uppercase tracking-[0.28em] text-white/30">
-                    Program Standards
+                    Program Agreement
                   </p>
 
-                  <div className="space-y-3">
+                  <label className="group flex cursor-pointer items-start gap-4 rounded-2xl border border-white/[0.08] bg-white/[0.025] p-5 transition hover:border-blue-400/25 hover:bg-blue-500/[0.035]">
 
-                    <label className="group flex cursor-pointer items-start gap-4 rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4 transition hover:border-blue-400/20 hover:bg-blue-500/[0.03]">
+                    <input
+                      type="checkbox"
+                      name="terms_acknowledgement"
+                      required
+                      className="mt-0.5 h-[18px] w-[18px] shrink-0 accent-blue-500"
+                    />
 
-                      <input
-                        type="checkbox"
-                        name="research_use_acknowledgement"
-                        required
-                        className="mt-0.5 h-[18px] w-[18px] shrink-0 accent-blue-500"
-                      />
+                    <span className="text-sm leading-relaxed text-white/55 transition group-hover:text-white/70">
 
-                      <span className="text-sm leading-relaxed text-white/50 transition group-hover:text-white/65">
-                        I understand that Apexx Biolabs products are intended
-                        strictly for lawful laboratory research use and are
-                        not for human or veterinary use.
-                      </span>
+                      I have read and agree to the{" "}
 
-                    </label>
+                      <Link
+                        href="/research-referral/terms"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(event) =>
+                          event.stopPropagation()
+                        }
+                        className="font-bold text-blue-300 underline decoration-blue-300/30 underline-offset-4 transition hover:text-blue-200"
+                      >
+                        Research Referral Program Terms
+                      </Link>
 
-                    <label className="group flex cursor-pointer items-start gap-4 rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4 transition hover:border-blue-400/20 hover:bg-blue-500/[0.03]">
+                      , including the research-use restrictions,
+                      referral marketing standards, commission rules,
+                      and disclosure requirements.
 
-                      <input
-                        type="checkbox"
-                        name="marketing_acknowledgement"
-                        required
-                        className="mt-0.5 h-[18px] w-[18px] shrink-0 accent-blue-500"
-                      />
+                    </span>
 
-                      <span className="text-sm leading-relaxed text-white/50 transition group-hover:text-white/65">
-                        I agree not to promote personal use, make medical or
-                        therapeutic claims, or provide dosing or administration
-                        guidance in connection with Apexx Biolabs products.
-                      </span>
+                  </label>
 
-                    </label>
-
-                  </div>
+                  <p className="mt-3 text-[11px] leading-relaxed text-white/25">
+                    You must accept the Research Referral Program Terms
+                    before submitting your application.
+                  </p>
 
                 </div>
 
+                {/* SUBMIT */}
                 <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center">
 
                   <button
@@ -881,6 +894,7 @@ function ProgramStat({
       </div>
 
       <div>
+
         <p className="font-black text-white">
           {title}
         </p>
@@ -888,6 +902,7 @@ function ProgramStat({
         <p className="mt-1 text-sm leading-relaxed text-white/45">
           {text}
         </p>
+
       </div>
 
     </div>

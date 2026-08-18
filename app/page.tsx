@@ -1274,7 +1274,67 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
   </div>
 </section>
 
-  {/* CREATE ACCOUNT + REWARDS */}
+{/* RESEARCH REFERRAL PROGRAM */}
+<Reveal>
+  <section className="relative w-full overflow-hidden bg-[#081526] px-4 py-8 sm:px-6 md:py-10">
+    <div className="mx-auto max-w-6xl">
+
+      <div className="relative overflow-hidden rounded-[2rem] border border-blue-400/20 bg-gradient-to-r from-[#0b1d33] via-[#102a49] to-[#0b1d33] px-6 py-7 shadow-[0_18px_55px_rgba(59,130,246,0.10)] sm:px-8 md:px-10">
+
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_right,rgba(96,165,250,0.16),transparent_45%)]" />
+
+        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+
+          <div className="max-w-3xl">
+
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.3em] text-blue-300">
+              Apexx Research Referral Program
+            </p>
+
+            <h2 className="text-2xl font-black leading-tight text-white sm:text-3xl">
+              Partner With Apexx
+            </h2>
+
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/60 sm:text-base">
+              Refer qualified research customers to Apexx Biolabs
+              and earn commission on eligible research purchases
+              made through your unique referral code.
+            </p>
+
+          </div>
+
+          <div className="shrink-0">
+
+            <Link
+              href="/affiliate/apply"
+              className="inline-flex w-full items-center justify-center gap-3 rounded-full bg-white px-7 py-4 text-center text-xs font-black uppercase tracking-[0.2em] text-[#081526] transition hover:bg-blue-100 sm:w-auto"
+            >
+              Apply to Partner
+              <span className="text-lg leading-none">
+                →
+              </span>
+            </Link>
+
+          </div>
+
+        </div>
+
+        <div className="relative z-10 mt-6 border-t border-white/10 pt-5">
+          <p className="text-[11px] leading-relaxed text-white/35">
+            Products are intended strictly for lawful laboratory
+            research use only and are not for human or veterinary use.
+            Research partners may not promote products for personal use
+            or make medical, therapeutic, or human-use claims.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+</Reveal>
+
+{/* CREATE ACCOUNT + REWARDS */}
 <Reveal>
   <section className="relative overflow-hidden bg-[#081526] px-4 py-20 sm:px-6 md:py-24">
     {/* Background glow */}
@@ -1413,6 +1473,7 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
     </div>
   </section>
 </Reveal>
+
 
 {/* HOMEPAGE FAQ */}
 <section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">

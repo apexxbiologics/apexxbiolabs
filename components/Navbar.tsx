@@ -313,6 +313,7 @@ export default function Navbar() {
               {search &&
                 filteredProducts.length === 0 && (
                   <div className="absolute left-0 right-0 top-[calc(100%+10px)] z-[999] rounded-[24px] border border-blue-400/20 bg-[#081526]/98 px-6 py-5 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+
                     <p className="font-semibold text-white/70">
                       No products found
                     </p>
@@ -320,6 +321,7 @@ export default function Navbar() {
                     <p className="mt-1 text-sm text-white/35">
                       Try another product name.
                     </p>
+
                   </div>
                 )}
 
@@ -341,6 +343,7 @@ export default function Navbar() {
           <aside className="apexx-scrollbar relative h-full w-[90%] max-w-[520px] overflow-y-auto border-r border-blue-900/50 bg-[#071323] px-7 py-8 shadow-2xl md:px-10">
 
             <div className="mb-12 flex items-center justify-between">
+
               <img
                 src="/images/logo.png"
                 alt="Apexx Biolabs"
@@ -356,6 +359,7 @@ export default function Navbar() {
               >
                 <X size={25} />
               </button>
+
             </div>
 
             <div className="space-y-10 pb-10">
@@ -389,6 +393,24 @@ export default function Navbar() {
               />
 
               <MenuSection
+                title="Research Referral"
+                links={[
+                  [
+                    "Program Overview",
+                    "/research-referral",
+                  ],
+                  [
+                    "Apply to Partner",
+                    "/research-referral#apply",
+                  ],
+                  [
+                    "Program Terms",
+                    "/research-referral/terms",
+                  ],
+                ]}
+              />
+
+              <MenuSection
                 title="Products"
                 links={[
                   ["Metabolic Research", "/products"],
@@ -412,6 +434,10 @@ export default function Navbar() {
                 links={[
                   ["Privacy Policy", "/privacy"],
                   ["Terms of Service", "/terms"],
+                  [
+                    "Research Referral Terms",
+                    "/research-referral/terms",
+                  ],
                 ]}
               />
 
@@ -432,11 +458,13 @@ function MenuSection({
 }) {
   return (
     <div>
+
       <p className="mb-4 text-xs uppercase tracking-[0.38em] text-blue-300">
         {title}
       </p>
 
       <div className="space-y-3">
+
         {links.map(([label, href]) => (
           <a
             key={label}
@@ -453,7 +481,9 @@ function MenuSection({
             />
           </a>
         ))}
+
       </div>
+
     </div>
   );
 }

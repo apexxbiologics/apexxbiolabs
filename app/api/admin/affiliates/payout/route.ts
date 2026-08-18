@@ -187,7 +187,7 @@ export async function POST(request: Request) {
           new Date().toISOString(),
 
         notes:
-          `Bi-monthly Zelle payout covering ${payableOrders.length} affiliate order${
+          `Monthly Zelle payout covering ${payableOrders.length} affiliate order${
             payableOrders.length === 1
               ? ""
               : "s"

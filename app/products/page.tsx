@@ -167,13 +167,6 @@ export default function ProductsPage() {
       image: "/images/pt141.png",
       href: "/products/pt141",
     },
-    {
-      name: "Bacteriostatic Water",
-      desc: "Research Reconstitution Solution",
-      category: "Research Solutions",
-      image: "/images/bacwater.PNG",
-      href: "/products/bacwater",
-    },
   ];
 
   const filteredProducts = products.filter((product) => {

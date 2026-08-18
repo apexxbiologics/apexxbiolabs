@@ -17,8 +17,34 @@ const resend = new Resend(
   process.env.RESEND_API_KEY
 );
 
+/*
+ * Keep this synchronized with the version
+ * displayed on:
+ *
+ * /research-referral/terms
+ */
+const TERMS_VERSION = "1.0";
+
+/*
+ * Prevent applicant-controlled text from being
+ * interpreted as HTML inside notification emails.
+ */
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 export async function POST(request: Request) {
   try {
+    /*
+     * ==========================================
+     * READ APPLICATION
+     * ==========================================
+     */
     const formData =
       await request.formData();
 
@@ -54,14 +80,17 @@ export async function POST(request: Request) {
         formData.get("description") || ""
       ).trim();
 
-    const researchUseAcknowledgement =
+    /*
+     * ONE agreement checkbox.
+     *
+     * This replaces:
+     *
+     * research_use_acknowledgement
+     * marketing_acknowledgement
+     */
+    const termsAcknowledgement =
       formData.get(
-        "research_use_acknowledgement"
-      ) === "on";
-
-    const marketingAcknowledgement =
-      formData.get(
-        "marketing_acknowledgement"
+        "terms_acknowledgement"
       ) === "on";
 
     /*
@@ -81,7 +110,9 @@ export async function POST(request: Request) {
           error:
             "Please complete all required application fields.",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
@@ -104,46 +135,104 @@ export async function POST(request: Request) {
           error:
             "Please enter a valid email address.",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
     /*
      * ==========================================
-     * REQUIRE BOTH ACKNOWLEDGEMENTS
+     * REQUIRE TERMS ACCEPTANCE
      * ==========================================
      */
     if (
-      !researchUseAcknowledgement ||
-      !marketingAcknowledgement
+      !termsAcknowledgement
     ) {
       return NextResponse.json(
         {
           success: false,
           error:
-            "You must agree to the Research Referral Program requirements before applying.",
+            "You must read and agree to the Research Referral Program Terms before applying.",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
     /*
      * ==========================================
-     * PREVENT DUPLICATE PENDING APPLICATIONS
+     * VALIDATE AUDIENCE VALUE
+     * ==========================================
+     */
+    const allowedAudiences = [
+      "laboratory",
+      "research-community",
+      "professional-network",
+      "educational",
+      "other",
+    ];
+
+    if (
+      !allowedAudiences.includes(
+        audience
+      )
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Please select a valid research audience.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    /*
+     * ==========================================
+     * LIMIT EXCESSIVELY LARGE INPUTS
+     * ==========================================
+     */
+    if (
+      name.length > 150 ||
+      organization.length > 250 ||
+      website.length > 500 ||
+      description.length > 5000
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "One or more application fields are too long.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    /*
+     * ==========================================
+     * PREVENT DUPLICATE PENDING /
+     * APPROVED APPLICATIONS
      * ==========================================
      */
     const {
       data:
-        existingApplication,
+        existingApplications,
       error:
         existingApplicationError,
     } = await supabaseAdmin
       .from(
         "affiliate_applications"
       )
-      .select(
-        "id, status"
-      )
+      .select(`
+        id,
+        status
+      `)
       .eq(
         "email",
         email
@@ -155,7 +244,7 @@ export async function POST(request: Request) {
           "approved",
         ]
       )
-      .maybeSingle();
+      .limit(1);
 
     if (
       existingApplicationError
@@ -171,9 +260,14 @@ export async function POST(request: Request) {
           error:
             "Unable to verify your application status.",
         },
-        { status: 500 }
+        {
+          status: 500,
+        }
       );
     }
+
+    const existingApplication =
+      existingApplications?.[0];
 
     if (
       existingApplication
@@ -189,9 +283,19 @@ export async function POST(request: Request) {
           success: false,
           error: message,
         },
-        { status: 409 }
+        {
+          status: 409,
+        }
       );
     }
+
+    /*
+     * ==========================================
+     * RECORD TERMS ACCEPTANCE TIME
+     * ==========================================
+     */
+    const termsAcceptedAt =
+      new Date().toISOString();
 
     /*
      * ==========================================
@@ -200,8 +304,7 @@ export async function POST(request: Request) {
      */
     const {
       data: application,
-      error:
-        insertError,
+      error: insertError,
     } = await supabaseAdmin
       .from(
         "affiliate_applications"
@@ -220,11 +323,17 @@ export async function POST(request: Request) {
 
         description,
 
-        research_use_acknowledgement:
+        /*
+         * New single agreement record.
+         */
+        terms_acknowledgement:
           true,
 
-        marketing_acknowledgement:
-          true,
+        terms_version:
+          TERMS_VERSION,
+
+        terms_accepted_at:
+          termsAcceptedAt,
 
         status:
           "pending",
@@ -238,7 +347,10 @@ export async function POST(request: Request) {
         website,
         audience,
         description,
-        status
+        status,
+        terms_acknowledgement,
+        terms_version,
+        terms_accepted_at
       `)
       .single();
 
@@ -257,17 +369,53 @@ export async function POST(request: Request) {
           error:
             "Unable to submit your application.",
         },
-        { status: 500 }
+        {
+          status: 500,
+        }
       );
     }
+
+    /*
+     * ==========================================
+     * SAFE EMAIL CONTENT
+     * ==========================================
+     */
+    const safeName =
+      escapeHtml(name);
+
+    const safeEmail =
+      escapeHtml(email);
+
+    const safeOrganization =
+      escapeHtml(
+        organization ||
+          "Not provided"
+      );
+
+    const safeWebsite =
+      escapeHtml(
+        website ||
+          "Not provided"
+      );
+
+    const safeAudience =
+      escapeHtml(audience);
+
+    const safeDescription =
+      escapeHtml(description)
+        .replace(
+          /\n/g,
+          "<br/>"
+        );
 
     /*
      * ==========================================
      * EMAIL APPLICANT
      * ==========================================
      *
-     * Application remains valid even if this
-     * courtesy email fails.
+     * The application remains saved even if
+     * this courtesy email fails.
+     * ==========================================
      */
     const {
       error:
@@ -284,67 +432,258 @@ export async function POST(request: Request) {
           "Research Referral Application Received • Apexx Biolabs",
 
         html: `
-          <div style="margin:0;padding:0;background:#f8fbff;font-family:Arial,Helvetica,sans-serif;">
-            <div style="max-width:680px;margin:0 auto;padding:28px 16px;">
+          <div
+            style="
+              margin:0;
+              padding:0;
+              background:#f8fbff;
+              font-family:Arial,Helvetica,sans-serif;
+            "
+          >
 
-              <div style="overflow:hidden;border:1px solid #dbeafe;border-radius:28px;background:#ffffff;">
+            <div
+              style="
+                max-width:680px;
+                margin:0 auto;
+                padding:28px 16px;
+              "
+            >
 
-                <div style="padding:34px 24px;text-align:center;background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff);border-bottom:1px solid #dbeafe;">
+              <div
+                style="
+                  overflow:hidden;
+                  border:1px solid #dbeafe;
+                  border-radius:28px;
+                  background:#ffffff;
+                  box-shadow:0 18px 45px rgba(30,58,138,0.10);
+                "
+              >
 
-                  <p style="margin:0 0 12px;color:#3b82f6;font-size:12px;letter-spacing:4px;text-transform:uppercase;">
-                    Apexx Biolabs
+                <!-- HEADER -->
+                <div
+                  style="
+                    padding:36px 24px;
+                    text-align:center;
+                    background:linear-gradient(
+                      135deg,
+                      #eef7ff,
+                      #dbeafe,
+                      #ffffff
+                    );
+                    border-bottom:1px solid #dbeafe;
+                  "
+                >
+
+                  <p
+                    style="
+                      margin:0 0 12px;
+                      color:#3b82f6;
+                      font-size:12px;
+                      letter-spacing:4px;
+                      text-transform:uppercase;
+                    "
+                  >
+                    Research. Quality. Confidence.
                   </p>
 
-                  <h1 style="margin:0;color:#06111f;font-size:30px;">
-                    Application Received
+                  <h1
+                    style="
+                      margin:0;
+                      color:#06111f;
+                      font-size:30px;
+                      letter-spacing:2px;
+                    "
+                  >
+                    APEXX BIOLABS
                   </h1>
+
+                  <p
+                    style="
+                      margin:12px 0 0;
+                      color:#64748b;
+                      font-size:12px;
+                      letter-spacing:2px;
+                      text-transform:uppercase;
+                    "
+                  >
+                    Research Referral Program
+                  </p>
 
                 </div>
 
-                <div style="padding:30px 24px;color:#0f172a;">
+                <!-- CONTENT -->
+                <div
+                  style="
+                    padding:32px 26px;
+                    color:#0f172a;
+                  "
+                >
 
-                  <p style="margin:0;color:#334155;font-size:15px;line-height:1.7;">
-                    Hi ${name},
+                  <p
+                    style="
+                      margin:0;
+                      color:#334155;
+                      font-size:15px;
+                      line-height:1.7;
+                    "
+                  >
+                    Hi ${safeName},
                   </p>
 
-                  <p style="margin:16px 0 0;color:#475569;font-size:15px;line-height:1.7;">
-                    We received your application for the Apexx Biolabs
-                    Research Referral Program.
+                  <h2
+                    style="
+                      margin:18px 0 0;
+                      color:#06111f;
+                      font-size:27px;
+                      line-height:1.2;
+                    "
+                  >
+                    Application Received
+                  </h2>
+
+                  <p
+                    style="
+                      margin:16px 0 0;
+                      color:#475569;
+                      font-size:15px;
+                      line-height:1.8;
+                    "
+                  >
+                    We received your application for the
+                    Apexx Biolabs Research Referral Program.
                   </p>
 
-                  <div style="margin:24px 0;padding:20px;border-radius:18px;border:1px solid #bfdbfe;background:#f8fbff;">
+                  <!-- STATUS -->
+                  <div
+                    style="
+                      margin:26px 0;
+                      padding:22px;
+                      border-radius:18px;
+                      border:1px solid #bfdbfe;
+                      background:#f8fbff;
+                    "
+                  >
 
-                    <p style="margin:0;color:#1e3a8a;font-weight:bold;">
+                    <p
+                      style="
+                        margin:0;
+                        color:#1e3a8a;
+                        font-size:11px;
+                        font-weight:bold;
+                        letter-spacing:2px;
+                        text-transform:uppercase;
+                      "
+                    >
                       Application Status
                     </p>
 
-                    <p style="margin:8px 0 0;color:#2563eb;font-size:18px;font-weight:800;">
+                    <p
+                      style="
+                        margin:8px 0 0;
+                        color:#2563eb;
+                        font-size:19px;
+                        font-weight:800;
+                      "
+                    >
                       Pending Review
                     </p>
 
                   </div>
 
-                  <p style="margin:0;color:#64748b;font-size:14px;line-height:1.7;">
+                  <p
+                    style="
+                      margin:0;
+                      color:#64748b;
+                      font-size:14px;
+                      line-height:1.8;
+                    "
+                  >
                     Submission does not guarantee acceptance.
-                    If approved, you'll receive a separate invitation
-                    with instructions for activating your Research Referral account.
+                    If your application is approved, you will
+                    receive a separate invitation with
+                    instructions for activating your Research
+                    Referral account.
                   </p>
 
-                  <p style="margin:24px 0 0;color:#64748b;font-size:12px;line-height:1.7;">
-                    Apexx Biolabs products are intended strictly for lawful
-                    laboratory research use only and are not for human or veterinary use.
+                  <!-- TERMS -->
+                  <div
+                    style="
+                      margin:26px 0;
+                      padding:18px;
+                      background:#eff6ff;
+                      border-left:4px solid #60a5fa;
+                      border-radius:12px;
+                    "
+                  >
+
+                    <p
+                      style="
+                        margin:0;
+                        color:#1e3a8a;
+                        font-size:13px;
+                        font-weight:bold;
+                      "
+                    >
+                      Program Terms Accepted
+                    </p>
+
+                    <p
+                      style="
+                        margin:7px 0 0;
+                        color:#64748b;
+                        font-size:12px;
+                        line-height:1.7;
+                      "
+                    >
+                      Research Referral Program Terms
+                      Version ${TERMS_VERSION} were accepted
+                      with your application.
+                    </p>
+
+                  </div>
+
+                  <p
+                    style="
+                      margin:24px 0 0;
+                      color:#64748b;
+                      font-size:12px;
+                      line-height:1.7;
+                    "
+                  >
+                    Apexx Biolabs products are intended strictly
+                    for lawful laboratory research use only and
+                    are not for human or veterinary use.
                   </p>
 
-                  <p style="margin:28px 0 0;color:#334155;line-height:1.6;">
-                    Apexx Biolabs<br/>
-                    support@apexxbiolabs.com
-                  </p>
+                  <div
+                    style="
+                      margin-top:30px;
+                      padding-top:24px;
+                      border-top:1px solid #e2e8f0;
+                    "
+                  >
+
+                    <p
+                      style="
+                        margin:0;
+                        color:#334155;
+                        font-size:13px;
+                        line-height:1.7;
+                      "
+                    >
+                      Apexx Biolabs<br/>
+                      support@apexxbiolabs.com<br/>
+                      apexxbiolabs.com
+                    </p>
+
+                  </div>
 
                 </div>
 
               </div>
 
             </div>
+
           </div>
         `,
       });
@@ -375,51 +714,131 @@ export async function POST(request: Request) {
           "support@apexxbiolabs.com",
 
         subject:
-          `New Research Referral Application • ${name}`,
+          `New Research Referral Application • ${safeName}`,
 
         html: `
-          <div style="font-family:Arial,Helvetica,sans-serif;color:#0f172a;line-height:1.6;">
+          <div
+            style="
+              margin:0;
+              padding:30px;
+              background:#f8fbff;
+              font-family:Arial,Helvetica,sans-serif;
+              color:#0f172a;
+            "
+          >
 
-            <h2>
-              New Research Referral Application
-            </h2>
+            <div
+              style="
+                max-width:680px;
+                margin:0 auto;
+                background:#ffffff;
+                border:1px solid #dbeafe;
+                border-radius:24px;
+                padding:30px;
+              "
+            >
 
-            <p>
-              <strong>Name:</strong>
-              ${name}
-            </p>
+              <p
+                style="
+                  margin:0;
+                  color:#3b82f6;
+                  font-size:11px;
+                  font-weight:bold;
+                  letter-spacing:3px;
+                  text-transform:uppercase;
+                "
+              >
+                Apexx Admin
+              </p>
 
-            <p>
-              <strong>Email:</strong>
-              ${email}
-            </p>
+              <h2
+                style="
+                  margin:12px 0 24px;
+                  color:#06111f;
+                "
+              >
+                New Research Referral Application
+              </h2>
 
-            <p>
-              <strong>Organization / Platform:</strong>
-              ${organization || "Not provided"}
-            </p>
+              <p>
+                <strong>Name:</strong><br/>
+                ${safeName}
+              </p>
 
-            <p>
-              <strong>Website / Social:</strong>
-              ${website || "Not provided"}
-            </p>
+              <p>
+                <strong>Email:</strong><br/>
+                ${safeEmail}
+              </p>
 
-            <p>
-              <strong>Audience:</strong>
-              ${audience}
-            </p>
+              <p>
+                <strong>Website / Platform:</strong><br/>
+                ${safeOrganization}
+              </p>
 
-            <p>
-              <strong>Description:</strong>
-            </p>
+              <p>
+                <strong>Handle or Link:</strong><br/>
+                ${safeWebsite}
+              </p>
 
-            <p>
-              ${description}
-            </p>
+              <p>
+                <strong>Research Audience:</strong><br/>
+                ${safeAudience}
+              </p>
 
-            <p>
-              Review this application from the Apexx admin dashboard.
-            </p>
+              <p>
+                <strong>Referral Description:</strong>
+              </p>
+
+              <div
+                style="
+                  padding:16px;
+                  background:#f8fafc;
+                  border-radius:12px;
+                  line-height:1.7;
+                "
+              >
+                ${safeDescription}
+              </div>
+
+              <div
+                style="
+                  margin-top:24px;
+                  padding:16px;
+                  border:1px solid #bfdbfe;
+                  background:#eff6ff;
+                  border-radius:12px;
+                "
+              >
+
+                <strong>
+                  Terms Accepted
+                </strong>
+
+                <br/>
+
+                Version:
+                ${TERMS_VERSION}
+
+                <br/>
+
+                Accepted:
+                ${escapeHtml(
+                  termsAcceptedAt
+                )}
+
+              </div>
+
+              <p
+                style="
+                  margin-top:24px;
+                  color:#64748b;
+                "
+              >
+                Review this application from the
+                Apexx Admin Dashboard.
+              </p>
+
+            </div>
 
           </div>
         `,
@@ -458,7 +877,9 @@ export async function POST(request: Request) {
         error:
           "Unable to submit your Research Referral application.",
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
 }

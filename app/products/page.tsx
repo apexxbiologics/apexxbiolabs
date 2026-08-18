@@ -92,7 +92,7 @@ export default function ProductsPage() {
     },
     {
       name: "AOD-9604",
-      desc: "5mg Research Peptide",
+      desc: "10mg Research Peptide",
       category: "Metabolic Research",
       image: "/images/aod9604.png",
       href: "/products/aod9604",

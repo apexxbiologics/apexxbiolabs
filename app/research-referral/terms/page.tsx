@@ -532,12 +532,12 @@ export default function ResearchReferralTermsPage() {
       <section className="border-b border-white/[0.07] px-6 pb-16 pt-24">
         <div className="mx-auto max-w-6xl">
 
-          <Link
-            href="/research-referral/apply"
-            className="mb-10 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-white/40 transition hover:text-blue-300"
-          >
-            ← Back to application
-          </Link>
+<Link
+  href="/research-referral#apply"
+  className="mb-10 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-white/40 transition hover:text-blue-300"
+>
+  ← Back to application
+</Link>
 
           <div className="max-w-4xl">
 

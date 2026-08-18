@@ -36,7 +36,7 @@ const faqs = [
   {
     question: "When are commissions paid?",
     answer:
-      "Eligible confirmed commissions are reviewed for payout on a bi-monthly schedule. Current payout history and previously paid amounts remain available in the partner dashboard.",
+      "Eligible confirmed commissions are reviewed for payout monthly. Current payout history and previously paid amounts remain available in the partner dashboard.",
   },
   {
     question: "Can partners promote products for personal use?",
@@ -66,9 +66,7 @@ export default function ResearchReferralPage() {
 
         <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
 
-          {/* LEFT */}
           <div>
-
             <p className="mb-6 text-xs font-black uppercase tracking-[0.35em] text-blue-300 sm:text-sm">
               Apexx Research Referral Program
             </p>
@@ -117,10 +115,8 @@ export default function ResearchReferralPage() {
               referral activity that complies with Apexx
               Biolabs program policies.
             </p>
-
           </div>
 
-          {/* RIGHT CARD */}
           <div className="relative">
 
             <div className="absolute -inset-8 rounded-full bg-blue-500/10 blur-3xl" />
@@ -134,33 +130,25 @@ export default function ResearchReferralPage() {
               <div className="mt-7 space-y-4">
 
                 <ProgramStat
-                  icon={
-                    <Handshake size={21} />
-                  }
+                  icon={<Handshake size={21} />}
                   title="Individual Referral Code"
                   text="Approved partners receive a unique code for eligible research referrals."
                 />
 
                 <ProgramStat
-                  icon={
-                    <BarChart3 size={21} />
-                  }
+                  icon={<BarChart3 size={21} />}
                   title="Partner Dashboard"
                   text="Review attributed orders, qualifying sales, and commission activity."
                 />
 
                 <ProgramStat
-                  icon={
-                    <WalletCards size={21} />
-                  }
-                  title="Bi-Monthly Payouts"
-                  text="Eligible confirmed commissions are reviewed for payout twice per month."
+                  icon={<WalletCards size={21} />}
+                  title="Monthly Payouts"
+                  text="Eligible confirmed commissions are reviewed for payout each month."
                 />
 
                 <ProgramStat
-                  icon={
-                    <ShieldCheck size={21} />
-                  }
+                  icon={<ShieldCheck size={21} />}
                   title="Research-Only Standards"
                   text="Referral activity must remain consistent with Apexx research-use requirements."
                 />
@@ -204,33 +192,25 @@ export default function ResearchReferralPage() {
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
 
             <FeatureCard
-              icon={
-                <FlaskConical size={25} />
-              }
+              icon={<FlaskConical size={25} />}
               title="Research-Grade Catalog"
               text="Apexx products are offered for lawful laboratory and analytical research purposes."
             />
 
             <FeatureCard
-              icon={
-                <FileCheck2 size={25} />
-              }
+              icon={<FileCheck2 size={25} />}
               title="Batch Documentation"
               text="Available Certificates of Analysis and testing documentation support research transparency."
             />
 
             <FeatureCard
-              icon={
-                <BarChart3 size={25} />
-              }
+              icon={<BarChart3 size={25} />}
               title="Referral Tracking"
               text="View eligible orders and commission activity directly from your private referral dashboard."
             />
 
             <FeatureCard
-              icon={
-                <Users size={25} />
-              }
+              icon={<Users size={25} />}
               title="Qualified Referrals"
               text="Refer researchers, laboratories, research teams, and other appropriate research customers."
             />
@@ -281,7 +261,7 @@ export default function ResearchReferralPage() {
             <StepCard
               number="04"
               title="Track & Get Paid"
-              text="Monitor eligible referrals and commissions from your dashboard. Confirmed commissions are paid on the established payout schedule."
+              text="Monitor eligible referrals and commissions from your dashboard. Confirmed commissions are reviewed for payout monthly."
             />
 
           </div>
@@ -295,7 +275,6 @@ export default function ResearchReferralPage() {
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-14 lg:grid-cols-[0.9fr_1.1fr]">
 
           <div>
-
             <p className="mb-5 text-xs font-black uppercase tracking-[0.35em] text-blue-300">
               Research Standards
             </p>
@@ -311,7 +290,6 @@ export default function ResearchReferralPage() {
               product information, analytical documentation,
               and responsible research-use policies.
             </p>
-
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -353,9 +331,7 @@ export default function ResearchReferralPage() {
               <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
 
                 <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-blue-400/20 bg-blue-500/10 text-blue-300">
-                  <ShieldCheck
-                    size={27}
-                  />
+                  <ShieldCheck size={27} />
                 </div>
 
                 <div>
@@ -457,8 +433,8 @@ export default function ResearchReferralPage() {
 
             <MiniProgramCard
               eyebrow="Payouts"
-              title="Bi-Monthly"
-              text="Eligible confirmed commissions are reviewed for payout twice per month, with payout history retained in your dashboard."
+              title="Monthly"
+              text="Eligible confirmed commissions are reviewed for payout monthly, with payout history retained in your dashboard."
             />
 
           </div>
@@ -485,61 +461,47 @@ export default function ResearchReferralPage() {
 
           <div className="space-y-4">
 
-            {faqs.map(
-              (
-                faq,
-                index
-              ) => (
-                <div
-                  key={
-                    faq.question
+            {faqs.map((faq, index) => (
+              <div
+                key={faq.question}
+                className="overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.035] transition hover:border-blue-400/30"
+              >
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setOpenFAQ(
+                      openFAQ === index
+                        ? null
+                        : index
+                    )
                   }
-                  className="overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.035] transition hover:border-blue-400/30"
+                  className="flex w-full items-center justify-between gap-6 p-6 text-left sm:p-7"
                 >
+                  <span className="text-lg font-black text-white sm:text-xl">
+                    {faq.question}
+                  </span>
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setOpenFAQ(
-                        openFAQ ===
-                          index
-                          ? null
-                          : index
-                      )
-                    }
-                    className="flex w-full items-center justify-between gap-6 p-6 text-left sm:p-7"
-                  >
+                  <ChevronDown
+                    size={20}
+                    className={`shrink-0 text-blue-300 transition-transform ${
+                      openFAQ === index
+                        ? "rotate-180"
+                        : ""
+                    }`}
+                  />
+                </button>
 
-                    <span className="text-lg font-black text-white sm:text-xl">
-                      {faq.question}
-                    </span>
+                {openFAQ === index && (
+                  <div className="border-t border-white/10 px-6 pb-7 pt-5 sm:px-7">
+                    <p className="leading-relaxed text-white/60">
+                      {faq.answer}
+                    </p>
+                  </div>
+                )}
 
-                    <ChevronDown
-                      size={20}
-                      className={`shrink-0 text-blue-300 transition-transform ${
-                        openFAQ ===
-                        index
-                          ? "rotate-180"
-                          : ""
-                      }`}
-                    />
-
-                  </button>
-
-                  {openFAQ ===
-                    index && (
-                    <div className="border-t border-white/10 px-6 pb-7 pt-5 sm:px-7">
-                      <p className="leading-relaxed text-white/60">
-                        {
-                          faq.answer
-                        }
-                      </p>
-                    </div>
-                  )}
-
-                </div>
-              )
-            )}
+              </div>
+            ))}
 
           </div>
 
@@ -552,202 +514,320 @@ export default function ResearchReferralPage() {
         className="relative border-t border-white/10 bg-[#071321] px-5 py-20 sm:px-6 md:py-28"
       >
 
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.13),transparent_48%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(96,165,250,0.10),transparent_42%)]" />
 
-        <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 gap-12 lg:grid-cols-[0.85fr_1.15fr]">
+        <div className="relative z-10 mx-auto max-w-7xl">
 
-          <div>
+          <div className="mb-12 max-w-3xl">
 
-            <p className="mb-5 text-xs font-black uppercase tracking-[0.35em] text-blue-300">
-              Apply to Partner
+            <p className="mb-4 text-xs font-black uppercase tracking-[0.35em] text-blue-300">
+              Research Referral Application
             </p>
 
-            <h2 className="text-4xl font-black leading-tight tracking-tight text-white sm:text-5xl md:text-6xl">
-              Apply to the Apexx
-              Research Referral Program.
+            <h2 className="text-4xl font-black leading-[1.02] tracking-tight text-white sm:text-5xl md:text-6xl">
+              Apply to partner
+              <span className="block text-blue-300">
+                with Apexx.
+              </span>
             </h2>
 
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-white/60 md:text-lg">
-              Tell us about yourself and the research-focused
-              audience, organization, laboratory, or community
-              you would be referring.
+            <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/55 md:text-lg">
+              Tell us about yourself and the research-focused audience,
+              platform, laboratory, organization, or community you would
+              be referring.
             </p>
 
-            <div className="mt-8 rounded-[1.75rem] border border-blue-400/15 bg-blue-500/[0.06] p-6">
+          </div>
 
-              <p className="font-black text-white">
-                Before applying
-              </p>
+          <div className="overflow-hidden rounded-[2.25rem] border border-white/10 bg-[#0b192b] shadow-[0_30px_80px_rgba(0,0,0,0.25)]">
 
-              <p className="mt-3 text-sm leading-relaxed text-white/55">
-                Research Referral Program participation is
-                subject to review and approval. All approved
-                partners must follow Apexx Biolabs referral
-                terms, disclosure requirements, and
-                research-use marketing standards.
-              </p>
+            <div className="flex flex-col gap-4 border-b border-white/10 px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+
+              <div>
+                <p className="font-black text-white">
+                  Partner Application
+                </p>
+
+                <p className="mt-1 text-xs text-white/40">
+                  Applications are individually reviewed by Apexx Biolabs.
+                </p>
+              </div>
+
+              <div className="flex w-fit items-center gap-2 rounded-full border border-blue-400/15 bg-blue-500/[0.07] px-4 py-2">
+                <span className="h-2 w-2 rounded-full bg-blue-300" />
+
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-200">
+                  Research Partners
+                </span>
+              </div>
+
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-[0.72fr_1.28fr]">
+
+              {/* LEFT INFO PANEL */}
+              <div className="border-b border-white/10 bg-[#091728] p-6 sm:p-8 lg:border-b-0 lg:border-r">
+
+                <p className="text-xs font-black uppercase tracking-[0.25em] text-blue-300">
+                  Before You Apply
+                </p>
+
+                <h3 className="mt-4 text-2xl font-black leading-tight text-white">
+                  Research-focused
+                  <br />
+                  referrals only.
+                </h3>
+
+                <p className="mt-4 text-sm leading-relaxed text-white/50">
+                  The Apexx Research Referral Program is intended for
+                  partners who can introduce qualified research customers
+                  while maintaining our research-use standards.
+                </p>
+
+                <div className="mt-7 space-y-4">
+
+                  {[
+                    "Applications are subject to review.",
+                    "Referral activity must remain research-focused.",
+                    "Personal-use promotion is prohibited.",
+                    "Medical and therapeutic claims are prohibited.",
+                  ].map((item) => (
+                    <div
+                      key={item}
+                      className="flex items-start gap-3"
+                    >
+                      <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-blue-400/20 bg-blue-500/10 text-blue-300">
+                        <Check
+                          size={11}
+                          strokeWidth={3}
+                        />
+                      </div>
+
+                      <p className="text-sm leading-relaxed text-white/50">
+                        {item}
+                      </p>
+                    </div>
+                  ))}
+
+                </div>
+
+                <div className="mt-8 rounded-2xl border border-blue-400/15 bg-blue-500/[0.05] p-5">
+
+                  <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-300">
+                    Approval
+                  </p>
+
+                  <p className="mt-2 text-sm leading-relaxed text-white/45">
+                    Submission does not guarantee acceptance. Approved
+                    applicants will receive program details by email.
+                  </p>
+
+                </div>
+
+              </div>
+
+              {/* FORM */}
+              <form
+                action="/api/affiliate/apply"
+                method="POST"
+                className="p-6 sm:p-8 lg:p-10"
+              >
+
+                <div>
+
+                  <p className="mb-5 text-[10px] font-black uppercase tracking-[0.28em] text-white/30">
+                    Your Information
+                  </p>
+
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                    <FormField
+                      label="Full Name"
+                      name="name"
+                      placeholder="Your name"
+                      required
+                    />
+
+                    <FormField
+                      label="Email Address"
+                      name="email"
+                      type="email"
+                      placeholder="you@email.com"
+                      required
+                    />
+
+                  </div>
+
+                </div>
+
+                <div className="mt-8 border-t border-white/[0.07] pt-7">
+
+                  <p className="mb-5 text-[10px] font-black uppercase tracking-[0.28em] text-white/30">
+                    Referral Platform
+                  </p>
+
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                    <FormField
+                      label="Website / Platform"
+                      name="organization"
+                      placeholder="Instagram, website, lab, organization..."
+                    />
+
+                    <FormField
+                      label="Handle or Link"
+                      name="website"
+                      placeholder="@handle or https://..."
+                    />
+
+                  </div>
+
+                  <p className="mt-3 text-xs leading-relaxed text-white/25">
+                    Provide the platform, organization, website, or community
+                    you plan to use for research referrals.
+                  </p>
+
+                </div>
+
+                <div className="mt-8 border-t border-white/[0.07] pt-7">
+
+                  <p className="mb-5 text-[10px] font-black uppercase tracking-[0.28em] text-white/30">
+                    Research Audience
+                  </p>
+
+                  <div className="relative">
+
+                    <select
+                      name="audience"
+                      required
+                      defaultValue=""
+                      className="w-full appearance-none rounded-2xl border border-white/10 bg-[#102238] px-5 py-4 pr-12 text-sm text-white outline-none transition hover:border-white/20 focus:border-blue-400/50 focus:ring-2 focus:ring-blue-400/10"
+                    >
+                      <option
+                        value=""
+                        disabled
+                      >
+                        Select your primary research audience
+                      </option>
+
+                      <option value="laboratory">
+                        Laboratory / Research Organization
+                      </option>
+
+                      <option value="research-community">
+                        Research Community
+                      </option>
+
+                      <option value="professional-network">
+                        Professional Network
+                      </option>
+
+                      <option value="educational">
+                        Educational / Research Content
+                      </option>
+
+                      <option value="other">
+                        Other
+                      </option>
+                    </select>
+
+                    <ChevronDown
+                      size={18}
+                      className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-white/35"
+                    />
+
+                  </div>
+
+                  <div className="mt-4">
+
+                    <label className="mb-2.5 block text-[11px] font-black uppercase tracking-[0.2em] text-white/40">
+                      Tell Us About Your Referral Audience
+                    </label>
+
+                    <textarea
+                      name="description"
+                      required
+                      rows={4}
+                      placeholder="Who would you refer to Apexx Biolabs, and how would you introduce Apexx to qualified research customers?"
+                      className="w-full resize-none rounded-2xl border border-white/10 bg-[#102238] px-5 py-4 text-sm leading-relaxed text-white outline-none transition placeholder:text-white/20 hover:border-white/20 focus:border-blue-400/50 focus:ring-2 focus:ring-blue-400/10"
+                    />
+
+                  </div>
+
+                </div>
+
+                <div className="mt-8 border-t border-white/[0.07] pt-7">
+
+                  <p className="mb-5 text-[10px] font-black uppercase tracking-[0.28em] text-white/30">
+                    Program Standards
+                  </p>
+
+                  <div className="space-y-3">
+
+                    <label className="group flex cursor-pointer items-start gap-4 rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4 transition hover:border-blue-400/20 hover:bg-blue-500/[0.03]">
+
+                      <input
+                        type="checkbox"
+                        name="research_use_acknowledgement"
+                        required
+                        className="mt-0.5 h-[18px] w-[18px] shrink-0 accent-blue-500"
+                      />
+
+                      <span className="text-sm leading-relaxed text-white/50 transition group-hover:text-white/65">
+                        I understand that Apexx Biolabs products are intended
+                        strictly for lawful laboratory research use and are
+                        not for human or veterinary use.
+                      </span>
+
+                    </label>
+
+                    <label className="group flex cursor-pointer items-start gap-4 rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4 transition hover:border-blue-400/20 hover:bg-blue-500/[0.03]">
+
+                      <input
+                        type="checkbox"
+                        name="marketing_acknowledgement"
+                        required
+                        className="mt-0.5 h-[18px] w-[18px] shrink-0 accent-blue-500"
+                      />
+
+                      <span className="text-sm leading-relaxed text-white/50 transition group-hover:text-white/65">
+                        I agree not to promote personal use, make medical or
+                        therapeutic claims, or provide dosing or administration
+                        guidance in connection with Apexx Biolabs products.
+                      </span>
+
+                    </label>
+
+                  </div>
+
+                </div>
+
+                <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center">
+
+                  <button
+                    type="submit"
+                    className="group inline-flex items-center justify-center gap-3 rounded-full bg-white px-8 py-4 text-xs font-black uppercase tracking-[0.2em] text-[#081526] transition hover:bg-blue-100"
+                  >
+                    Submit Application
+
+                    <ArrowRight
+                      size={17}
+                      className="transition-transform group-hover:translate-x-1"
+                    />
+                  </button>
+
+                  <p className="max-w-sm text-[11px] leading-relaxed text-white/25">
+                    Your application will be reviewed before any referral
+                    account is activated.
+                  </p>
+
+                </div>
+
+              </form>
 
             </div>
 
           </div>
-
-          <form
-            action="/api/affiliate/apply"
-            method="POST"
-            className="rounded-[2.5rem] border border-white/10 bg-white/[0.04] p-6 sm:p-8 md:p-10"
-          >
-
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-
-              <FormField
-                label="Full Name"
-                name="name"
-                placeholder="Your name"
-                required
-              />
-
-              <FormField
-                label="Email"
-                name="email"
-                type="email"
-                placeholder="you@email.com"
-                required
-              />
-
-            </div>
-
-            <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
-
-              <FormField
-                label="Organization / Platform"
-                name="organization"
-                placeholder="Optional"
-              />
-
-              <FormField
-                label="Website or Social Link"
-                name="website"
-                placeholder="https://"
-              />
-
-            </div>
-
-            <div className="mt-5">
-
-              <label className="mb-2 block text-xs font-black uppercase tracking-[0.2em] text-white/45">
-                Research Audience
-              </label>
-
-              <select
-                name="audience"
-                required
-                defaultValue=""
-                className="w-full rounded-2xl border border-white/10 bg-[#0d1d30] px-5 py-4 text-sm text-white outline-none transition focus:border-blue-400/50"
-              >
-                <option
-                  value=""
-                  disabled
-                >
-                  Select one
-                </option>
-
-                <option value="laboratory">
-                  Laboratory / Research Organization
-                </option>
-
-                <option value="research-community">
-                  Research Community
-                </option>
-
-                <option value="professional-network">
-                  Professional Network
-                </option>
-
-                <option value="educational">
-                  Educational / Research Content
-                </option>
-
-                <option value="other">
-                  Other
-                </option>
-              </select>
-
-            </div>
-
-            <div className="mt-5">
-
-              <label className="mb-2 block text-xs font-black uppercase tracking-[0.2em] text-white/45">
-                Tell Us About Your Referral Audience
-              </label>
-
-              <textarea
-                name="description"
-                required
-                rows={5}
-                placeholder="Briefly describe who you would refer to Apexx Biolabs and how you plan to introduce qualified research customers."
-                className="w-full resize-none rounded-2xl border border-white/10 bg-white/[0.045] px-5 py-4 text-sm leading-relaxed text-white outline-none placeholder:text-white/25 focus:border-blue-400/50"
-              />
-
-            </div>
-
-            <div className="mt-6 space-y-4">
-
-              <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-
-                <input
-                  type="checkbox"
-                  name="research_use_acknowledgement"
-                  required
-                  className="mt-1 h-4 w-4 accent-blue-500"
-                />
-
-                <span className="text-sm leading-relaxed text-white/55">
-                  I understand that Apexx Biolabs products
-                  are intended strictly for lawful laboratory
-                  research use and are not for human or
-                  veterinary use.
-                </span>
-
-              </label>
-
-              <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-
-                <input
-                  type="checkbox"
-                  name="marketing_acknowledgement"
-                  required
-                  className="mt-1 h-4 w-4 accent-blue-500"
-                />
-
-                <span className="text-sm leading-relaxed text-white/55">
-                  I agree not to promote personal use, make
-                  medical or therapeutic claims, or provide
-                  dosing or administration guidance in
-                  connection with Apexx Biolabs products.
-                </span>
-
-              </label>
-
-            </div>
-
-            <button
-              type="submit"
-              className="mt-7 inline-flex w-full items-center justify-center gap-3 rounded-full bg-white px-8 py-4 text-sm font-black uppercase tracking-[0.18em] text-[#081526] transition hover:bg-blue-100"
-            >
-              Submit Application
-
-              <ArrowRight
-                size={18}
-              />
-            </button>
-
-            <p className="mt-4 text-center text-[11px] leading-relaxed text-white/30">
-              Submission does not guarantee acceptance.
-              Approved applicants will receive further
-              program information by email.
-            </p>
-
-          </form>
 
         </div>
       </section>
@@ -940,7 +1020,7 @@ function FormField({
   return (
     <div>
 
-      <label className="mb-2 block text-xs font-black uppercase tracking-[0.2em] text-white/45">
+      <label className="mb-2.5 block text-[11px] font-black uppercase tracking-[0.2em] text-white/40">
         {label}
       </label>
 
@@ -949,7 +1029,7 @@ function FormField({
         name={name}
         placeholder={placeholder}
         required={required}
-        className="w-full rounded-2xl border border-white/10 bg-white/[0.045] px-5 py-4 text-sm text-white outline-none placeholder:text-white/25 transition focus:border-blue-400/50"
+        className="w-full rounded-2xl border border-white/10 bg-[#102238] px-5 py-4 text-sm text-white outline-none transition placeholder:text-white/20 hover:border-white/20 focus:border-blue-400/50 focus:ring-2 focus:ring-blue-400/10"
       />
 
     </div>

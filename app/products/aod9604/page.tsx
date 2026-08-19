@@ -469,10 +469,6 @@ export default function AOD9604Page() {
                 Analysis
               </h3>
 
-              <p className="text-white/40 text-sm mb-5">
-                Reported August 16, 2026
-              </p>
-
               <div className="flex flex-wrap gap-3">
 
                 <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">

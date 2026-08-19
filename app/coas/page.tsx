@@ -180,11 +180,14 @@ export default function COAsPage() {
   content: "1119.71 mg",
   coa: "/images/coas/nadcoa7-20-26.pdf",
 },
-    {
-      name: "AOD-9604",
-      batch: "Pending",
-      status: "Awaiting Testing",
-    },
+{
+  name: "AOD-9604",
+  batch: "RED CAP -1",
+  status: "Verified",
+  purity: "99.27%",
+  content: "15.32 mg",
+  coa: "/images/coas/8-16-aod9604-coa.pdf",
+},
     {
       name: "PT-141",
       batch: "Pending",

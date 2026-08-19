@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import {
   ShoppingCart,
   FlaskConical,
@@ -11,20 +12,38 @@ import {
 import FavoriteButton from "@/components/FavoriteButton";
 
 export default function AOD9604Page() {
-  const [added, setAdded] = useState(false);
-  const [quantity, setQuantity] = useState(1);
-  const [inventory, setInventory] = useState<number | null>(null);
-  const [price, setPrice] = useState(50);
+  const [added, setAdded] =
+    useState(false);
+
+  const [quantity, setQuantity] =
+    useState(1);
+
+  const [inventory, setInventory] =
+    useState<number | null>(null);
+
+  const [price, setPrice] =
+    useState(50);
 
   const product = {
     id: "aod9604-10mg",
     name: "AOD-9604 10mg",
-    image: "/images/aod9604blue.png",
-    path: "/products/aod9604",
+    image:
+      "/images/aod9604blue.png",
+    path:
+      "/products/aod9604",
   };
 
-  const isOutOfStock = inventory !== null && inventory <= 0;
-  const isLimitedStock = inventory !== null && inventory > 0 && inventory <= 5;
+  const coaPath =
+    "/images/coas/8-16-aod9604-coa.pdf";
+
+  const isOutOfStock =
+    inventory !== null &&
+    inventory <= 0;
+
+  const isLimitedStock =
+    inventory !== null &&
+    inventory > 0 &&
+    inventory <= 5;
 
   const favoriteProduct = {
     id: product.id,
@@ -35,45 +54,79 @@ export default function AOD9604Page() {
   };
 
   useEffect(() => {
-    const fetchProductData = async () => {
-      try {
-        const response = await fetch("/api/products", {
-          cache: "no-store",
-        });
+    const fetchProductData =
+      async () => {
+        try {
+          const response =
+            await fetch(
+              "/api/products",
+              {
+                cache:
+                  "no-store",
+              }
+            );
 
-        const data = await response.json();
+          const data =
+            await response.json();
 
-        if (!data.success) return;
+          if (!data.success) {
+            return;
+          }
 
-        const aod = data.products.find(
-          (item: any) =>
-            item.slug === "aod9604" ||
-            item.slug === "aod9604-10mg" ||
-            item.id === "aod9604" ||
-            item.id === "aod9604-10mg" ||
-            item.id === "AOD-9604-10mg" ||
-            item.name?.toLowerCase().includes("aod")
-        );
+          const aod =
+            data.products.find(
+              (item: any) =>
+                item.slug ===
+                  "aod9604" ||
+                item.slug ===
+                  "aod9604-10mg" ||
+                item.id ===
+                  "aod9604" ||
+                item.id ===
+                  "aod9604-10mg" ||
+                item.id ===
+                  "AOD-9604-10mg" ||
+                item.name
+                  ?.toLowerCase()
+                  .includes("aod")
+            );
 
-        if (aod) {
-          setInventory(Number(aod.inventory ?? 0));
-          setPrice(Number(aod.price ?? 50));
-        } else {
+          if (aod) {
+            setInventory(
+              Number(
+                aod.inventory ??
+                  0
+              )
+            );
+
+            setPrice(
+              Number(
+                aod.price ??
+                  50
+              )
+            );
+          } else {
+            setInventory(null);
+            setPrice(50);
+          }
+        } catch (error) {
+          console.error(
+            "Failed to fetch AOD-9604 data:",
+            error
+          );
+
           setInventory(null);
           setPrice(50);
         }
-      } catch (error) {
-        console.error("Failed to fetch AOD-9604 data:", error);
-        setInventory(null);
-        setPrice(50);
-      }
-    };
+      };
 
     fetchProductData();
   }, []);
 
   const addToCart = () => {
-    if (isOutOfStock) return;
+    if (isOutOfStock) {
+      return;
+    }
 
     const cartProduct = {
       id: product.id,
@@ -84,50 +137,100 @@ export default function AOD9604Page() {
       path: product.path,
     };
 
-    const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const existingCart =
+      JSON.parse(
+        localStorage.getItem(
+          "cart"
+        ) || "[]"
+      );
 
-    const existingProduct = existingCart.find(
-      (item: any) => item.id === cartProduct.id
+    const existingProduct =
+      existingCart.find(
+        (item: any) =>
+          item.id ===
+          cartProduct.id
+      );
+
+    const updatedCart =
+      existingProduct
+        ? existingCart.map(
+            (item: any) =>
+              item.id ===
+              cartProduct.id
+                ? {
+                    ...item,
+                    quantity:
+                      item.quantity +
+                      quantity,
+                    price,
+                    path:
+                      product.path,
+                  }
+                : item
+          )
+        : [
+            ...existingCart,
+            cartProduct,
+          ];
+
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(
+        updatedCart
+      )
     );
 
-    const updatedCart = existingProduct
-      ? existingCart.map((item: any) =>
-          item.id === cartProduct.id
-            ? {
-                ...item,
-                quantity: item.quantity + quantity,
-                price,
-                path: product.path,
-              }
-            : item
-        )
-      : [...existingCart, cartProduct];
+    window.dispatchEvent(
+      new Event(
+        "cartUpdated"
+      )
+    );
 
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-    window.dispatchEvent(new Event("cartUpdated"));
     setAdded(true);
   };
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
+
+      {/* =========================================
+          PRODUCT HERO
+      ========================================= */}
       <section className="relative px-6 md:px-10 py-16 overflow-hidden">
+
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto">
+
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
+
+            {/* PRODUCT IMAGE */}
             <div className="flex items-center justify-center">
+
               <div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
-                <FavoriteButton product={favoriteProduct} />
+
+                <FavoriteButton
+                  product={
+                    favoriteProduct
+                  }
+                />
 
                 <img
-                  src={product.image}
-                  alt={product.name}
+                  src={
+                    product.image
+                  }
+                  alt={
+                    product.name
+                  }
                   className="w-full h-full object-cover"
                 />
+
               </div>
+
             </div>
 
+            {/* PRODUCT INFORMATION */}
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
+
               <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-4">
                 Research Peptide
               </p>
@@ -137,13 +240,21 @@ export default function AOD9604Page() {
               </h1>
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                High-purity AOD-9604 produced for laboratory research involving
-                growth hormone fragment studies, lipid metabolism pathways,
-                metabolic signaling, and body composition research models.
+                High-purity AOD-9604 produced
+                for laboratory research
+                involving growth hormone
+                fragment studies, lipid
+                metabolism pathways,
+                metabolic signaling, and
+                body composition research
+                models.
               </p>
 
               <p className="text-5xl font-black text-white mb-3">
-                ${price.toFixed(2)}
+                $
+                {price.toFixed(
+                  2
+                )}
               </p>
 
               {isLimitedStock && (
@@ -158,12 +269,18 @@ export default function AOD9604Page() {
                 </div>
               )}
 
-              {!isLimitedStock && !isOutOfStock && <div className="mb-8" />}
+              {!isLimitedStock &&
+                !isOutOfStock && (
+                  <div className="mb-8" />
+                )}
 
               <div className="h-px bg-white/10 mb-8" />
 
+              {/* SIZE + QUANTITY */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+
                 <div>
+
                   <p className="uppercase tracking-widest text-white/50 text-sm mb-4">
                     Size
                   </p>
@@ -171,18 +288,30 @@ export default function AOD9604Page() {
                   <div className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-7 py-4 text-sm font-semibold uppercase tracking-widest text-white">
                     10mg
                   </div>
+
                 </div>
 
                 <div>
+
                   <p className="uppercase tracking-widest text-white/50 text-sm mb-4">
                     Quantity
                   </p>
 
                   <div className="flex items-center w-fit rounded-full border border-white/10 bg-white/[0.04] p-2">
+
                     <button
                       onClick={() => {
-                        setQuantity((prev) => Math.max(1, prev - 1));
-                        setAdded(false);
+                        setQuantity(
+                          (prev) =>
+                            Math.max(
+                              1,
+                              prev - 1
+                            )
+                        );
+
+                        setAdded(
+                          false
+                        );
                       }}
                       className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08]"
                     >
@@ -195,28 +324,70 @@ export default function AOD9604Page() {
 
                     <button
                       onClick={() => {
-                        setQuantity((prev) =>
-                          inventory === null
-                            ? prev + 1
-                            : Math.min(inventory, prev + 1)
+                        setQuantity(
+                          (prev) =>
+                            inventory ===
+                            null
+                              ? prev +
+                                1
+                              : Math.min(
+                                  inventory,
+                                  prev +
+                                    1
+                                )
                         );
-                        setAdded(false);
+
+                        setAdded(
+                          false
+                        );
                       }}
-                      disabled={isOutOfStock}
+                      disabled={
+                        isOutOfStock
+                      }
                       className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08] disabled:opacity-40"
                     >
                       +
                     </button>
+
                   </div>
+
                 </div>
+
               </div>
 
+              {/* FREE GIFT */}
               <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
-                <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider text-center">
-Receive a Complimentary Gift With Any 8 Vials                </p>
+
+                <div className="flex items-center justify-center gap-2">
+
+                  <svg
+                    className="w-5 h-5 text-blue-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={
+                        2
+                      }
+                      d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7m16 0H4m16 0V8a1 1 0 00-1-1h-3.5M4 12V8a1 1 0 011-1h3.5m0 0a1.5 1.5 0 113 0m-3 0h3m0 0a1.5 1.5 0 113 0"
+                    />
+                  </svg>
+
+                  <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider text-center">
+                    Receive a Complimentary
+                    Gift With Any 8 Vials
+                  </p>
+
+                </div>
+
               </div>
 
+              {/* BUTTONS */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+
                 {isOutOfStock ? (
                   <button
                     disabled
@@ -226,11 +397,20 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
                   </button>
                 ) : (
                   <button
-                    onClick={addToCart}
+                    onClick={
+                      addToCart
+                    }
                     className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
                   >
-                    <ShoppingCart size={22} />
-                    {added ? "Added To Cart" : "Add To Cart"}
+                    <ShoppingCart
+                      size={
+                        22
+                      }
+                    />
+
+                    {added
+                      ? "Added To Cart"
+                      : "Add To Cart"}
                   </button>
                 )}
 
@@ -249,42 +429,186 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
                 </a>
 
                 <a
-                  href="/coas"
+                  href={
+                    coaPath
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
                 >
-                  View All COAs
+                  View Latest COA
                 </a>
+
               </div>
+
             </div>
+
           </div>
+
         </div>
+
       </section>
 
-      <section className="px-6 md:px-10 pb-10">
-        <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
-          {[
-            [FlaskConical, "Research Use Only", "Strictly for laboratory research."],
-            [ShieldCheck, "Third-Party Tested", "Independent lab verified when available."],
-            [ClipboardCheck, "Batch Documented", "Documentation available for verified lots."],
-            [ShieldCheck, "Quality Target", "99%+ purity target."],
-          ].map(([Icon, title, text]: any) => (
-            <div key={title} className="flex gap-4">
-              <Icon className="text-[#A5D8FF]" size={34} />
-
-              <div>
-                <h3 className="text-white uppercase tracking-widest font-bold text-sm">
-                  {title}
-                </h3>
-
-                <p className="text-white/50 text-sm mt-1">{text}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
+      {/* =========================================
+          COA SUMMARY
+      ========================================= */}
       <section className="px-6 md:px-10 pb-16">
+
+        <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
+
+          <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
+
+            <div>
+
+              <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-xs mb-2">
+                Freedom Diagnostics
+              </p>
+
+              <h3 className="text-2xl font-black text-white mb-2">
+                Latest Certificate of
+                Analysis
+              </h3>
+
+              <p className="text-white/40 text-sm mb-5">
+                Reported August 16, 2026
+              </p>
+
+              <div className="flex flex-wrap gap-3">
+
+                <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
+                  <span className="text-green-400 font-semibold">
+                    ✓ Identity Confirmed
+                  </span>
+                </div>
+
+                <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+                  <span className="text-[#A5D8FF] font-semibold">
+                    99.27% Purity
+                  </span>
+                </div>
+
+                <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+                  <span className="text-[#A5D8FF] font-semibold">
+                    15.32mg Content
+                  </span>
+                </div>
+
+                <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
+                  <span className="text-white/70">
+                    Lot: RED CAP -1
+                  </span>
+                </div>
+
+              </div>
+
+            </div>
+
+            <div className="flex flex-col items-center md:items-end">
+
+              <div className="text-5xl font-black text-[#A5D8FF]">
+                99.27%
+              </div>
+
+              <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
+                Purity
+              </div>
+
+              <a
+                href={
+                  coaPath
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
+              >
+                View Full COA
+              </a>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* =========================================
+          QUALITY FEATURES
+      ========================================= */}
+      <section className="px-6 md:px-10 pb-10">
+
+        <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+
+          {[
+            [
+              FlaskConical,
+              "Research Use Only",
+              "Strictly for laboratory research.",
+            ],
+            [
+              ShieldCheck,
+              "Third-Party Tested",
+              "Independent lab verified when available.",
+            ],
+            [
+              ClipboardCheck,
+              "Batch Documented",
+              "Documentation available for verified lots.",
+            ],
+            [
+              ShieldCheck,
+              "Quality Target",
+              "99%+ purity target.",
+            ],
+          ].map(
+            (
+              [
+                Icon,
+                title,
+                text,
+              ]: any
+            ) => (
+              <div
+                key={
+                  title
+                }
+                className="flex gap-4"
+              >
+
+                <Icon
+                  className="text-[#A5D8FF]"
+                  size={
+                    34
+                  }
+                />
+
+                <div>
+
+                  <h3 className="text-white uppercase tracking-widest font-bold text-sm">
+                    {title}
+                  </h3>
+
+                  <p className="text-white/50 text-sm mt-1">
+                    {text}
+                  </p>
+
+                </div>
+
+              </div>
+            )
+          )}
+
+        </div>
+
+      </section>
+
+      {/* =========================================
+          RESEARCH PROFILE
+      ========================================= */}
+      <section className="px-6 md:px-10 pb-16">
+
         <div className="max-w-7xl mx-auto rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
+
           <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
             Research Profile
           </p>
@@ -294,12 +618,17 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
           </h2>
 
           <p className="text-white/70 text-lg leading-relaxed max-w-4xl mb-8">
-            AOD-9604 is a synthetic peptide fragment studied in laboratory
-            research for its relationship to growth hormone fragment pathways,
-            lipid metabolism, metabolic signaling, and body composition models.
+            AOD-9604 is a synthetic peptide
+            fragment studied in laboratory
+            research for its relationship to
+            growth hormone fragment pathways,
+            lipid metabolism, metabolic
+            signaling, and body composition
+            models.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+
             {[
               [
                 "GH Fragment Research",
@@ -317,45 +646,72 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
                 "Storage",
                 "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
               ],
-            ].map(([title, text]) => (
-              <div
-                key={title}
-                className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
-              >
-                <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
+            ].map(
+              ([
+                title,
+                text,
+              ]) => (
+                <div
+                  key={
+                    title
+                  }
+                  className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
+                >
 
-                <p className="text-white/60 text-sm leading-relaxed">{text}</p>
-              </div>
-            ))}
+                  <h3 className="text-white text-lg font-bold mb-3">
+                    {title}
+                  </h3>
+
+                  <p className="text-white/60 text-sm leading-relaxed">
+                    {text}
+                  </p>
+
+                </div>
+              )
+            )}
+
           </div>
+
         </div>
+
       </section>
 
-      {/* Frequently Researched Together */}
+      {/* =========================================
+          FREQUENTLY RESEARCHED TOGETHER
+      ========================================= */}
       <section className="px-6 md:px-10 pb-16">
+
         <div className="max-w-7xl mx-auto">
+
           <div className="mb-8">
+
             <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
               Related Research
             </p>
 
             <h2 className="text-3xl md:text-4xl font-black text-white">
-              Frequently Researched Together
+              Frequently Researched
+              Together
             </h2>
+
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* 5-Amino-1MQ */}
+
+            {/* 5-AMINO-1MQ */}
             <a
               href="/products/5amino1mq"
               className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
             >
+
               <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+
                 <img
                   src="/images/5amino1mqblue.png"
                   alt="5-Amino-1MQ"
                   className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
                 />
+
               </div>
 
               <h3 className="text-2xl font-black text-white mb-2">
@@ -363,26 +719,32 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
               </h3>
 
               <p className="text-white/60 text-sm leading-relaxed mb-4">
-                Studied in NNMT-related pathways, adipocyte signaling, and
-                metabolic regulation research models.
+                Studied in NNMT-related
+                pathways, adipocyte signaling,
+                and metabolic regulation
+                research models.
               </p>
 
               <span className="text-[#A5D8FF] font-semibold">
                 View Product →
               </span>
+
             </a>
 
-            {/* Tesamorelin */}
+            {/* TESAMORELIN */}
             <a
               href="/products/tesamorelin"
               className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
             >
+
               <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+
                 <img
                   src="/images/tesa5blue.png"
                   alt="Tesamorelin"
                   className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
                 />
+
               </div>
 
               <h3 className="text-2xl font-black text-white mb-2">
@@ -390,13 +752,16 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
               </h3>
 
               <p className="text-white/60 text-sm leading-relaxed mb-4">
-                Researched in GH-axis signaling, metabolic regulation, and body
+                Researched in GH-axis
+                signaling, metabolic
+                regulation, and body
                 composition models.
               </p>
 
               <span className="text-[#A5D8FF] font-semibold">
                 View Product →
               </span>
+
             </a>
 
             {/* MOTS-C */}
@@ -404,53 +769,88 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
               href="/products/motsc"
               className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
             >
+
               <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
+
                 <img
                   src="/images/motscblue.png"
                   alt="MOTS-C"
                   className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
                 />
+
               </div>
 
-              <h3 className="text-2xl font-black text-white mb-2">MOTS-C</h3>
+              <h3 className="text-2xl font-black text-white mb-2">
+                MOTS-C
+              </h3>
 
               <p className="text-white/60 text-sm leading-relaxed mb-4">
-                Studied in mitochondrial signaling, cellular energy balance,
-                and metabolic pathway research.
+                Studied in mitochondrial
+                signaling, cellular energy
+                balance, and metabolic
+                pathway research.
               </p>
 
               <span className="text-[#A5D8FF] font-semibold">
                 View Product →
               </span>
+
             </a>
+
           </div>
+
         </div>
+
       </section>
 
+      {/* =========================================
+          LEGAL / DISCLAIMERS
+      ========================================= */}
       {[
         {
-          title: "FDA Disclaimer",
+          title:
+            "FDA Disclaimer",
+
           text:
             "These statements have not been evaluated by the U.S. Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only and are not for human or veterinary consumption.",
         },
+
         {
-          title: "Customer Acknowledgment",
+          title:
+            "Customer Acknowledgment",
+
           text:
             "By purchasing this product, the customer acknowledges that this material is intended solely for lawful laboratory research purposes and will not be used for human consumption, veterinary use, medical use, diagnosis, treatment, cure, or prevention of disease. Apexx Biolabs does not provide dosing instructions, treatment recommendations, medical advice, or guidance regarding human use of any product.",
         },
-      ].map((section) => (
-        <section key={section.title} className="px-6 md:px-10 pb-16">
-          <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
-            <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-sm mb-4">
-              {section.title}
-            </h3>
+      ].map(
+        (section) => (
+          <section
+            key={
+              section.title
+            }
+            className="px-6 md:px-10 pb-16"
+          >
 
-            <p className="text-white/60 text-sm leading-relaxed">
-              {section.text}
-            </p>
-          </div>
-        </section>
-      ))}
+            <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
+
+              <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-sm mb-4">
+                {
+                  section.title
+                }
+              </h3>
+
+              <p className="text-white/60 text-sm leading-relaxed">
+                {
+                  section.text
+                }
+              </p>
+
+            </div>
+
+          </section>
+        )
+      )}
+
     </main>
   );
 }

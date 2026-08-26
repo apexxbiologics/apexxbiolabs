@@ -942,7 +942,7 @@ export default function AdminOrdersPage() {
                 )}
               </div>
 
-              <div className="max-h-80 space-y-3 overflow-y-auto rounded-2xl border border-white/10 bg-black/10 p-4">
+              <div className="space-y-3 rounded-2xl border border-white/10 bg-black/10 p-4">
                 {loadingConversation ? (
                   <p className="py-6 text-center text-sm text-white/45">Loading conversation...</p>
                 ) : conversationMessages.length === 0 ? (

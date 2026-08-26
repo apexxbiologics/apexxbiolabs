@@ -94,6 +94,13 @@ export default function AdminOrdersPage() {
   const [loggingIn, setLoggingIn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [contactOrder, setContactOrder] = useState<Order | null>(null);
+  const [contactSubject, setContactSubject] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
+  const [sendingCustomerEmail, setSendingCustomerEmail] = useState(false);
+  const [contactError, setContactError] = useState("");
+  const [contactSuccess, setContactSuccess] = useState("");
+
   const fetchOrders = async () => {
     try {
       const response = await fetch("/api/admin/orders", {
@@ -290,6 +297,71 @@ export default function AdminOrdersPage() {
         ...current,
         [order.id]: false,
       }));
+    }
+  };
+
+  const openContactModal = (order: Order) => {
+    setContactOrder(order);
+    setContactSubject(`Regarding Your Apexx Biolabs Order ${order.order_number}`);
+    setContactMessage("");
+    setContactError("");
+    setContactSuccess("");
+  };
+
+  const closeContactModal = () => {
+    if (sendingCustomerEmail) return;
+    setContactOrder(null);
+    setContactSubject("");
+    setContactMessage("");
+    setContactError("");
+    setContactSuccess("");
+  };
+
+  const handleContactCustomer = async () => {
+    if (!contactOrder) return;
+
+    const subject = contactSubject.trim();
+    const message = contactMessage.trim();
+
+    if (!subject) {
+      setContactError("Please enter an email subject.");
+      return;
+    }
+
+    if (!message) {
+      setContactError("Please enter a message.");
+      return;
+    }
+
+    try {
+      setSendingCustomerEmail(true);
+      setContactError("");
+      setContactSuccess("");
+
+      const response = await fetch("/api/admin/contact-customer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId: contactOrder.id,
+          subject,
+          message,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        setContactError(result.error || "The email could not be sent.");
+        return;
+      }
+
+      setContactSuccess(`Email sent successfully to ${contactOrder.customer_email}.`);
+      setContactMessage("");
+    } catch (error) {
+      console.error("Contact customer error:", error);
+      setContactError("Something went wrong while sending the email.");
+    } finally {
+      setSendingCustomerEmail(false);
     }
   };
 
@@ -727,39 +799,34 @@ export default function AdminOrdersPage() {
                         </td>
 
                         <td className="p-5">
-                          {order.status ===
-                          "awaiting_payment" ? (
+                          <div className="flex min-w-[180px] flex-col items-start gap-3">
+                            {order.status === "awaiting_payment" ? (
+                              <button
+                                type="button"
+                                onClick={() => handleMarkPaid(order.id)}
+                                disabled={markingPaid[order.id]}
+                                className="rounded-full bg-blue-400 px-5 py-2 text-sm font-black text-[#081526] transition-all hover:bg-blue-300 disabled:cursor-not-allowed disabled:opacity-50"
+                              >
+                                {markingPaid[order.id] ? "Updating..." : "Mark Paid"}
+                              </button>
+                            ) : order.status === "paid" ? (
+                              <span className="font-bold text-green-400">Paid</span>
+                            ) : order.status === "shipped" ? (
+                              <span className="font-bold text-blue-300">Shipped</span>
+                            ) : (
+                              <span className="text-sm text-white/40">
+                                {order.status.replaceAll("_", " ")}
+                              </span>
+                            )}
+
                             <button
                               type="button"
-                              onClick={() =>
-                                handleMarkPaid(order.id)
-                              }
-                              disabled={
-                                markingPaid[order.id]
-                              }
-                              className="rounded-full bg-blue-400 px-5 py-2 text-sm font-black text-[#081526] transition-all hover:bg-blue-300 disabled:cursor-not-allowed disabled:opacity-50"
+                              onClick={() => openContactModal(order)}
+                              className="rounded-full border border-blue-300/30 bg-blue-500/10 px-5 py-2 text-sm font-bold text-blue-200 transition-all hover:border-blue-300/60 hover:bg-blue-500/20 hover:text-white"
                             >
-                              {markingPaid[order.id]
-                                ? "Updating..."
-                                : "Mark Paid"}
+                              Contact Customer
                             </button>
-                          ) : order.status === "paid" ? (
-                            <span className="font-bold text-green-400">
-                              Paid
-                            </span>
-                          ) : order.status ===
-                            "shipped" ? (
-                            <span className="font-bold text-blue-300">
-                              Shipped
-                            </span>
-                          ) : (
-                            <span className="text-sm text-white/40">
-                              {order.status.replaceAll(
-                                "_",
-                                " "
-                              )}
-                            </span>
-                          )}
+                          </div>
                         </td>
                       </tr>
                     );
@@ -770,6 +837,99 @@ export default function AdminOrdersPage() {
           )}
         </div>
       </div>
+
+      {contactOrder && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-8 backdrop-blur-sm"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) closeContactModal();
+          }}
+        >
+          <div className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-[32px] border border-blue-300/20 bg-[#0b1b30] p-6 shadow-2xl sm:p-8">
+            <div className="mb-7 flex items-start justify-between gap-4">
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.35em] text-blue-300">Direct Customer Email</p>
+                <h2 className="text-3xl font-black text-white">Contact Customer</h2>
+                <p className="mt-3 text-sm leading-6 text-white/55">
+                  Send a one-to-one order-related email. This stays separate from promotional campaigns.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeContactModal}
+                disabled={sendingCustomerEmail}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xl text-white/60 transition-all hover:bg-white/10 hover:text-white disabled:opacity-40"
+                aria-label="Close contact customer window"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="mb-6 grid gap-3 rounded-2xl border border-blue-300/15 bg-white/[0.04] p-5 sm:grid-cols-2">
+              <div>
+                <p className="text-xs uppercase tracking-widest text-white/40">Customer</p>
+                <p className="mt-1 font-bold text-white">{contactOrder.first_name} {contactOrder.last_name}</p>
+                <p className="mt-1 break-all text-sm text-blue-200">{contactOrder.customer_email}</p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-widest text-white/40">Order</p>
+                <p className="mt-1 font-bold text-white">{contactOrder.order_number}</p>
+                <p className="mt-1 text-sm capitalize text-white/55">{contactOrder.status.replaceAll("_", " ")}</p>
+              </div>
+            </div>
+
+            <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-blue-200">Subject</label>
+            <input
+              type="text"
+              value={contactSubject}
+              onChange={(event) => setContactSubject(event.target.value)}
+              maxLength={180}
+              className="mb-5 w-full rounded-2xl border border-white/10 bg-white/[0.06] px-5 py-4 text-white outline-none placeholder:text-white/30 focus:border-blue-300/50"
+            />
+
+            <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-blue-200">Message</label>
+            <textarea
+              value={contactMessage}
+              onChange={(event) => setContactMessage(event.target.value)}
+              rows={9}
+              maxLength={5000}
+              placeholder={`Hi ${contactOrder.first_name || "there"},\n\nWe're reaching out regarding your order...`}
+              className="w-full resize-y rounded-2xl border border-white/10 bg-white/[0.06] px-5 py-4 leading-7 text-white outline-none placeholder:text-white/30 focus:border-blue-300/50"
+            />
+
+            <div className="mt-2 flex justify-between text-xs text-white/35">
+              <span>Line breaks are preserved.</span>
+              <span>{contactMessage.length}/5000</span>
+            </div>
+
+            {contactError && (
+              <div className="mt-5 rounded-2xl border border-red-400/20 bg-red-500/10 px-5 py-4 text-sm font-bold text-red-200">{contactError}</div>
+            )}
+            {contactSuccess && (
+              <div className="mt-5 rounded-2xl border border-green-400/20 bg-green-500/10 px-5 py-4 text-sm font-bold text-green-200">{contactSuccess}</div>
+            )}
+
+            <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={closeContactModal}
+                disabled={sendingCustomerEmail}
+                className="rounded-full border border-white/10 px-6 py-3 font-bold text-white/70 transition-all hover:bg-white/5 hover:text-white disabled:opacity-40"
+              >
+                {contactSuccess ? "Close" : "Cancel"}
+              </button>
+              <button
+                type="button"
+                onClick={handleContactCustomer}
+                disabled={sendingCustomerEmail || !contactSubject.trim() || !contactMessage.trim()}
+                className="rounded-full bg-blue-400 px-7 py-3 font-black uppercase tracking-widest text-[#081526] transition-all hover:bg-blue-300 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {sendingCustomerEmail ? "Sending..." : "Send Email"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

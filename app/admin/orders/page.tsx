@@ -942,7 +942,7 @@ export default function AdminOrdersPage() {
                 )}
               </div>
 
-              <div className="space-y-3 rounded-2xl border border-white/10 bg-black/10 p-4">
+              <div className="conversation-scrollbar max-h-80 space-y-3 overflow-y-auto rounded-2xl border border-white/10 bg-black/10 p-4">
                 {loadingConversation ? (
                   <p className="py-6 text-center text-sm text-white/45">Loading conversation...</p>
                 ) : conversationMessages.length === 0 ? (
@@ -1024,6 +1024,32 @@ export default function AdminOrdersPage() {
                     : "Send Email"}
               </button>
             </div>
+
+            <style jsx>{`
+              .conversation-scrollbar {
+                scrollbar-width: thin;
+                scrollbar-color: #3b82f6 #0b1b30;
+              }
+
+              .conversation-scrollbar::-webkit-scrollbar {
+                width: 8px;
+              }
+
+              .conversation-scrollbar::-webkit-scrollbar-track {
+                background: #0b1b30;
+                border-radius: 999px;
+              }
+
+              .conversation-scrollbar::-webkit-scrollbar-thumb {
+                background: linear-gradient(180deg, #60a5fa, #2563eb);
+                border: 2px solid #0b1b30;
+                border-radius: 999px;
+              }
+
+              .conversation-scrollbar::-webkit-scrollbar-thumb:hover {
+                background: linear-gradient(180deg, #93c5fd, #3b82f6);
+              }
+            `}</style>
           </div>
         </div>
       )}

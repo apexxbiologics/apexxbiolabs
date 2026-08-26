@@ -31,6 +31,15 @@ function normalizeEmailAddress(value: string) {
   return String(angleMatch?.[1] || value).trim().toLowerCase();
 }
 
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 export async function POST(req: NextRequest) {
   try {
     const webhookSecret = process.env.RESEND_WEBHOOK_SECRET;
@@ -146,6 +155,98 @@ export async function POST(req: NextRequest) {
     if (insertError) {
       console.error("Inbound conversation save error:", insertError);
       return new NextResponse("Could not save inbound email", { status: 500 });
+    }
+
+    // Send a separate phone/inbox notification to Apexx after the reply is safely saved.
+    // Notification failures do NOT block or remove the saved customer reply.
+    try {
+      const { data: orderForNotification } = await supabaseAdmin
+        .from("orders")
+        .select("order_number, first_name, last_name, customer_email")
+        .eq("id", matchedOrderId)
+        .maybeSingle();
+
+      const customerName = `${String(orderForNotification?.first_name || "").trim()} ${String(
+        orderForNotification?.last_name || ""
+      ).trim()}`.trim() || "Customer";
+
+      const orderNumber = String(orderForNotification?.order_number || "Unknown Order");
+      const customerEmail = normalizeEmailAddress(
+        String(orderForNotification?.customer_email || (receivedEmail as any).from || "")
+      );
+      const inboundSubject = String((receivedEmail as any).subject || "Customer reply");
+
+      const { error: notificationError } = await resend.emails.send({
+        from: "Apexx Biolabs <orders@apexxbiolabs.com>",
+        to: "orders@apexxbiolabs.com",
+        subject: `Customer Reply • ${orderNumber}`,
+        html: `
+          <div style="margin:0;padding:0;background:#f8fbff;font-family:Arial,Helvetica,sans-serif;">
+            <div style="max-width:680px;margin:0 auto;padding:28px 16px;">
+              <div style="overflow:hidden;border:1px solid #dbeafe;border-radius:26px;background:#ffffff;box-shadow:0 18px 45px rgba(30,58,138,0.10);">
+                <div style="background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff);padding:30px 24px;text-align:center;border-bottom:1px solid #dbeafe;">
+                  <p style="margin:0 0 10px;color:#3b82f6;font-size:12px;letter-spacing:4px;text-transform:uppercase;">
+                    Customer Reply Notification
+                  </p>
+                  <h1 style="margin:0;color:#06111f;font-size:30px;letter-spacing:2px;">
+                    APEXX BIOLABS
+                  </h1>
+                </div>
+
+                <div style="padding:30px 24px;color:#0f172a;">
+                  <h2 style="margin:0 0 8px;color:#06111f;font-size:25px;">
+                    New reply for ${escapeHtml(orderNumber)}
+                  </h2>
+
+                  <p style="margin:0 0 24px;color:#64748b;line-height:1.7;">
+                    ${escapeHtml(customerName)} replied to an Apexx order conversation.
+                  </p>
+
+                  <div style="margin-bottom:22px;border:1px solid #bfdbfe;border-radius:18px;background:#eff6ff;padding:20px;">
+                    <p style="margin:0 0 8px;color:#1e3a8a;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:2px;">
+                      Customer
+                    </p>
+                    <p style="margin:0;color:#06111f;font-weight:800;">
+                      ${escapeHtml(customerName)}
+                    </p>
+                    <p style="margin:5px 0 0;color:#475569;font-size:14px;">
+                      ${escapeHtml(customerEmail)}
+                    </p>
+                  </div>
+
+                  <div style="margin-bottom:22px;border:1px solid #e2e8f0;border-radius:18px;padding:20px;">
+                    <p style="margin:0 0 8px;color:#64748b;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:2px;">
+                      Subject
+                    </p>
+                    <p style="margin:0;color:#0f172a;font-weight:800;">
+                      ${escapeHtml(inboundSubject)}
+                    </p>
+                  </div>
+
+                  <div style="border:1px solid #e2e8f0;border-radius:18px;padding:20px;">
+                    <p style="margin:0 0 10px;color:#64748b;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:2px;">
+                      Message
+                    </p>
+                    <div style="color:#334155;font-size:15px;line-height:1.75;white-space:pre-wrap;">
+                      ${escapeHtml(bodyText)}
+                    </div>
+                  </div>
+
+                  <p style="margin:24px 0 0;color:#64748b;font-size:13px;line-height:1.7;">
+                    Open Apexx Admin → Orders → Conversation / Email to send the branded reply.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `,
+      });
+
+      if (notificationError) {
+        console.error("Customer reply notification email error:", notificationError);
+      }
+    } catch (notificationError) {
+      console.error("Customer reply notification failed:", notificationError);
     }
 
     return NextResponse.json({ success: true });

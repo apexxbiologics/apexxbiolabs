@@ -19,6 +19,16 @@ type Order = {
   created_at: string;
 };
 
+type ConversationMessage = {
+  id: string;
+  direction: "outbound" | "inbound";
+  subject: string;
+  body_text: string;
+  from_email: string | null;
+  to_email: string | null;
+  created_at: string;
+};
+
 function detectCarrier(
   trackingNumber: string
 ): Exclude<Carrier, "AUTO"> | null {
@@ -100,6 +110,8 @@ export default function AdminOrdersPage() {
   const [sendingCustomerEmail, setSendingCustomerEmail] = useState(false);
   const [contactError, setContactError] = useState("");
   const [contactSuccess, setContactSuccess] = useState("");
+  const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
+  const [loadingConversation, setLoadingConversation] = useState(false);
 
   const fetchOrders = async () => {
     try {
@@ -300,12 +312,45 @@ export default function AdminOrdersPage() {
     }
   };
 
+  const loadConversation = async (order: Order) => {
+    try {
+      setLoadingConversation(true);
+      const response = await fetch(
+        `/api/admin/order-conversation?orderId=${encodeURIComponent(order.id)}`,
+        { cache: "no-store" }
+      );
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        setConversationMessages([]);
+        setContactError(result.error || "Conversation history could not be loaded.");
+        return;
+      }
+
+      const messages = (result.messages || []) as ConversationMessage[];
+      setConversationMessages(messages);
+
+      if (messages.length > 0) {
+        const firstSubject = messages[0].subject || `Regarding Your Apexx Biolabs Order ${order.order_number}`;
+        setContactSubject(/^re:/i.test(firstSubject) ? firstSubject : `Re: ${firstSubject}`);
+      }
+    } catch (error) {
+      console.error("Conversation load error:", error);
+      setConversationMessages([]);
+      setContactError("Conversation history could not be loaded.");
+    } finally {
+      setLoadingConversation(false);
+    }
+  };
+
   const openContactModal = (order: Order) => {
     setContactOrder(order);
     setContactSubject(`Regarding Your Apexx Biolabs Order ${order.order_number}`);
     setContactMessage("");
     setContactError("");
     setContactSuccess("");
+    setConversationMessages([]);
+    void loadConversation(order);
   };
 
   const closeContactModal = () => {
@@ -315,6 +360,7 @@ export default function AdminOrdersPage() {
     setContactMessage("");
     setContactError("");
     setContactSuccess("");
+    setConversationMessages([]);
   };
 
   const handleContactCustomer = async () => {
@@ -355,8 +401,13 @@ export default function AdminOrdersPage() {
         return;
       }
 
-      setContactSuccess(`Email sent successfully to ${contactOrder.customer_email}.`);
+      setContactSuccess(
+        result.warning
+          ? `Email sent to ${contactOrder.customer_email}. ${result.warning}`
+          : `Email sent successfully to ${contactOrder.customer_email}.`
+      );
       setContactMessage("");
+      await loadConversation(contactOrder);
     } catch (error) {
       console.error("Contact customer error:", error);
       setContactError("Something went wrong while sending the email.");
@@ -824,7 +875,7 @@ export default function AdminOrdersPage() {
                               onClick={() => openContactModal(order)}
                               className="rounded-full border border-blue-300/30 bg-blue-500/10 px-5 py-2 text-sm font-bold text-blue-200 transition-all hover:border-blue-300/60 hover:bg-blue-500/20 hover:text-white"
                             >
-                              Contact Customer
+                              Conversation / Email
                             </button>
                           </div>
                         </td>
@@ -848,10 +899,10 @@ export default function AdminOrdersPage() {
           <div className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-[32px] border border-blue-300/20 bg-[#0b1b30] p-6 shadow-2xl sm:p-8">
             <div className="mb-7 flex items-start justify-between gap-4">
               <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.35em] text-blue-300">Direct Customer Email</p>
-                <h2 className="text-3xl font-black text-white">Contact Customer</h2>
+                <p className="mb-2 text-xs uppercase tracking-[0.35em] text-blue-300">Order Conversation</p>
+                <h2 className="text-3xl font-black text-white">Customer Conversation</h2>
                 <p className="mt-3 text-sm leading-6 text-white/55">
-                  Send a one-to-one order-related email. This stays separate from promotional campaigns.
+                  View the order conversation and send a branded Apexx reply. This stays separate from promotional campaigns.
                 </p>
               </div>
               <button
@@ -875,6 +926,48 @@ export default function AdminOrdersPage() {
                 <p className="text-xs uppercase tracking-widest text-white/40">Order</p>
                 <p className="mt-1 font-bold text-white">{contactOrder.order_number}</p>
                 <p className="mt-1 text-sm capitalize text-white/55">{contactOrder.status.replaceAll("_", " ")}</p>
+              </div>
+            </div>
+
+            <div className="mb-7">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.25em] text-blue-300">Conversation</p>
+                  <p className="mt-1 text-sm text-white/45">Customer replies will appear here after the Resend inbound webhook is connected.</p>
+                </div>
+                {conversationMessages.length > 0 && (
+                  <span className="rounded-full border border-blue-300/20 bg-blue-500/10 px-3 py-1 text-xs font-bold text-blue-200">
+                    {conversationMessages.length} message{conversationMessages.length === 1 ? "" : "s"}
+                  </span>
+                )}
+              </div>
+
+              <div className="max-h-80 space-y-3 overflow-y-auto rounded-2xl border border-white/10 bg-black/10 p-4">
+                {loadingConversation ? (
+                  <p className="py-6 text-center text-sm text-white/45">Loading conversation...</p>
+                ) : conversationMessages.length === 0 ? (
+                  <p className="py-6 text-center text-sm text-white/45">No saved messages yet. Your first email will start this conversation.</p>
+                ) : (
+                  conversationMessages.map((item) => (
+                    <div
+                      key={item.id}
+                      className={`rounded-2xl border p-4 ${
+                        item.direction === "outbound"
+                          ? "ml-6 border-blue-300/20 bg-blue-500/10"
+                          : "mr-6 border-green-300/20 bg-green-500/10"
+                      }`}
+                    >
+                      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                        <span className={`text-xs font-black uppercase tracking-widest ${item.direction === "outbound" ? "text-blue-200" : "text-green-200"}`}>
+                          {item.direction === "outbound" ? "Apexx Biolabs" : "Customer"}
+                        </span>
+                        <span className="text-xs text-white/35">{new Date(item.created_at).toLocaleString()}</span>
+                      </div>
+                      <p className="mb-2 text-sm font-bold text-white/85">{item.subject}</p>
+                      <p className="whitespace-pre-wrap break-words text-sm leading-6 text-white/65">{item.body_text}</p>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
 
@@ -924,7 +1017,11 @@ export default function AdminOrdersPage() {
                 disabled={sendingCustomerEmail || !contactSubject.trim() || !contactMessage.trim()}
                 className="rounded-full bg-blue-400 px-7 py-3 font-black uppercase tracking-widest text-[#081526] transition-all hover:bg-blue-300 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {sendingCustomerEmail ? "Sending..." : "Send Email"}
+                {sendingCustomerEmail
+                  ? "Sending..."
+                  : conversationMessages.length > 0
+                    ? "Send Reply"
+                    : "Send Email"}
               </button>
             </div>
           </div>

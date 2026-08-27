@@ -1316,7 +1316,7 @@ export async function POST(request: Request) {
                             </p>
 
                             <p style="margin:0; color:#0f172a !important; font-size:22px; font-weight:900;">
-                              apexxbiolabs7@gmail.com
+                              apexxbiolabs7
                             </p>
 
                           </div>

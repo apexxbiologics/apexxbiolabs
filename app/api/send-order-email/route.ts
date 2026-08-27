@@ -1270,19 +1270,53 @@ export async function POST(request: Request) {
                         <div style="text-align:center;">
 
                           <p style="color:#475569; line-height:1.6; margin:0 0 18px;">
-                            You can complete your Zelle payment by scanning
-                            the QR code or by sending payment manually using
-                            the email below.
+                            Paying from a phone? Use the Zelle username below.
+                            If you are viewing this email on another device,
+                            you can also scan the QR code.
                           </p>
+
+                          <div style="background:linear-gradient(135deg,#eaf4ff,#ffffff); border:1px solid #bfdbfe; border-radius:18px; padding:24px; margin:18px 0;">
+
+                            <p style="margin:0 0 10px; color:#2563eb; font-size:13px; text-transform:uppercase; letter-spacing:1.5px; font-weight:bold;">
+                              Easiest On Your Phone
+                            </p>
+
+                            <h4 style="margin:0 0 14px; color:#06111f; font-size:20px;">
+                              Pay Using Zelle Username
+                            </h4>
+
+                            <p style="margin:0 0 8px; color:#475569; font-size:14px;">
+                              Zelle Username
+                            </p>
+
+                            <div style="display:inline-block; background:#ffffff; border:2px solid #93c5fd; border-radius:14px; padding:14px 20px; margin:0 auto 12px;">
+                              <p style="margin:0; color:#0f172a !important; font-size:25px; font-weight:900; letter-spacing:0.5px; word-break:break-all;">
+                                apexxbiolabs7
+                              </p>
+                            </div>
+
+                            <p style="margin:0; color:#64748b; font-size:13px; line-height:1.6;">
+                              Press and hold the username above to copy it,
+                              then open your bank app, choose Zelle, and paste it.
+                            </p>
+
+                            <p style="margin:12px 0 0; color:#64748b; font-size:13px; line-height:1.5;">
+                              Recipient should show as
+                              <strong style="color:#06111f;">
+                                APEXX BIOLABS LLC
+                              </strong>.
+                            </p>
+
+                          </div>
 
                           <div style="background:#ffffff; border:1px solid #bfdbfe; border-radius:18px; padding:22px; margin:18px 0;">
 
                             <p style="margin:0 0 10px; color:#3b82f6; font-size:13px; text-transform:uppercase; letter-spacing:1.5px;">
-                              Option 1
+                              Or Scan To Pay
                             </p>
 
                             <h4 style="margin:0 0 14px; color:#06111f; font-size:18px;">
-                              Scan Zelle QR Code
+                              Zelle QR Code
                             </h4>
 
                             <img
@@ -1293,30 +1327,7 @@ export async function POST(request: Request) {
                             />
 
                             <p style="margin:0; color:#64748b; font-size:13px; line-height:1.5;">
-                              Recipient should show as
-                              <strong style="color:#06111f;">
-                                APEXX BIOLABS LLC
-                              </strong>.
-                            </p>
-
-                          </div>
-
-                          <div style="background:linear-gradient(135deg,#eaf4ff,#ffffff); border:1px solid #bfdbfe; border-radius:18px; padding:22px; margin:18px 0;">
-
-                            <p style="margin:0 0 10px; color:#2563eb; font-size:13px; text-transform:uppercase; letter-spacing:1.5px; font-weight:bold;">
-                              Option 2
-                            </p>
-
-                            <h4 style="margin:0 0 12px; color:#06111f; font-size:18px;">
-                              Send Using Zelle Email
-                            </h4>
-
-                            <p style="margin:0 0 6px; color:#475569; font-size:14px;">
-                              Zelle Recipient
-                            </p>
-
-                            <p style="margin:0; color:#0f172a !important; font-size:22px; font-weight:900;">
-                              apexxbiolabs7
+                              Best when this email is open on a computer or another device.
                             </p>
 
                           </div>
@@ -1326,18 +1337,27 @@ export async function POST(request: Request) {
                       : ""
                   }
 
-                  <div style="background:#ffffff; border-left:4px solid #60a5fa; padding:18px; border-radius:14px; margin-top:24px;">
+                  <div style="background:#ffffff; border-left:4px solid #60a5fa; padding:20px; border-radius:14px; margin-top:24px;">
 
                     <p style="margin:0; color:#06111f; font-weight:bold;">
                       Payment Note
                     </p>
 
-                    <p style="margin:8px 0 0; color:#1e3a8a;">
-                      Include ONLY your order number:
-                      <strong>${orderNumber}</strong>
+                    <p style="margin:8px 0 8px; color:#1e3a8a;">
+                      Include ONLY this order number:
                     </p>
 
-                    <p style="margin:10px 0 0; color:#64748b; font-size:13px; line-height:1.5;">
+                    <div style="display:inline-block; background:#eef7ff; border:1px solid #bfdbfe; border-radius:12px; padding:11px 14px; margin:0 0 10px;">
+                      <strong style="color:#06111f; font-size:18px; letter-spacing:0.3px; word-break:break-all;">
+                        ${orderNumber}
+                      </strong>
+                    </div>
+
+                    <p style="margin:0 0 10px; color:#64748b; font-size:13px; line-height:1.5;">
+                      On your phone, press and hold the order number above to copy it.
+                    </p>
+
+                    <p style="margin:0; color:#64748b; font-size:13px; line-height:1.5;">
                       Do not include product names, product descriptions,
                       or extra details in the payment notes.
                     </p>

@@ -39,10 +39,8 @@ type ManageOrderBody =
       reason: string;
     };
 
-function escapeHtml(
-  value: string
-) {
-  return value
+function escapeHtml(value: string) {
+  return String(value || "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -52,14 +50,8 @@ function escapeHtml(
 
 /*
  * ==================================================
- * RESTORE INVENTORY
+ * INVENTORY RESTORATION
  * ==================================================
- *
- * This mirrors the inventory lookup used by
- * /api/admin/mark-paid.
- *
- * Inventory is only restored when the order had
- * actually been paid/shipped.
  */
 
 async function restoreInventory(
@@ -69,8 +61,7 @@ async function restoreInventory(
     quantity: number;
   }[]
 ) {
-  const failures: string[] =
-    [];
+  const failures: string[] = [];
 
   for (const item of items) {
     const itemId = String(
@@ -85,23 +76,16 @@ async function restoreInventory(
       .trim()
       .toLowerCase();
 
-    const quantity =
-      Number(
-        item.quantity || 0
-      );
+    const quantity = Number(
+      item.quantity || 0
+    );
 
     if (
       quantity <= 0 ||
-      (!itemId &&
-        !itemName)
+      (!itemId && !itemName)
     ) {
       continue;
     }
-
-    /*
-     * Find the same product that
-     * mark-paid originally deducted.
-     */
 
     const {
       data: products,
@@ -131,20 +115,16 @@ async function restoreInventory(
         }
       );
 
-      failures.push(
-        item.name
-      );
+      failures.push(item.name);
 
       continue;
     }
 
-    const product =
-      products[0];
+    const product = products[0];
 
     const currentInventory =
       Number(
-        product.inventory ||
-          0
+        product.inventory || 0
       );
 
     const restoredInventory =
@@ -152,8 +132,7 @@ async function restoreInventory(
       quantity;
 
     const {
-      error:
-        inventoryUpdateError,
+      error: inventoryError,
     } = await supabaseAdmin
       .from("products")
       .update({
@@ -165,37 +144,322 @@ async function restoreInventory(
         product.id
       );
 
-    if (
-      inventoryUpdateError
-    ) {
+    if (inventoryError) {
       console.error(
         "Inventory restoration failed:",
         {
           product,
           quantity,
-          inventoryUpdateError,
+          inventoryError,
         }
       );
 
-      failures.push(
-        item.name
-      );
-
-      continue;
+      failures.push(item.name);
     }
-
-    console.log(
-      `Inventory restored: ${product.name} +${quantity}`
-    );
   }
 
   return {
     success:
       failures.length === 0,
-
     failures,
   };
 }
+
+/*
+ * ==================================================
+ * REDEEMED POINTS ADJUSTMENT
+ * ==================================================
+ *
+ * Instead of creating duplicate point transactions,
+ * we update the existing "redeemed" transaction.
+ *
+ * Example:
+ *
+ * Customer redeemed 500 points.
+ * Transaction = -500
+ *
+ * Partial refund means only 300 points can remain used.
+ * Transaction becomes -300.
+ *
+ * Their balance automatically receives 200 points back.
+ */
+
+async function adjustRedeemedPoints({
+  orderId,
+  orderNumber,
+  targetRedeemedPoints,
+}: {
+  orderId: string;
+  orderNumber: string;
+  targetRedeemedPoints: number;
+}) {
+  const {
+    data: transaction,
+    error: lookupError,
+  } = await supabaseAdmin
+    .from("point_transactions")
+    .select(
+      "id, user_id, points"
+    )
+    .eq(
+      "order_id",
+      orderId
+    )
+    .eq(
+      "type",
+      "redeemed"
+    )
+    .maybeSingle();
+
+  if (lookupError) {
+    console.error(
+      "Redeemed points lookup error:",
+      lookupError
+    );
+
+    return {
+      pointsReturned: 0,
+      warning:
+        "Redeemed rewards could not be checked.",
+    };
+  }
+
+  /*
+   * No transaction means nothing was
+   * actually deducted from the ledger.
+   */
+  if (!transaction) {
+    return {
+      pointsReturned: 0,
+      warning: null,
+    };
+  }
+
+  const currentRedeemed =
+    Math.abs(
+      Number(
+        transaction.points || 0
+      )
+    );
+
+  const target =
+    Math.max(
+      0,
+      Math.floor(
+        targetRedeemedPoints
+      )
+    );
+
+  const safeTarget =
+    Math.min(
+      currentRedeemed,
+      target
+    );
+
+  const pointsReturned =
+    Math.max(
+      0,
+      currentRedeemed -
+        safeTarget
+    );
+
+  if (
+    pointsReturned === 0
+  ) {
+    return {
+      pointsReturned: 0,
+      warning: null,
+    };
+  }
+
+  const description =
+    safeTarget > 0
+      ? `Rewards adjusted after partial refund on order ${orderNumber}. ${pointsReturned} points returned.`
+      : `Rewards returned after cancellation/refund of order ${orderNumber}. ${pointsReturned} points returned.`;
+
+  const {
+    error: updateError,
+  } = await supabaseAdmin
+    .from("point_transactions")
+    .update({
+      points:
+        -safeTarget,
+      description,
+    })
+    .eq(
+      "id",
+      transaction.id
+    );
+
+  if (updateError) {
+    console.error(
+      "Redeemed points adjustment error:",
+      updateError
+    );
+
+    return {
+      pointsReturned: 0,
+      warning:
+        "Redeemed points could not be returned.",
+    };
+  }
+
+  return {
+    pointsReturned,
+    warning: null,
+  };
+}
+
+/*
+ * ==================================================
+ * EARNED POINTS ADJUSTMENT
+ * ==================================================
+ *
+ * Earned points only exist after shipping.
+ *
+ * Example:
+ *
+ * Original final total = $150
+ * Earned = 150 points
+ *
+ * Partial refund makes total = $100
+ * Earned transaction becomes 100
+ *
+ * 50 points are therefore reversed.
+ */
+
+async function adjustEarnedPoints({
+  orderId,
+  orderNumber,
+  targetEarnedPoints,
+}: {
+  orderId: string;
+  orderNumber: string;
+  targetEarnedPoints: number;
+}) {
+  const {
+    data: transaction,
+    error: lookupError,
+  } = await supabaseAdmin
+    .from("point_transactions")
+    .select(
+      "id, user_id, points"
+    )
+    .eq(
+      "order_id",
+      orderId
+    )
+    .eq(
+      "type",
+      "earned"
+    )
+    .maybeSingle();
+
+  if (lookupError) {
+    console.error(
+      "Earned points lookup error:",
+      lookupError
+    );
+
+    return {
+      pointsReversed: 0,
+      warning:
+        "Earned rewards could not be checked.",
+    };
+  }
+
+  /*
+   * No earned transaction means the order
+   * hasn't earned points yet.
+   */
+  if (!transaction) {
+    return {
+      pointsReversed: 0,
+      warning: null,
+    };
+  }
+
+  const currentEarned =
+    Math.max(
+      0,
+      Number(
+        transaction.points || 0
+      )
+    );
+
+  const target =
+    Math.max(
+      0,
+      Math.floor(
+        targetEarnedPoints
+      )
+    );
+
+  const safeTarget =
+    Math.min(
+      currentEarned,
+      target
+    );
+
+  const pointsReversed =
+    Math.max(
+      0,
+      currentEarned -
+        safeTarget
+    );
+
+  if (
+    pointsReversed === 0
+  ) {
+    return {
+      pointsReversed: 0,
+      warning: null,
+    };
+  }
+
+  const description =
+    safeTarget > 0
+      ? `Points adjusted after partial refund on order ${orderNumber}. ${pointsReversed} earned points reversed.`
+      : `Points reversed after cancellation/refund of order ${orderNumber}.`;
+
+  const {
+    error: updateError,
+  } = await supabaseAdmin
+    .from("point_transactions")
+    .update({
+      points:
+        safeTarget,
+      description,
+    })
+    .eq(
+      "id",
+      transaction.id
+    );
+
+  if (updateError) {
+    console.error(
+      "Earned points adjustment error:",
+      updateError
+    );
+
+    return {
+      pointsReversed: 0,
+      warning:
+        "Earned points could not be reversed.",
+    };
+  }
+
+  return {
+    pointsReversed,
+    warning: null,
+  };
+}
+
+/*
+ * ==================================================
+ * MAIN ROUTE
+ * ==================================================
+ */
 
 export async function POST(
   request: Request
@@ -266,20 +530,15 @@ export async function POST(
       );
     }
 
-    const status =
+    const normalizedStatus =
       String(
         order.status || ""
-      ).trim();
-
-    const normalizedStatus =
-      status.toLowerCase();
+      )
+        .trim()
+        .toLowerCase();
 
     /*
-     * Prevent a cancelled order from
-     * being processed again.
-     *
-     * This is important because otherwise
-     * inventory could be restored twice.
+     * Prevent double cancellation / double restocking.
      */
 
     if (
@@ -327,8 +586,7 @@ export async function POST(
 
     const originalSubtotal =
       Number(
-        order.subtotal ||
-          0
+        order.subtotal || 0
       );
 
     const originalDiscount =
@@ -338,8 +596,40 @@ export async function POST(
 
     const originalRewardDiscount =
       Number(
-        order.reward_discount ||
-          0
+        order.reward_discount || 0
+      );
+
+    const originalRedeemedPoints =
+      Math.max(
+        0,
+        Math.floor(
+          Number(
+            order.redeemed_points ||
+              0
+          )
+        )
+      );
+
+    const alreadyReturnedPoints =
+      Math.max(
+        0,
+        Math.floor(
+          Number(
+            order.points_returned ||
+              0
+          )
+        )
+      );
+
+    const alreadyReversedEarned =
+      Math.max(
+        0,
+        Math.floor(
+          Number(
+            order.earned_points_reversed ||
+              0
+          )
+        )
       );
 
     const shipping =
@@ -347,12 +637,18 @@ export async function POST(
         order.shipping || 0
       );
 
+    const previousRefundAmount =
+      Number(
+        order.refund_amount || 0
+      );
+
+    const previousRefundStatus =
+      String(
+        order.refund_status || ""
+      ).toLowerCase();
+
     /*
-     * Inventory was deducted when the
-     * order was marked paid.
-     *
-     * Therefore these statuses mean
-     * inventory should be restored.
+     * Inventory was deducted when marked paid.
      */
 
     const isPaid =
@@ -364,6 +660,13 @@ export async function POST(
         "payment received";
 
     /*
+     * Earned points are created when shipped.
+     */
+    const wasShipped =
+      normalizedStatus ===
+      "shipped";
+
+    /*
      * ==================================================
      * CANCEL ENTIRE ORDER
      * ==================================================
@@ -373,18 +676,80 @@ export async function POST(
       body.action ===
       "cancel_order"
     ) {
+      /*
+       * If another refund is already pending,
+       * combine it with the remaining order total.
+       *
+       * If an older refund was already completed,
+       * only the remaining current total is due.
+       */
+
+      const pendingRefundAlready =
+        previousRefundStatus ===
+        "pending"
+          ? previousRefundAmount
+          : 0;
+
       const refundAmount =
         isPaid
-          ? originalTotal
+          ? Number(
+              (
+                pendingRefundAlready +
+                originalTotal
+              ).toFixed(2)
+            )
           : 0;
 
       /*
-       * First mark order cancelled.
+       * ----------------------------------------------
+       * REWARDS
+       * ----------------------------------------------
+       */
+
+      const redeemedResult =
+        await adjustRedeemedPoints(
+          {
+            orderId:
+              order.id,
+
+            orderNumber:
+              order.order_number,
+
+            targetRedeemedPoints:
+              0,
+          }
+        );
+
+      const earnedResult =
+        await adjustEarnedPoints(
+          {
+            orderId:
+              order.id,
+
+            orderNumber:
+              order.order_number,
+
+            targetEarnedPoints:
+              0,
+          }
+        );
+
+      const totalPointsReturned =
+        alreadyReturnedPoints +
+        redeemedResult.pointsReturned;
+
+      const totalEarnedReversed =
+        alreadyReversedEarned +
+        earnedResult.pointsReversed;
+
+      /*
+       * ----------------------------------------------
+       * UPDATE ORDER
+       * ----------------------------------------------
        */
 
       const {
-        error:
-          updateError,
+        error: updateError,
       } = await supabaseAdmin
         .from("orders")
         .update({
@@ -409,6 +774,21 @@ export async function POST(
             refundAmount > 0
               ? body.reason.trim()
               : null,
+
+          /*
+           * Rewards are no longer applied
+           * after a full cancellation.
+           */
+
+          redeemed_points: 0,
+
+          reward_discount: 0,
+
+          points_returned:
+            totalPointsReturned,
+
+          earned_points_reversed:
+            totalEarnedReversed,
         })
         .eq(
           "id",
@@ -434,13 +814,9 @@ export async function POST(
       }
 
       /*
-       * ==================================================
-       * RESTORE FULL INVENTORY
-       * ==================================================
-       *
-       * Only paid/shipped orders had inventory deducted.
-       *
-       * Awaiting-payment orders DO NOT change inventory.
+       * ----------------------------------------------
+       * INVENTORY
+       * ----------------------------------------------
        */
 
       let inventoryWarning:
@@ -470,25 +846,100 @@ export async function POST(
           !inventoryResult.success
         ) {
           inventoryWarning =
-            `Order was cancelled, but inventory could not be restored for: ${inventoryResult.failures.join(
+            `Inventory could not be restored for: ${inventoryResult.failures.join(
               ", "
             )}.`;
-
-          console.error(
-            inventoryWarning
-          );
         }
       }
 
       /*
-       * ==================================================
-       * CUSTOMER CANCELLATION EMAIL
-       * ==================================================
+       * ----------------------------------------------
+       * WARNINGS
+       * ----------------------------------------------
+       */
+
+      const rewardWarnings =
+        [
+          redeemedResult.warning,
+          earnedResult.warning,
+          inventoryWarning,
+        ].filter(Boolean);
+
+      /*
+       * ----------------------------------------------
+       * CUSTOMER EMAIL
+       * ----------------------------------------------
        */
 
       const firstName =
         order.first_name ||
         "there";
+
+      const rewardHtml =
+        redeemedResult.pointsReturned >
+          0 ||
+        earnedResult.pointsReversed >
+          0
+          ? `
+            <div style="
+              background:#eff6ff;
+              border:1px solid #bfdbfe;
+              border-radius:20px;
+              padding:22px;
+              margin-bottom:28px;
+            ">
+
+              <p style="
+                margin:0 0 12px;
+                color:#1e3a8a;
+                font-size:12px;
+                font-weight:800;
+                text-transform:uppercase;
+                letter-spacing:2px;
+              ">
+                Apexx Rewards Updated
+              </p>
+
+              ${
+                redeemedResult.pointsReturned >
+                0
+                  ? `
+                    <p style="
+                      margin:0 0 8px;
+                      color:#334155;
+                      font-size:15px;
+                    ">
+                      <strong>
+                        ${redeemedResult.pointsReturned}
+                        reward points
+                      </strong>
+                      have been returned to your account.
+                    </p>
+                  `
+                  : ""
+              }
+
+              ${
+                earnedResult.pointsReversed >
+                0
+                  ? `
+                    <p style="
+                      margin:0;
+                      color:#334155;
+                      font-size:15px;
+                    ">
+                      ${earnedResult.pointsReversed}
+                      points previously earned from this
+                      order were reversed because the
+                      order was cancelled.
+                    </p>
+                  `
+                  : ""
+              }
+
+            </div>
+          `
+          : "";
 
       try {
         await resend.emails.send(
@@ -506,56 +957,120 @@ export async function POST(
               `Order ${order.order_number} Cancelled`,
 
             html: `
-              <div style="margin:0;padding:0;background:#f8fbff;font-family:Arial,Helvetica,sans-serif;">
-                <div style="max-width:720px;margin:0 auto;padding:28px 16px;">
+              <div style="
+                margin:0;
+                padding:0;
+                background:#f8fbff;
+                font-family:Arial,Helvetica,sans-serif;
+              ">
 
-                  <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:28px;overflow:hidden;box-shadow:0 18px 45px rgba(30,58,138,0.12);">
+                <div style="
+                  max-width:720px;
+                  margin:0 auto;
+                  padding:28px 16px;
+                ">
 
-                    <div style="background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff);padding:38px 24px;text-align:center;border-bottom:1px solid #dbeafe;">
+                  <div style="
+                    background:#ffffff;
+                    border:1px solid #dbeafe;
+                    border-radius:28px;
+                    overflow:hidden;
+                    box-shadow:0 18px 45px rgba(30,58,138,0.12);
+                  ">
 
-                      <p style="margin:0 0 14px;color:#3b82f6;font-size:13px;letter-spacing:4px;text-transform:uppercase;">
+                    <div style="
+                      background:linear-gradient(
+                        135deg,
+                        #eef7ff,
+                        #dbeafe,
+                        #ffffff
+                      );
+                      padding:38px 24px;
+                      text-align:center;
+                      border-bottom:1px solid #dbeafe;
+                    ">
+
+                      <p style="
+                        margin:0 0 14px;
+                        color:#3b82f6;
+                        font-size:13px;
+                        letter-spacing:4px;
+                        text-transform:uppercase;
+                      ">
                         Research. Quality. Confidence.
                       </p>
 
-                      <h1 style="margin:0;color:#06111f;font-size:34px;letter-spacing:3px;">
+                      <h1 style="
+                        margin:0;
+                        color:#06111f;
+                        font-size:34px;
+                        letter-spacing:3px;
+                      ">
                         APEXX BIOLABS
                       </h1>
 
                     </div>
 
-                    <div style="padding:32px 24px;color:#0f172a;">
+                    <div style="
+                      padding:32px 24px;
+                      color:#0f172a;
+                    ">
 
-                      <div style="background:#ffffff;border:1px solid #bfdbfe;border-radius:22px;padding:30px 24px;margin-bottom:28px;">
+                      <p style="
+                        margin:0 0 18px;
+                        color:#06111f;
+                        font-size:16px;
+                      ">
+                        Hi ${escapeHtml(
+                          firstName
+                        )},
+                      </p>
 
-                        <p style="margin:0 0 18px;color:#06111f;font-size:16px;">
-                          Hi ${escapeHtml(
-                            firstName
-                          )},
-                        </p>
+                      <h2 style="
+                        margin:0 0 16px;
+                        color:#06111f;
+                        font-size:26px;
+                      ">
+                        Your order has been cancelled.
+                      </h2>
 
-                        <h2 style="margin:0 0 16px;color:#06111f;font-size:26px;">
-                          Your order has been cancelled.
-                        </h2>
+                      <p style="
+                        margin:0 0 24px;
+                        color:#475569;
+                        line-height:1.7;
+                      ">
+                        Order
+                        <strong>
+                          ${escapeHtml(
+                            order.order_number
+                          )}
+                        </strong>
+                        has been cancelled.
+                      </p>
 
-                        <p style="margin:0;color:#475569;font-size:15px;line-height:1.7;">
-                          Order
-                          <strong>
-                            ${escapeHtml(
-                              order.order_number
-                            )}
-                          </strong>
-                          has been cancelled.
-                        </p>
+                      <div style="
+                        background:#f8fbff;
+                        border:1px solid #bfdbfe;
+                        border-radius:20px;
+                        padding:22px;
+                        margin-bottom:24px;
+                      ">
 
-                      </div>
-
-                      <div style="background:#f8fbff;border:1px solid #bfdbfe;border-radius:20px;padding:22px;margin-bottom:28px;">
-
-                        <p style="margin:0 0 8px;color:#64748b;font-size:12px;text-transform:uppercase;letter-spacing:2px;">
+                        <p style="
+                          margin:0 0 8px;
+                          color:#64748b;
+                          font-size:12px;
+                          text-transform:uppercase;
+                          letter-spacing:2px;
+                        ">
                           Reason
                         </p>
 
-                        <p style="margin:0;color:#06111f;font-size:15px;line-height:1.7;">
+                        <p style="
+                          margin:0;
+                          color:#06111f;
+                          line-height:1.7;
+                        ">
                           ${escapeHtml(
                             body.reason
                           )}
@@ -563,17 +1078,33 @@ export async function POST(
 
                       </div>
 
+                      ${rewardHtml}
+
                       ${
                         refundAmount >
                         0
                           ? `
-                            <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:20px;padding:22px;margin-bottom:28px;">
+                            <div style="
+                              background:#fff7ed;
+                              border:1px solid #fed7aa;
+                              border-radius:20px;
+                              padding:22px;
+                              margin-bottom:28px;
+                            ">
 
-                              <p style="margin:0 0 8px;color:#9a3412;font-weight:800;">
+                              <p style="
+                                margin:0 0 8px;
+                                color:#9a3412;
+                                font-weight:800;
+                              ">
                                 Refund Pending
                               </p>
 
-                              <p style="margin:0;color:#7c2d12;font-size:14px;line-height:1.7;">
+                              <p style="
+                                margin:0;
+                                color:#7c2d12;
+                                line-height:1.7;
+                              ">
                                 A refund of
                                 <strong>
                                   $${refundAmount.toFixed(
@@ -588,16 +1119,30 @@ export async function POST(
                           : ""
                       }
 
-                      <div style="border-top:1px solid #dbeafe;padding-top:24px;">
+                      <div style="
+                        border-top:1px solid #dbeafe;
+                        padding-top:24px;
+                      ">
 
-                        <p style="font-size:12px;color:#64748b;line-height:1.6;margin:0;">
-                          Products sold by Apexx Biolabs are intended strictly
-                          for lawful laboratory research use only. Not for human
-                          consumption, medical use, veterinary use, diagnosis,
-                          treatment, cure, or prevention of disease.
+                        <p style="
+                          font-size:12px;
+                          color:#64748b;
+                          line-height:1.6;
+                          margin:0;
+                        ">
+                          Products sold by Apexx Biolabs are
+                          intended strictly for lawful laboratory
+                          research use only. Not for human
+                          consumption, medical use, veterinary use,
+                          diagnosis, treatment, cure, or prevention
+                          of disease.
                         </p>
 
-                        <p style="margin:24px 0 0;color:#334155;line-height:1.6;">
+                        <p style="
+                          margin:24px 0 0;
+                          color:#334155;
+                          line-height:1.6;
+                        ">
                           Apexx Biolabs<br/>
                           orders@apexxbiolabs.com<br/>
                           apexxbiolabs.com
@@ -610,6 +1155,7 @@ export async function POST(
                   </div>
 
                 </div>
+
               </div>
             `,
           }
@@ -629,20 +1175,31 @@ export async function POST(
 
           message:
             refundAmount > 0
-              ? `Order cancelled. Inventory restored and $${refundAmount.toFixed(
+              ? `Order cancelled. $${refundAmount.toFixed(
                   2
-                )} refund marked pending.`
+                )} refund pending.`
               : "Order cancelled successfully.",
 
+          pointsReturned:
+            redeemedResult.pointsReturned,
+
+          earnedPointsReversed:
+            earnedResult.pointsReversed,
+
           warning:
-            inventoryWarning,
+            rewardWarnings.length >
+            0
+              ? rewardWarnings.join(
+                  " "
+                )
+              : null,
         }
       );
     }
 
     /*
      * ==================================================
-     * MODIFY / PARTIAL CANCEL
+     * PARTIAL ITEM CANCELLATION
      * ==================================================
      */
 
@@ -657,9 +1214,7 @@ export async function POST(
             body.itemId
         );
 
-      if (
-        !currentItem
-      ) {
+      if (!currentItem) {
         return NextResponse.json(
           {
             success: false,
@@ -720,7 +1275,6 @@ export async function POST(
                 body.itemId
                   ? {
                       ...item,
-
                       quantity:
                         newQuantity,
                     }
@@ -744,9 +1298,9 @@ export async function POST(
       }
 
       /*
-       * ==================================================
-       * RECALCULATE ORDER
-       * ==================================================
+       * ----------------------------------------------
+       * RECALCULATE SUBTOTAL
+       * ----------------------------------------------
        */
 
       const updatedSubtotal =
@@ -770,7 +1324,7 @@ export async function POST(
         );
 
       /*
-       * Preserve original promo discount rate.
+       * Preserve existing promo percentage.
        */
 
       const promoDiscountRate =
@@ -788,8 +1342,16 @@ export async function POST(
         );
 
       /*
-       * Reward discount cannot exceed remaining
-       * merchandise after promo.
+       * ----------------------------------------------
+       * REWARD POINTS
+       * ----------------------------------------------
+       *
+       * Checkout uses:
+       *
+       * 100 points = $10
+       *
+       * Rewards cannot exceed merchandise
+       * remaining after promo.
        */
 
       const merchandiseAfterPromo =
@@ -799,11 +1361,31 @@ export async function POST(
             updatedDiscount
         );
 
-      const updatedRewardDiscount =
+      const maximumPointsForOrder =
+        Math.floor(
+          merchandiseAfterPromo /
+            10
+        ) * 100;
+
+      const updatedRedeemedPoints =
         Math.min(
-          originalRewardDiscount,
-          merchandiseAfterPromo
+          originalRedeemedPoints,
+          maximumPointsForOrder
         );
+
+      const updatedRewardDiscount =
+        Number(
+          (
+            updatedRedeemedPoints /
+            10
+          ).toFixed(2)
+        );
+
+      /*
+       * ----------------------------------------------
+       * NEW TOTAL
+       * ----------------------------------------------
+       */
 
       const updatedTotal =
         Number(
@@ -817,10 +1399,10 @@ export async function POST(
         );
 
       /*
-       * Refund due for THIS modification.
+       * Refund caused by THIS modification.
        */
 
-      const refundAmount =
+      const refundDelta =
         isPaid
           ? Number(
               Math.max(
@@ -832,9 +1414,87 @@ export async function POST(
           : 0;
 
       /*
-       * ==================================================
-       * RECALCULATE AFFILIATE COMMISSION
-       * ==================================================
+       * If a previous refund is still pending,
+       * combine it with this new pending refund.
+       *
+       * If previous refund was completed,
+       * this becomes a new refund amount.
+       */
+
+      const pendingRefundAlready =
+        previousRefundStatus ===
+        "pending"
+          ? previousRefundAmount
+          : 0;
+
+      const refundAmount =
+        isPaid
+          ? Number(
+              (
+                pendingRefundAlready +
+                refundDelta
+              ).toFixed(2)
+            )
+          : 0;
+
+      /*
+       * ----------------------------------------------
+       * ADJUST REDEEMED POINTS
+       * ----------------------------------------------
+       */
+
+      const redeemedResult =
+        await adjustRedeemedPoints(
+          {
+            orderId:
+              order.id,
+
+            orderNumber:
+              order.order_number,
+
+            targetRedeemedPoints:
+              updatedRedeemedPoints,
+          }
+        );
+
+      /*
+       * ----------------------------------------------
+       * ADJUST EARNED POINTS
+       * ----------------------------------------------
+       *
+       * If the order was shipped, the customer
+       * already earned points.
+       *
+       * Their new earned amount should equal the
+       * floor of the new final total.
+       */
+
+      const earnedResult =
+        wasShipped
+          ? await adjustEarnedPoints(
+              {
+                orderId:
+                  order.id,
+
+                orderNumber:
+                  order.order_number,
+
+                targetEarnedPoints:
+                  Math.floor(
+                    updatedTotal
+                  ),
+              }
+            )
+          : {
+              pointsReversed:
+                0,
+              warning: null,
+            };
+
+      /*
+       * ----------------------------------------------
+       * AFFILIATE COMMISSION
+       * ----------------------------------------------
        */
 
       let updatedAffiliateCommission =
@@ -878,14 +1538,21 @@ export async function POST(
       }
 
       /*
-       * ==================================================
+       * ----------------------------------------------
        * UPDATE ORDER
-       * ==================================================
+       * ----------------------------------------------
        */
 
+      const totalPointsReturned =
+        alreadyReturnedPoints +
+        redeemedResult.pointsReturned;
+
+      const totalEarnedReversed =
+        alreadyReversedEarned +
+        earnedResult.pointsReversed;
+
       const {
-        error:
-          updateError,
+        error: updateError,
       } = await supabaseAdmin
         .from("orders")
         .update({
@@ -898,8 +1565,17 @@ export async function POST(
           discount:
             updatedDiscount,
 
+          redeemed_points:
+            updatedRedeemedPoints,
+
           reward_discount:
             updatedRewardDiscount,
+
+          points_returned:
+            totalPointsReturned,
+
+          earned_points_reversed:
+            totalEarnedReversed,
 
           total:
             updatedTotal,
@@ -944,18 +1620,9 @@ export async function POST(
       }
 
       /*
-       * ==================================================
-       * RESTORE REMOVED INVENTORY
-       * ==================================================
-       *
-       * Example:
-       *
-       * Customer purchased 3
-       * Admin changes to 1
-       *
-       * removedQuantity = 2
-       *
-       * Inventory gets +2.
+       * ----------------------------------------------
+       * INVENTORY
+       * ----------------------------------------------
        */
 
       let inventoryWarning:
@@ -985,21 +1652,78 @@ export async function POST(
           !inventoryResult.success
         ) {
           inventoryWarning =
-            `Order was updated, but inventory could not be restored for: ${inventoryResult.failures.join(
-              ", "
-            )}.`;
-
-          console.error(
-            inventoryWarning
-          );
+            `Inventory could not be restored for ${currentItem.name}.`;
         }
       }
 
       /*
-       * ==================================================
-       * CUSTOMER PARTIAL-CANCELLATION EMAIL
-       * ==================================================
+       * ----------------------------------------------
+       * CUSTOMER EMAIL
+       * ----------------------------------------------
        */
+
+      const rewardsHtml =
+        redeemedResult.pointsReturned >
+          0 ||
+        earnedResult.pointsReversed >
+          0
+          ? `
+            <div style="
+              background:#eff6ff;
+              border:1px solid #bfdbfe;
+              border-radius:20px;
+              padding:22px;
+              margin-bottom:24px;
+            ">
+
+              <p style="
+                margin:0 0 12px;
+                color:#1e3a8a;
+                font-size:12px;
+                text-transform:uppercase;
+                letter-spacing:2px;
+                font-weight:800;
+              ">
+                Apexx Rewards Updated
+              </p>
+
+              ${
+                redeemedResult.pointsReturned >
+                0
+                  ? `
+                    <p style="
+                      margin:0 0 8px;
+                      color:#334155;
+                    ">
+                      <strong>
+                        ${redeemedResult.pointsReturned}
+                        reward points
+                      </strong>
+                      were returned to your account.
+                    </p>
+                  `
+                  : ""
+              }
+
+              ${
+                earnedResult.pointsReversed >
+                0
+                  ? `
+                    <p style="
+                      margin:0;
+                      color:#334155;
+                    ">
+                      ${earnedResult.pointsReversed}
+                      earned points were adjusted to
+                      reflect your updated order total.
+                    </p>
+                  `
+                  : ""
+              }
+
+            </div>
+          `
+          : "";
 
       try {
         await resend.emails.send(
@@ -1017,31 +1741,78 @@ export async function POST(
               `Order ${order.order_number} Updated`,
 
             html: `
-              <div style="margin:0;padding:0;background:#f8fbff;font-family:Arial,Helvetica,sans-serif;">
+              <div style="
+                margin:0;
+                padding:0;
+                background:#f8fbff;
+                font-family:Arial,Helvetica,sans-serif;
+              ">
 
-                <div style="max-width:720px;margin:0 auto;padding:28px 16px;">
+                <div style="
+                  max-width:720px;
+                  margin:0 auto;
+                  padding:28px 16px;
+                ">
 
-                  <div style="background:#ffffff;border:1px solid #dbeafe;border-radius:28px;overflow:hidden;box-shadow:0 18px 45px rgba(30,58,138,0.12);">
+                  <div style="
+                    background:#ffffff;
+                    border:1px solid #dbeafe;
+                    border-radius:28px;
+                    overflow:hidden;
+                    box-shadow:0 18px 45px rgba(30,58,138,0.12);
+                  ">
 
-                    <div style="background:linear-gradient(135deg,#eef7ff,#dbeafe,#ffffff);padding:38px 24px;text-align:center;border-bottom:1px solid #dbeafe;">
+                    <div style="
+                      background:linear-gradient(
+                        135deg,
+                        #eef7ff,
+                        #dbeafe,
+                        #ffffff
+                      );
+                      padding:38px 24px;
+                      text-align:center;
+                      border-bottom:1px solid #dbeafe;
+                    ">
 
-                      <p style="margin:0 0 14px;color:#3b82f6;font-size:13px;letter-spacing:4px;text-transform:uppercase;">
+                      <p style="
+                        margin:0 0 14px;
+                        color:#3b82f6;
+                        font-size:13px;
+                        letter-spacing:4px;
+                        text-transform:uppercase;
+                      ">
                         Research. Quality. Confidence.
                       </p>
 
-                      <h1 style="margin:0;color:#06111f;font-size:34px;letter-spacing:3px;">
+                      <h1 style="
+                        margin:0;
+                        color:#06111f;
+                        font-size:34px;
+                        letter-spacing:3px;
+                      ">
                         APEXX BIOLABS
                       </h1>
 
                     </div>
 
-                    <div style="padding:32px 24px;color:#0f172a;">
+                    <div style="
+                      padding:32px 24px;
+                      color:#0f172a;
+                    ">
 
-                      <h2 style="margin:0 0 18px;color:#06111f;font-size:26px;">
+                      <h2 style="
+                        margin:0 0 18px;
+                        color:#06111f;
+                        font-size:26px;
+                      ">
                         Your Order Has Been Updated
                       </h2>
 
-                      <p style="margin:0 0 22px;color:#475569;font-size:15px;line-height:1.7;">
+                      <p style="
+                        margin:0 0 22px;
+                        color:#475569;
+                        line-height:1.7;
+                      ">
                         We updated order
                         <strong>
                           ${escapeHtml(
@@ -1050,9 +1821,19 @@ export async function POST(
                         </strong>.
                       </p>
 
-                      <div style="background:#f8fbff;border:1px solid #bfdbfe;border-radius:20px;padding:22px;margin-bottom:20px;">
+                      <div style="
+                        background:#f8fbff;
+                        border:1px solid #bfdbfe;
+                        border-radius:20px;
+                        padding:22px;
+                        margin-bottom:20px;
+                      ">
 
-                        <p style="margin:0;color:#06111f;font-size:15px;line-height:1.8;">
+                        <p style="
+                          margin:0;
+                          color:#06111f;
+                          line-height:1.8;
+                        ">
 
                           <strong>
                             Item:
@@ -1084,13 +1865,37 @@ export async function POST(
 
                       </div>
 
-                      <div style="background:linear-gradient(135deg,#eaf4ff,#f8fbff);border:1px solid #bfdbfe;border-radius:20px;padding:22px;margin-bottom:24px;">
+                      ${rewardsHtml}
 
-                        <p style="margin:0 0 8px;color:#1e3a8a;font-size:12px;text-transform:uppercase;letter-spacing:2px;font-weight:bold;">
+                      <div style="
+                        background:linear-gradient(
+                          135deg,
+                          #eaf4ff,
+                          #f8fbff
+                        );
+                        border:1px solid #bfdbfe;
+                        border-radius:20px;
+                        padding:22px;
+                        margin-bottom:24px;
+                      ">
+
+                        <p style="
+                          margin:0 0 8px;
+                          color:#1e3a8a;
+                          font-size:12px;
+                          text-transform:uppercase;
+                          letter-spacing:2px;
+                          font-weight:bold;
+                        ">
                           Updated Order Total
                         </p>
 
-                        <p style="margin:0;color:#06111f;font-size:36px;font-weight:900;">
+                        <p style="
+                          margin:0;
+                          color:#06111f;
+                          font-size:36px;
+                          font-weight:900;
+                        ">
                           $${updatedTotal.toFixed(
                             2
                           )}
@@ -1102,24 +1907,34 @@ export async function POST(
                         refundAmount >
                         0
                           ? `
-                            <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:20px;padding:22px;margin-bottom:24px;">
+                            <div style="
+                              background:#fff7ed;
+                              border:1px solid #fed7aa;
+                              border-radius:20px;
+                              padding:22px;
+                              margin-bottom:24px;
+                            ">
 
-                              <p style="margin:0 0 8px;color:#9a3412;font-weight:800;">
+                              <p style="
+                                margin:0 0 8px;
+                                color:#9a3412;
+                                font-weight:800;
+                              ">
                                 Partial Refund Pending
                               </p>
 
-                              <p style="margin:0;color:#7c2d12;font-size:14px;line-height:1.7;">
-
+                              <p style="
+                                margin:0;
+                                color:#7c2d12;
+                                line-height:1.7;
+                              ">
                                 A refund of
-
                                 <strong>
                                   $${refundAmount.toFixed(
                                     2
                                   )}
                                 </strong>
-
                                 is pending.
-
                               </p>
 
                             </div>
@@ -1127,16 +1942,30 @@ export async function POST(
                           : ""
                       }
 
-                      <div style="border-top:1px solid #dbeafe;padding-top:24px;">
+                      <div style="
+                        border-top:1px solid #dbeafe;
+                        padding-top:24px;
+                      ">
 
-                        <p style="font-size:12px;color:#64748b;line-height:1.6;margin:0;">
-                          Products sold by Apexx Biolabs are intended strictly
-                          for lawful laboratory research use only. Not for human
-                          consumption, medical use, veterinary use, diagnosis,
-                          treatment, cure, or prevention of disease.
+                        <p style="
+                          font-size:12px;
+                          color:#64748b;
+                          line-height:1.6;
+                          margin:0;
+                        ">
+                          Products sold by Apexx Biolabs are
+                          intended strictly for lawful laboratory
+                          research use only. Not for human
+                          consumption, medical use, veterinary use,
+                          diagnosis, treatment, cure, or prevention
+                          of disease.
                         </p>
 
-                        <p style="margin:24px 0 0;color:#334155;line-height:1.6;">
+                        <p style="
+                          margin:24px 0 0;
+                          color:#334155;
+                          line-height:1.6;
+                        ">
                           Apexx Biolabs<br/>
                           orders@apexxbiolabs.com<br/>
                           apexxbiolabs.com
@@ -1163,26 +1992,23 @@ export async function POST(
         );
       }
 
+      const warnings =
+        [
+          redeemedResult.warning,
+          earnedResult.warning,
+          inventoryWarning,
+        ].filter(Boolean);
+
       return NextResponse.json(
         {
           success: true,
 
           message:
             refundAmount > 0
-              ? `Order updated. ${removedQuantity} item${
-                  removedQuantity ===
-                  1
-                    ? ""
-                    : "s"
-                } returned to inventory and $${refundAmount.toFixed(
+              ? `Order updated. $${refundAmount.toFixed(
                   2
-                )} partial refund marked pending.`
-              : `Order updated. ${removedQuantity} item${
-                  removedQuantity ===
-                  1
-                    ? ""
-                    : "s"
-                } returned to inventory. New total: $${updatedTotal.toFixed(
+                )} refund pending.`
+              : `Order updated. New total: $${updatedTotal.toFixed(
                   2
                 )}.`,
 
@@ -1190,13 +2016,23 @@ export async function POST(
 
           refundAmount,
 
+          pointsReturned:
+            redeemedResult.pointsReturned,
+
+          earnedPointsReversed:
+            earnedResult.pointsReversed,
+
           inventoryRestored:
             isPaid
               ? removedQuantity
               : 0,
 
           warning:
-            inventoryWarning,
+            warnings.length > 0
+              ? warnings.join(
+                  " "
+                )
+              : null,
         }
       );
     }

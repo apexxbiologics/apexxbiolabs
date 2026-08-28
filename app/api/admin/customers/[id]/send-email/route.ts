@@ -23,6 +23,15 @@ type RouteContext = {
   }>;
 };
 
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 export async function POST(
   request: Request,
   context: RouteContext
@@ -63,7 +72,10 @@ export async function POST(
     const {
       data: { user },
       error: userError,
-    } = await supabaseAdmin.auth.admin.getUserById(id);
+    } =
+      await supabaseAdmin.auth.admin.getUserById(
+        id
+      );
 
     if (userError || !user) {
       return NextResponse.json(
@@ -91,85 +103,208 @@ export async function POST(
       user.user_metadata?.name ||
       "there";
 
-    const escapedMessage = message
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;")
-      .replace(/\n/g, "<br />");
+    const safeFirstName =
+      escapeHtml(String(firstName));
 
-    const { data, error: emailError } =
-      await resend.emails.send({
-        from:
-          "Apexx Biolabs <orders@apexxbiolabs.com>",
-        to: user.email,
-        replyTo:
-          process.env.CUSTOMER_REPLY_TO_EMAIL ||
-          "orders@apexxbiolabs.com",
-        subject,
-        html: `
+    const safeMessage =
+      escapeHtml(message).replace(
+        /\n/g,
+        "<br />"
+      );
+
+    const {
+      data,
+      error: emailError,
+    } = await resend.emails.send({
+      from:
+        "Apexx Biolabs <orders@apexxbiolabs.com>",
+
+      to: user.email,
+
+      replyTo:
+        process.env.CUSTOMER_REPLY_TO_EMAIL ||
+        "orders@apexxbiolabs.com",
+
+      subject,
+
+      html: `
+        <div style="
+          margin:0;
+          padding:0;
+          background:#f8fbff;
+          font-family:Arial, Helvetica, sans-serif;
+        ">
           <div style="
-            background:#071527;
-            padding:40px 20px;
-            font-family:Arial,Helvetica,sans-serif;
+            max-width:720px;
+            margin:0 auto;
+            padding:28px 16px;
           ">
+
             <div style="
-              max-width:620px;
-              margin:0 auto;
               background:#ffffff;
-              border-radius:18px;
+              border:1px solid #dbeafe;
+              border-radius:28px;
               overflow:hidden;
+              box-shadow:0 18px 45px rgba(30,58,138,0.12);
             ">
+
+              <!-- HEADER -->
               <div style="
-                background:#0b1f36;
-                padding:28px 32px;
+                background:linear-gradient(
+                  135deg,
+                  #eef7ff,
+                  #dbeafe,
+                  #ffffff
+                );
+                padding:38px 24px;
+                text-align:center;
+                border-bottom:1px solid #dbeafe;
               ">
-                <div style="
-                  color:#8ec5ff;
-                  font-size:12px;
+
+                <p style="
+                  margin:0 0 14px;
+                  color:#3b82f6;
+                  font-size:13px;
                   letter-spacing:4px;
                   text-transform:uppercase;
                 ">
+                  Research. Quality. Confidence.
+                </p>
+
+                <h1 style="
+                  margin:0;
+                  color:#06111f;
+                  font-size:34px;
+                  letter-spacing:3px;
+                ">
                   APEXX BIOLABS
-                </div>
+                </h1>
+
+                <p style="
+                  margin:12px 0 0;
+                  color:#475569;
+                  font-size:13px;
+                  letter-spacing:2px;
+                  text-transform:uppercase;
+                ">
+                  Premium Research Materials
+                </p>
+
               </div>
 
+              <!-- BODY -->
               <div style="
-                padding:36px 32px;
-                color:#18212f;
-                line-height:1.7;
+                padding:32px 24px;
+                color:#0f172a;
               ">
-                <p style="
-                  margin-top:0;
-                  font-size:16px;
-                ">
-                  Hi ${firstName},
-                </p>
 
                 <div style="
-                  font-size:16px;
+                  background:#ffffff;
+                  border:1px solid #bfdbfe;
+                  border-radius:22px;
+                  padding:32px 24px;
+                  margin-bottom:30px;
+                  box-shadow:0 12px 30px rgba(59,130,246,0.10);
                 ">
-                  ${escapedMessage}
+
+                  <p style="
+                    margin:0 0 20px;
+                    color:#06111f;
+                    font-size:17px;
+                    line-height:1.7;
+                  ">
+                    Hi ${safeFirstName},
+                  </p>
+
+                  <div style="
+                    color:#475569;
+                    font-size:15px;
+                    line-height:1.8;
+                  ">
+                    ${safeMessage}
+                  </div>
+
                 </div>
 
-                <p style="
-                  margin-top:32px;
-                  color:#667085;
-                  font-size:14px;
+                <!-- SUPPORT BOX -->
+                <div style="
+                  background:#f8fbff;
+                  border:1px solid #bfdbfe;
+                  border-radius:20px;
+                  padding:22px;
+                  margin-bottom:30px;
                 ">
-                  Apexx Biolabs
-                </p>
+
+                  <h3 style="
+                    margin:0 0 10px;
+                    color:#06111f;
+                    font-size:18px;
+                  ">
+                    Need Assistance?
+                  </h3>
+
+                  <p style="
+                    margin:0;
+                    color:#475569;
+                    font-size:14px;
+                    line-height:1.7;
+                  ">
+                    Simply reply to this email and our team will be happy to assist you.
+                  </p>
+
+                </div>
+
+                <!-- FOOTER -->
+                <div style="
+                  border-top:1px solid #dbeafe;
+                  padding-top:24px;
+                ">
+
+                  <p style="
+                    font-size:12px;
+                    color:#64748b;
+                    line-height:1.6;
+                    margin:0;
+                  ">
+                    Products sold by Apexx Biolabs are intended strictly
+                    for lawful laboratory research use only. Not for human
+                    consumption, medical use, veterinary use, diagnosis,
+                    treatment, cure, or prevention of disease.
+                  </p>
+
+                  <p style="
+                    margin:24px 0 0;
+                    color:#334155;
+                    line-height:1.6;
+                    font-size:14px;
+                  ">
+                    Apexx Biolabs<br/>
+                    orders@apexxbiolabs.com<br/>
+                    apexxbiolabs.com
+                  </p>
+
+                </div>
+
               </div>
+
             </div>
+
           </div>
-        `,
-        text: `Hi ${firstName},
+        </div>
+      `,
+
+      text: `Hi ${firstName},
 
 ${message}
 
-Apexx Biolabs`,
-      });
+Need assistance? Simply reply to this email and our team will be happy to assist you.
+
+Apexx Biolabs
+orders@apexxbiolabs.com
+apexxbiolabs.com
+
+Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only. Not for human consumption, medical use, veterinary use, diagnosis, treatment, cure, or prevention of disease.`,
+    });
 
     if (emailError) {
       console.error(

@@ -18,6 +18,7 @@ const FALLBACK_PRICE = 14.99;
 export default function VialStorageCasePage() {
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(0);
 
   const [productData, setProductData] = useState({
     inventory: 0,
@@ -31,14 +32,26 @@ export default function VialStorageCasePage() {
     path: "/products/vial-storage-case",
   };
 
+  const productImages = [
+    {
+      src: "/images/vial-case.png",
+      alt: "Apexx Biolabs Vial Storage Case Closed",
+    },
+    {
+      src: "/images/vial-case-open.png",
+      alt: "Apexx Biolabs Vial Storage Case Open",
+    },
+  ];
+
   const isOutOfStock = productData.inventory <= 0;
 
   const isLimitedStock =
     productData.inventory > 0 && productData.inventory <= 5;
 
   /* =========================================================
-     FETCH PRICE + INVENTORY FROM SUPABASE
+     FETCH PRICE + INVENTORY
   ========================================================= */
+
   useEffect(() => {
     const fetchProductData = async () => {
       try {
@@ -79,6 +92,7 @@ export default function VialStorageCasePage() {
   /* =========================================================
      ADD TO CART
   ========================================================= */
+
   const addToCart = () => {
     if (isOutOfStock) return;
 
@@ -99,9 +113,6 @@ export default function VialStorageCasePage() {
       (item: any) => item.id === cartProduct.id
     );
 
-    /*
-      Prevent cart quantity from exceeding available inventory.
-    */
     const existingQuantity = existingProduct?.quantity || 0;
 
     const newQuantity = Math.min(
@@ -138,18 +149,22 @@ export default function VialStorageCasePage() {
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-      {/* BACKGROUND */}
+
+      {/* BACKGROUND GLOW */}
       <div className="pointer-events-none fixed inset-0">
         <div className="absolute left-1/2 top-0 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-blue-500/[0.08] blur-[140px]" />
+
         <div className="absolute -left-40 top-[500px] h-[500px] w-[500px] rounded-full bg-blue-400/[0.05] blur-[140px]" />
       </div>
 
       {/* =========================================================
           PRODUCT HERO
       ========================================================= */}
+
       <section className="relative z-10 px-6 py-12 md:px-10 md:py-16">
         <div className="mx-auto max-w-7xl">
-          {/* BACK */}
+
+          {/* BACK BUTTON */}
           <Link
             href="/products"
             className="group mb-10 inline-flex items-center gap-3 text-sm font-semibold text-white/50 transition hover:text-white"
@@ -165,11 +180,15 @@ export default function VialStorageCasePage() {
           </Link>
 
           <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14">
+
             {/* =====================================================
-                PRODUCT IMAGE
+                LEFT SIDE - PRODUCT GALLERY
             ===================================================== */}
+
             <div>
+              {/* MAIN IMAGE */}
               <div className="relative mx-auto w-full max-w-[560px] overflow-hidden rounded-[48px] border border-blue-400/10 bg-white/[0.03] p-4 shadow-[0_0_40px_rgba(96,165,250,0.12)]">
+
                 <div className="absolute left-8 top-8 z-20">
                   <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-[#081526]/80 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.22em] text-blue-200 backdrop-blur-md">
                     <Package size={13} />
@@ -179,17 +198,44 @@ export default function VialStorageCasePage() {
 
                 <div className="overflow-hidden rounded-[36px] bg-[#93C5FD]">
                   <img
-                    src={product.image}
-                    alt={product.name}
-                    className="aspect-square h-full w-full object-cover"
+                    src={productImages[selectedImage].src}
+                    alt={productImages[selectedImage].alt}
+                    className="aspect-square h-full w-full object-cover transition-all duration-300"
                   />
                 </div>
               </div>
 
+              {/* IMAGE THUMBNAILS */}
+              <div className="mx-auto mt-5 grid w-full max-w-[560px] grid-cols-2 gap-4">
+                {productImages.map((image, index) => (
+                  <button
+                    key={image.src}
+                    type="button"
+                    onClick={() => setSelectedImage(index)}
+                    className={`group overflow-hidden rounded-[24px] border p-2 transition-all duration-300 ${
+                      selectedImage === index
+                        ? "border-blue-300 bg-blue-400/10 shadow-[0_0_25px_rgba(96,165,250,0.15)]"
+                        : "border-white/10 bg-white/[0.04] hover:border-blue-400/40"
+                    }`}
+                  >
+                    <div className="overflow-hidden rounded-[18px] bg-[#93C5FD]">
+                      <img
+                        src={image.src}
+                        alt={image.alt}
+                        className="aspect-[16/10] h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                      />
+                    </div>
+                  </button>
+                ))}
+              </div>
+
               {/* SPECS */}
               <div className="mx-auto mt-5 grid w-full max-w-[560px] grid-cols-3 gap-3">
+
                 <div className="rounded-[22px] border border-white/10 bg-white/[0.04] p-4 text-center">
-                  <p className="text-xl font-black">14</p>
+                  <p className="text-xl font-black">
+                    14
+                  </p>
 
                   <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
                     Vial Slots
@@ -197,7 +243,9 @@ export default function VialStorageCasePage() {
                 </div>
 
                 <div className="rounded-[22px] border border-white/10 bg-white/[0.04] p-4 text-center">
-                  <p className="text-xl font-black">2 × 7</p>
+                  <p className="text-xl font-black">
+                    2 × 7
+                  </p>
 
                   <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
                     Layout
@@ -213,13 +261,16 @@ export default function VialStorageCasePage() {
                     Branded
                   </p>
                 </div>
+
               </div>
             </div>
 
             {/* =====================================================
-                PRODUCT INFO
+                RIGHT SIDE - PRODUCT INFO
             ===================================================== */}
+
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] p-7 backdrop-blur-sm md:p-10">
+
               <p className="mb-4 text-sm uppercase tracking-[0.35em] text-[#A5D8FF]">
                 Apexx Lab Accessories
               </p>
@@ -227,7 +278,10 @@ export default function VialStorageCasePage() {
               <h1 className="text-5xl font-black leading-[0.95] text-white md:text-6xl">
                 Vial Storage
                 <br />
-                <span className="text-blue-300">Case.</span>
+
+                <span className="text-blue-300">
+                  Case.
+                </span>
               </h1>
 
               <p className="mt-7 max-w-2xl text-lg leading-relaxed text-white/65">
@@ -263,6 +317,7 @@ export default function VialStorageCasePage() {
 
               {/* FEATURES */}
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+
                 <FeatureCard
                   icon={<LayoutGrid size={19} />}
                   title="14 Vial Capacity"
@@ -286,6 +341,7 @@ export default function VialStorageCasePage() {
                   title="Apexx Branded"
                   text="Finished with Apexx Biolabs branding."
                 />
+
               </div>
 
               {/* QUANTITY */}
@@ -295,10 +351,14 @@ export default function VialStorageCasePage() {
                 </p>
 
                 <div className="flex w-fit items-center rounded-full border border-white/10 bg-white/[0.04] p-2">
+
                   <button
                     type="button"
                     onClick={() => {
-                      setQuantity((prev) => Math.max(1, prev - 1));
+                      setQuantity((prev) =>
+                        Math.max(1, prev - 1)
+                      );
+
                       setAdded(false);
                     }}
                     className="flex h-11 w-11 items-center justify-center rounded-full text-[#A5D8FF] transition hover:bg-white/[0.08]"
@@ -314,7 +374,10 @@ export default function VialStorageCasePage() {
                     type="button"
                     onClick={() => {
                       setQuantity((prev) =>
-                        Math.min(productData.inventory || 1, prev + 1)
+                        Math.min(
+                          productData.inventory || 1,
+                          prev + 1
+                        )
                       );
 
                       setAdded(false);
@@ -324,11 +387,13 @@ export default function VialStorageCasePage() {
                   >
                     <Plus size={19} />
                   </button>
+
                 </div>
               </div>
 
-              {/* BUTTONS */}
+              {/* CART BUTTONS */}
               <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+
                 {isOutOfStock ? (
                   <button
                     type="button"
@@ -345,7 +410,9 @@ export default function VialStorageCasePage() {
                   >
                     <ShoppingCart size={21} />
 
-                    {added ? "Added To Cart" : "Add To Cart"}
+                    {added
+                      ? "Added To Cart"
+                      : "Add To Cart"}
                   </button>
                 )}
 
@@ -363,6 +430,7 @@ export default function VialStorageCasePage() {
               >
                 Continue Shopping
               </Link>
+
             </div>
           </div>
         </div>
@@ -371,10 +439,12 @@ export default function VialStorageCasePage() {
       {/* =========================================================
           PRODUCT DETAILS
       ========================================================= */}
+
       <section className="relative z-10 px-6 pb-16 md:px-10">
         <div className="mx-auto max-w-7xl overflow-hidden rounded-[36px] border border-white/10 bg-white/[0.04]">
+
           <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
-            {/* DESCRIPTION */}
+
             <div className="p-8 md:p-10">
               <p className="mb-3 text-sm uppercase tracking-[0.35em] text-[#A5D8FF]">
                 Product Details
@@ -385,24 +455,35 @@ export default function VialStorageCasePage() {
               </h2>
 
               <p className="mt-5 max-w-2xl text-base leading-7 text-white/60">
-                Designed for convenient organization, the Apexx Biolabs Vial
-                Storage Case features fourteen dedicated vial slots arranged
-                across two rows. Its compact profile makes it easy to keep
-                your research materials together while maintaining a clean,
-                organized setup.
+                The Apexx Biolabs Vial Storage Case features fourteen
+                dedicated vial slots arranged across two rows. Its compact
+                profile provides a clean and convenient way to keep research
+                vials together and organized.
               </p>
             </div>
 
-            {/* SPECS */}
             <div className="border-t border-white/10 p-8 md:p-10 lg:border-l lg:border-t-0">
-              <DetailRow label="Capacity" value="14 Vials" />
-              <DetailRow label="Configuration" value="2 Rows × 7" />
-              <DetailRow label="Category" value="Lab Accessories" />
+              <DetailRow
+                label="Capacity"
+                value="14 Vials"
+              />
+
+              <DetailRow
+                label="Configuration"
+                value="2 Rows × 7"
+              />
+
+              <DetailRow
+                label="Category"
+                value="Lab Accessories"
+              />
+
               <DetailRow
                 label="Price"
                 value={`$${productData.price.toFixed(2)}`}
               />
             </div>
+
           </div>
         </div>
       </section>
@@ -413,6 +494,7 @@ export default function VialStorageCasePage() {
 /* =============================================================
    FEATURE CARD
 ============================================================= */
+
 function FeatureCard({
   icon,
   title,
@@ -424,13 +506,19 @@ function FeatureCard({
 }) {
   return (
     <div className="rounded-[22px] border border-white/10 bg-[#06111f]/45 p-4 transition hover:border-blue-400/30">
+
       <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-blue-400/10 text-blue-300">
         {icon}
       </div>
 
-      <p className="text-sm font-bold text-white">{title}</p>
+      <p className="text-sm font-bold text-white">
+        {title}
+      </p>
 
-      <p className="mt-1 text-xs leading-5 text-white/40">{text}</p>
+      <p className="mt-1 text-xs leading-5 text-white/40">
+        {text}
+      </p>
+
     </div>
   );
 }
@@ -438,6 +526,7 @@ function FeatureCard({
 /* =============================================================
    DETAIL ROW
 ============================================================= */
+
 function DetailRow({
   label,
   value,
@@ -447,9 +536,15 @@ function DetailRow({
 }) {
   return (
     <div className="flex items-center justify-between gap-6 border-b border-white/10 py-5 first:pt-0 last:border-0 last:pb-0">
-      <span className="text-sm text-white/40">{label}</span>
 
-      <span className="text-sm font-bold text-white">{value}</span>
+      <span className="text-sm text-white/40">
+        {label}
+      </span>
+
+      <span className="text-sm font-bold text-white">
+        {value}
+      </span>
+
     </div>
   );
 }

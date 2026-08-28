@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
+import CustomerActions from "./CustomerActions";
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -29,7 +30,6 @@ export default async function CustomerPage({
 }: CustomerPageProps) {
   const { id } = await params;
 
-  // Get the Supabase Auth user
   const {
     data: { user },
     error,
@@ -57,7 +57,6 @@ export default async function CustomerPage({
   const verified =
     !!user.email_confirmed_at;
 
-  // Get this customer's orders
   const { data: orders } = email
     ? await supabaseAdmin
         .from("orders")
@@ -234,8 +233,8 @@ export default async function CustomerPage({
                 </p>
 
                 <p className="mt-2 font-semibold capitalize">
-                  {user.app_metadata
-                    ?.provider || "email"}
+                  {user.app_metadata?.provider ||
+                    "email"}
                 </p>
               </div>
 
@@ -290,43 +289,17 @@ export default async function CustomerPage({
             </h2>
 
             <p className="mt-2 text-sm text-white/40">
-              Account and email management tools
-              will appear here.
+              Manage this customer&apos;s account
+              and email communication.
             </p>
 
           </div>
 
-          <div className="flex flex-wrap gap-3">
-
-            {!verified && (
-              <button
-                disabled
-                className="cursor-not-allowed rounded-xl border border-yellow-400/20 bg-yellow-500/10 px-5 py-3 text-sm font-bold text-yellow-200 opacity-50"
-              >
-                Resend Verification
-              </button>
-            )}
-
-            <button
-              disabled
-              className="cursor-not-allowed rounded-xl border border-blue-400/20 bg-blue-500/10 px-5 py-3 text-sm font-bold text-blue-200 opacity-50"
-            >
-              Send Password Reset
-            </button>
-
-            <button
-              disabled
-              className="cursor-not-allowed rounded-xl border border-white/10 bg-white/[0.05] px-5 py-3 text-sm font-bold text-white/60 opacity-50"
-            >
-              Send Email
-            </button>
-
-          </div>
-
-          <p className="mt-4 text-xs text-white/25">
-            We will activate these actions in
-            the next step.
-          </p>
+          <CustomerActions
+            customerId={user.id}
+            email={email}
+            verified={verified}
+          />
 
         </div>
 
@@ -427,10 +400,12 @@ export default async function CustomerPage({
                         </td>
 
                         <td className="px-6 py-5">
+
                           <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-semibold">
                             {order.status ||
                               "Unknown"}
                           </span>
+
                         </td>
 
                         <td className="px-6 py-5 font-semibold">

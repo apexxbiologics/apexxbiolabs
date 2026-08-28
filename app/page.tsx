@@ -498,31 +498,31 @@ Receive a Complimentary Gift With Any 8 Vials
           {
             name: "APX-2",
             desc: "30mg Research Peptide",
-            image: "/images/apx230blue.png",
+            image: "/images/apx230.png",
             href: "/products/apx2",
           },
           {
             name: "MITO-X",
             desc: "120mg Research Blend",
-            image: "/images/mitox120blue.png",
+            image: "/images/mitox120.png",
             href: "/products/mitox",
           },
           {
             name: "NEURO-X",
             desc: "48mg Research Peptide Blend",
-            image: "/images/neurox48blue.png",
+            image: "/images/neurox48.png",
             href: "/products/neurox",
           },
           {
             name: "Glutathione",
             desc: "1500mg Research Compound",
-            image: "/images/glutathione1500blue.png",
+            image: "/images/glutathione1500.png",
             href: "/products/glutathione",
           },
           {
             name: "SS-31",
             desc: "10mg Research Peptide",
-            image: "/images/ss3110blue.png",
+            image: "/images/ss3110.png",
             href: "/products/ss31",
           },
           {

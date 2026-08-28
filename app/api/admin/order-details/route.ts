@@ -51,8 +51,9 @@ export async function GET(request: Request) {
         cancellation_reason,
         cancelled_at,
         refund_amount,
-        refund_status,
-        refund_reason
+refund_status,
+refund_reason,
+refunded_at
       `)
       .eq("id", orderId)
       .single();

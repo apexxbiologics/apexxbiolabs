@@ -2,9 +2,6 @@
 
 import { useState } from "react";
 
-import { HiOutlineMail } from "react-icons/hi";
-import { FaTiktok } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
 
 type Peptide = {
   id: string;
@@ -469,201 +466,185 @@ export default function PeptideInfoPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-
+    <main className="min-h-screen bg-[#081526] text-white">
       {/* HERO */}
-      <section className="relative py-24 px-6 border-b border-white/10 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+      <section className="relative border-b border-white/10 px-5 py-14 md:py-16 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.10),transparent_55%)]" />
 
-        <div className="relative z-10 text-center max-w-5xl mx-auto">
-          <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
+        <div className="relative z-10 mx-auto max-w-4xl text-center">
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.32em] text-blue-300">
             Research Library
           </p>
 
-          <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.95]">
+          <h1 className="text-4xl font-black leading-tight md:text-5xl">
             Peptide Information
           </h1>
 
-          <p className="mt-10 text-white/70 text-lg md:text-xl max-w-4xl mx-auto leading-relaxed">
-            Educational research information covering peptide classifications,
-            laboratory handling, analytical testing, and research-use
-            documentation.
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-white/55 md:text-base">
+            Concise educational reference material covering peptide classifications,
+            research pathways, and laboratory-focused information.
           </p>
 
-          <div className="mt-8 inline-flex items-center gap-3 px-6 py-3 rounded-full border border-white/10 bg-white/[0.04] text-blue-300 text-sm uppercase tracking-widest">
+          <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] px-4 py-2 text-[10px] font-medium uppercase tracking-[0.18em] text-blue-300">
             <span>✓</span>
-            <span>Research Use Only • Educational Reference</span>
+            <span>Research Use Only</span>
           </div>
         </div>
       </section>
 
-      <div className="relative px-6 py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.08),transparent_60%)]"></div>
+      <div className="relative px-4 py-10 md:px-6 md:py-12 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.05),transparent_62%)]" />
 
-        <div className="relative z-10 max-w-7xl mx-auto space-y-8">
-          {/* INTRO */}
-          <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-12">
-            <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
-              Peptide Research Overview
-            </p>
+        <div className="relative z-10 mx-auto max-w-6xl">
+          {/* COMPACT OVERVIEW */}
+          <section className="mb-7 rounded-2xl border border-white/10 bg-white/[0.035] p-5 md:p-7">
+            <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:items-start">
+              <div>
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-blue-300">
+                  Peptide Research Overview
+                </p>
+                <h2 className="text-2xl font-black md:text-3xl">
+                  Understanding Peptides
+                </h2>
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-white/60">
+                  Peptides are short chains of amino acids studied for highly specific
+                  biological signaling. Research commonly examines their roles in
+                  cellular communication, metabolism, immune signaling, tissue repair,
+                  neurological activity, and related pathways.
+                </p>
+              </div>
 
-            <h2 className="text-4xl md:text-6xl font-black mb-8 text-white leading-[0.95]">
-              Understanding Peptides
-            </h2>
-
-            <p className="text-white/70 text-lg md:text-xl leading-relaxed mb-12 max-w-5xl">
-              Peptides are short chains of amino acids that function as highly
-              specific biological signaling molecules. Found naturally
-              throughout the body, peptides play essential roles in cellular
-              communication, metabolic regulation, immune signaling, tissue
-              repair, neurological activity, and countless physiological
-              pathways studied in modern biomedical research.
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                {
-                  title: "What Are Peptides?",
-                  text:
-                    "Peptides are composed of small sequences of amino acids linked together by peptide bonds. Due to their smaller structure compared to proteins, peptides are frequently studied for targeted biological signaling capabilities.",
-                },
-                {
-                  title: "Cellular Signaling",
-                  text:
-                    "Many peptides function as signaling compounds that bind to receptors on cells, triggering complex biochemical responses studied in metabolism, inflammation, cognition, regeneration, and immune regulation.",
-                },
-                {
-                  title: "Natural & Synthetic Peptides",
-                  text:
-                    "The body naturally produces thousands of peptides involved in physiological regulation. Synthetic peptides are laboratory-developed analogs used to study specific biological mechanisms under controlled research conditions.",
-                },
-                {
-                  title: "Peptides vs. Proteins",
-                  text:
-                    "While both peptides and proteins are built from amino acids, peptides are shorter and often investigated for targeted biological activity. Proteins are larger and more complex macromolecules.",
-                },
-              ].map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-8"
-                >
-                  <h3 className="text-2xl font-black text-white mb-4">
-                    {item.title}
-                  </h3>
-
-                  <p className="text-white/60 leading-relaxed">
-                    {item.text}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-10 rounded-[2rem] border border-white/10 bg-white/[0.03] p-8">
-              <h3 className="text-2xl font-black text-white mb-6">
-                Key Facts About Peptide Research
-              </h3>
-
-              <div className="flex flex-wrap gap-3">
+              <div className="grid gap-3 sm:grid-cols-2">
                 {[
-                  "Thousands of naturally occurring peptides identified",
-                  "Critical role in cellular communication pathways",
-                  "Widely studied in metabolic and regenerative research",
-                  "Highly specific receptor-targeting mechanisms",
-                  "Important tools in modern biomedical investigation",
-                ].map((fact) => (
-                  <span
-                    key={fact}
-                    className="border border-white/10 bg-white/[0.04] text-blue-300 rounded-full px-5 py-3 text-sm"
+                  {
+                    title: "Targeted Signaling",
+                    text: "Peptides are frequently studied for specific receptor and cellular signaling activity.",
+                  },
+                  {
+                    title: "Natural + Synthetic",
+                    text: "Research includes naturally occurring peptides and laboratory-developed analogs.",
+                  },
+                  {
+                    title: "Small Structures",
+                    text: "Peptides are shorter than proteins and can support highly focused pathway studies.",
+                  },
+                  {
+                    title: "Broad Research Use",
+                    text: "Common areas include metabolic, neurological, immune, and regenerative models.",
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.title}
+                    className="rounded-xl border border-white/10 bg-white/[0.025] p-4"
                   >
-                    {fact}
-                  </span>
+                    <h3 className="text-sm font-bold text-white">{item.title}</h3>
+                    <p className="mt-1.5 text-xs leading-5 text-white/50">{item.text}</p>
+                  </div>
                 ))}
               </div>
             </div>
 
-            <p className="mt-10 text-xs text-white/35 uppercase tracking-widest">
+            <p className="mt-5 border-t border-white/10 pt-4 text-[10px] uppercase tracking-[0.16em] text-white/30">
               For laboratory research use only. Not for human consumption.
             </p>
           </section>
 
-          {/* PEPTIDE ACCORDIONS */}
-          {peptides.map((peptide) => (
-            <div
-              key={peptide.id}
-              className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm overflow-hidden hover:bg-white/[0.07] hover:border-blue-400/40 transition-all duration-300"
-            >
-              <button
-                onClick={() =>
-                  setOpenPeptide(
-                    openPeptide === peptide.id ? null : peptide.id
-                  )
-                }
-                className="w-full text-left p-8 bg-transparent hover:bg-white/[0.03] transition-all"
-              >
-                <div className="flex items-center justify-between gap-6">
-                  <div>
-                    <p className="uppercase tracking-[0.3em] text-blue-300 text-sm mb-3">
-                      {peptide.category}
-                    </p>
-
-                    <h2 className="text-4xl font-black text-white">
-                      {peptide.name}
-                    </h2>
-                  </div>
-
-                  <span className="text-4xl text-blue-300">
-                    {openPeptide === peptide.id ? "−" : "+"}
-                  </span>
-                </div>
-              </button>
-
-              {openPeptide === peptide.id && (
-                <div className="p-8 md:p-10 border-t border-white/10 bg-[#081526]/40 backdrop-blur-sm">
-                  <p className="text-sm text-white/40 mb-8">
-                    {peptide.details}
-                  </p>
-
-                  <p className="text-white/70 text-lg leading-relaxed mb-8">
-                    {peptide.description}
-                  </p>
-
-                  <div className="border border-white/10 rounded-[2rem] p-8 mb-8 bg-white/[0.03]">
-                    <h3 className="text-xl font-black text-white mb-4">
-                      Mechanism Research
-                    </h3>
-
-                    <p className="text-white/60 leading-relaxed">
-                      {peptide.mechanism}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-xl font-black text-white mb-5">
-                      Research Areas
-                    </h3>
-
-                    <div className="flex flex-wrap gap-3">
-                      {peptide.areas.map((area) => (
-                        <span
-                          key={area}
-                          className="border border-white/10 bg-white/[0.04] text-blue-300 rounded-full px-4 py-2 text-sm"
-                        >
-                          {area}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <p className="mt-10 text-xs text-white/35 uppercase tracking-widest">
-                    For laboratory research use only. Not for human consumption.
-                  </p>
-                </div>
-              )}
+          {/* SECTION HEADER */}
+          <div className="mb-4 flex items-end justify-between gap-4 px-1">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-blue-300">
+                Research Index
+              </p>
+              <h2 className="mt-1 text-xl font-black md:text-2xl">
+                Peptide & Compound Library
+              </h2>
             </div>
-          ))}
+            <p className="hidden text-xs text-white/35 sm:block">
+              Select an item to view details
+            </p>
+          </div>
+
+          {/* SLIM ACCORDIONS */}
+          <div className="space-y-2.5">
+            {peptides.map((peptide) => (
+              <div
+                key={peptide.id}
+                className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] transition-colors duration-200 hover:border-blue-400/30 hover:bg-white/[0.045]"
+              >
+                <button
+                  onClick={() =>
+                    setOpenPeptide(openPeptide === peptide.id ? null : peptide.id)
+                  }
+                  className="w-full px-4 py-4 text-left md:px-5"
+                >
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="min-w-0 sm:flex sm:items-center sm:gap-4">
+                      <h3 className="text-lg font-bold text-white md:text-xl">
+                        {peptide.name}
+                      </h3>
+                      <span className="mt-1 block text-[10px] font-medium uppercase tracking-[0.16em] text-blue-300/80 sm:mt-0">
+                        {peptide.category}
+                      </span>
+                    </div>
+
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.035] text-lg font-light text-blue-300">
+                      {openPeptide === peptide.id ? "−" : "+"}
+                    </span>
+                  </div>
+                </button>
+
+                {openPeptide === peptide.id && (
+                  <div className="border-t border-white/10 bg-[#081526]/35 px-4 py-5 md:px-5 md:py-6">
+                    <p className="text-xs leading-5 text-white/40">
+                      {peptide.details}
+                    </p>
+
+                    <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                      <div>
+                        <h4 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-blue-300">
+                          Overview
+                        </h4>
+                        <p className="mt-2 text-sm leading-6 text-white/65">
+                          {peptide.description}
+                        </p>
+                      </div>
+
+                      <div>
+                        <h4 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-blue-300">
+                          Mechanism Research
+                        </h4>
+                        <p className="mt-2 text-sm leading-6 text-white/55">
+                          {peptide.mechanism}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 border-t border-white/10 pt-4">
+                      <h4 className="mb-2.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-blue-300">
+                        Research Areas
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {peptide.areas.map((area) => (
+                          <span
+                            key={area}
+                            className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[11px] text-white/55"
+                          >
+                            {area}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <p className="mt-5 text-[9px] uppercase tracking-[0.14em] text-white/25">
+                      For laboratory research use only. Not for human consumption.
+                    </p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-
     </main>
   );
 }

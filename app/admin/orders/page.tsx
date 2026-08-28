@@ -47,6 +47,7 @@ function detectCarrier(
     return null;
   }
 
+  // UPS
   if (
     /^1Z[A-Z0-9]{16}$/.test(
       tracking
@@ -56,6 +57,7 @@ function detectCarrier(
     return "UPS";
   }
 
+  // USPS
   if (
     /^(92|93|94|95)\d{18,20}$/.test(
       tracking
@@ -67,33 +69,21 @@ function detectCarrier(
     return "USPS";
   }
 
+  // DHL
   if (
-    /^\d{10}$/.test(
-      tracking
-    ) ||
-    /^JD\d+$/.test(
-      tracking
-    ) ||
-    /^JJD\d+$/.test(
-      tracking
-    )
+    /^\d{10}$/.test(tracking) ||
+    /^JD\d+$/.test(tracking) ||
+    /^JJD\d+$/.test(tracking)
   ) {
     return "DHL";
   }
 
+  // FedEx
   if (
-    /^\d{12}$/.test(
-      tracking
-    ) ||
-    /^\d{15}$/.test(
-      tracking
-    ) ||
-    /^\d{20}$/.test(
-      tracking
-    ) ||
-    /^\d{22}$/.test(
-      tracking
-    )
+    /^\d{12}$/.test(tracking) ||
+    /^\d{15}$/.test(tracking) ||
+    /^\d{20}$/.test(tracking) ||
+    /^\d{22}$/.test(tracking)
   ) {
     return "FedEx";
   }
@@ -146,30 +136,35 @@ export default function AdminOrdersPage() {
     setEnteredPassword,
   ] = useState("");
 
-  const [
-    unlocked,
-    setUnlocked,
-  ] = useState(false);
+  const [unlocked, setUnlocked] =
+    useState(false);
 
-  const [
-    lockedOut,
-    setLockedOut,
-  ] = useState(false);
+  const [lockedOut, setLockedOut] =
+    useState(false);
 
-  const [
-    loginError,
-    setLoginError,
-  ] = useState("");
+  const [loginError, setLoginError] =
+    useState("");
 
-  const [
-    loggingIn,
-    setLoggingIn,
-  ] = useState(false);
+  const [loggingIn, setLoggingIn] =
+    useState(false);
 
-  const [
-    searchTerm,
-    setSearchTerm,
-  ] = useState("");
+  const [searchTerm, setSearchTerm] =
+    useState("");
+
+  /*
+   * =====================================
+   * ADJUST ORDER TOTAL
+   * =====================================
+   */
+
+  const [editingTotalId, setEditingTotalId] =
+    useState<string | null>(null);
+
+  const [totalInputs, setTotalInputs] =
+    useState<Record<string, string>>({});
+
+  const [savingTotal, setSavingTotal] =
+    useState<Record<string, boolean>>({});
 
   /*
    * =====================================
@@ -180,9 +175,7 @@ export default function AdminOrdersPage() {
   const [
     contactOrder,
     setContactOrder,
-  ] = useState<Order | null>(
-    null
-  );
+  ] = useState<Order | null>(null);
 
   const [
     contactSubject,
@@ -230,9 +223,7 @@ export default function AdminOrdersPage() {
   const [
     manageOrder,
     setManageOrder,
-  ] = useState<Order | null>(
-    null
-  );
+  ] = useState<Order | null>(null);
 
   /*
    * =====================================
@@ -240,49 +231,45 @@ export default function AdminOrdersPage() {
    * =====================================
    */
 
-  const fetchOrders =
-    async () => {
-      try {
-        const response =
-          await fetch(
-            "/api/admin/orders",
-            {
-              cache:
-                "no-store",
-            }
-          );
-
-        const result =
-          await response.json();
-
-        if (
-          !response.ok ||
-          !result.success
-        ) {
-          console.error(
-            "Error fetching orders:",
-            result.error
-          );
-
-          setOrders([]);
-
-          return;
+  const fetchOrders = async () => {
+    try {
+      const response = await fetch(
+        "/api/admin/orders",
+        {
+          cache: "no-store",
         }
+      );
 
-        setOrders(
-          result.orders || []
-        );
-      } catch (error) {
+      const result =
+        await response.json();
+
+      if (
+        !response.ok ||
+        !result.success
+      ) {
         console.error(
           "Error fetching orders:",
-          error
+          result.error
         );
 
         setOrders([]);
-      } finally {
-        setLoading(false);
+        return;
       }
-    };
+
+      setOrders(
+        result.orders || []
+      );
+    } catch (error) {
+      console.error(
+        "Error fetching orders:",
+        error
+      );
+
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     void fetchOrders();
@@ -290,95 +277,210 @@ export default function AdminOrdersPage() {
 
   /*
    * =====================================
+   * SAVE ADJUSTED ORDER TOTAL
+   * =====================================
+   */
+
+  const handleSaveOrderTotal = async (
+    orderId: string
+  ) => {
+    const rawValue =
+      totalInputs[orderId];
+
+    const newTotal =
+      Number(rawValue);
+
+    if (
+      rawValue === undefined ||
+      rawValue.trim() === "" ||
+      !Number.isFinite(newTotal) ||
+      newTotal < 0
+    ) {
+      alert(
+        "Please enter a valid order total."
+      );
+      return;
+    }
+
+    try {
+      setSavingTotal(
+        (current) => ({
+          ...current,
+          [orderId]: true,
+        })
+      );
+
+      const response = await fetch(
+        "/api/admin/orders/update-total",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            orderId,
+            total: Number(
+              newTotal.toFixed(2)
+            ),
+          }),
+        }
+      );
+
+      const result =
+        await response.json();
+
+      if (
+        !response.ok ||
+        !result.success
+      ) {
+        alert(
+          result.error ||
+            "Failed to update order total."
+        );
+        return;
+      }
+
+      setOrders(
+        (current) =>
+          current.map(
+            (order) =>
+              order.id === orderId
+                ? {
+                    ...order,
+                    total:
+                      result.order
+                        ?.total ??
+                      Number(
+                        newTotal.toFixed(
+                          2
+                        )
+                      ),
+                  }
+                : order
+          )
+      );
+
+      setEditingTotalId(
+        null
+      );
+
+      setTotalInputs(
+        (current) => {
+          const next = {
+            ...current,
+          };
+
+          delete next[
+            orderId
+          ];
+
+          return next;
+        }
+      );
+    } catch (error) {
+      console.error(
+        "Update order total error:",
+        error
+      );
+
+      alert(
+        "Unable to update the order total."
+      );
+    } finally {
+      setSavingTotal(
+        (current) => ({
+          ...current,
+          [orderId]: false,
+        })
+      );
+    }
+  };
+
+  /*
+   * =====================================
    * ADMIN LOGIN
    * =====================================
    */
 
-  const handleLogin =
-    async () => {
+  const handleLogin = async () => {
+    if (
+      !enteredUsername.trim() ||
+      !enteredPassword.trim()
+    ) {
+      setLoginError(
+        "Please enter your username and password."
+      );
+
+      return;
+    }
+
+    try {
+      setLoggingIn(true);
+      setLoginError("");
+
+      const response = await fetch(
+        "/api/admin/login",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
+            username:
+              enteredUsername.trim(),
+
+            password:
+              enteredPassword,
+          }),
+        }
+      );
+
+      const result =
+        await response.json();
+
       if (
-        !enteredUsername.trim() ||
-        !enteredPassword.trim()
+        response.ok &&
+        result.success
       ) {
+        setUnlocked(true);
+        setLoginError("");
+        return;
+      }
+
+      if (result.locked) {
+        setLockedOut(true);
+
         setLoginError(
-          "Please enter your username and password."
+          "Too many failed attempts. Access locked."
         );
 
         return;
       }
 
-      try {
-        setLoggingIn(true);
-        setLoginError("");
+      setLoginError(
+        typeof result.attemptsLeft ===
+          "number"
+          ? `Incorrect login. Attempts left: ${result.attemptsLeft}`
+          : result.error ||
+              "Incorrect username or password."
+      );
+    } catch (error) {
+      console.error(
+        "Admin login error:",
+        error
+      );
 
-        const response =
-          await fetch(
-            "/api/admin/login",
-            {
-              method:
-                "POST",
-
-              headers: {
-                "Content-Type":
-                  "application/json",
-              },
-
-              body:
-                JSON.stringify({
-                  username:
-                    enteredUsername.trim(),
-
-                  password:
-                    enteredPassword,
-                }),
-            }
-          );
-
-        const result =
-          await response.json();
-
-        if (
-          response.ok &&
-          result.success
-        ) {
-          setUnlocked(true);
-          setLoginError("");
-
-          return;
-        }
-
-        if (
-          result.locked
-        ) {
-          setLockedOut(true);
-
-          setLoginError(
-            "Too many failed attempts. Access locked."
-          );
-
-          return;
-        }
-
-        setLoginError(
-          typeof result.attemptsLeft ===
-            "number"
-            ? `Incorrect login. Attempts left: ${result.attemptsLeft}`
-            : result.error ||
-                "Incorrect username or password."
-        );
-      } catch (error) {
-        console.error(
-          "Admin login error:",
-          error
-        );
-
-        setLoginError(
-          "Unable to log in. Please try again."
-        );
-      } finally {
-        setLoggingIn(false);
-      }
-    };
+      setLoginError(
+        "Unable to log in. Please try again."
+      );
+    } finally {
+      setLoggingIn(false);
+    }
+  };
 
   /*
    * =====================================
@@ -386,79 +488,71 @@ export default function AdminOrdersPage() {
    * =====================================
    */
 
-  const handleMarkPaid =
-    async (
-      orderId: string
-    ) => {
-      try {
-        setMarkingPaid(
-          (current) => ({
-            ...current,
+  const handleMarkPaid = async (
+    orderId: string
+  ) => {
+    try {
+      setMarkingPaid(
+        (current) => ({
+          ...current,
+          [orderId]: true,
+        })
+      );
 
-            [orderId]:
-              true,
-          })
-        );
+      const response = await fetch(
+        "/api/admin/mark-paid",
+        {
+          method: "POST",
 
-        const response =
-          await fetch(
-            "/api/admin/mark-paid",
-            {
-              method:
-                "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
 
-              headers: {
-                "Content-Type":
-                  "application/json",
-              },
-
-              body:
-                JSON.stringify({
-                  orderId,
-                }),
-            }
-          );
-
-        const result =
-          await response.json();
-
-        if (
-          !response.ok ||
-          !result.success
-        ) {
-          alert(
-            result.error ||
-              "Failed to mark the order as paid."
-          );
-
-          return;
+          body: JSON.stringify({
+            orderId,
+          }),
         }
+      );
 
+      const result =
+        await response.json();
+
+      if (
+        !response.ok ||
+        !result.success
+      ) {
         alert(
-          "Order marked as paid. Inventory updated."
+          result.error ||
+            "Failed to mark the order as paid."
         );
 
-        await fetchOrders();
-      } catch (error) {
-        console.error(
-          "Error marking order paid:",
-          error
-        );
-
-        alert(
-          "Something went wrong while marking the order as paid."
-        );
-      } finally {
-        setMarkingPaid(
-          (current) => ({
-            ...current,
-
-            [orderId]:
-              false,
-          })
-        );
+        return;
       }
-    };
+
+      alert(
+        "Order marked as paid. Inventory updated."
+      );
+
+      await fetchOrders();
+    } catch (error) {
+      console.error(
+        "Error marking order paid:",
+        error
+      );
+
+      alert(
+        "Something went wrong while marking the order as paid."
+      );
+    } finally {
+      setMarkingPaid(
+        (current) => ({
+          ...current,
+          [orderId]: false,
+        })
+      );
+    }
+  };
 
   /*
    * =====================================
@@ -466,150 +560,139 @@ export default function AdminOrdersPage() {
    * =====================================
    */
 
-  const handleSendTracking =
-    async (
-      order: Order
-    ) => {
-      const trackingNumber =
-        (
-          trackingInputs[
-            order.id
-          ] || ""
-        ).trim();
+  const handleSendTracking = async (
+    order: Order
+  ) => {
+    const trackingNumber = (
+      trackingInputs[
+        order.id
+      ] || ""
+    ).trim();
+
+    if (!trackingNumber) {
+      alert(
+        "Please enter a tracking number."
+      );
+
+      return;
+    }
+
+    const selectedCarrier =
+      carrierInputs[
+        order.id
+      ] || "AUTO";
+
+    const carrier =
+      selectedCarrier === "AUTO"
+        ? detectCarrier(
+            trackingNumber
+          )
+        : selectedCarrier;
+
+    if (!carrier) {
+      alert(
+        "The carrier could not be detected. Please select USPS, UPS, FedEx, or DHL manually."
+      );
+
+      return;
+    }
+
+    try {
+      setSendingTracking(
+        (current) => ({
+          ...current,
+
+          [order.id]:
+            true,
+        })
+      );
+
+      const response = await fetch(
+        "/api/admin/send-tracking",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
+            orderId: order.id,
+            trackingNumber,
+            carrier,
+          }),
+        }
+      );
+
+      const result =
+        await response.json();
 
       if (
-        !trackingNumber
+        !response.ok ||
+        !result.success
       ) {
         alert(
-          "Please enter a tracking number."
+          result.error ||
+            "The tracking information could not be sent."
         );
 
         return;
       }
 
-      const selectedCarrier =
-        carrierInputs[
-          order.id
-        ] || "AUTO";
+      alert(
+        `Tracking information sent successfully through ${carrier}.`
+      );
 
-      const carrier =
-        selectedCarrier ===
-        "AUTO"
-          ? detectCarrier(
-              trackingNumber
-            )
-          : selectedCarrier;
-
-      if (!carrier) {
-        alert(
-          "The carrier could not be detected. Please select USPS, UPS, FedEx, or DHL manually."
-        );
-
-        return;
-      }
-
-      try {
-        setSendingTracking(
-          (current) => ({
+      setTrackingInputs(
+        (current) => {
+          const updated = {
             ...current,
+          };
 
-            [order.id]:
-              true,
-          })
-        );
+          delete updated[
+            order.id
+          ];
 
-        const response =
-          await fetch(
-            "/api/admin/send-tracking",
-            {
-              method:
-                "POST",
-
-              headers: {
-                "Content-Type":
-                  "application/json",
-              },
-
-              body:
-                JSON.stringify({
-                  orderId:
-                    order.id,
-
-                  trackingNumber,
-
-                  carrier,
-                }),
-            }
-          );
-
-        const result =
-          await response.json();
-
-        if (
-          !response.ok ||
-          !result.success
-        ) {
-          alert(
-            result.error ||
-              "The tracking information could not be sent."
-          );
-
-          return;
+          return updated;
         }
+      );
 
-        alert(
-          `Tracking information sent successfully through ${carrier}.`
-        );
-
-        setTrackingInputs(
-          (current) => {
-            const updated = {
-              ...current,
-            };
-
-            delete updated[
-              order.id
-            ];
-
-            return updated;
-          }
-        );
-
-        setCarrierInputs(
-          (current) => {
-            const updated = {
-              ...current,
-            };
-
-            delete updated[
-              order.id
-            ];
-
-            return updated;
-          }
-        );
-
-        await fetchOrders();
-      } catch (error) {
-        console.error(
-          "Error sending tracking:",
-          error
-        );
-
-        alert(
-          "Something went wrong while sending the tracking information."
-        );
-      } finally {
-        setSendingTracking(
-          (current) => ({
+      setCarrierInputs(
+        (current) => {
+          const updated = {
             ...current,
+          };
 
-            [order.id]:
-              false,
-          })
-        );
-      }
-    };
+          delete updated[
+            order.id
+          ];
+
+          return updated;
+        }
+      );
+
+      await fetchOrders();
+    } catch (error) {
+      console.error(
+        "Error sending tracking:",
+        error
+      );
+
+      alert(
+        "Something went wrong while sending the tracking information."
+      );
+    } finally {
+      setSendingTracking(
+        (current) => ({
+          ...current,
+
+          [order.id]:
+            false,
+        })
+      );
+    }
+  };
 
   /*
    * =====================================
@@ -618,9 +701,7 @@ export default function AdminOrdersPage() {
    */
 
   const loadConversation =
-    async (
-      order: Order
-    ) => {
+    async (order: Order) => {
       try {
         setLoadingConversation(
           true
@@ -701,30 +782,29 @@ export default function AdminOrdersPage() {
       }
     };
 
-  const openContactModal =
-    (
-      order: Order
-    ) => {
-      setContactOrder(
-        order
-      );
+  const openContactModal = (
+    order: Order
+  ) => {
+    setContactOrder(
+      order
+    );
 
-      setContactSubject(
-        `Regarding Your Apexx Biolabs Order ${order.order_number}`
-      );
+    setContactSubject(
+      `Regarding Your Apexx Biolabs Order ${order.order_number}`
+    );
 
-      setContactMessage("");
-      setContactError("");
-      setContactSuccess("");
+    setContactMessage("");
+    setContactError("");
+    setContactSuccess("");
 
-      setConversationMessages(
-        []
-      );
+    setConversationMessages(
+      []
+    );
 
-      void loadConversation(
-        order
-      );
-    };
+    void loadConversation(
+      order
+    );
+  };
 
   const closeContactModal =
     () => {
@@ -756,9 +836,7 @@ export default function AdminOrdersPage() {
 
   const handleContactCustomer =
     async () => {
-      if (
-        !contactOrder
-      ) {
+      if (!contactOrder) {
         return;
       }
 
@@ -805,14 +883,15 @@ export default function AdminOrdersPage() {
               },
 
               body:
-                JSON.stringify({
-                  orderId:
-                    contactOrder.id,
+                JSON.stringify(
+                  {
+                    orderId:
+                      contactOrder.id,
 
-                  subject,
-
-                  message,
-                }),
+                    subject,
+                    message,
+                  }
+                ),
             }
           );
 
@@ -1026,7 +1105,8 @@ export default function AdminOrdersPage() {
                   event
                 ) =>
                   setEnteredUsername(
-                    event.target
+                    event
+                      .target
                       .value
                   )
                 }
@@ -1054,7 +1134,8 @@ export default function AdminOrdersPage() {
                   event
                 ) =>
                   setEnteredPassword(
-                    event.target
+                    event
+                      .target
                       .value
                   )
                 }
@@ -1205,9 +1286,7 @@ export default function AdminOrdersPage() {
         <div className="mb-6">
           <input
             type="text"
-            value={
-              searchTerm
-            }
+            value={searchTerm}
             onChange={(
               event
             ) =>
@@ -1309,11 +1388,15 @@ export default function AdminOrdersPage() {
                           className="border-t border-white/10 transition-colors hover:bg-white/[0.03]"
                         >
 
+                          {/* ORDER */}
+
                           <td className="p-5 font-bold text-white">
                             {
                               order.order_number
                             }
                           </td>
+
+                          {/* CUSTOMER */}
 
                           <td className="p-5">
                             <p className="font-semibold">
@@ -1332,21 +1415,160 @@ export default function AdminOrdersPage() {
                             </p>
                           </td>
 
+                          {/* PAYMENT */}
+
                           <td className="p-5 capitalize text-blue-200">
                             {
                               order.payment_method
                             }
                           </td>
 
-                          <td className="p-5 font-black text-blue-300">
-                            $
-                            {Number(
-                              order.total ||
-                                0
-                            ).toFixed(
-                              2
+                          {/* TOTAL */}
+
+                          <td className="p-5">
+                            {editingTotalId ===
+                            order.id ? (
+                              <div className="flex min-w-[190px] flex-col gap-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-black text-blue-300">
+                                    $
+                                  </span>
+
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    value={
+                                      totalInputs[
+                                        order.id
+                                      ] ??
+                                      Number(
+                                        order.total ||
+                                          0
+                                      ).toFixed(
+                                        2
+                                      )
+                                    }
+                                    onChange={(
+                                      event
+                                    ) =>
+                                      setTotalInputs(
+                                        (
+                                          current
+                                        ) => ({
+                                          ...current,
+                                          [order.id]:
+                                            event
+                                              .target
+                                              .value,
+                                        })
+                                      )
+                                    }
+                                    className="w-28 rounded-xl border border-blue-300/30 bg-white/[0.06] px-3 py-2 font-black text-white outline-none focus:border-blue-300/70"
+                                  />
+                                </div>
+
+                                <div className="flex gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      void handleSaveOrderTotal(
+                                        order.id
+                                      )
+                                    }
+                                    disabled={
+                                      savingTotal[
+                                        order.id
+                                      ]
+                                    }
+                                    className="rounded-full bg-blue-400 px-3 py-1.5 text-xs font-black text-[#081526] transition-all hover:bg-blue-300 disabled:cursor-not-allowed disabled:opacity-50"
+                                  >
+                                    {savingTotal[
+                                      order.id
+                                    ]
+                                      ? "Saving..."
+                                      : "Save"}
+                                  </button>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setEditingTotalId(
+                                        null
+                                      );
+
+                                      setTotalInputs(
+                                        (
+                                          current
+                                        ) => {
+                                          const next =
+                                            {
+                                              ...current,
+                                            };
+
+                                          delete next[
+                                            order
+                                              .id
+                                          ];
+
+                                          return next;
+                                        }
+                                      );
+                                    }}
+                                    disabled={
+                                      savingTotal[
+                                        order.id
+                                      ]
+                                    }
+                                    className="rounded-full border border-white/15 px-3 py-1.5 text-xs font-bold text-white/60 transition-all hover:bg-white/[0.06] hover:text-white disabled:opacity-50"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="flex min-w-[150px] items-center gap-3">
+                                <span className="font-black text-blue-300">
+                                  $
+                                  {Number(
+                                    order.total ||
+                                      0
+                                  ).toFixed(
+                                    2
+                                  )}
+                                </span>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setEditingTotalId(
+                                      order.id
+                                    );
+
+                                    setTotalInputs(
+                                      (
+                                        current
+                                      ) => ({
+                                        ...current,
+                                        [order.id]:
+                                          Number(
+                                            order.total ||
+                                              0
+                                          ).toFixed(
+                                            2
+                                          ),
+                                      })
+                                    );
+                                  }}
+                                  className="rounded-full border border-blue-300/25 bg-blue-500/10 px-3 py-1 text-[11px] font-bold text-blue-200 transition-all hover:border-blue-300/50 hover:bg-blue-500/20 hover:text-white"
+                                >
+                                  Edit
+                                </button>
+                              </div>
                             )}
                           </td>
+
+                          {/* PROMO */}
 
                           <td className="p-5">
                             {order.promo_code ? (
@@ -1374,6 +1596,8 @@ export default function AdminOrdersPage() {
                             )}
                           </td>
 
+                          {/* STATUS */}
+
                           <td className="p-5">
                             <span className="inline-flex rounded-full border border-blue-300/30 bg-blue-500/10 px-4 py-2 text-xs uppercase tracking-widest text-blue-200">
                               {order.status.replaceAll(
@@ -1382,6 +1606,8 @@ export default function AdminOrdersPage() {
                               )}
                             </span>
                           </td>
+
+                          {/* CREATED */}
 
                           <td className="p-5 text-sm text-white/50">
                             {new Date(
@@ -1530,14 +1756,10 @@ export default function AdminOrdersPage() {
                                   </p>
                                 )}
                               </div>
-                            ) : order.status ===
-                              "cancelled" ? (
-                              <span className="text-sm text-red-200/60">
-                                Cancelled
-                              </span>
                             ) : (
                               <span className="text-sm text-white/40">
-                                Mark paid first
+                                Mark paid
+                                first
                               </span>
                             )}
 
@@ -1592,19 +1814,18 @@ export default function AdminOrdersPage() {
                                 </span>
                               )}
 
-                              {/* MANAGE ORDER - ALWAYS VISIBLE */}
+                              {/* NEW MANAGE ORDER BUTTON */}
 
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setManageOrder(
-                                    order
-                                  )
-                                }
-                                className="rounded-full border border-purple-300/30 bg-purple-500/10 px-5 py-2 text-sm font-bold text-purple-200 transition-all hover:border-purple-300/60 hover:bg-purple-500/20 hover:text-white"
-                              >
-                                Manage Order
-                              </button>
+                              {order.status !==
+                                "cancelled" && (
+<button
+  type="button"
+  onClick={() => setManageOrder(order)}
+  className="rounded-full border border-purple-300/30 bg-purple-500/10 px-5 py-2 text-sm font-bold text-purple-200 transition-all hover:border-purple-300/60 hover:bg-purple-500/20 hover:text-white"
+>
+  Manage Order
+</button>
+                              )}
 
                               {/* CONVERSATION */}
 
@@ -1640,7 +1861,9 @@ export default function AdminOrdersPage() {
 
       </div>
 
-      {/* MANAGE ORDER MODAL */}
+      {/* =========================================
+          MANAGE ORDER MODAL
+      ========================================= */}
 
       {manageOrder && (
         <ManageOrderModal
@@ -1658,7 +1881,9 @@ export default function AdminOrdersPage() {
         />
       )}
 
-      {/* CUSTOMER CONVERSATION MODAL */}
+      {/* =========================================
+          CUSTOMER CONVERSATION MODAL
+      ========================================= */}
 
       {contactOrder && (
         <div
@@ -1681,15 +1906,23 @@ export default function AdminOrdersPage() {
 
               <div>
                 <p className="mb-2 text-xs uppercase tracking-[0.35em] text-blue-300">
-                  Order Conversation
+                  Order
+                  Conversation
                 </p>
 
                 <h2 className="text-3xl font-black text-white">
-                  Customer Conversation
+                  Customer
+                  Conversation
                 </h2>
 
                 <p className="mt-3 text-sm leading-6 text-white/55">
-                  View the order conversation and send a branded Apexx reply. This stays separate from promotional campaigns.
+                  View the order
+                  conversation and
+                  send a branded
+                  Apexx reply. This
+                  stays separate
+                  from promotional
+                  campaigns.
                 </p>
               </div>
 
@@ -1708,6 +1941,8 @@ export default function AdminOrdersPage() {
               </button>
 
             </div>
+
+            {/* CUSTOMER / ORDER INFO */}
 
             <div className="mb-6 grid gap-3 rounded-2xl border border-blue-300/15 bg-white/[0.04] p-5 sm:grid-cols-2">
 
@@ -1753,6 +1988,8 @@ export default function AdminOrdersPage() {
 
             </div>
 
+            {/* CONVERSATION */}
+
             <div className="mb-7">
 
               <div className="mb-3 flex items-center justify-between gap-3">
@@ -1763,7 +2000,11 @@ export default function AdminOrdersPage() {
                   </p>
 
                   <p className="mt-1 text-sm text-white/45">
-                    Customer replies will appear here after the Resend inbound webhook is connected.
+                    Customer replies
+                    will appear here
+                    after the Resend
+                    inbound webhook
+                    is connected.
                   </p>
                 </div>
 
@@ -1787,12 +2028,16 @@ export default function AdminOrdersPage() {
 
                 {loadingConversation ? (
                   <p className="py-6 text-center text-sm text-white/45">
-                    Loading conversation...
+                    Loading
+                    conversation...
                   </p>
                 ) : conversationMessages.length ===
                   0 ? (
                   <p className="py-6 text-center text-sm text-white/45">
-                    No saved messages yet. Your first email will start this conversation.
+                    No saved messages
+                    yet. Your first
+                    email will start
+                    this conversation.
                   </p>
                 ) : (
                   conversationMessages.map(
@@ -1856,6 +2101,8 @@ export default function AdminOrdersPage() {
 
             </div>
 
+            {/* SUBJECT */}
+
             <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-blue-200">
               Subject
             </label>
@@ -1873,11 +2120,11 @@ export default function AdminOrdersPage() {
                     .value
                 )
               }
-              maxLength={
-                180
-              }
+              maxLength={180}
               className="mb-5 w-full rounded-2xl border border-white/10 bg-white/[0.06] px-5 py-4 text-white outline-none placeholder:text-white/30 focus:border-blue-300/50"
             />
+
+            {/* MESSAGE */}
 
             <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-blue-200">
               Message
@@ -1895,12 +2142,8 @@ export default function AdminOrdersPage() {
                     .value
                 )
               }
-              rows={
-                9
-              }
-              maxLength={
-                5000
-              }
+              rows={9}
+              maxLength={5000}
               placeholder={`Hi ${
                 contactOrder.first_name ||
                 "there"
@@ -1911,9 +2154,9 @@ We're reaching out regarding your order...`}
             />
 
             <div className="mt-2 flex justify-between text-xs text-white/35">
-
               <span>
-                Line breaks are preserved.
+                Line breaks are
+                preserved.
               </span>
 
               <span>
@@ -1922,8 +2165,9 @@ We're reaching out regarding your order...`}
                 }
                 /5000
               </span>
-
             </div>
+
+            {/* ERROR */}
 
             {contactError && (
               <div className="mt-5 rounded-2xl border border-red-400/20 bg-red-500/10 px-5 py-4 text-sm font-bold text-red-200">
@@ -1933,6 +2177,8 @@ We're reaching out regarding your order...`}
               </div>
             )}
 
+            {/* SUCCESS */}
+
             {contactSuccess && (
               <div className="mt-5 rounded-2xl border border-green-400/20 bg-green-500/10 px-5 py-4 text-sm font-bold text-green-200">
                 {
@@ -1940,6 +2186,8 @@ We're reaching out regarding your order...`}
                 }
               </div>
             )}
+
+            {/* BUTTONS */}
 
             <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
 
@@ -1979,6 +2227,8 @@ We're reaching out regarding your order...`}
               </button>
 
             </div>
+
+            {/* SCROLLBAR */}
 
             <style jsx>{`
               .conversation-scrollbar {

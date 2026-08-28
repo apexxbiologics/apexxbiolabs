@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
 type BasicOrder = {
   id: string;
@@ -31,25 +28,13 @@ type DetailedOrder = BasicOrder & {
   discount: number | null;
   reward_discount: number | null;
 
-  cancellation_reason:
-    | string
-    | null;
+  cancellation_reason: string | null;
+  cancelled_at: string | null;
 
-  cancelled_at:
-    | string
-    | null;
-
-  refund_amount:
-    | number
-    | null;
-
-  refund_status:
-    | string
-    | null;
-
-  refund_reason:
-    | string
-    | null;
+  refund_amount: number | null;
+  refund_status: string | null;
+  refund_reason: string | null;
+  refunded_at: string | null;
 };
 
 type Props = {
@@ -72,26 +57,19 @@ export default function ManageOrderModal({
   onClose,
   onUpdated,
 }: Props) {
-  const [
-    details,
-    setDetails,
-  ] =
-    useState<DetailedOrder | null>(
-      null
-    );
+  const [details, setDetails] =
+    useState<DetailedOrder | null>(null);
 
   const [loading, setLoading] =
     useState(true);
 
-  const [
-    submitting,
-    setSubmitting,
-  ] = useState(false);
+  const [submitting, setSubmitting] =
+    useState(false);
 
   const [mode, setMode] =
-    useState<
-      "cancel" | "modify"
-    >("modify");
+    useState<"cancel" | "modify">(
+      "modify"
+    );
 
   const [reason, setReason] =
     useState("");
@@ -99,12 +77,10 @@ export default function ManageOrderModal({
   const [otherReason, setOtherReason] =
     useState("");
 
-  const [
-    quantities,
-    setQuantities,
-  ] = useState<
-    Record<string, number>
-  >({});
+  const [quantities, setQuantities] =
+    useState<Record<string, number>>(
+      {}
+    );
 
   const [message, setMessage] =
     useState("");
@@ -117,76 +93,92 @@ export default function ManageOrderModal({
       ? otherReason.trim()
       : reason.trim();
 
-  useEffect(() => {
-    async function loadOrder() {
-      try {
-        setLoading(true);
+  /*
+   * =====================================
+   * LOAD ORDER
+   * =====================================
+   */
 
-        const response =
-          await fetch(
-            `/api/admin/order-details?orderId=${encodeURIComponent(
-              order.id
-            )}`,
-            {
-              cache: "no-store",
-            }
-          );
+  async function loadOrder() {
+    try {
+      setLoading(true);
+      setError("");
 
-        const result =
-          await response.json();
-
-        if (
-          !response.ok ||
-          !result.success
-        ) {
-          setError(
-            result.error ||
-              "Unable to load order."
-          );
-          return;
+      const response = await fetch(
+        `/api/admin/order-details?orderId=${encodeURIComponent(
+          order.id
+        )}`,
+        {
+          cache: "no-store",
         }
+      );
 
-        const loadedOrder =
-          result.order as DetailedOrder;
+      const result =
+        await response.json();
 
-        setDetails(loadedOrder);
-
-        const startingQuantities:
-          Record<string, number> = {};
-
-        (
-          loadedOrder.cart || []
-        ).forEach((item) => {
-          startingQuantities[
-            item.id
-          ] = item.quantity;
-        });
-
-        setQuantities(
-          startingQuantities
-        );
-      } catch (error) {
-        console.error(
-          "Load order error:",
-          error
-        );
-
+      if (
+        !response.ok ||
+        !result.success
+      ) {
         setError(
-          "Unable to load order."
+          result.error ||
+            "Unable to load order."
         );
-      } finally {
-        setLoading(false);
-      }
-    }
 
+        return;
+      }
+
+      const loadedOrder =
+        result.order as DetailedOrder;
+
+      setDetails(loadedOrder);
+
+      const startingQuantities: Record<
+        string,
+        number
+      > = {};
+
+      (
+        loadedOrder.cart || []
+      ).forEach((item) => {
+        startingQuantities[
+          item.id
+        ] = item.quantity;
+      });
+
+      setQuantities(
+        startingQuantities
+      );
+    } catch (error) {
+      console.error(
+        "Load order error:",
+        error
+      );
+
+      setError(
+        "Unable to load order."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
     void loadOrder();
   }, [order.id]);
+
+  /*
+   * =====================================
+   * CANCEL ENTIRE ORDER
+   * =====================================
+   */
 
   async function cancelOrder() {
     if (!finalReason) {
       setError(
         "Please choose a cancellation reason."
       );
+
       return;
     }
 
@@ -195,32 +187,32 @@ export default function ManageOrderModal({
         `Cancel order ${order.order_number}?`
       );
 
-    if (!confirmed) return;
+    if (!confirmed) {
+      return;
+    }
 
     try {
       setSubmitting(true);
       setError("");
       setMessage("");
 
-      const response =
-        await fetch(
-          "/api/admin/manage-order",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-            body: JSON.stringify({
-              action:
-                "cancel_order",
-              orderId:
-                order.id,
-              reason:
-                finalReason,
-            }),
-          }
-        );
+      const response = await fetch(
+        "/api/admin/manage-order",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
+            action: "cancel_order",
+            orderId: order.id,
+            reason: finalReason,
+          }),
+        }
+      );
 
       const result =
         await response.json();
@@ -233,6 +225,7 @@ export default function ManageOrderModal({
           result.error ||
             "Unable to cancel order."
         );
+
         return;
       }
 
@@ -240,6 +233,8 @@ export default function ManageOrderModal({
         result.message ||
           "Order cancelled."
       );
+
+      await loadOrder();
 
       onUpdated();
     } catch (error) {
@@ -256,13 +251,31 @@ export default function ManageOrderModal({
     }
   }
 
+  /*
+   * =====================================
+   * MODIFY ITEM
+   * =====================================
+   */
+
   async function modifyItem(
     item: CartItem
   ) {
-    const newQuantity =
-      Number(
-        quantities[item.id]
+    const newQuantity = Number(
+      quantities[item.id]
+    );
+
+    if (
+      !Number.isInteger(
+        newQuantity
+      ) ||
+      newQuantity < 0
+    ) {
+      setError(
+        "Please choose a valid quantity."
       );
+
+      return;
+    }
 
     if (
       newQuantity >=
@@ -271,10 +284,7 @@ export default function ManageOrderModal({
       setError(
         "Choose a lower quantity to remove or reduce this item."
       );
-      return;
-    }
 
-    if (newQuantity < 0) {
       return;
     }
 
@@ -282,6 +292,7 @@ export default function ManageOrderModal({
       setError(
         "Please choose a reason."
       );
+
       return;
     }
 
@@ -299,39 +310,34 @@ export default function ManageOrderModal({
         description
       );
 
-    if (!confirmed) return;
+    if (!confirmed) {
+      return;
+    }
 
     try {
       setSubmitting(true);
       setError("");
       setMessage("");
 
-      const response =
-        await fetch(
-          "/api/admin/manage-order",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-            body: JSON.stringify({
-              action:
-                "modify_item",
+      const response = await fetch(
+        "/api/admin/manage-order",
+        {
+          method: "POST",
 
-              orderId:
-                order.id,
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
 
-              itemId:
-                item.id,
-
-              newQuantity,
-
-              reason:
-                finalReason,
-            }),
-          }
-        );
+          body: JSON.stringify({
+            action: "modify_item",
+            orderId: order.id,
+            itemId: item.id,
+            newQuantity,
+            reason: finalReason,
+          }),
+        }
+      );
 
       const result =
         await response.json();
@@ -344,6 +350,7 @@ export default function ManageOrderModal({
           result.error ||
             "Unable to modify order."
         );
+
         return;
       }
 
@@ -352,56 +359,9 @@ export default function ManageOrderModal({
           "Order updated."
       );
 
+      await loadOrder();
+
       onUpdated();
-
-      /*
-       * Reload the order inside
-       * the modal so the items
-       * and totals refresh.
-       */
-      const refreshed =
-        await fetch(
-          `/api/admin/order-details?orderId=${encodeURIComponent(
-            order.id
-          )}`,
-          {
-            cache: "no-store",
-          }
-        );
-
-      const refreshedResult =
-        await refreshed.json();
-
-      if (
-        refreshed.ok &&
-        refreshedResult.success
-      ) {
-        const updatedOrder =
-          refreshedResult.order as DetailedOrder;
-
-        setDetails(
-          updatedOrder
-        );
-
-        const updatedQuantities:
-          Record<
-            string,
-            number
-          > = {};
-
-        (
-          updatedOrder.cart || []
-        ).forEach((cartItem) => {
-          updatedQuantities[
-            cartItem.id
-          ] =
-            cartItem.quantity;
-        });
-
-        setQuantities(
-          updatedQuantities
-        );
-      }
     } catch (error) {
       console.error(
         "Modify order error:",
@@ -415,6 +375,116 @@ export default function ManageOrderModal({
       setSubmitting(false);
     }
   }
+
+  /*
+   * =====================================
+   * MARK REFUND COMPLETED
+   * =====================================
+   */
+
+  async function markRefundCompleted() {
+    if (!details) {
+      return;
+    }
+
+    const refundAmount =
+      Number(
+        details.refund_amount ||
+          0
+      );
+
+    if (
+      refundAmount <= 0
+    ) {
+      setError(
+        "This order does not have a refund due."
+      );
+
+      return;
+    }
+
+    const confirmed =
+      window.confirm(
+        `Confirm that you have actually sent the $${refundAmount.toFixed(
+          2
+        )} refund to the customer?\n\nOnly continue after the money has been sent.`
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setError("");
+      setMessage("");
+
+      const response = await fetch(
+        `/api/admin/orders/${encodeURIComponent(
+          details.id
+        )}/mark-refunded`,
+        {
+          method: "POST",
+        }
+      );
+
+      const result =
+        await response.json();
+
+      if (
+        !response.ok ||
+        !result.success
+      ) {
+        setError(
+          result.error ||
+            "Unable to complete refund."
+        );
+
+        return;
+      }
+
+      setMessage(
+        result.warning ||
+          result.message ||
+          "Refund marked completed."
+      );
+
+      setDetails(
+        (current) =>
+          current
+            ? {
+                ...current,
+
+                refund_status:
+                  "completed",
+
+                refunded_at:
+                  result.refundedAt ||
+                  new Date().toISOString(),
+              }
+            : current
+      );
+
+      onUpdated();
+    } catch (error) {
+      console.error(
+        "Complete refund error:",
+        error
+      );
+
+      setError(
+        "Something went wrong while completing the refund."
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  /*
+   * =====================================
+   * RENDER
+   * =====================================
+   */
 
   return (
     <div
@@ -430,6 +500,8 @@ export default function ManageOrderModal({
       }}
     >
       <div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-[32px] border border-blue-300/20 bg-[#0b1b30] p-6 shadow-2xl sm:p-8">
+
+        {/* HEADER */}
 
         <div className="mb-7 flex items-start justify-between gap-4">
 
@@ -451,7 +523,7 @@ export default function ManageOrderModal({
             type="button"
             onClick={onClose}
             disabled={submitting}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xl text-white/60 hover:bg-white/10 hover:text-white disabled:opacity-40"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xl text-white/60 transition-all hover:bg-white/10 hover:text-white disabled:opacity-40"
           >
             ×
           </button>
@@ -469,20 +541,30 @@ export default function ManageOrderModal({
           </div>
         ) : (
           <>
+
+            {/* ORDER SUMMARY */}
+
             <div className="mb-6 grid gap-3 sm:grid-cols-3">
 
               <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+
                 <p className="text-xs uppercase tracking-widest text-white/40">
                   Customer
                 </p>
 
                 <p className="mt-2 font-bold">
-                  {details.first_name}{" "}
-                  {details.last_name}
+                  {
+                    details.first_name
+                  }{" "}
+                  {
+                    details.last_name
+                  }
                 </p>
+
               </div>
 
               <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+
                 <p className="text-xs uppercase tracking-widest text-white/40">
                   Status
                 </p>
@@ -493,9 +575,11 @@ export default function ManageOrderModal({
                     " "
                   )}
                 </p>
+
               </div>
 
               <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+
                 <p className="text-xs uppercase tracking-widest text-white/40">
                   Current Total
                 </p>
@@ -503,45 +587,122 @@ export default function ManageOrderModal({
                 <p className="mt-2 text-xl font-black text-blue-300">
                   $
                   {Number(
-                    details.total || 0
+                    details.total ||
+                      0
                   ).toFixed(2)}
                 </p>
+
               </div>
 
             </div>
+
+            {/* REFUND STATUS */}
 
             {Number(
               details.refund_amount ||
                 0
             ) > 0 && (
-              <div className="mb-6 rounded-2xl border border-orange-300/20 bg-orange-500/10 p-5">
+              <div
+                className={`mb-6 rounded-2xl border p-5 ${
+                  details.refund_status ===
+                  "completed"
+                    ? "border-green-300/20 bg-green-500/10"
+                    : "border-orange-300/20 bg-orange-500/10"
+                }`}
+              >
 
-                <p className="text-xs uppercase tracking-widest text-orange-200">
-                  Refund
-                </p>
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
-                <p className="mt-2 text-xl font-black text-orange-200">
-                  $
-                  {Number(
-                    details.refund_amount
-                  ).toFixed(2)}
-                </p>
+                  <div>
 
-                <p className="mt-1 text-sm capitalize text-orange-100/70">
-                  Status:{" "}
-                  {details.refund_status ||
-                    "pending"}
-                </p>
+                    <p
+                      className={`text-xs uppercase tracking-widest ${
+                        details.refund_status ===
+                        "completed"
+                          ? "text-green-200"
+                          : "text-orange-200"
+                      }`}
+                    >
+                      {details.refund_status ===
+                      "completed"
+                        ? "Refund Completed"
+                        : "Refund Pending"}
+                    </p>
+
+                    <p
+                      className={`mt-2 text-2xl font-black ${
+                        details.refund_status ===
+                        "completed"
+                          ? "text-green-200"
+                          : "text-orange-200"
+                      }`}
+                    >
+                      $
+                      {Number(
+                        details.refund_amount
+                      ).toFixed(2)}
+                    </p>
+
+                    {details.refund_reason && (
+                      <p className="mt-2 text-sm text-white/50">
+                        {
+                          details.refund_reason
+                        }
+                      </p>
+                    )}
+
+                    {details.refunded_at && (
+                      <p className="mt-2 text-xs text-green-100/60">
+                        Completed{" "}
+                        {new Date(
+                          details.refunded_at
+                        ).toLocaleString()}
+                      </p>
+                    )}
+
+                  </div>
+
+                  {details.refund_status !==
+                    "completed" && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        void markRefundCompleted()
+                      }
+                      disabled={
+                        submitting
+                      }
+                      className="rounded-full bg-green-400 px-6 py-3 text-sm font-black text-[#081526] transition-all hover:bg-green-300 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      {submitting
+                        ? "Updating..."
+                        : "Mark Refund Completed"}
+                    </button>
+                  )}
+
+                </div>
+
+                {details.refund_status !==
+                  "completed" && (
+                  <p className="mt-4 border-t border-orange-300/10 pt-4 text-xs leading-5 text-orange-100/60">
+                    Only mark this completed after you
+                    have actually sent the customer
+                    their refund.
+                  </p>
+                )}
 
               </div>
             )}
+
+            {/* CANCELLED ORDER */}
 
             {details.status ===
             "cancelled" ? (
               <div className="rounded-2xl border border-red-400/20 bg-red-500/10 p-6">
 
                 <p className="font-black text-red-200">
-                  This order has been cancelled.
+                  This order has been
+                  cancelled.
                 </p>
 
                 {details.cancellation_reason && (
@@ -552,18 +713,32 @@ export default function ManageOrderModal({
                   </p>
                 )}
 
+                {details.cancelled_at && (
+                  <p className="mt-2 text-xs text-red-100/50">
+                    Cancelled{" "}
+                    {new Date(
+                      details.cancelled_at
+                    ).toLocaleString()}
+                  </p>
+                )}
+
               </div>
             ) : (
               <>
-                <div className="mb-6 flex gap-3">
+
+                {/* MODE BUTTONS */}
+
+                <div className="mb-6 flex flex-wrap gap-3">
 
                   <button
                     type="button"
-                    onClick={() =>
+                    onClick={() => {
                       setMode(
                         "modify"
-                      )
-                    }
+                      );
+
+                      setError("");
+                    }}
                     className={`rounded-full px-5 py-3 text-sm font-black transition ${
                       mode ===
                       "modify"
@@ -576,11 +751,13 @@ export default function ManageOrderModal({
 
                   <button
                     type="button"
-                    onClick={() =>
+                    onClick={() => {
                       setMode(
                         "cancel"
-                      )
-                    }
+                      );
+
+                      setError("");
+                    }}
                     className={`rounded-full px-5 py-3 text-sm font-black transition ${
                       mode ===
                       "cancel"
@@ -593,6 +770,8 @@ export default function ManageOrderModal({
 
                 </div>
 
+                {/* REASON */}
+
                 <div className="mb-6">
 
                   <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-white/50">
@@ -601,9 +780,7 @@ export default function ManageOrderModal({
 
                   <select
                     value={reason}
-                    onChange={(
-                      event
-                    ) => {
+                    onChange={(event) => {
                       setReason(
                         event.target
                           .value
@@ -652,6 +829,8 @@ export default function ManageOrderModal({
 
                 </div>
 
+                {/* MODIFY ITEMS */}
+
                 {mode ===
                 "modify" ? (
                   <div>
@@ -688,6 +867,7 @@ export default function ManageOrderModal({
                                 )}
 
                                 <div>
+
                                   <p className="font-black text-white">
                                     {
                                       item.name
@@ -705,11 +885,13 @@ export default function ManageOrderModal({
                                   </p>
 
                                   <p className="mt-1 text-sm text-blue-200">
-                                    Current quantity:{" "}
+                                    Current
+                                    quantity:{" "}
                                     {
                                       item.quantity
                                     }
                                   </p>
+
                                 </div>
 
                               </div>
@@ -719,8 +901,7 @@ export default function ManageOrderModal({
                                 <select
                                   value={
                                     quantities[
-                                      item
-                                        .id
+                                      item.id
                                     ] ??
                                     item.quantity
                                   }
@@ -732,6 +913,7 @@ export default function ManageOrderModal({
                                         current
                                       ) => ({
                                         ...current,
+
                                         [item.id]:
                                           Number(
                                             event
@@ -743,6 +925,7 @@ export default function ManageOrderModal({
                                   }
                                   className="rounded-xl border border-white/10 bg-[#10223a] px-4 py-3 text-white"
                                 >
+
                                   {Array.from(
                                     {
                                       length:
@@ -768,24 +951,24 @@ export default function ManageOrderModal({
                                       </option>
                                     )
                                   )}
+
                                 </select>
 
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    modifyItem(
+                                    void modifyItem(
                                       item
                                     )
                                   }
                                   disabled={
                                     submitting ||
                                     quantities[
-                                      item
-                                        .id
+                                      item.id
                                     ] ===
                                       item.quantity
                                   }
-                                  className="rounded-xl bg-blue-400 px-5 py-3 text-sm font-black text-[#081526] hover:bg-blue-300 disabled:cursor-not-allowed disabled:opacity-40"
+                                  className="rounded-xl bg-blue-400 px-5 py-3 text-sm font-black text-[#081526] transition-all hover:bg-blue-300 disabled:cursor-not-allowed disabled:opacity-40"
                                 >
                                   {submitting
                                     ? "Updating..."
@@ -795,27 +978,32 @@ export default function ManageOrderModal({
                               </div>
 
                             </div>
+
                           </div>
                         )
                       )}
 
                     </div>
 
-                    {details.cart
-                      .length ===
+                    {details.cart.length ===
                       1 &&
                       details.cart[0]
                         .quantity ===
                         1 && (
                         <p className="mt-4 text-sm text-yellow-200">
-                          This order only has one item. Use
-                          Cancel Entire Order if you want to
-                          remove it.
+                          This order only
+                          has one item. Use
+                          Cancel Entire
+                          Order if you want
+                          to remove it.
                         </p>
                       )}
 
                   </div>
                 ) : (
+
+                  /* CANCEL ORDER */
+
                   <div className="rounded-2xl border border-red-400/20 bg-red-500/10 p-6">
 
                     <h3 className="text-xl font-black text-red-200">
@@ -823,23 +1011,27 @@ export default function ManageOrderModal({
                     </h3>
 
                     <p className="mt-3 text-sm leading-6 text-red-100/70">
-                      The customer will receive an
-                      Apexx cancellation email. If the
-                      order was already paid, the order
-                      will be marked as having a pending
-                      refund.
+                      The customer will
+                      receive an Apexx
+                      cancellation email.
+                      If this order was
+                      already paid, the
+                      refund will be
+                      recorded as pending
+                      until you actually
+                      send the money back.
                     </p>
 
                     <button
                       type="button"
-                      onClick={
-                        cancelOrder
+                      onClick={() =>
+                        void cancelOrder()
                       }
                       disabled={
                         submitting ||
                         !finalReason
                       }
-                      className="mt-5 rounded-full bg-red-400 px-6 py-3 font-black text-[#081526] hover:bg-red-300 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="mt-5 rounded-full bg-red-400 px-6 py-3 font-black text-[#081526] transition-all hover:bg-red-300 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       {submitting
                         ? "Cancelling..."
@@ -848,14 +1040,19 @@ export default function ManageOrderModal({
 
                   </div>
                 )}
+
               </>
             )}
+
+            {/* SUCCESS */}
 
             {message && (
               <div className="mt-6 rounded-2xl border border-green-400/20 bg-green-500/10 px-5 py-4 font-bold text-green-200">
                 ✓ {message}
               </div>
             )}
+
+            {/* ERROR */}
 
             {error && (
               <div className="mt-6 rounded-2xl border border-red-400/20 bg-red-500/10 px-5 py-4 font-bold text-red-200">
@@ -865,6 +1062,7 @@ export default function ManageOrderModal({
 
           </>
         )}
+
       </div>
     </div>
   );

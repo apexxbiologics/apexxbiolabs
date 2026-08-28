@@ -12,43 +12,31 @@ const supabase = createClient(
 export default function ResetPasswordPage() {
   const router = useRouter();
 
-  const [password, setPassword] =
-    useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [confirmPassword, setConfirmPassword] =
-    useState("");
-
-  const [loading, setLoading] =
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
     useState(false);
 
+  const [loading, setLoading] = useState(false);
   const [checkingSession, setCheckingSession] =
     useState(true);
 
   const [validSession, setValidSession] =
     useState(false);
 
-  const [message, setMessage] =
-    useState("");
-
-  const [success, setSuccess] =
-    useState(false);
+  const [message, setMessage] = useState("");
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     let mounted = true;
 
     async function checkRecoverySession() {
       try {
-        /*
-         * Supabase recovery links establish
-         * an authenticated recovery session.
-         *
-         * Check whether that session exists
-         * before allowing a password change.
-         */
         const {
           data: { session },
-        } =
-          await supabase.auth.getSession();
+        } = await supabase.auth.getSession();
 
         if (!mounted) {
           return;
@@ -60,20 +48,11 @@ export default function ResetPasswordPage() {
           return;
         }
 
-        /*
-         * Sometimes Supabase finishes processing
-         * the recovery URL immediately after the
-         * page loads. Listen briefly for the
-         * password recovery auth event.
-         */
-        const {
-          data: authListener,
-        } =
+        const { data: authListener } =
           supabase.auth.onAuthStateChange(
             (event, session) => {
               if (
-                event ===
-                  "PASSWORD_RECOVERY" ||
+                event === "PASSWORD_RECOVERY" ||
                 session
               ) {
                 setValidSession(true);
@@ -82,15 +61,8 @@ export default function ResetPasswordPage() {
             }
           );
 
-        /*
-         * Give the recovery redirect a moment
-         * to establish the session.
-         */
         window.setTimeout(() => {
-          if (
-            mounted &&
-            !validSession
-          ) {
+          if (mounted) {
             setCheckingSession(false);
           }
         }, 1500);
@@ -125,20 +97,37 @@ export default function ResetPasswordPage() {
     setMessage("");
     setSuccess(false);
 
+    /*
+     * Keep validation aligned with the
+     * Supabase password requirements.
+     */
     if (password.length < 8) {
       setMessage(
-        "Your new password must be at least 8 characters long."
+        "Password must be at least 8 characters and include at least one letter and one number."
       );
 
       return;
     }
 
-    if (
-      password !==
-      confirmPassword
-    ) {
+    const hasLetter = /[A-Za-z]/.test(
+      password
+    );
+
+    const hasNumber = /[0-9]/.test(
+      password
+    );
+
+    if (!hasLetter || !hasNumber) {
       setMessage(
-        "The passwords do not match."
+        "Password must be at least 8 characters and include at least one letter and one number."
+      );
+
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setMessage(
+        "The passwords do not match. Please try again."
       );
 
       return;
@@ -149,8 +138,7 @@ export default function ResetPasswordPage() {
     try {
       const {
         data: { session },
-      } =
-        await supabase.auth.getSession();
+      } = await supabase.auth.getSession();
 
       if (!session) {
         setMessage(
@@ -160,9 +148,7 @@ export default function ResetPasswordPage() {
         return;
       }
 
-      const {
-        error,
-      } =
+      const { error } =
         await supabase.auth.updateUser({
           password,
         });
@@ -173,10 +159,29 @@ export default function ResetPasswordPage() {
           error
         );
 
-        setMessage(
-          error.message ||
-            "Unable to update your password."
-        );
+        /*
+         * Hide Supabase's technical
+         * password-policy error.
+         */
+        const errorText =
+          error.message.toLowerCase();
+
+        if (
+          errorText.includes("password") &&
+          (
+            errorText.includes("character") ||
+            errorText.includes("contain") ||
+            errorText.includes("weak")
+          )
+        ) {
+          setMessage(
+            "Password must be at least 8 characters and include at least one letter and one number."
+          );
+        } else {
+          setMessage(
+            "Unable to update your password. Please try again."
+          );
+        }
 
         return;
       }
@@ -190,13 +195,6 @@ export default function ResetPasswordPage() {
       setPassword("");
       setConfirmPassword("");
 
-      /*
-       * Keep them signed into the same
-       * Apexx Auth account.
-       *
-       * After a short confirmation,
-       * send them to their account page.
-       */
       window.setTimeout(() => {
         router.push("/account");
       }, 1800);
@@ -228,7 +226,6 @@ export default function ResetPasswordPage() {
     return (
       <main className="min-h-screen bg-[#081526] text-white px-6 py-12 flex items-center justify-center">
         <div className="w-full max-w-xl text-center">
-
           <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
             Apexx Account
           </p>
@@ -257,7 +254,6 @@ export default function ResetPasswordPage() {
               ← Back to Login
             </a>
           </div>
-
         </div>
       </main>
     );
@@ -266,9 +262,7 @@ export default function ResetPasswordPage() {
   return (
     <main className="min-h-screen bg-[#081526] text-white px-6 py-12 flex items-center justify-center">
       <div className="w-full max-w-xl">
-
         <div className="text-center mb-10">
-
           <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-4">
             Apexx Account
           </p>
@@ -280,40 +274,63 @@ export default function ResetPasswordPage() {
           <p className="text-white/60 mt-4">
             Enter a new password for your Apexx account.
           </p>
-
         </div>
 
         <div className="rounded-[32px] border border-white/10 bg-white/[0.04] p-8">
-
           <form
-            onSubmit={
-              handleResetPassword
-            }
+            onSubmit={handleResetPassword}
             className="space-y-5"
           >
-
             <div>
               <label className="block text-sm uppercase tracking-widest text-white/50 mb-2">
                 New Password
               </label>
 
-              <input
-                type="password"
-                value={password}
-                onChange={(event) =>
-                  setPassword(
-                    event.target.value
-                  )
-                }
-                required
-                minLength={8}
-                autoComplete="new-password"
-                placeholder="Enter new password"
-                className="w-full rounded-2xl border border-white/10 bg-white/[0.05] px-5 py-4 text-white outline-none focus:border-blue-400/50"
-              />
+              <div className="relative">
+                <input
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
+                  value={password}
+                  onChange={(event) =>
+                    setPassword(
+                      event.target.value
+                    )
+                  }
+                  required
+                  minLength={8}
+                  autoComplete="new-password"
+                  placeholder="Enter new password"
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.05] px-5 py-4 pr-14 text-white outline-none focus:border-blue-400/50"
+                />
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowPassword(
+                      (current) => !current
+                    )
+                  }
+                  aria-label={
+                    showPassword
+                      ? "Hide password"
+                      : "Show password"
+                  }
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/45 transition hover:text-white"
+                >
+                  {showPassword ? (
+                    <EyeOffIcon />
+                  ) : (
+                    <EyeIcon />
+                  )}
+                </button>
+              </div>
 
               <p className="mt-2 text-xs text-white/35">
-                Minimum 8 characters.
+                Minimum 8 characters with at least one
+                letter and one number.
               </p>
             </div>
 
@@ -322,22 +339,47 @@ export default function ResetPasswordPage() {
                 Confirm New Password
               </label>
 
-              <input
-                type="password"
-                value={
-                  confirmPassword
-                }
-                onChange={(event) =>
-                  setConfirmPassword(
-                    event.target.value
-                  )
-                }
-                required
-                minLength={8}
-                autoComplete="new-password"
-                placeholder="Confirm new password"
-                className="w-full rounded-2xl border border-white/10 bg-white/[0.05] px-5 py-4 text-white outline-none focus:border-blue-400/50"
-              />
+              <div className="relative">
+                <input
+                  type={
+                    showConfirmPassword
+                      ? "text"
+                      : "password"
+                  }
+                  value={confirmPassword}
+                  onChange={(event) =>
+                    setConfirmPassword(
+                      event.target.value
+                    )
+                  }
+                  required
+                  minLength={8}
+                  autoComplete="new-password"
+                  placeholder="Confirm new password"
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.05] px-5 py-4 pr-14 text-white outline-none focus:border-blue-400/50"
+                />
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowConfirmPassword(
+                      (current) => !current
+                    )
+                  }
+                  aria-label={
+                    showConfirmPassword
+                      ? "Hide password"
+                      : "Show password"
+                  }
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/45 transition hover:text-white"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOffIcon />
+                  ) : (
+                    <EyeIcon />
+                  )}
+                </button>
+              </div>
             </div>
 
             <button
@@ -349,7 +391,6 @@ export default function ResetPasswordPage() {
                 ? "Updating Password..."
                 : "Update Password"}
             </button>
-
           </form>
 
           {message && (
@@ -365,24 +406,60 @@ export default function ResetPasswordPage() {
           )}
 
           <div className="mt-7 border-t border-white/10 pt-6 text-center">
-
             <a
               href="/account/login"
               className="text-sm font-bold text-blue-300 hover:text-blue-200 transition"
             >
               ← Back to Login
             </a>
-
           </div>
-
         </div>
 
         <p className="text-center text-white/35 text-xs mt-6 leading-relaxed">
-          Your new password will be used for both your regular Apexx account
-          and Affiliate Dashboard access.
+          Your new password will be used for both your regular
+          Apexx account and Affiliate Dashboard access.
         </p>
-
       </div>
     </main>
+  );
+}
+
+function EyeIcon() {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M2.062 12.348a1 1 0 0 1 0-.696C3.423 7.51 7.36 5 12 5c4.638 0 8.573 2.506 9.938 6.652a1 1 0 0 1 0 .696C20.577 16.49 16.64 19 12 19c-4.638 0-8.573-2.506-9.938-6.652Z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+function EyeOffIcon() {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="m2 2 20 20" />
+      <path d="M6.71 6.71C4.92 7.9 3.52 9.6 2.94 11.65a1 1 0 0 0 0 .7C4.3 16.49 7.98 19 12 19c1.15 0 2.24-.2 3.23-.56" />
+      <path d="M10.73 5.08C11.14 5.03 11.57 5 12 5c4.02 0 7.7 2.51 9.06 6.65a1 1 0 0 1 0 .7c-.37 1.13-.92 2.14-1.62 3.02" />
+      <path d="M14.12 14.12A3 3 0 0 1 9.88 9.88" />
+    </svg>
   );
 }

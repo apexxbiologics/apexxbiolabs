@@ -80,7 +80,7 @@ export default function COAsPage() {
       coa: "/images/coas/apx3-20mg-blue-cap-coa.pdf",
     },
     {
-      name: "BPC-157",
+      name: "BPC-157 10mg",
       batch: "Blue Cap-2",
       status: "Verified",
       purity: "99.72%",
@@ -96,7 +96,7 @@ export default function COAsPage() {
       ],
     },
     {
-      name: "TB-500",
+      name: "TB-500 10mg",
       batch: "Yellow Cap-2",
       status: "Verified",
       purity: "99.95%",
@@ -112,7 +112,7 @@ export default function COAsPage() {
       ],
     },
     {
-      name: "KPV",
+      name: "KPV 10mg",
       batch: "Purple Cap-1",
       status: "Verified",
       purity: "99.60%",
@@ -120,7 +120,7 @@ export default function COAsPage() {
       coa: "/images/coas/6-26-kpv-coa.pdf",
     },
     {
-      name: "GHK-Cu",
+      name: "GHK-Cu 100mg",
       batch: "Red Cap-1",
       status: "Verified",
       purity: "99.74%",
@@ -128,12 +128,12 @@ export default function COAsPage() {
       coa: "/images/coas/ghkcucoa7-10-26.pdf",
     },
     {
-      name: "Pinealon",
+      name: "Pinealon 10mg",
       batch: "Pending",
       status: "Awaiting Testing",
     },
     {
-      name: "Selank",
+      name: "Selank 10mg",
       batch: "SEL1005192026-08",
       status: "Verified",
       purity: "99.62%",
@@ -141,7 +141,7 @@ export default function COAsPage() {
       coa: "/images/coas/selank-10mg-brown-green-coa.pdf",
     },
     {
-      name: "Semax",
+      name: "Semax 10mg",
       batch: "SEMX1005182026-10",
       status: "Verified",
       purity: "99.33%",
@@ -149,7 +149,7 @@ export default function COAsPage() {
       coa: "/images/coas/semax-10mg-coa.pdf",
     },
     {
-      name: "MOTS-c",
+      name: "MOTS-c 10mg",
       batch: "Blue Cap-2",
       status: "Verified",
       purity: "99.75%",
@@ -165,17 +165,17 @@ export default function COAsPage() {
       ],
     },
     {
-      name: "ARA-290",
+      name: "ARA-290 10mg",
       batch: "Pending",
       status: "Awaiting Testing",
     },
     {
-      name: "PE-22-28",
+      name: "PE-22-28 10mg",
       batch: "Pending",
       status: "Awaiting Testing",
     },
     {
-      name: "Adamax",
+      name: "Adamax 10mg",
       batch: "Black Cap-1",
       status: "Verified",
       purity: "99.21%",
@@ -183,7 +183,7 @@ export default function COAsPage() {
       coa: "/images/coas/adamaxcoa7-20-26.pdf",
     },
     {
-      name: "CJC/IPA without DAC",
+      name: "CJC/IPA without DAC 10mg",
       batch: "CJCIPA504292026-09",
       status: "Verified",
       purity: "99.42%",
@@ -208,7 +208,7 @@ export default function COAsPage() {
       ],
     },
     {
-      name: "NAD+",
+      name: "NAD+ 1000mg",
       batch: "Black Cap-1",
       status: "Verified",
       purity: "99.95%",
@@ -216,7 +216,7 @@ export default function COAsPage() {
       coa: "/images/coas/nadcoa7-20-26.pdf",
     },
     {
-      name: "AOD-9604",
+      name: "AOD-9604 10mg",
       batch: "RED CAP -1",
       status: "Verified",
       purity: "99.27%",
@@ -224,12 +224,12 @@ export default function COAsPage() {
       coa: "/images/coas/8-16-aod9604-coa.pdf",
     },
     {
-      name: "PT-141",
+      name: "PT-141 10mg",
       batch: "Pending",
       status: "Awaiting Testing",
     },
     {
-      name: "5-Amino-1MQ",
+      name: "5-Amino-1MQ 50mg",
       batch: "Orange Cap",
       status: "Verified",
       purity: "99.90%",
@@ -237,12 +237,12 @@ export default function COAsPage() {
       coa: "/images/coas/7-31-5-amino-1mq-coa.pdf",
     },
     {
-      name: "Kisspeptin-10",
+      name: "Kisspeptin-10 10mg",
       batch: "Pending",
       status: "Awaiting Testing",
     },
     {
-      name: "KLOW",
+      name: "KLOW 80mg",
       batch: "Dark Blue Cap",
       status: "Verified",
       purity: "99.82%",
@@ -252,7 +252,7 @@ export default function COAsPage() {
       coa: "/images/coas/7-31-klow-coa.pdf",
     },
     {
-      name: "Wolverine",
+      name: "Wolverine 20mg",
       batch: "Clear Cap / Blue Crimp",
       status: "Verified",
       purity: "99.34%",

@@ -28,6 +28,41 @@ export default function ProductsPage() {
       href: "/products/apx3",
     },
     {
+      name: "APX-2",
+      desc: "30mg Research Peptide",
+      category: "Metabolic Research",
+      image: "/images/apx230blue.png",
+      href: "/products/apx2",
+    },
+    {
+      name: "MITO-X",
+      desc: "120mg Research Blend",
+      category: "Cellular Research",
+      image: "/images/mitox120blue.png",
+      href: "/products/mitox",
+    },
+    {
+      name: "NEURO-X",
+      desc: "48mg Research Peptide Blend",
+      category: "Neuro Research",
+      image: "/images/neurox48blue.png",
+      href: "/products/neurox",
+    },
+    {
+      name: "Glutathione",
+      desc: "1500mg Research Compound",
+      category: "Cellular Research",
+      image: "/images/glutathione1500blue.png",
+      href: "/products/glutathione",
+    },
+    {
+      name: "SS-31",
+      desc: "10mg Research Peptide",
+      category: "Cellular Research",
+      image: "/images/ss3110blue.png",
+      href: "/products/ss31",
+    },
+    {
       name: "BPC-157",
       desc: "10mg Research Peptide",
       category: "Tissue Repair Research",
@@ -41,7 +76,7 @@ export default function ProductsPage() {
       image: "/images/tb500.PNG",
       href: "/products/tb500",
     },
-     {
+    {
       name: "Wolverine",
       desc: "20mg Research Blend",
       category: "Tissue Repair Research",
@@ -76,7 +111,7 @@ export default function ProductsPage() {
       image: "/images/motsc.PNG",
       href: "/products/motsc",
     },
-  {
+    {
       name: "NAD+",
       desc: "1000mg Research Compound",
       category: "Cellular Research",
@@ -153,7 +188,7 @@ export default function ProductsPage() {
       image: "/images/ara290.PNG",
       href: "/products/ara290",
     },
-     {
+    {
       name: "Kisspeptin-10",
       desc: "10mg Research Peptide",
       category: "Neuro Research",

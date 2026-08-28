@@ -19,6 +19,11 @@ export default function Navbar() {
 
   const products = [
     { name: "APX-3", href: "/products/apx3" },
+    { name: "APX-2", href: "/products/apx2" },
+    { name: "MITO-X", href: "/products/mitox" },
+    { name: "NEURO-X", href: "/products/neurox" },
+    { name: "Glutathione", href: "/products/glutathione" },
+    { name: "SS-31", href: "/products/ss31" },
     { name: "BPC-157", href: "/products/bpc157" },
     { name: "TB-500", href: "/products/tb500" },
     { name: "GHK-Cu", href: "/products/ghkcu" },

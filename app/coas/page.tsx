@@ -1,6 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import {
+  ChevronDown,
+  Clock3,
+  FileText,
+  Search,
+  ShieldCheck,
+} from "lucide-react";
 
 type PreviousCOA = {
   batch: string;
@@ -15,11 +22,17 @@ type ProductCOA = {
   status: "Verified" | "Awaiting Testing";
   purity?: string;
   content?: string;
+  totalContent?: string;
   coa?: string;
   previousCoas?: PreviousCOA[];
 };
 
+type StatusFilter = "All" | "Verified" | "Pending";
+
 export default function COAsPage() {
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
+  const [openProduct, setOpenProduct] = useState<string | null>(null);
   const [openPreviousCoas, setOpenPreviousCoas] = useState<string | null>(
     null,
   );
@@ -50,62 +63,54 @@ export default function COAsPage() {
       batch: "Pending",
       status: "Awaiting Testing",
     },
-{
-  name: "APX-3 10mg",
-  batch: "Blue Cap-1",
-  status: "Verified",
-  purity: "99.89%",
-  content: "13.24 mg",
-  coa: "/images/coas/apx3-10mg-blue-cap-1-coa.pdf",
-},
-{
-  name: "APX-3 20mg",
-  batch: "Blue Cap-1",
-  status: "Verified",
-  purity: "99.92%",
-  content: "23.89 mg",
-  coa: "/images/coas/apx3-20mg-blue-cap-coa.pdf",
-},
-{
-  name: "BPC-157",
-  batch: "Blue Cap-2",
-  status: "Verified",
-  purity: "99.72%",
-  content: "11.78 mg",
-
-  // Latest COA
-  coa: "/images/coas/bpc157coa7-10-26.pdf",
-
-  // Previous COAs
-  previousCoas: [
     {
-      batch: "Black Cap-1",
-      purity: "99.33%",
-      content: "11.58 mg",
-      coa: "/images/coas/bpc-157-10mg-black-cap-coa.pdf",
-    },
-  ],
-},
-{
-  name: "TB-500",
-  batch: "Yellow Cap-2",
-  status: "Verified",
-  purity: "99.95%",
-  content: "13.47 mg",
-
-  // MOST RECENT COA
-  coa: "/images/coas/tb500.pdf",
-
-  // OLDER COAS
-  previousCoas: [
-    {
+      name: "APX-3 10mg",
       batch: "Blue Cap-1",
-      purity: "99.47%",
-      content: "11.83 mg",
-      coa: "/images/coas/tb500-10mg-blue-cap-coa.pdf",
+      status: "Verified",
+      purity: "99.89%",
+      content: "13.24 mg",
+      coa: "/images/coas/apx3-10mg-blue-cap-1-coa.pdf",
     },
-  ],
-},
+    {
+      name: "APX-3 20mg",
+      batch: "Blue Cap-1",
+      status: "Verified",
+      purity: "99.92%",
+      content: "23.89 mg",
+      coa: "/images/coas/apx3-20mg-blue-cap-coa.pdf",
+    },
+    {
+      name: "BPC-157",
+      batch: "Blue Cap-2",
+      status: "Verified",
+      purity: "99.72%",
+      content: "11.78 mg",
+      coa: "/images/coas/bpc157coa7-10-26.pdf",
+      previousCoas: [
+        {
+          batch: "Black Cap-1",
+          purity: "99.33%",
+          content: "11.58 mg",
+          coa: "/images/coas/bpc-157-10mg-black-cap-coa.pdf",
+        },
+      ],
+    },
+    {
+      name: "TB-500",
+      batch: "Yellow Cap-2",
+      status: "Verified",
+      purity: "99.95%",
+      content: "13.47 mg",
+      coa: "/images/coas/tb500.pdf",
+      previousCoas: [
+        {
+          batch: "Blue Cap-1",
+          purity: "99.47%",
+          content: "11.83 mg",
+          coa: "/images/coas/tb500-10mg-blue-cap-coa.pdf",
+        },
+      ],
+    },
     {
       name: "KPV",
       batch: "Purple Cap-1",
@@ -114,14 +119,14 @@ export default function COAsPage() {
       content: "10.41 mg",
       coa: "/images/coas/6-26-kpv-coa.pdf",
     },
-{
-  name: "GHK-Cu",
-  batch: "Red Cap-1",
-  status: "Verified",
-  purity: "99.74%",
-  content: "114.96 mg",
-  coa: "/images/coas/ghkcucoa7-10-26.pdf",
-},
+    {
+      name: "GHK-Cu",
+      batch: "Red Cap-1",
+      status: "Verified",
+      purity: "99.74%",
+      content: "114.96 mg",
+      coa: "/images/coas/ghkcucoa7-10-26.pdf",
+    },
     {
       name: "Pinealon",
       batch: "Pending",
@@ -143,26 +148,22 @@ export default function COAsPage() {
       content: "11.71 mg",
       coa: "/images/coas/semax-10mg-coa.pdf",
     },
-{
-  name: "MOTS-c",
-  batch: "Blue Cap-2",
-  status: "Verified",
-  purity: "99.75%",
-  content: "12.42 mg",
-
-  // Latest COA
-  coa: "/images/coas/motsccoa.pdf",
-
-  // Previous COAs
-  previousCoas: [
     {
-      batch: "Light Purple Cap-1",
-      purity: "99.48%",
-      content: "13.94 mg",
-      coa: "/images/coas/6-26-motsc-coa.pdf",
+      name: "MOTS-c",
+      batch: "Blue Cap-2",
+      status: "Verified",
+      purity: "99.75%",
+      content: "12.42 mg",
+      coa: "/images/coas/motsccoa.pdf",
+      previousCoas: [
+        {
+          batch: "Light Purple Cap-1",
+          purity: "99.48%",
+          content: "13.94 mg",
+          coa: "/images/coas/6-26-motsc-coa.pdf",
+        },
+      ],
     },
-  ],
-},
     {
       name: "ARA-290",
       batch: "Pending",
@@ -173,93 +174,138 @@ export default function COAsPage() {
       batch: "Pending",
       status: "Awaiting Testing",
     },
-{
-  name: "Adamax",
-  batch: "Black Cap-1",
-  status: "Verified",
-  purity: "99.21%",
-  content: "13.71 mg",
-  coa: "/images/coas/adamaxcoa7-20-26.pdf",
-},
+    {
+      name: "Adamax",
+      batch: "Black Cap-1",
+      status: "Verified",
+      purity: "99.21%",
+      content: "13.71 mg",
+      coa: "/images/coas/adamaxcoa7-20-26.pdf",
+    },
     {
       name: "CJC/IPA without DAC",
       batch: "CJCIPA504292026-09",
       status: "Verified",
       purity: "99.42%",
-      content: "5 mg / 5 mg",
+      content: "5 mg CJC / 5 mg IPA",
+      totalContent: "10 mg",
       coa: "/images/coas/cjc-ipa-no-dac-coa.pdf",
     },
-{
-  name: "Tesamorelin 10mg",
-  batch: "TESA2608-01",
-  status: "Verified",
-  purity: "99.99%",
-  content: "9.968 mg",
-
-  // Latest COA - Accumark Labs
-  coa: "/images/coas/tesamorelin-10mg-8-26-26.pdf",
-
-  // Previous COAs
-  previousCoas: [
     {
-      batch: "Red Cap-1",
-      purity: "99.89%",
-      content: "5.48 mg",
-      coa: "/images/coas/tesamorelincoa7-10-26.pdf",
+      name: "Tesamorelin 10mg",
+      batch: "TESA2608-01",
+      status: "Verified",
+      purity: "99.99%",
+      content: "9.968 mg",
+      coa: "/images/coas/tesamorelin-10mg-8-26-26.pdf",
+      previousCoas: [
+        {
+          batch: "Red Cap-1",
+          purity: "99.89%",
+          content: "5.48 mg",
+          coa: "/images/coas/tesamorelincoa7-10-26.pdf",
+        },
+      ],
     },
-  ],
-},
-{
-  name: "NAD+",
-  batch: "Black Cap-1",
-  status: "Verified",
-  purity: "99.95%",
-  content: "1119.71 mg",
-  coa: "/images/coas/nadcoa7-20-26.pdf",
-},
-{
-  name: "AOD-9604",
-  batch: "RED CAP -1",
-  status: "Verified",
-  purity: "99.27%",
-  content: "15.32 mg",
-  coa: "/images/coas/8-16-aod9604-coa.pdf",
-},
+    {
+      name: "NAD+",
+      batch: "Black Cap-1",
+      status: "Verified",
+      purity: "99.95%",
+      content: "1119.71 mg",
+      coa: "/images/coas/nadcoa7-20-26.pdf",
+    },
+    {
+      name: "AOD-9604",
+      batch: "RED CAP -1",
+      status: "Verified",
+      purity: "99.27%",
+      content: "15.32 mg",
+      coa: "/images/coas/8-16-aod9604-coa.pdf",
+    },
     {
       name: "PT-141",
       batch: "Pending",
       status: "Awaiting Testing",
     },
-{
-  name: "5-Amino-1MQ",
-  batch: "Orange Cap",
-  status: "Verified",
-  purity: "99.90%",
-  content: "59.02 mg",
-  coa: "/images/coas/7-31-5-amino-1mq-coa.pdf",
-},
+    {
+      name: "5-Amino-1MQ",
+      batch: "Orange Cap",
+      status: "Verified",
+      purity: "99.90%",
+      content: "59.02 mg",
+      coa: "/images/coas/7-31-5-amino-1mq-coa.pdf",
+    },
     {
       name: "Kisspeptin-10",
       batch: "Pending",
       status: "Awaiting Testing",
     },
- {
-  name: "KLOW",
-  batch: "Dark Blue Cap",
-  status: "Verified",
-  purity: "99.82%",
-  content: "57.66 mg GHK-Cu / 11.53 mg KPV / 12.36 mg BPC-157 / 12.93 mg TB-4",
-  coa: "/images/coas/7-31-klow-coa.pdf",
-},
-{
-  name: "Wolverine",
-  batch: "Clear Cap / Blue Crimp",
-  status: "Verified",
-  purity: "99.34%",
-  content: "11.84 mg BPC-157 / 12.93 mg Thymosin Beta-4",
-  coa: "/images/coas/7-31-wolverine-coa.pdf",
-},
+    {
+      name: "KLOW",
+      batch: "Dark Blue Cap",
+      status: "Verified",
+      purity: "99.82%",
+      content:
+        "57.66 mg GHK-Cu / 11.53 mg KPV / 12.36 mg BPC-157 / 12.93 mg TB-4",
+      totalContent: "94.48 mg",
+      coa: "/images/coas/7-31-klow-coa.pdf",
+    },
+    {
+      name: "Wolverine",
+      batch: "Clear Cap / Blue Crimp",
+      status: "Verified",
+      purity: "99.34%",
+      content: "11.84 mg BPC-157 / 12.93 mg Thymosin Beta-4",
+      totalContent: "24.77 mg",
+      coa: "/images/coas/7-31-wolverine-coa.pdf",
+    },
   ];
+
+  const verifiedCount = products.filter(
+    (product) => product.status === "Verified",
+  ).length;
+
+  const pendingCount = products.filter(
+    (product) => product.status === "Awaiting Testing",
+  ).length;
+
+  const filteredProducts = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase();
+
+    return products
+      .filter((product) => {
+        const matchesSearch =
+          !normalizedSearch ||
+          product.name.toLowerCase().includes(normalizedSearch) ||
+          product.batch.toLowerCase().includes(normalizedSearch);
+
+        const matchesStatus =
+          statusFilter === "All" ||
+          (statusFilter === "Verified" && product.status === "Verified") ||
+          (statusFilter === "Pending" &&
+            product.status === "Awaiting Testing");
+
+        return matchesSearch && matchesStatus;
+      })
+      .sort((a, b) => {
+        if (a.status !== b.status) {
+          return a.status === "Verified" ? -1 : 1;
+        }
+
+        return a.name.localeCompare(b.name);
+      });
+  }, [search, statusFilter]);
+
+  function toggleProduct(productName: string) {
+    setOpenProduct((current) =>
+      current === productName ? null : productName,
+    );
+
+    if (openProduct === productName) {
+      setOpenPreviousCoas(null);
+    }
+  }
 
   function togglePreviousCoas(productName: string) {
     setOpenPreviousCoas((current) =>
@@ -270,248 +316,453 @@ export default function COAsPage() {
   return (
     <main className="min-h-screen overflow-hidden bg-[#081526] text-white">
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-white/10 px-6 py-24 text-center">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
+      <section className="relative overflow-hidden border-b border-white/10 px-6 pb-16 pt-24">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.15),transparent_52%)]" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-300/50 to-transparent" />
 
-        <div className="relative z-10 mx-auto max-w-5xl">
-          <p className="mb-6 text-sm uppercase tracking-[0.35em] text-blue-300">
-            Quality Assurance
-          </p>
+        <div className="relative z-10 mx-auto max-w-6xl text-center">
+          <div className="mb-7 inline-flex items-center gap-3 rounded-full border border-blue-400/20 bg-blue-500/10 px-5 py-3">
+            <ShieldCheck size={16} className="text-blue-300" />
+            <span className="text-xs font-bold uppercase tracking-[0.28em] text-blue-200">
+              Quality Assurance
+            </span>
+          </div>
 
-          <h1 className="mb-6 text-5xl font-black leading-[0.95] text-white md:text-7xl">
+          <h1 className="mb-7 text-5xl font-black tracking-tight text-white md:text-7xl">
             Certificates of Analysis
           </h1>
 
-          <div className="mb-10 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70">
-            <span className="text-green-400">✓</span>
-            <span>Last Updated: August 28, 2026</span>
-          </div>
-
-          <p className="mx-auto mb-10 max-w-3xl text-lg leading-relaxed text-white/70 md:text-xl">
-            Third-party analytical verification and batch documentation
-            supporting research transparency, quality assurance, and product
-            integrity.
+          <p className="mx-auto max-w-3xl text-base leading-relaxed text-white/60 md:text-lg">
+            Browse current third-party analytical results, batch information,
+            purity data, content verification, and previous test records.
           </p>
 
-          <div className="inline-flex items-center gap-3 rounded-full border border-green-500/20 bg-green-500/5 px-6 py-3">
-            <span className="text-green-400">✓</span>
+          <p className="mt-6 text-xs uppercase tracking-[0.22em] text-white/35">
+            Last Updated August 28, 2026
+          </p>
 
-            <span className="text-sm uppercase tracking-widest text-green-300">
-              Independently Verified Products
-            </span>
+          {/* SUMMARY */}
+          <div className="mx-auto mt-10 grid max-w-3xl grid-cols-3 overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm">
+            <div className="border-r border-white/10 px-4 py-5">
+              <p className="text-2xl font-black text-white">
+                {products.length}
+              </p>
+              <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-white/40">
+                Products
+              </p>
+            </div>
+
+            <div className="border-r border-white/10 px-4 py-5">
+              <p className="text-2xl font-black text-green-300">
+                {verifiedCount}
+              </p>
+              <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-white/40">
+                Verified
+              </p>
+            </div>
+
+            <div className="px-4 py-5">
+              <p className="text-2xl font-black text-white/70">
+                {pendingCount}
+              </p>
+              <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-white/40">
+                Pending
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* COA CARDS */}
-      <section className="relative overflow-hidden px-6 py-20 md:px-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.08),transparent_60%)]" />
+      {/* SEARCH + FILTERS */}
+      <section className="relative border-b border-white/10 px-6 py-8">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="relative w-full lg:max-w-xl">
+            <Search
+              size={18}
+              className="absolute left-5 top-1/2 -translate-y-1/2 text-white/35"
+            />
 
-        <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 md:grid-cols-2">
-          {products.map((product) => {
-            const isVerified = product.status === "Verified";
+            <input
+              type="text"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search product or batch..."
+              className="w-full rounded-full border border-white/10 bg-white/[0.04] py-4 pl-13 pr-5 text-sm text-white outline-none transition-all placeholder:text-white/30 focus:border-blue-400/50 focus:bg-white/[0.06]"
+              style={{ paddingLeft: "3.25rem" }}
+            />
+          </div>
 
-            const hasPreviousCoas =
-              Array.isArray(product.previousCoas) &&
-              product.previousCoas.length > 0;
+          <div className="flex w-full gap-2 overflow-x-auto lg:w-auto">
+            {(["All", "Verified", "Pending"] as StatusFilter[]).map(
+              (filter) => (
+                <button
+                  key={filter}
+                  type="button"
+                  onClick={() => setStatusFilter(filter)}
+                  className={`whitespace-nowrap rounded-full px-5 py-3 text-xs font-bold uppercase tracking-[0.18em] transition-all ${
+                    statusFilter === filter
+                      ? "bg-white text-[#081526]"
+                      : "border border-white/10 bg-white/[0.04] text-white/50 hover:border-blue-400/40 hover:text-white"
+                  }`}
+                >
+                  {filter}
+                </button>
+              ),
+            )}
+          </div>
+        </div>
+      </section>
 
-            const isPreviousOpen = openPreviousCoas === product.name;
+      {/* ACCORDION LIST */}
+      <section className="relative px-6 py-14 md:px-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.06),transparent_60%)]" />
 
-            return (
-              <article
-                key={product.name}
-                className="flex min-h-[260px] flex-col justify-between rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm transition-all duration-300 hover:border-blue-400/50 hover:bg-white/[0.07] sm:p-8"
-              >
-                <div>
-                  <div className="mb-6 flex items-start justify-between gap-4">
-                    <div>
-                      <h2 className="text-3xl font-black tracking-tight text-white">
-                        {product.name}
-                      </h2>
+        <div className="relative z-10 mx-auto max-w-6xl">
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <p className="text-xs uppercase tracking-[0.24em] text-white/35">
+              {filteredProducts.length}{" "}
+              {filteredProducts.length === 1 ? "Result" : "Results"}
+            </p>
 
-                      {hasPreviousCoas && (
-                        <p className="mt-2 text-xs uppercase tracking-[0.24em] text-blue-300">
-                          Most Recent Batch
-                        </p>
+            <p className="hidden text-xs text-white/30 sm:block">
+              Select a product to view test details
+            </p>
+          </div>
+
+          <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.025] shadow-[0_30px_100px_rgba(0,0,0,0.20)]">
+            {filteredProducts.map((product, index) => {
+              const isVerified = product.status === "Verified";
+              const isOpen = openProduct === product.name;
+              const hasPreviousCoas =
+                Array.isArray(product.previousCoas) &&
+                product.previousCoas.length > 0;
+              const isPreviousOpen =
+                openPreviousCoas === product.name;
+
+              return (
+                <article
+                  key={product.name}
+                  className={
+                    index !== filteredProducts.length - 1
+                      ? "border-b border-white/10"
+                      : ""
+                  }
+                >
+                  {/* COLLAPSED ROW */}
+                  <button
+                    type="button"
+                    onClick={() => toggleProduct(product.name)}
+                    aria-expanded={isOpen}
+                    className="group flex w-full items-center gap-4 px-5 py-5 text-left transition-all hover:bg-white/[0.045] sm:px-7 sm:py-6"
+                  >
+                    <div
+                      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border ${
+                        isVerified
+                          ? "border-green-500/20 bg-green-500/10"
+                          : "border-white/10 bg-white/[0.04]"
+                      }`}
+                    >
+                      {isVerified ? (
+                        <ShieldCheck
+                          size={19}
+                          className="text-green-300"
+                        />
+                      ) : (
+                        <Clock3
+                          size={19}
+                          className="text-white/35"
+                        />
                       )}
                     </div>
 
-                    <span
-                      className={`shrink-0 rounded-full border px-3 py-1 text-xs uppercase tracking-widest ${
-                        isVerified
-                          ? "border-green-500/20 bg-green-500/10 text-green-300"
-                          : "border-white/10 bg-white/[0.04] text-white/40"
-                      }`}
-                    >
-                      {isVerified ? "Verified" : "Pending"}
-                    </span>
-                  </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
+                        <h2 className="truncate text-lg font-bold text-white sm:text-xl">
+                          {product.name}
+                        </h2>
 
-                  <div className="mb-8 space-y-4 text-sm text-white/60">
-                    <div className="flex justify-between gap-6 border-b border-white/10 pb-3">
-                      <span>Batch</span>
-
-                      <span className="text-right text-white/80">
-                        {product.batch}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between gap-6 border-b border-white/10 pb-3">
-                      <span>Status</span>
-
-                      <span
-                        className={
-                          isVerified ? "text-green-300" : "text-white/40"
-                        }
-                      >
-                        {product.status}
-                      </span>
-                    </div>
-
-                    {product.purity && (
-                      <div className="flex justify-between gap-6 border-b border-white/10 pb-3">
-                        <span>Purity</span>
-
-                        <span className="text-white/80">
-                          {product.purity}
-                        </span>
-                      </div>
-                    )}
-
-                    {product.content && (
-                      <div className="flex justify-between gap-6 border-b border-white/10 pb-3">
-                        <span>Net Content</span>
-
-                        <span className="text-white/80">
-                          {product.content}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {product.coa ? (
-                  <div className="space-y-4">
-                    {isVerified && (
-                      <div className="text-center">
-                        <span className="inline-flex rounded-full border border-green-500/20 bg-green-500/10 px-4 py-2 text-xs uppercase tracking-widest text-green-300">
-                          ✓ Third-Party Verified
-                        </span>
-                      </div>
-                    )}
-
-                    <a
-                      href={product.coa}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block w-full rounded-full border border-blue-400/30 bg-blue-500/10 py-4 text-center text-sm uppercase tracking-widest text-blue-100 transition-all hover:border-blue-300/60 hover:bg-blue-500/20"
-                    >
-                      {hasPreviousCoas ? "View Latest COA" : "View COA"}
-                    </a>
-
-                    {hasPreviousCoas && (
-                      <div className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#06101f]">
-                        <button
-                          type="button"
-                          onClick={() => togglePreviousCoas(product.name)}
-                          aria-expanded={isPreviousOpen}
-                          className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-sm uppercase tracking-widest text-white/80 transition-all hover:bg-white/[0.05] hover:text-white"
+                        <span
+                          className={`w-fit rounded-full border px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.18em] ${
+                            isVerified
+                              ? "border-green-500/20 bg-green-500/10 text-green-300"
+                              : "border-white/10 bg-white/[0.04] text-white/35"
+                          }`}
                         >
-                          <span>
-                            {isPreviousOpen
-                              ? "Hide Previous COAs"
-                              : "See Previous COAs"}
-                          </span>
+                          {isVerified ? "Verified" : "Pending"}
+                        </span>
+                      </div>
 
-                          <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            className={`h-5 w-5 shrink-0 transition-transform duration-300 ${
-                              isPreviousOpen ? "rotate-180" : ""
-                            }`}
-                          >
-                            <path
-                              d="m6 9 6 6 6-6"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </button>
+                      <p className="mt-1 truncate text-xs text-white/35">
+                        {isVerified
+                          ? `Batch ${product.batch}${
+                              product.purity
+                                ? ` • ${product.purity} purity`
+                                : ""
+                            }`
+                          : "Third-party testing pending"}
+                      </p>
+                    </div>
 
-                        {isPreviousOpen && (
-                          <div className="space-y-4 border-t border-white/10 p-4">
-                            <p className="px-1 text-xs uppercase tracking-[0.24em] text-white/40">
-                              Previous Test Results
-                            </p>
+                    {isVerified && product.purity && (
+                      <div className="hidden text-right md:block">
+                        <p className="text-lg font-bold text-white">
+                          {product.purity}
+                        </p>
+                        <p className="text-[10px] uppercase tracking-[0.18em] text-white/30">
+                          Purity
+                        </p>
+                      </div>
+                    )}
 
-                            {product.previousCoas?.map(
-                              (previousCoa, previousIndex) => (
-                                <div
-                                  key={`${product.name}-${previousCoa.batch}-${previousIndex}`}
-                                  className="rounded-[1.25rem] border border-white/10 bg-white/[0.03] p-5"
+                    <ChevronDown
+                      size={20}
+                      className={`shrink-0 text-white/35 transition-transform duration-300 group-hover:text-white/70 ${
+                        isOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {/* EXPANDED CONTENT */}
+                  <div
+                    className={`grid transition-all duration-300 ${
+                      isOpen
+                        ? "grid-rows-[1fr] opacity-100"
+                        : "grid-rows-[0fr] opacity-0"
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="border-t border-white/10 bg-[#06111f]/55 px-5 py-6 sm:px-7 sm:py-7">
+                        {isVerified ? (
+                          <>
+                            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                              <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+                                <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-white/30">
+                                  Batch
+                                </p>
+                                <p className="text-sm font-semibold text-white/85">
+                                  {product.batch}
+                                </p>
+                              </div>
+
+                              <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+                                <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-white/30">
+                                  Status
+                                </p>
+                                <p className="text-sm font-semibold text-green-300">
+                                  Third-Party Verified
+                                </p>
+                              </div>
+
+                              <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+                                <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-white/30">
+                                  Purity
+                                </p>
+                                <p className="text-sm font-semibold text-white/85">
+                                  {product.purity || "—"}
+                                </p>
+                              </div>
+
+                              <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+                                <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-white/30">
+                                  Total mg Content
+                                </p>
+                                <p className="text-sm font-semibold text-blue-200">
+                                  {product.totalContent ||
+                                    product.content ||
+                                    "—"}
+                                </p>
+                              </div>
+                            </div>
+
+                            {product.totalContent && product.content && (
+                              <div className="mt-3 rounded-2xl border border-white/10 bg-white/[0.025] p-4">
+                                <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-white/30">
+                                  Component Content
+                                </p>
+                                <p className="text-sm leading-relaxed text-white/65">
+                                  {product.content}
+                                </p>
+                              </div>
+                            )}
+
+                            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                              {product.coa && (
+                                <a
+                                  href={product.coa}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(event) =>
+                                    event.stopPropagation()
+                                  }
+                                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-white px-5 py-3.5 text-xs font-bold uppercase tracking-[0.18em] text-[#081526] transition-all hover:bg-blue-100"
                                 >
-                                  <div className="mb-5 space-y-3 text-sm">
-                                    <div className="flex justify-between gap-4 border-b border-white/10 pb-3">
-                                      <span className="text-white/50">
-                                        Batch
-                                      </span>
+                                  <FileText size={16} />
+                                  {hasPreviousCoas
+                                    ? "View Latest COA"
+                                    : "View COA"}
+                                </a>
+                              )}
 
-                                      <span className="text-right text-white/80">
-                                        {previousCoa.batch}
-                                      </span>
-                                    </div>
+                              {hasPreviousCoas && (
+                                <button
+                                  type="button"
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    togglePreviousCoas(
+                                      product.name,
+                                    );
+                                  }}
+                                  aria-expanded={
+                                    isPreviousOpen
+                                  }
+                                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-5 py-3.5 text-xs font-bold uppercase tracking-[0.18em] text-white/70 transition-all hover:border-blue-400/40 hover:bg-white/[0.07] hover:text-white"
+                                >
+                                  {isPreviousOpen
+                                    ? "Hide Previous COAs"
+                                    : `Previous COAs (${product.previousCoas?.length || 0})`}
+                                  <ChevronDown
+                                    size={16}
+                                    className={`transition-transform duration-300 ${
+                                      isPreviousOpen
+                                        ? "rotate-180"
+                                        : ""
+                                    }`}
+                                  />
+                                </button>
+                              )}
+                            </div>
 
-                                    <div className="flex justify-between gap-4 border-b border-white/10 pb-3">
-                                      <span className="text-white/50">
-                                        Purity
-                                      </span>
+                            {hasPreviousCoas && (
+                              <div
+                                className={`grid transition-all duration-300 ${
+                                  isPreviousOpen
+                                    ? "mt-5 grid-rows-[1fr] opacity-100"
+                                    : "grid-rows-[0fr] opacity-0"
+                                }`}
+                              >
+                                <div className="overflow-hidden">
+                                  <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.025] p-4 sm:p-5">
+                                    <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white/35">
+                                      Previous Test Results
+                                    </p>
 
-                                      <span className="text-white/80">
-                                        {previousCoa.purity}
-                                      </span>
-                                    </div>
+                                    <div className="space-y-3">
+                                      {product.previousCoas?.map(
+                                        (
+                                          previousCoa,
+                                          previousIndex,
+                                        ) => (
+                                          <div
+                                            key={`${product.name}-${previousCoa.batch}-${previousIndex}`}
+                                            className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-[#081526]/65 p-4 sm:flex-row sm:items-center sm:justify-between"
+                                          >
+                                            <div className="grid flex-1 grid-cols-3 gap-4">
+                                              <div>
+                                                <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-white/30">
+                                                  Batch
+                                                </p>
+                                                <p className="text-xs text-white/75">
+                                                  {
+                                                    previousCoa.batch
+                                                  }
+                                                </p>
+                                              </div>
 
-                                    <div className="flex justify-between gap-4 border-b border-white/10 pb-3">
-                                      <span className="text-white/50">
-                                        Net Content
-                                      </span>
+                                              <div>
+                                                <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-white/30">
+                                                  Purity
+                                                </p>
+                                                <p className="text-xs text-white/75">
+                                                  {
+                                                    previousCoa.purity
+                                                  }
+                                                </p>
+                                              </div>
 
-                                      <span className="text-white/80">
-                                        {previousCoa.content}
-                                      </span>
+                                              <div>
+                                                <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-white/30">
+                                                  Total mg
+                                                </p>
+                                                <p className="text-xs text-white/75">
+                                                  {
+                                                    previousCoa.content
+                                                  }
+                                                </p>
+                                              </div>
+                                            </div>
+
+                                            <a
+                                              href={
+                                                previousCoa.coa
+                                              }
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              onClick={(event) =>
+                                                event.stopPropagation()
+                                              }
+                                              className="shrink-0 rounded-full border border-white/10 bg-white/[0.04] px-5 py-2.5 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-white/60 transition-all hover:border-blue-400/40 hover:text-white"
+                                            >
+                                              View
+                                            </a>
+                                          </div>
+                                        ),
+                                      )}
                                     </div>
                                   </div>
-
-                                  <a
-                                    href={previousCoa.coa}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="block w-full rounded-full border border-white/10 bg-white/[0.05] py-3 text-center text-xs uppercase tracking-widest text-white/80 transition-all hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-white"
-                                  >
-                                    View Previous COA
-                                  </a>
                                 </div>
-                              ),
+                              </div>
                             )}
+                          </>
+                        ) : (
+                          <div className="flex flex-col items-center justify-center rounded-[1.5rem] border border-dashed border-white/10 bg-white/[0.02] px-6 py-9 text-center">
+                            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/[0.04]">
+                              <Clock3
+                                size={20}
+                                className="text-white/35"
+                              />
+                            </div>
+
+                            <h3 className="text-base font-bold text-white/80">
+                              COA Coming Soon
+                            </h3>
+
+                            <p className="mt-2 max-w-md text-sm leading-relaxed text-white/35">
+                              Third-party analytical testing is
+                              pending. Results will be published here
+                              when available.
+                            </p>
                           </div>
                         )}
                       </div>
-                    )}
+                    </div>
                   </div>
-                ) : (
-                  <button
-                    type="button"
-                    disabled
-                    className="w-full cursor-not-allowed rounded-full border border-white/10 bg-white/[0.03] py-4 text-sm uppercase tracking-widest text-white/40"
-                  >
-                    COA Coming Soon
-                  </button>
-                )}
-              </article>
-            );
-          })}
+                </article>
+              );
+            })}
+          </div>
+
+          {filteredProducts.length === 0 && (
+            <div className="mt-8 rounded-[2rem] border border-white/10 bg-white/[0.03] px-6 py-14 text-center">
+              <Search
+                size={26}
+                className="mx-auto mb-4 text-white/25"
+              />
+              <p className="text-lg font-semibold text-white/70">
+                No COAs found
+              </p>
+              <p className="mt-2 text-sm text-white/35">
+                Try another product name, batch, or status filter.
+              </p>
+            </div>
+          )}
+
+          <div className="mt-10 rounded-[1.5rem] border border-white/10 bg-white/[0.025] px-6 py-5 text-center">
+            <p className="text-xs leading-relaxed text-white/35">
+              Certificates are displayed for research transparency and
+              quality documentation. Testing status and batch records may
+              be updated as new analytical results become available.
+            </p>
+          </div>
         </div>
       </section>
     </main>

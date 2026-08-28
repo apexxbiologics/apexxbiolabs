@@ -56,7 +56,7 @@ export async function POST(
         user.email,
         {
           redirectTo:
-            "https://apexxbiolabs.com/update-password",
+            "https://apexxbiolabs.com/reset-password",
         }
       );
 

@@ -41,19 +41,6 @@ export default async function CustomerPage({
 
   const email = user.email || "";
 
-  const firstName =
-    user.user_metadata?.first_name || "";
-
-  const lastName =
-    user.user_metadata?.last_name || "";
-
-  const fullName =
-    firstName || lastName
-      ? `${firstName} ${lastName}`.trim()
-      : user.user_metadata?.full_name ||
-        user.user_metadata?.name ||
-        "Customer";
-
   const verified =
     !!user.email_confirmed_at;
 
@@ -61,13 +48,40 @@ export default async function CustomerPage({
     ? await supabaseAdmin
         .from("orders")
         .select("*")
-        .ilike("email", email)
+        .ilike("customer_email", email)
         .order("created_at", {
           ascending: false,
         })
     : { data: [] };
 
   const safeOrders = orders || [];
+
+  /*
+   * Use Supabase Auth metadata first.
+   * If the account does not have name metadata, fall back to
+   * the customer's most recent order.
+   */
+  const latestOrder =
+    safeOrders.length > 0
+      ? safeOrders[0]
+      : null;
+
+  const firstName =
+    user.user_metadata?.first_name ||
+    latestOrder?.first_name ||
+    "";
+
+  const lastName =
+    user.user_metadata?.last_name ||
+    latestOrder?.last_name ||
+    "";
+
+  const fullName =
+    firstName || lastName
+      ? `${firstName} ${lastName}`.trim()
+      : user.user_metadata?.full_name ||
+        user.user_metadata?.name ||
+        "Customer";
 
   const totalSpent = safeOrders.reduce(
     (sum, order) => {

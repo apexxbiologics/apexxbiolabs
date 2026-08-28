@@ -244,7 +244,9 @@ export default function ProductsPage() {
             <h1 className="text-6xl md:text-8xl font-black tracking-tight leading-[0.9] mb-8">
               Research
               <br />
-              <span className="text-blue-300">Products.</span>
+              <span className="text-blue-300">
+                Products.
+              </span>
             </h1>
 
             <p className="text-white/65 text-lg md:text-xl leading-relaxed max-w-2xl">
@@ -422,7 +424,10 @@ export default function ProductsPage() {
             </p>
 
             <h2 className="text-4xl md:text-6xl font-black tracking-tight">
-              Apexx <span className="text-blue-300">Gear.</span>
+              Apexx{" "}
+              <span className="text-blue-300">
+                Gear.
+              </span>
             </h2>
 
             <p className="mt-4 text-white/50 max-w-2xl text-base md:text-lg">
@@ -438,6 +443,7 @@ export default function ProductsPage() {
           <div className="relative rounded-[2.5rem] border border-blue-300/15 bg-gradient-to-br from-white/[0.07] via-white/[0.035] to-blue-500/[0.04] overflow-hidden p-5 md:p-8">
             <div className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-blue-400/10 blur-[100px]" />
 
+            {/* HEADER */}
             <div className="relative z-10 flex items-center gap-4 mb-7">
               <div className="h-12 w-12 rounded-2xl border border-blue-300/20 bg-blue-400/10 flex items-center justify-center">
                 <FlaskConical
@@ -465,6 +471,7 @@ export default function ProductsPage() {
               }
               className="relative z-10 group cursor-pointer grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] overflow-hidden rounded-[2rem] border border-white/10 bg-[#071321]/80 hover:border-blue-400/40 transition-all duration-300"
             >
+              {/* IMAGE */}
               <div className="p-4">
                 <div className="relative overflow-hidden rounded-[1.6rem] bg-[#93C5FD] aspect-[16/10]">
                   <img
@@ -481,6 +488,7 @@ export default function ProductsPage() {
                 </div>
               </div>
 
+              {/* INFO */}
               <div className="flex flex-col justify-center p-7 md:p-10">
                 <p className="text-blue-300 text-xs uppercase tracking-[0.24em] mb-4">
                   Protective Storage
@@ -557,84 +565,125 @@ export default function ProductsPage() {
             </div>
 
             {/* =====================================================
-                SHIRT CARD
+                SHIRT FEATURE CARD
             ===================================================== */}
 
             <div
               onClick={() =>
                 (window.location.href = "/products/apexx-shirt")
               }
-              className="relative z-10 group cursor-pointer grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] overflow-hidden rounded-[2rem] border border-white/10 bg-[#071321]/80 hover:border-blue-400/40 transition-all duration-300"
+              className="relative z-10 group cursor-pointer grid grid-cols-1 lg:grid-cols-[0.78fr_1.22fr] overflow-hidden rounded-[2rem] border border-white/10 bg-[#071321]/80 hover:border-blue-400/40 transition-all duration-300"
             >
-              {/* IMAGE */}
-              <div className="p-4">
-                <div className="relative overflow-hidden rounded-[1.6rem] bg-[#93C5FD] aspect-[16/10]">
+              {/* =================================================
+                  IMAGE SIDE
+              ================================================= */}
+
+              <div className="p-4 md:p-5 flex items-center justify-center">
+                <div className="relative w-full max-w-[430px] overflow-hidden rounded-[1.75rem] bg-[#93C5FD]">
                   <img
                     src="/images/apexx-shirt-blue-front.png"
                     alt="Apexx Biolabs Signature Tee"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    className="w-full aspect-[4/5] object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
                   />
 
-                  <div className="absolute top-5 left-5 rounded-full border border-white/30 bg-[#081526]/75 backdrop-blur-md px-4 py-2">
+                  {/* BADGE */}
+                  <div className="absolute top-5 left-5 rounded-full border border-white/25 bg-[#081526]/80 backdrop-blur-md px-4 py-2">
                     <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-white">
                       Apexx Apparel
                     </span>
                   </div>
 
                   {/* COLOR DOTS */}
-                  <div className="absolute bottom-5 left-5 flex items-center gap-2 rounded-full border border-white/20 bg-[#081526]/75 px-4 py-2 backdrop-blur-md">
+                  <div className="absolute bottom-5 left-5 flex items-center gap-2 rounded-full border border-white/20 bg-[#081526]/80 px-4 py-2 backdrop-blur-md">
                     <span className="h-3.5 w-3.5 rounded-full border border-white/20 bg-[#93C5FD]" />
+
                     <span className="h-3.5 w-3.5 rounded-full border border-white/20 bg-[#E8E1DA]" />
-                    <span className="h-3.5 w-3.5 rounded-full border border-white/20 bg-[#666A59]" />
+
+                    <span className="h-3.5 w-3.5 rounded-full border border-white/20 bg-[#777863]" />
                   </div>
                 </div>
               </div>
 
-              {/* INFO */}
-              <div className="flex flex-col justify-center p-7 md:p-10">
+              {/* =================================================
+                  INFO SIDE
+              ================================================= */}
+
+              <div className="flex flex-col justify-center p-7 md:p-10 lg:p-12">
                 <p className="text-blue-300 text-xs uppercase tracking-[0.24em] mb-4">
                   Signature Collection
                 </p>
 
-                <h3 className="text-3xl md:text-4xl font-black tracking-tight">
+                <h3 className="text-3xl md:text-5xl font-black tracking-tight leading-[0.95]">
                   Apexx Biolabs
                   <br />
-                  Signature Tee
+
+                  <span className="text-blue-300">
+                    Signature Tee
+                  </span>
                 </h3>
 
-                <p className="text-blue-300 text-2xl font-black mt-4">
+                <p className="text-white text-3xl font-black mt-6">
                   $29.99
                 </p>
 
-                <p className="text-white/55 leading-relaxed mt-5 max-w-lg">
-                  Apexx Biolabs signature short sleeve tee featuring
-                  minimal front branding and a statement vertical Apexx
-                  design on the back.
+                <p className="text-white/55 leading-relaxed mt-5 max-w-xl">
+                  A clean everyday tee featuring minimal Apexx Biolabs
+                  branding on the front and our signature vertical Apexx
+                  graphic across the back.
                 </p>
 
-                {/* OPTIONS */}
-                <div className="flex flex-wrap gap-2 mt-6">
-                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/60">
-                    Blue
-                  </span>
+                {/* PRODUCT INFO */}
+                <div className="mt-7 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl">
+                  <div className="rounded-2xl border border-white/10 bg-white/[0.035] px-5 py-4">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-white/35 mb-1">
+                      Material
+                    </p>
 
-                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/60">
-                    Ivory
-                  </span>
+                    <p className="font-bold text-white">
+                      100% Cotton
+                    </p>
+                  </div>
 
-                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/60">
-                    Olive
-                  </span>
+                  <div className="rounded-2xl border border-white/10 bg-white/[0.035] px-5 py-4">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-white/35 mb-1">
+                      Sizes
+                    </p>
 
-                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/60">
-                    Sizes S–XL
-                  </span>
+                    <p className="font-bold text-white">
+                      S – XL
+                    </p>
+                  </div>
                 </div>
 
+                {/* COLORS */}
+                <div className="mt-6">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/35 mb-3">
+                    Available Colors
+                  </p>
+
+                  <div className="flex flex-wrap gap-2">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/65">
+                      <span className="h-3 w-3 rounded-full bg-[#93C5FD]" />
+                      Apexx Blue
+                    </span>
+
+                    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/65">
+                      <span className="h-3 w-3 rounded-full border border-black/10 bg-[#E8E1DA]" />
+                      Ivory
+                    </span>
+
+                    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/65">
+                      <span className="h-3 w-3 rounded-full bg-[#777863]" />
+                      Olive
+                    </span>
+                  </div>
+                </div>
+
+                {/* BUTTON */}
                 <a
                   href="/products/apexx-shirt"
                   onClick={(e) => e.stopPropagation()}
-                  className="group/button mt-8 inline-flex w-full sm:w-fit items-center justify-center gap-3 rounded-full bg-white px-8 py-4 text-sm font-bold uppercase tracking-[0.16em] text-[#081526] hover:bg-blue-100 transition-all"
+                  className="group/button mt-8 inline-flex w-full sm:w-fit items-center justify-center gap-3 rounded-full bg-white px-9 py-4 text-sm font-bold uppercase tracking-[0.16em] text-[#081526] hover:bg-blue-100 transition-all"
                 >
                   Shop Tee
 

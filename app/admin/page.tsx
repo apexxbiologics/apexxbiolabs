@@ -64,6 +64,12 @@ export default async function AdminPage() {
       href: "/admin/orders",
     },
     {
+      title: "Customers",
+      description:
+        "View customer accounts, verification status, and account activity.",
+      href: "/admin/customers",
+    },
+    {
       title: "Subscribers",
       description:
         "Manage promo email subscribers.",

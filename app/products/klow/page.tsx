@@ -1,509 +1,533 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  ShoppingCart,
-  FlaskConical,
-  ShieldCheck,
-  ClipboardCheck,
-} from "lucide-react";
+import { useState } from "react";
 
-import FavoriteButton from "@/components/FavoriteButton";
+type PreviousCOA = {
+  batch: string;
+  purity: string;
+  content: string;
+  coa: string;
+};
 
-export default function KlowPage() {
-  const [added, setAdded] = useState(false);
-  const [quantity, setQuantity] = useState(1);
-  const [inventory, setInventory] = useState<number | null>(null);
-  const [price, setPrice] = useState(55);
+type ProductCOA = {
+  name: string;
+  batch: string;
+  status: "Verified" | "Awaiting Testing";
+  purity?: string;
+  content?: string;
+  totalContent?: string;
+  coa?: string;
+  previousCoas?: PreviousCOA[];
+};
 
-  const product = {
-    id: "klow-80mg",
-    name: "KLOW 80mg",
-    image: "/images/klowblue.png",
-    path: "/products/klow",
-  };
+export default function COAsPage() {
+  const [openPreviousCoas, setOpenPreviousCoas] = useState<string | null>(
+    null,
+  );
 
-  const isOutOfStock = inventory !== null && inventory <= 0;
-  const isLimitedStock = inventory !== null && inventory > 0 && inventory <= 5;
+  const products: ProductCOA[] = [
+    {
+      name: "APX-2 30mg",
+      batch: "Pending",
+      status: "Awaiting Testing",
+    },
+    {
+      name: "MITO-X 120mg",
+      batch: "Pending",
+      status: "Awaiting Testing",
+    },
+    {
+      name: "NEURO-X 48mg",
+      batch: "Pending",
+      status: "Awaiting Testing",
+    },
+    {
+      name: "Glutathione 1500mg",
+      batch: "Pending",
+      status: "Awaiting Testing",
+    },
+    {
+      name: "SS-31 10mg",
+      batch: "Pending",
+      status: "Awaiting Testing",
+    },
+{
+  name: "APX-3 10mg",
+  batch: "Blue Cap-1",
+  status: "Verified",
+  purity: "99.89%",
+  content: "13.24 mg",
+  coa: "/images/coas/apx3-10mg-blue-cap-1-coa.pdf",
+},
+{
+  name: "APX-3 20mg",
+  batch: "Blue Cap-1",
+  status: "Verified",
+  purity: "99.92%",
+  content: "23.89 mg",
+  coa: "/images/coas/apx3-20mg-blue-cap-coa.pdf",
+},
+{
+  name: "BPC-157",
+  batch: "Blue Cap-2",
+  status: "Verified",
+  purity: "99.72%",
+  content: "11.78 mg",
 
-  const favoriteProduct = {
-    id: product.id,
-    name: product.name,
-    price,
-    image: product.image,
-    path: product.path,
-  };
+  // Latest COA
+  coa: "/images/coas/bpc157coa7-10-26.pdf",
 
-  useEffect(() => {
-    const fetchProductData = async () => {
-      try {
-        const response = await fetch("/api/products", {
-          cache: "no-store",
-        });
+  // Previous COAs
+  previousCoas: [
+    {
+      batch: "Black Cap-1",
+      purity: "99.33%",
+      content: "11.58 mg",
+      coa: "/images/coas/bpc-157-10mg-black-cap-coa.pdf",
+    },
+  ],
+},
+{
+  name: "TB-500",
+  batch: "Yellow Cap-2",
+  status: "Verified",
+  purity: "99.95%",
+  content: "13.47 mg",
 
-        const data = await response.json();
+  // MOST RECENT COA
+  coa: "/images/coas/tb500.pdf",
 
-        if (!data.success) return;
+  // OLDER COAS
+  previousCoas: [
+    {
+      batch: "Blue Cap-1",
+      purity: "99.47%",
+      content: "11.83 mg",
+      coa: "/images/coas/tb500-10mg-blue-cap-coa.pdf",
+    },
+  ],
+},
+    {
+      name: "KPV",
+      batch: "Purple Cap-1",
+      status: "Verified",
+      purity: "99.60%",
+      content: "10.41 mg",
+      coa: "/images/coas/6-26-kpv-coa.pdf",
+    },
+{
+  name: "GHK-Cu",
+  batch: "Red Cap-1",
+  status: "Verified",
+  purity: "99.74%",
+  content: "114.96 mg",
+  coa: "/images/coas/ghkcucoa7-10-26.pdf",
+},
+    {
+      name: "Pinealon",
+      batch: "Pending",
+      status: "Awaiting Testing",
+    },
+    {
+      name: "Selank",
+      batch: "SEL1005192026-08",
+      status: "Verified",
+      purity: "99.62%",
+      content: "11.36 mg",
+      coa: "/images/coas/selank-10mg-brown-green-coa.pdf",
+    },
+    {
+      name: "Semax",
+      batch: "SEMX1005182026-10",
+      status: "Verified",
+      purity: "99.33%",
+      content: "11.71 mg",
+      coa: "/images/coas/semax-10mg-coa.pdf",
+    },
+{
+  name: "MOTS-c",
+  batch: "Blue Cap-2",
+  status: "Verified",
+  purity: "99.75%",
+  content: "12.42 mg",
 
-        const klow = data.products.find(
-          (item: any) =>
-            item.slug === "klow" ||
-            item.slug === "klow-10mg" ||
-            item.slug === "k-low" ||
-            item.slug === "k-low-10mg" ||
-            item.id === "klow" ||
-            item.id === "klow-10mg" ||
-            item.id === "KLOW-10mg" ||
-            item.name?.toLowerCase().includes("klow")
-        );
+  // Latest COA
+  coa: "/images/coas/motsccoa.pdf",
 
-        if (klow) {
-          setInventory(Number(klow.inventory ?? 0));
-          setPrice(Number(klow.price ?? 55));
-        } else {
-          setInventory(null);
-          setPrice(55);
-        }
-      } catch (error) {
-        console.error("Failed to fetch KLOW data:", error);
-        setInventory(null);
-        setPrice(55);
-      }
-    };
+  // Previous COAs
+  previousCoas: [
+    {
+      batch: "Light Purple Cap-1",
+      purity: "99.48%",
+      content: "13.94 mg",
+      coa: "/images/coas/6-26-motsc-coa.pdf",
+    },
+  ],
+},
+    {
+      name: "ARA-290",
+      batch: "Pending",
+      status: "Awaiting Testing",
+    },
+    {
+      name: "PE-22-28",
+      batch: "Pending",
+      status: "Awaiting Testing",
+    },
+{
+  name: "Adamax",
+  batch: "Black Cap-1",
+  status: "Verified",
+  purity: "99.21%",
+  content: "13.71 mg",
+  coa: "/images/coas/adamaxcoa7-20-26.pdf",
+},
+    {
+      name: "CJC/IPA without DAC",
+      batch: "CJCIPA504292026-09",
+      status: "Verified",
+      purity: "99.42%",
+      content: "5 mg CJC / 5 mg IPA",
+      totalContent: "10 mg",
+      coa: "/images/coas/cjc-ipa-no-dac-coa.pdf",
+    },
+{
+  name: "Tesamorelin 10mg",
+  batch: "TESA2608-01",
+  status: "Verified",
+  purity: "99.99%",
+  content: "9.968 mg",
 
-    fetchProductData();
-  }, []);
+  // Latest COA - Accumark Labs
+  coa: "/images/coas/tesamorelin-10mg-8-26-26.pdf",
 
-  const addToCart = () => {
-    if (isOutOfStock) return;
+  // Previous COAs
+  previousCoas: [
+    {
+      batch: "Red Cap-1",
+      purity: "99.89%",
+      content: "5.48 mg",
+      coa: "/images/coas/tesamorelincoa7-10-26.pdf",
+    },
+  ],
+},
+{
+  name: "NAD+",
+  batch: "Black Cap-1",
+  status: "Verified",
+  purity: "99.95%",
+  content: "1119.71 mg",
+  coa: "/images/coas/nadcoa7-20-26.pdf",
+},
+{
+  name: "AOD-9604",
+  batch: "RED CAP -1",
+  status: "Verified",
+  purity: "99.27%",
+  content: "15.32 mg",
+  coa: "/images/coas/8-16-aod9604-coa.pdf",
+},
+    {
+      name: "PT-141",
+      batch: "Pending",
+      status: "Awaiting Testing",
+    },
+{
+  name: "5-Amino-1MQ",
+  batch: "Orange Cap",
+  status: "Verified",
+  purity: "99.90%",
+  content: "59.02 mg",
+  coa: "/images/coas/7-31-5-amino-1mq-coa.pdf",
+},
+    {
+      name: "Kisspeptin-10",
+      batch: "Pending",
+      status: "Awaiting Testing",
+    },
+ {
+  name: "KLOW",
+  batch: "Dark Blue Cap",
+  status: "Verified",
+  purity: "99.82%",
+  content: "57.66 mg GHK-Cu / 11.53 mg KPV / 12.36 mg BPC-157 / 12.93 mg TB-4",
+  totalContent: "94.48 mg",
+  coa: "/images/coas/7-31-klow-coa.pdf",
+},
+{
+  name: "Wolverine",
+  batch: "Clear Cap / Blue Crimp",
+  status: "Verified",
+  purity: "99.34%",
+  content: "11.84 mg BPC-157 / 12.93 mg Thymosin Beta-4",
+  totalContent: "24.77 mg",
+  coa: "/images/coas/7-31-wolverine-coa.pdf",
+},
+  ];
 
-    const cartProduct = {
-      id: product.id,
-      name: product.name,
-      price,
-      quantity,
-      image: product.image,
-      path: product.path,
-    };
-
-    const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-    const existingProduct = existingCart.find(
-      (item: any) => item.id === cartProduct.id
+  function togglePreviousCoas(productName: string) {
+    setOpenPreviousCoas((current) =>
+      current === productName ? null : productName,
     );
-
-    const updatedCart = existingProduct
-      ? existingCart.map((item: any) =>
-          item.id === cartProduct.id
-            ? {
-                ...item,
-                quantity: item.quantity + quantity,
-                price,
-                path: product.path,
-              }
-            : item
-        )
-      : [...existingCart, cartProduct];
-
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-    window.dispatchEvent(new Event("cartUpdated"));
-    setAdded(true);
-  };
+  }
 
   return (
-    <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-      <section className="relative px-6 md:px-10 py-16 overflow-hidden">
+    <main className="min-h-screen overflow-hidden bg-[#081526] text-white">
+      {/* HERO */}
+      <section className="relative overflow-hidden border-b border-white/10 px-6 py-24 text-center">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
-        <div className="relative z-10 max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
-            <div className="flex items-center justify-center">
-              <div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
-                <FavoriteButton product={favoriteProduct} />
+        <div className="relative z-10 mx-auto max-w-5xl">
+          <p className="mb-6 text-sm uppercase tracking-[0.35em] text-blue-300">
+            Quality Assurance
+          </p>
 
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
+          <h1 className="mb-6 text-5xl font-black leading-[0.95] text-white md:text-7xl">
+            Certificates of Analysis
+          </h1>
 
-            <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-              <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-4">
-                Research Peptide
-              </p>
+          <div className="mb-10 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70">
+            <span className="text-green-400">✓</span>
+            <span>Last Updated: August 28, 2026</span>
+          </div>
 
-              <h1 className="text-5xl md:text-6xl font-black mb-5 text-white">
-                {product.name}
-              </h1>
+          <p className="mx-auto mb-10 max-w-3xl text-lg leading-relaxed text-white/70 md:text-xl">
+            Third-party analytical verification and batch documentation
+            supporting research transparency, quality assurance, and product
+            integrity.
+          </p>
 
-              <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                High-purity KLOW produced for laboratory research involving
-                peptide signaling, metabolic pathway studies, receptor activity,
-                and controlled research models.
-              </p>
+          <div className="inline-flex items-center gap-3 rounded-full border border-green-500/20 bg-green-500/5 px-6 py-3">
+            <span className="text-green-400">✓</span>
 
-              <p className="text-5xl font-black text-white mb-3">
-                ${price.toFixed(2)}
-              </p>
+            <span className="text-sm uppercase tracking-widest text-green-300">
+              Independently Verified Products
+            </span>
+          </div>
+        </div>
+      </section>
 
-              {isLimitedStock && (
-                <div className="font-semibold mb-8 text-yellow-300">
-                  Limited Stock
-                </div>
-              )}
+      {/* COA CARDS */}
+      <section className="relative overflow-hidden px-6 py-20 md:px-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.08),transparent_60%)]" />
 
-              {isOutOfStock && (
-                <div className="font-semibold mb-8 text-red-300">
-                  Out of Stock
-                </div>
-              )}
+        <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 md:grid-cols-2">
+          {products.map((product) => {
+            const isVerified = product.status === "Verified";
 
-              {!isLimitedStock && !isOutOfStock && <div className="mb-8" />}
+            const hasPreviousCoas =
+              Array.isArray(product.previousCoas) &&
+              product.previousCoas.length > 0;
 
-              <div className="h-px bg-white/10 mb-8" />
+            const isPreviousOpen = openPreviousCoas === product.name;
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+            return (
+              <article
+                key={product.name}
+                className="flex min-h-[260px] flex-col justify-between rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm transition-all duration-300 hover:border-blue-400/50 hover:bg-white/[0.07] sm:p-8"
+              >
                 <div>
-                  <p className="uppercase tracking-widest text-white/50 text-sm mb-4">
-                    Size
-                  </p>
+                  <div className="mb-6 flex items-start justify-between gap-4">
+                    <div>
+                      <h2 className="text-3xl font-black tracking-tight text-white">
+                        {product.name}
+                      </h2>
 
-                  <div className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-7 py-4 text-sm font-semibold uppercase tracking-widest text-white">
-                    80mg
-                  </div>
-                </div>
-
-                <div>
-                  <p className="uppercase tracking-widest text-white/50 text-sm mb-4">
-                    Quantity
-                  </p>
-
-                  <div className="flex items-center w-fit rounded-full border border-white/10 bg-white/[0.04] p-2">
-                    <button
-                      onClick={() => {
-                        setQuantity((prev) => Math.max(1, prev - 1));
-                        setAdded(false);
-                      }}
-                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08]"
-                    >
-                      −
-                    </button>
-
-                    <div className="w-12 h-11 flex items-center justify-center text-lg font-bold">
-                      {quantity}
+                      {hasPreviousCoas && (
+                        <p className="mt-2 text-xs uppercase tracking-[0.24em] text-blue-300">
+                          Most Recent Batch
+                        </p>
+                      )}
                     </div>
 
-                    <button
-                      onClick={() => {
-                        setQuantity((prev) =>
-                          inventory === null
-                            ? prev + 1
-                            : Math.min(inventory, prev + 1)
-                        );
-                        setAdded(false);
-                      }}
-                      disabled={isOutOfStock}
-                      className="w-11 h-11 rounded-full text-2xl text-[#A5D8FF] hover:bg-white/[0.08] disabled:opacity-40"
+                    <span
+                      className={`shrink-0 rounded-full border px-3 py-1 text-xs uppercase tracking-widest ${
+                        isVerified
+                          ? "border-green-500/20 bg-green-500/10 text-green-300"
+                          : "border-white/10 bg-white/[0.04] text-white/40"
+                      }`}
                     >
-                      +
-                    </button>
+                      {isVerified ? "Verified" : "Pending"}
+                    </span>
+                  </div>
+
+                  <div className="mb-8 space-y-4 text-sm text-white/60">
+                    <div className="flex justify-between gap-6 border-b border-white/10 pb-3">
+                      <span>Batch</span>
+
+                      <span className="text-right text-white/80">
+                        {product.batch}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between gap-6 border-b border-white/10 pb-3">
+                      <span>Status</span>
+
+                      <span
+                        className={
+                          isVerified ? "text-green-300" : "text-white/40"
+                        }
+                      >
+                        {product.status}
+                      </span>
+                    </div>
+
+                    {product.purity && (
+                      <div className="flex justify-between gap-6 border-b border-white/10 pb-3">
+                        <span>Purity</span>
+
+                        <span className="text-white/80">
+                          {product.purity}
+                        </span>
+                      </div>
+                    )}
+
+                    {product.content && product.totalContent && (
+                      <div className="flex justify-between gap-6 border-b border-white/10 pb-3">
+                        <span>Component Content</span>
+
+                        <span className="max-w-[65%] text-right leading-relaxed text-white/80">
+                          {product.content}
+                        </span>
+                      </div>
+                    )}
+
+                    {(product.totalContent || product.content) && (
+                      <div className="flex justify-between gap-6 border-b border-white/10 pb-3">
+                        <span>Total mg Content</span>
+
+                        <span className="font-semibold text-blue-200">
+                          {product.totalContent || product.content}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
 
-              <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
-                <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider text-center">
-Receive a Complimentary Gift With Any 8 Vials                </p>
-              </div>
+                {product.coa ? (
+                  <div className="space-y-4">
+                    {isVerified && (
+                      <div className="text-center">
+                        <span className="inline-flex rounded-full border border-green-500/20 bg-green-500/10 px-4 py-2 text-xs uppercase tracking-widest text-green-300">
+                          ✓ Third-Party Verified
+                        </span>
+                      </div>
+                    )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                {isOutOfStock ? (
-                  <button
-                    disabled
-                    className="bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-5 uppercase tracking-widest text-sm font-semibold"
-                  >
-                    Out of Stock
-                  </button>
+                    <a
+                      href={product.coa}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block w-full rounded-full border border-blue-400/30 bg-blue-500/10 py-4 text-center text-sm uppercase tracking-widest text-blue-100 transition-all hover:border-blue-300/60 hover:bg-blue-500/20"
+                    >
+                      {hasPreviousCoas ? "View Latest COA" : "View COA"}
+                    </a>
+
+                    {hasPreviousCoas && (
+                      <div className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#06101f]">
+                        <button
+                          type="button"
+                          onClick={() => togglePreviousCoas(product.name)}
+                          aria-expanded={isPreviousOpen}
+                          className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-sm uppercase tracking-widest text-white/80 transition-all hover:bg-white/[0.05] hover:text-white"
+                        >
+                          <span>
+                            {isPreviousOpen
+                              ? "Hide Previous COAs"
+                              : "See Previous COAs"}
+                          </span>
+
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            className={`h-5 w-5 shrink-0 transition-transform duration-300 ${
+                              isPreviousOpen ? "rotate-180" : ""
+                            }`}
+                          >
+                            <path
+                              d="m6 9 6 6 6-6"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </button>
+
+                        {isPreviousOpen && (
+                          <div className="space-y-4 border-t border-white/10 p-4">
+                            <p className="px-1 text-xs uppercase tracking-[0.24em] text-white/40">
+                              Previous Test Results
+                            </p>
+
+                            {product.previousCoas?.map(
+                              (previousCoa, previousIndex) => (
+                                <div
+                                  key={`${product.name}-${previousCoa.batch}-${previousIndex}`}
+                                  className="rounded-[1.25rem] border border-white/10 bg-white/[0.03] p-5"
+                                >
+                                  <div className="mb-5 space-y-3 text-sm">
+                                    <div className="flex justify-between gap-4 border-b border-white/10 pb-3">
+                                      <span className="text-white/50">
+                                        Batch
+                                      </span>
+
+                                      <span className="text-right text-white/80">
+                                        {previousCoa.batch}
+                                      </span>
+                                    </div>
+
+                                    <div className="flex justify-between gap-4 border-b border-white/10 pb-3">
+                                      <span className="text-white/50">
+                                        Purity
+                                      </span>
+
+                                      <span className="text-white/80">
+                                        {previousCoa.purity}
+                                      </span>
+                                    </div>
+
+                                    <div className="flex justify-between gap-4 border-b border-white/10 pb-3">
+                                      <span className="text-white/50">
+                                        Total mg Content
+                                      </span>
+
+                                      <span className="text-white/80">
+                                        {previousCoa.content}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  <a
+                                    href={previousCoa.coa}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block w-full rounded-full border border-white/10 bg-white/[0.05] py-3 text-center text-xs uppercase tracking-widest text-white/80 transition-all hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-white"
+                                  >
+                                    View Previous COA
+                                  </a>
+                                </div>
+                              ),
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   <button
-                    onClick={addToCart}
-                    className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
+                    type="button"
+                    disabled
+                    className="w-full cursor-not-allowed rounded-full border border-white/10 bg-white/[0.03] py-4 text-sm uppercase tracking-widest text-white/40"
                   >
-                    <ShoppingCart size={22} />
-                    {added ? "Added To Cart" : "Add To Cart"}
+                    COA Coming Soon
                   </button>
                 )}
-
-                <a
-                  href="/cart"
-                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
-                >
-                  View Cart
-                </a>
-
-                <a
-                  href="/products"
-                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
-                >
-                  Continue Shopping
-                </a>
-
-                <a
-                  href="/coas"
-                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] hover:border-blue-400/50 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all text-center"
-                >
-                  View All COAs
-                </a>
-              </div>
-            </div>
-          </div>
+              </article>
+            );
+          })}
         </div>
       </section>
-
-      {/* COA Summary */}
-<section className="px-6 md:px-10 pb-16">
-  <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
-    <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
-      <div>
-        <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-xs mb-2">
-          Freedom Diagnostics
-        </p>
-
-        <h3 className="text-2xl font-black text-white mb-5">
-          Latest Certificate of Analysis
-        </h3>
-
-        <div className="flex flex-wrap gap-3">
-          <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
-            <span className="text-green-400 font-semibold">
-              ✓ Identity Confirmed
-            </span>
-          </div>
-
-          <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
-            <span className="text-[#A5D8FF] font-semibold">
-              99.82% Purity
-            </span>
-          </div>
-
-          <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
-            <span className="text-white/70">
-              Lot: Dark Blue Cap
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-col items-center md:items-end">
-        <div className="text-5xl font-black text-[#A5D8FF]">
-          99.82%
-        </div>
-
-        <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
-          Purity
-        </div>
-
-        <a
-          href="/images/coas/7-31-klow-coa.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
-        >
-          View Full COA
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
-      <section className="px-6 md:px-10 pb-10">
-        <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
-          {[
-            [FlaskConical, "Research Use Only", "Strictly for laboratory research."],
-            [ShieldCheck, "Third-Party Tested", "Independent lab verified when available."],
-            [ClipboardCheck, "Batch Documented", "Documentation available for verified lots."],
-            [ShieldCheck, "Quality Target", "99%+ purity target."],
-          ].map(([Icon, title, text]: any) => (
-            <div key={title} className="flex gap-4">
-              <Icon className="text-[#A5D8FF]" size={34} />
-
-              <div>
-                <h3 className="text-white uppercase tracking-widest font-bold text-sm">
-                  {title}
-                </h3>
-
-                <p className="text-white/50 text-sm mt-1">{text}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="px-6 md:px-10 pb-16">
-        <div className="max-w-7xl mx-auto rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
-          <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
-            Research Profile
-          </p>
-
-          <h2 className="text-3xl md:text-4xl font-black text-white mb-4">
-            KLOW Research Overview
-          </h2>
-
-          <p className="text-white/70 text-lg leading-relaxed max-w-4xl mb-8">
-            KLOW is studied in controlled laboratory research settings involving
-            peptide signaling, metabolic pathway investigation, receptor-related
-            models, and general research-use applications.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-            {[
-              [
-                "Peptide Research",
-                "Studied in controlled peptide-based laboratory models.",
-              ],
-              [
-                "Metabolic Pathways",
-                "Evaluated in models involving metabolic signaling and pathway research.",
-              ],
-              [
-                "Receptor Activity",
-                "Frequently researched in receptor-related laboratory studies.",
-              ],
-              [
-                "Storage",
-                "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
-              ],
-            ].map(([title, text]) => (
-              <div
-                key={title}
-                className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
-              >
-                <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
-
-                <p className="text-white/60 text-sm leading-relaxed">{text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Frequently Researched Together */}
-      <section className="px-6 md:px-10 pb-16">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-8">
-            <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
-              Related Research
-            </p>
-
-            <h2 className="text-3xl md:text-4xl font-black text-white">
-              Frequently Researched Together
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <a
-              href="/products/apx3"
-              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-            >
-              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-                <img
-                  src="/images/apx310blue.png"
-                  alt="APX-3"
-                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
-
-              <h3 className="text-2xl font-black text-white mb-2">APX-3</h3>
-
-              <p className="text-white/60 text-sm leading-relaxed mb-4">
-                Triple agonist research peptide studied in metabolic regulation
-                and body composition models.
-              </p>
-
-              <span className="text-[#A5D8FF] font-semibold">
-                View Product →
-              </span>
-            </a>
-
-            <a
-              href="/products/motsc"
-              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-            >
-              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-                <img
-                  src="/images/motscblue.png"
-                  alt="MOTS-C"
-                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
-
-              <h3 className="text-2xl font-black text-white mb-2">MOTS-C</h3>
-
-              <p className="text-white/60 text-sm leading-relaxed mb-4">
-                Studied in laboratory models involving mitochondrial signaling
-                and metabolic research.
-              </p>
-
-              <span className="text-[#A5D8FF] font-semibold">
-                View Product →
-              </span>
-            </a>
-
-            <a
-              href="/products/5amino1mq"
-              className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
-            >
-              <div className="rounded-[28px] overflow-hidden mb-5 bg-[#93C5FD] h-[230px] flex items-center justify-center">
-                <img
-                  src="/images/5amino1mqblue.png"
-                  alt="5-Amino-1MQ"
-                  className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
-
-              <h3 className="text-2xl font-black text-white mb-2">
-                5-Amino-1MQ
-              </h3>
-
-              <p className="text-white/60 text-sm leading-relaxed mb-4">
-                Studied in NNMT-related pathways, adipocyte signaling, and
-                metabolic regulation research models.
-              </p>
-
-              <span className="text-[#A5D8FF] font-semibold">
-                View Product →
-              </span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {[
-        {
-          title: "FDA Disclaimer",
-          text:
-            "These statements have not been evaluated by the U.S. Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only and are not for human or veterinary consumption.",
-        },
-        {
-          title: "Customer Acknowledgment",
-          text:
-            "By purchasing this product, the customer acknowledges that this material is intended solely for lawful laboratory research purposes and will not be used for human consumption, veterinary use, medical use, diagnosis, treatment, cure, or prevention of disease. Apexx Biolabs does not provide dosing instructions, treatment recommendations, medical advice, or guidance regarding human use of any product.",
-        },
-      ].map((section) => (
-        <section key={section.title} className="px-6 md:px-10 pb-16">
-          <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
-            <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-sm mb-4">
-              {section.title}
-            </h3>
-
-            <p className="text-white/60 text-sm leading-relaxed">
-              {section.text}
-            </p>
-          </div>
-        </section>
-      ))}
     </main>
   );
 }

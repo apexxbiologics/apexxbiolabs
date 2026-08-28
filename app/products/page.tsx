@@ -441,8 +441,7 @@ export default function ProductsPage() {
             </h2>
 
             <p className="mt-4 text-white/50 max-w-2xl text-base md:text-lg">
-              Storage, accessories, and apparel designed around the Apexx
-              Biolabs aesthetic.
+  Shop Apexx Biolabs storage essentials, accessories, and branded apparel.
             </p>
 
           </div>

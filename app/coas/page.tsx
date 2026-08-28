@@ -165,12 +165,24 @@ export default function COAsPage() {
       coa: "/images/coas/cjc-ipa-no-dac-coa.pdf",
     },
 {
-  name: "Tesamorelin",
-  batch: "Red Cap-1",
+  name: "Tesamorelin 10mg",
+  batch: "TESA2608-01",
   status: "Verified",
-  purity: "99.89%",
-  content: "5.48 mg",
-  coa: "/images/coas/tesamorelincoa7-10-26.pdf",
+  purity: "99.99%",
+  content: "9.968 mg",
+
+  // Latest COA - Accumark Labs
+  coa: "/images/coas/tesamorelin-10mg-8-26-26.pdf",
+
+  // Previous COAs
+  previousCoas: [
+    {
+      batch: "Red Cap-1",
+      purity: "99.89%",
+      content: "5.48 mg",
+      coa: "/images/coas/tesamorelincoa7-10-26.pdf",
+    },
+  ],
 },
 {
   name: "NAD+",

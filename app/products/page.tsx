@@ -6,7 +6,6 @@ import {
   FlaskConical,
   Shirt,
   ArrowRight,
-  Package,
 } from "lucide-react";
 
 export default function ProductsPage() {
@@ -223,10 +222,10 @@ export default function ProductsPage() {
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-
       {/* =========================================================
           HERO
       ========================================================= */}
+
       <section className="relative px-6 pt-24 pb-20 border-b border-white/10 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.16),transparent_55%)]" />
 
@@ -234,7 +233,6 @@ export default function ProductsPage() {
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="max-w-4xl">
-
             <div className="inline-flex items-center gap-3 rounded-full border border-blue-400/20 bg-blue-500/10 px-5 py-3 mb-8">
               <span className="h-2 w-2 rounded-full bg-blue-300" />
 
@@ -257,7 +255,6 @@ export default function ProductsPage() {
 
           {/* SEARCH + STATS */}
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.8fr] gap-8 items-end mt-12">
-
             <div className="relative">
               <Search
                 size={22}
@@ -274,7 +271,6 @@ export default function ProductsPage() {
             </div>
 
             <div className="grid grid-cols-3 gap-3">
-
               <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 text-center">
                 <p className="text-3xl font-black">
                   {products.length}
@@ -286,7 +282,9 @@ export default function ProductsPage() {
               </div>
 
               <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 text-center">
-                <p className="text-3xl font-black">COA</p>
+                <p className="text-3xl font-black">
+                  COA
+                </p>
 
                 <p className="text-white/45 text-xs uppercase tracking-widest mt-2">
                   Access
@@ -294,13 +292,14 @@ export default function ProductsPage() {
               </div>
 
               <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 text-center">
-                <p className="text-3xl font-black">RUO</p>
+                <p className="text-3xl font-black">
+                  RUO
+                </p>
 
                 <p className="text-white/45 text-xs uppercase tracking-widest mt-2">
                   Only
                 </p>
               </div>
-
             </div>
           </div>
 
@@ -320,21 +319,18 @@ export default function ProductsPage() {
               </button>
             ))}
           </div>
-
         </div>
       </section>
 
       {/* =========================================================
           RESEARCH PRODUCTS
       ========================================================= */}
-      <section className="relative px-6 py-20 overflow-hidden">
 
+      <section className="relative px-6 py-20 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.08),transparent_60%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto">
-
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
-
             <div>
               <p className="uppercase tracking-[0.3em] text-blue-300 text-xs mb-4">
                 Available Research Materials
@@ -350,19 +346,16 @@ export default function ProductsPage() {
             <p className="text-white/45 text-sm uppercase tracking-widest">
               Showing {filteredProducts.length} of {products.length} products
             </p>
-
           </div>
 
           {/* PRODUCT GRID */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
-
             {filteredProducts.map((product) => (
               <div
                 key={product.name}
                 onClick={() => (window.location.href = product.href)}
                 className="group cursor-pointer rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-3 hover:bg-white/[0.07] hover:border-blue-400/50 hover:-translate-y-2 transition-all duration-300"
               >
-
                 <div className="h-[360px] flex items-center justify-center rounded-[1.7rem] bg-[#06111f]/50 overflow-hidden">
                   <img
                     src={product.image}
@@ -372,7 +365,6 @@ export default function ProductsPage() {
                 </div>
 
                 <div className="p-5 pt-7">
-
                   <p className="text-blue-300 text-xs uppercase tracking-widest mb-3">
                     {product.category}
                   </p>
@@ -386,7 +378,6 @@ export default function ProductsPage() {
                   </p>
 
                   <div className="flex gap-3">
-
                     <a
                       href="/coas"
                       onClick={(e) => e.stopPropagation()}
@@ -402,13 +393,10 @@ export default function ProductsPage() {
                     >
                       View
                     </a>
-
                   </div>
-
                 </div>
               </div>
             ))}
-
           </div>
 
           {filteredProducts.length === 0 && (
@@ -418,20 +406,17 @@ export default function ProductsPage() {
               </p>
             </div>
           )}
-
         </div>
       </section>
 
       {/* =========================================================
-          APEXX GEAR / ACCESSORIES
+          APEXX GEAR
       ========================================================= */}
+
       <section className="relative px-6 pb-24 pt-6">
-
         <div className="max-w-7xl mx-auto">
-
           {/* SECTION INTRO */}
           <div className="mb-10">
-
             <p className="uppercase tracking-[0.3em] text-blue-300 text-xs mb-4">
               Beyond The Lab
             </p>
@@ -441,22 +426,19 @@ export default function ProductsPage() {
             </h2>
 
             <p className="mt-4 text-white/50 max-w-2xl text-base md:text-lg">
-  Shop Apexx Biolabs storage essentials, accessories, and branded apparel.
+              Shop Apexx Biolabs storage essentials, accessories, and branded
+              apparel.
             </p>
-
           </div>
 
           {/* =====================================================
               LAB ACCESSORIES
           ===================================================== */}
-          <div className="relative rounded-[2.5rem] border border-blue-300/15 bg-gradient-to-br from-white/[0.07] via-white/[0.035] to-blue-500/[0.04] overflow-hidden p-5 md:p-8">
 
-            {/* glow */}
+          <div className="relative rounded-[2.5rem] border border-blue-300/15 bg-gradient-to-br from-white/[0.07] via-white/[0.035] to-blue-500/[0.04] overflow-hidden p-5 md:p-8">
             <div className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-blue-400/10 blur-[100px]" />
 
-            {/* HEADER */}
             <div className="relative z-10 flex items-center gap-4 mb-7">
-
               <div className="h-12 w-12 rounded-2xl border border-blue-300/20 bg-blue-400/10 flex items-center justify-center">
                 <FlaskConical
                   size={21}
@@ -473,10 +455,9 @@ export default function ProductsPage() {
                   Lab Accessories
                 </h3>
               </div>
-
             </div>
 
-            {/* CASE CARD */}
+            {/* VIAL CASE */}
             <div
               onClick={() =>
                 (window.location.href =
@@ -484,12 +465,8 @@ export default function ProductsPage() {
               }
               className="relative z-10 group cursor-pointer grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] overflow-hidden rounded-[2rem] border border-white/10 bg-[#071321]/80 hover:border-blue-400/40 transition-all duration-300"
             >
-
-              {/* IMAGE SIDE */}
               <div className="p-4">
-
                 <div className="relative overflow-hidden rounded-[1.6rem] bg-[#93C5FD] aspect-[16/10]">
-
                   <img
                     src="/images/vial-case.png"
                     alt="Apexx Biolabs Vial Storage Case"
@@ -501,14 +478,10 @@ export default function ProductsPage() {
                       Lab Accessory
                     </span>
                   </div>
-
                 </div>
-
               </div>
 
-              {/* INFO SIDE */}
               <div className="flex flex-col justify-center p-7 md:p-10">
-
                 <p className="text-blue-300 text-xs uppercase tracking-[0.24em] mb-4">
                   Protective Storage
                 </p>
@@ -526,11 +499,9 @@ export default function ProductsPage() {
                   vials organized in one clean, secure case.
                 </p>
 
-                {/* FEATURES */}
                 <div className="flex flex-wrap gap-2 mt-6">
-
                   <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/60">
-                    Compact Storage
+                    14 Vial Capacity
                   </span>
 
                   <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/60">
@@ -540,7 +511,6 @@ export default function ProductsPage() {
                   <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/60">
                     Apexx Branded
                   </span>
-
                 </div>
 
                 <a
@@ -555,24 +525,20 @@ export default function ProductsPage() {
                     className="transition-transform group-hover/button:translate-x-1"
                   />
                 </a>
-
               </div>
-
             </div>
-
           </div>
 
           {/* =====================================================
               APPAREL
           ===================================================== */}
-          <div className="relative mt-7 rounded-[2.5rem] border border-white/10 bg-white/[0.035] overflow-hidden p-5 md:p-8">
 
-            <div className="pointer-events-none absolute left-1/3 top-0 h-64 w-64 rounded-full bg-blue-500/[0.06] blur-[100px]" />
+          <div className="relative mt-7 rounded-[2.5rem] border border-blue-300/15 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-blue-500/[0.035] overflow-hidden p-5 md:p-8">
+            <div className="pointer-events-none absolute left-1/3 top-0 h-64 w-64 rounded-full bg-blue-500/[0.07] blur-[100px]" />
 
             {/* HEADER */}
             <div className="relative z-10 flex items-center gap-4 mb-7">
-
-              <div className="h-12 w-12 rounded-2xl border border-white/10 bg-white/[0.04] flex items-center justify-center">
+              <div className="h-12 w-12 rounded-2xl border border-blue-300/20 bg-blue-400/10 flex items-center justify-center">
                 <Shirt
                   size={21}
                   className="text-blue-300"
@@ -588,54 +554,100 @@ export default function ProductsPage() {
                   Apparel
                 </h3>
               </div>
-
             </div>
 
-            {/* COMING SOON */}
-            <div className="relative z-10 rounded-[2rem] border border-dashed border-white/15 bg-[#071321]/55 px-7 py-10 md:px-10">
+            {/* =====================================================
+                SHIRT CARD
+            ===================================================== */}
 
-              <div className="flex flex-col md:flex-row md:items-center gap-6">
-
-                <div className="h-16 w-16 shrink-0 rounded-2xl border border-blue-300/15 bg-blue-400/[0.07] flex items-center justify-center">
-                  <Package
-                    size={27}
-                    className="text-blue-300"
+            <div
+              onClick={() =>
+                (window.location.href = "/products/apexx-shirt")
+              }
+              className="relative z-10 group cursor-pointer grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] overflow-hidden rounded-[2rem] border border-white/10 bg-[#071321]/80 hover:border-blue-400/40 transition-all duration-300"
+            >
+              {/* IMAGE */}
+              <div className="p-4">
+                <div className="relative overflow-hidden rounded-[1.6rem] bg-[#93C5FD] aspect-[16/10]">
+                  <img
+                    src="/images/apexx-shirt-blue-front.png"
+                    alt="Apexx Biolabs Signature Tee"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                   />
-                </div>
 
-                <div className="flex-1">
+                  <div className="absolute top-5 left-5 rounded-full border border-white/30 bg-[#081526]/75 backdrop-blur-md px-4 py-2">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-white">
+                      Apexx Apparel
+                    </span>
+                  </div>
 
-                  <p className="text-blue-300 text-xs font-bold uppercase tracking-[0.23em] mb-2">
-                    Coming Soon
-                  </p>
-
-                  <h4 className="text-2xl font-black">
-                    Apexx Biolabs Apparel
-                  </h4>
-
-                  <p className="text-white/45 mt-2 max-w-2xl leading-relaxed">
-                    Branded Apexx apparel is on the way. This section is
-                    ready for shirts and additional merchandise as they
-                    become available.
-                  </p>
-
-                </div>
-
-                <div className="shrink-0">
-                  <div className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-xs uppercase tracking-[0.2em] text-white/40">
-                    Coming Soon
+                  {/* COLOR DOTS */}
+                  <div className="absolute bottom-5 left-5 flex items-center gap-2 rounded-full border border-white/20 bg-[#081526]/75 px-4 py-2 backdrop-blur-md">
+                    <span className="h-3.5 w-3.5 rounded-full border border-white/20 bg-[#93C5FD]" />
+                    <span className="h-3.5 w-3.5 rounded-full border border-white/20 bg-[#E8E1DA]" />
+                    <span className="h-3.5 w-3.5 rounded-full border border-white/20 bg-[#666A59]" />
                   </div>
                 </div>
-
               </div>
 
+              {/* INFO */}
+              <div className="flex flex-col justify-center p-7 md:p-10">
+                <p className="text-blue-300 text-xs uppercase tracking-[0.24em] mb-4">
+                  Signature Collection
+                </p>
+
+                <h3 className="text-3xl md:text-4xl font-black tracking-tight">
+                  Apexx Biolabs
+                  <br />
+                  Signature Tee
+                </h3>
+
+                <p className="text-blue-300 text-2xl font-black mt-4">
+                  $29.99
+                </p>
+
+                <p className="text-white/55 leading-relaxed mt-5 max-w-lg">
+                  Apexx Biolabs signature short sleeve tee featuring
+                  minimal front branding and a statement vertical Apexx
+                  design on the back.
+                </p>
+
+                {/* OPTIONS */}
+                <div className="flex flex-wrap gap-2 mt-6">
+                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/60">
+                    Blue
+                  </span>
+
+                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/60">
+                    Ivory
+                  </span>
+
+                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/60">
+                    Olive
+                  </span>
+
+                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/60">
+                    Sizes S–XL
+                  </span>
+                </div>
+
+                <a
+                  href="/products/apexx-shirt"
+                  onClick={(e) => e.stopPropagation()}
+                  className="group/button mt-8 inline-flex w-full sm:w-fit items-center justify-center gap-3 rounded-full bg-white px-8 py-4 text-sm font-bold uppercase tracking-[0.16em] text-[#081526] hover:bg-blue-100 transition-all"
+                >
+                  Shop Tee
+
+                  <ArrowRight
+                    size={17}
+                    className="transition-transform group-hover/button:translate-x-1"
+                  />
+                </a>
+              </div>
             </div>
-
           </div>
-
         </div>
       </section>
-
     </main>
   );
 }

@@ -18,6 +18,24 @@ export default function PeptideInfoPage() {
 
   const peptides: Peptide[] = [
     {
+  id: "apx2",
+  category: "Metabolic Research Peptide",
+  name: "APX-2",
+  details:
+    "Synthetic Research Peptide | GIPR / GLP-1R Signaling Research",
+  description:
+    "APX-2 is a synthetic research peptide utilized in laboratory investigations involving glucose-dependent insulinotropic polypeptide receptor (GIPR) and glucagon-like peptide-1 receptor (GLP-1R) signaling pathways.",
+  mechanism:
+    "Experimental research evaluates APX-2 in relation to GIPR and GLP-1R receptor activity, metabolic signaling, cellular communication, glucose-regulatory pathways, and energy-balance research models.",
+  areas: [
+    "GIPR signaling research",
+    "GLP-1R signaling research",
+    "Dual receptor pathway studies",
+    "Metabolic signaling research",
+    "Cellular communication models",
+  ],
+},
+    {
       id: "apx3",
       category: "Metabolic Research Peptide",
       name: "APX-3",
@@ -444,23 +462,6 @@ export default function PeptideInfoPage() {
         "Neuroplasticity pathway models",
         "Cellular stress research",
         "Central nervous system signaling",
-      ],
-    },
-    {
-      id: "apx2",
-      category: "Metabolic Research Peptide",
-      name: "APX-2",
-      details: "Synthetic Research Peptide | Metabolic & Receptor Signaling Research",
-      description:
-        "APX-2 is a synthetic research peptide studied in laboratory models involving metabolic signaling, receptor-mediated cellular communication, energy-balance pathways, and peptide-receptor interactions.",
-      mechanism:
-        "Experimental research may evaluate APX-2 in relation to receptor-associated signaling, metabolic pathway activity, cellular communication, energy regulation, and peptide-mediated signaling mechanisms.",
-      areas: [
-        "Metabolic signaling research",
-        "Receptor pathway studies",
-        "Cellular communication research",
-        "Energy-balance models",
-        "Peptide-receptor investigations",
       ],
     },
   ];

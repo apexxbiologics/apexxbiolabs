@@ -345,6 +345,24 @@ export default function PeptideInfoPage() {
     "DNA repair pathway research",
   ],
 },
+
+{
+  id: "glutathione",
+  category: "Antioxidant Research Peptide",
+  name: "Glutathione",
+  details: "3 amino acids | MW: 307.32 g/mol | Sequence: γ-Glu-Cys-Gly",
+  description:
+    "Glutathione is a naturally occurring tripeptide studied in laboratory models involving redox balance, antioxidant defense, cellular detoxification pathways, oxidative-stress responses, and intracellular signaling.",
+  mechanism:
+    "Experimental studies investigate glutathione in relation to cellular redox reactions, reactive oxygen species regulation, glutathione peroxidase activity, detoxification pathways, and maintenance of intracellular antioxidant systems.",
+  areas: [
+    "Antioxidant pathway research",
+    "Cellular redox biology",
+    "Oxidative stress studies",
+    "Glutathione peroxidase research",
+    "Cellular detoxification models",
+  ],
+},
 {
   id: "pt141",
   category: "Melanocortin Research Peptide",
@@ -379,6 +397,75 @@ export default function PeptideInfoPage() {
     "Regenerative signaling investigations",
   ],
 },
+
+    {
+      id: "ss31",
+      category: "Mitochondrial Research Peptide",
+      name: "SS-31",
+      details: "Tetrapeptide Research Compound | Mitochondrial Signaling Research",
+      description:
+        "SS-31 is a synthetic tetrapeptide studied in laboratory models involving mitochondrial function, oxidative-stress pathways, cellular energy regulation, and mitochondrial membrane research.",
+      mechanism:
+        "Experimental studies investigate SS-31 in relation to mitochondrial membrane interactions, cardiolipin-associated signaling, reactive oxygen species regulation, ATP-related cellular processes, and mitochondrial stress-response pathways.",
+      areas: [
+        "Mitochondrial function research",
+        "Oxidative stress studies",
+        "Cellular energy regulation",
+        "Mitochondrial membrane research",
+        "Stress-response pathway models",
+      ],
+    },
+    {
+      id: "mitomax",
+      category: "Mitochondrial Research Blend",
+      name: "MitoMax",
+      details: "Research Blend | Mitochondrial & Cellular Energy Research",
+      description:
+        "MitoMax is a research blend intended for laboratory investigations involving mitochondrial signaling, cellular energy pathways, oxidative-stress responses, and metabolic research models.",
+      mechanism:
+        "Laboratory research may evaluate MitoMax in relation to mitochondrial communication, cellular energy regulation, redox signaling, metabolic pathway activity, and cellular stress-response mechanisms.",
+      areas: [
+        "Mitochondrial signaling research",
+        "Cellular energy studies",
+        "Redox pathway research",
+        "Metabolic signaling models",
+        "Cellular stress-response studies",
+      ],
+    },
+    {
+      id: "neurox",
+      category: "Neurobiology Research Blend",
+      name: "NeuroX",
+      details: "Research Blend | Neurobiology & Cellular Signaling Research",
+      description:
+        "NeuroX is a research blend intended for laboratory investigations involving neurobiological signaling, neuronal communication, cellular stress pathways, and central nervous system research models.",
+      mechanism:
+        "Experimental research may evaluate NeuroX in relation to neuronal signaling pathways, neurotransmitter-associated communication, neuroplasticity-related mechanisms, oxidative-stress responses, and cellular communication networks.",
+      areas: [
+        "Neurobiology research",
+        "Neuronal signaling studies",
+        "Neuroplasticity pathway models",
+        "Cellular stress research",
+        "Central nervous system signaling",
+      ],
+    },
+    {
+      id: "apx2",
+      category: "Metabolic Research Peptide",
+      name: "APX-2",
+      details: "Synthetic Research Peptide | Metabolic & Receptor Signaling Research",
+      description:
+        "APX-2 is a synthetic research peptide studied in laboratory models involving metabolic signaling, receptor-mediated cellular communication, energy-balance pathways, and peptide-receptor interactions.",
+      mechanism:
+        "Experimental research may evaluate APX-2 in relation to receptor-associated signaling, metabolic pathway activity, cellular communication, energy regulation, and peptide-mediated signaling mechanisms.",
+      areas: [
+        "Metabolic signaling research",
+        "Receptor pathway studies",
+        "Cellular communication research",
+        "Energy-balance models",
+        "Peptide-receptor investigations",
+      ],
+    },
   ];
 
   return (

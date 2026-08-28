@@ -14,6 +14,7 @@ export default function TesamorelinPage() {
   const [added, setAdded] = useState(false);
   const [selectedMg, setSelectedMg] = useState<"5mg" | "10mg">("5mg");
   const [quantity, setQuantity] = useState(1);
+  const [showPreviousCoa, setShowPreviousCoa] = useState(false);
 
   const [productData, setProductData] = useState({
     "5mg": {
@@ -46,7 +47,8 @@ export default function TesamorelinPage() {
   const selectedPrice = productData[selectedMg].price;
 
   const isOutOfStock = selectedInventory <= 0;
-  const isLimitedStock = selectedInventory > 0 && selectedInventory <= 5;
+  const isLimitedStock =
+    selectedInventory > 0 && selectedInventory <= 5;
 
   const favoriteProduct = {
     id: selectedProduct.id,
@@ -127,7 +129,9 @@ export default function TesamorelinPage() {
       path: selectedProduct.path,
     };
 
-    const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const existingCart = JSON.parse(
+      localStorage.getItem("cart") || "[]"
+    );
 
     const existingProduct = existingCart.find(
       (item: any) => item.id === cartProduct.id
@@ -147,17 +151,21 @@ export default function TesamorelinPage() {
       : [...existingCart, cartProduct];
 
     localStorage.setItem("cart", JSON.stringify(updatedCart));
+
     window.dispatchEvent(new Event("cartUpdated"));
+
     setAdded(true);
   };
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
+      {/* PRODUCT HERO */}
       <section className="relative px-6 md:px-10 py-16 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
+            {/* Product Image */}
             <div className="flex items-center justify-center">
               <div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
                 <FavoriteButton product={favoriteProduct} />
@@ -170,6 +178,7 @@ export default function TesamorelinPage() {
               </div>
             </div>
 
+            {/* Product Information */}
             <div className="rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
               <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-4">
                 Research Peptide
@@ -180,10 +189,10 @@ export default function TesamorelinPage() {
               </h1>
 
               <p className="text-white/70 text-lg leading-relaxed max-w-2xl mb-6">
-                High-purity Tesamorelin research peptide studied in laboratory
-                models involving growth hormone-releasing hormone receptor
-                pathways, GH signaling, IGF-1 response pathways, and metabolic
-                regulation.
+                High-purity Tesamorelin research peptide studied in
+                laboratory models involving growth hormone-releasing
+                hormone receptor pathways, GH signaling, IGF-1 response
+                pathways, and metabolic regulation.
               </p>
 
               <p className="text-5xl font-black text-white mb-3">
@@ -202,10 +211,13 @@ export default function TesamorelinPage() {
                 </div>
               )}
 
-              {!isLimitedStock && !isOutOfStock && <div className="mb-8" />}
+              {!isLimitedStock && !isOutOfStock && (
+                <div className="mb-8" />
+              )}
 
               <div className="h-px bg-white/10 mb-8" />
 
+              {/* Size + Quantity */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
                 <div>
                   <p className="uppercase tracking-widest text-white/50 text-sm mb-4">
@@ -258,6 +270,7 @@ export default function TesamorelinPage() {
                         setQuantity((prev) =>
                           Math.min(selectedInventory || 1, prev + 1)
                         );
+
                         setAdded(false);
                       }}
                       disabled={isOutOfStock}
@@ -269,11 +282,14 @@ export default function TesamorelinPage() {
                 </div>
               </div>
 
+              {/* Complimentary Gift */}
               <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 mb-6">
                 <p className="text-blue-100 text-sm font-semibold uppercase tracking-wider text-center">
-Receive a Complimentary Gift With Any 8 Vials                </p>
+                  Receive a Complimentary Gift With Any 8 Vials
+                </p>
               </div>
 
+              {/* Buttons */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                 {isOutOfStock ? (
                   <button
@@ -288,6 +304,7 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
                     className="bg-white text-[#081526] hover:bg-blue-100 rounded-full py-5 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
                   >
                     <ShoppingCart size={22} />
+
                     {added ? "Added To Cart" : "Add To Cart"}
                   </button>
                 )}
@@ -318,13 +335,14 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
         </div>
       </section>
 
-            {/* COA Summary */}
+      {/* COA SUMMARY */}
       <section className="px-6 md:px-10 pb-16">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6">
+          {/* Latest COA */}
           <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
             <div>
               <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-xs mb-2">
-                Freedom Diagnostics
+                Accumark Labs
               </p>
 
               <h3 className="text-2xl font-black text-white mb-5">
@@ -340,19 +358,19 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
 
                 <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
                   <span className="text-[#A5D8FF] font-semibold">
-                    99.89% Purity
+                    99.99% Purity
                   </span>
                 </div>
 
                 <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
                   <span className="text-[#A5D8FF] font-semibold">
-                    5.48mg Content
+                    9.968mg Content
                   </span>
                 </div>
 
                 <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
                   <span className="text-white/70">
-                    Lot: Red Cap-1
+                    Lot: TESA2608-01
                   </span>
                 </div>
               </div>
@@ -360,7 +378,7 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
 
             <div className="flex flex-col items-center md:items-end">
               <div className="text-5xl font-black text-[#A5D8FF]">
-                99.89%
+                99.99%
               </div>
 
               <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
@@ -368,18 +386,95 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
               </div>
 
               <a
-                href="/images/coas/tesamorelincoa7-10-26.pdf"
+                href="/images/coas/tesamorelin-10mg-8-26-26.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
               >
-                View Full COA
+                View Latest COA
               </a>
             </div>
+          </div>
+
+          {/* Previous COA Toggle */}
+          <div className="mt-8 border-t border-white/10 pt-6">
+            <button
+              type="button"
+              onClick={() =>
+                setShowPreviousCoa((prev) => !prev)
+              }
+              className="w-full rounded-full border border-white/10 bg-white/[0.04] py-3 text-sm uppercase tracking-widest text-white/80 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+            >
+              {showPreviousCoa
+                ? "Hide Previous COA"
+                : "See Previous COA"}
+            </button>
+
+            {showPreviousCoa && (
+              <div className="mt-8 rounded-[28px] border border-white/10 bg-white/[0.03] p-6">
+                <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
+                  <div>
+                    <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-xs mb-2">
+                      Freedom Diagnostics
+                    </p>
+
+                    <h3 className="text-2xl font-black text-white mb-5">
+                      Previous Certificate of Analysis
+                    </h3>
+
+                    <div className="flex flex-wrap gap-3">
+                      <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
+                        <span className="text-green-400 font-semibold">
+                          ✓ Identity Confirmed
+                        </span>
+                      </div>
+
+                      <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+                        <span className="text-[#A5D8FF] font-semibold">
+                          99.89% Purity
+                        </span>
+                      </div>
+
+                      <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+                        <span className="text-[#A5D8FF] font-semibold">
+                          5.48mg Content
+                        </span>
+                      </div>
+
+                      <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10">
+                        <span className="text-white/70">
+                          Lot: Red Cap-1
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-center md:items-end">
+                    <div className="text-5xl font-black text-[#A5D8FF]">
+                      99.89%
+                    </div>
+
+                    <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
+                      Purity
+                    </div>
+
+                    <a
+                      href="/images/coas/tesamorelincoa7-10-26.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 rounded-full border border-blue-400/20 bg-blue-400/10 px-6 py-3 text-blue-300 font-semibold hover:bg-blue-400/20 transition-all"
+                    >
+                      View Previous COA
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
+      {/* QUALITY CARDS */}
       <section className="px-6 md:px-10 pb-10">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
@@ -398,23 +493,33 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
               "Batch Documented",
               "Documentation available for verified lots.",
             ],
-            [ShieldCheck, "Quality Target", "99%+ purity target."],
+            [
+              ShieldCheck,
+              "Quality Target",
+              "99%+ purity target.",
+            ],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
-              <Icon className="text-[#A5D8FF]" size={34} />
+              <Icon
+                className="text-[#A5D8FF]"
+                size={34}
+              />
 
               <div>
                 <h3 className="text-white uppercase tracking-widest font-bold text-sm">
                   {title}
                 </h3>
 
-                <p className="text-white/50 text-sm mt-1">{text}</p>
+                <p className="text-white/50 text-sm mt-1">
+                  {text}
+                </p>
               </div>
             </div>
           ))}
         </div>
       </section>
 
+      {/* RESEARCH PROFILE */}
       <section className="px-6 md:px-10 pb-16">
         <div className="max-w-7xl mx-auto rounded-[36px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8 md:p-10">
           <p className="uppercase tracking-[0.35em] text-[#A5D8FF] text-sm mb-3">
@@ -426,10 +531,10 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
           </h2>
 
           <p className="text-white/70 text-lg leading-relaxed max-w-4xl mb-8">
-            Tesamorelin is studied in laboratory research for its interaction
-            with growth hormone-releasing hormone receptor pathways, commonly
-            evaluated in endocrine signaling, IGF-1 response, and metabolic
-            research models.
+            Tesamorelin is studied in laboratory research for its
+            interaction with growth hormone-releasing hormone receptor
+            pathways, commonly evaluated in endocrine signaling, IGF-1
+            response, and metabolic research models.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
@@ -455,16 +560,20 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
                 key={title}
                 className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 hover:border-blue-400/50 transition-all"
               >
-                <h3 className="text-white text-lg font-bold mb-3">{title}</h3>
+                <h3 className="text-white text-lg font-bold mb-3">
+                  {title}
+                </h3>
 
-                <p className="text-white/60 text-sm leading-relaxed">{text}</p>
+                <p className="text-white/60 text-sm leading-relaxed">
+                  {text}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Frequently Researched Together */}
+      {/* FREQUENTLY RESEARCHED TOGETHER */}
       <section className="px-6 md:px-10 pb-16">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
@@ -478,6 +587,7 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* CJC / IPA */}
             <a
               href="/products/cjcipa"
               className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
@@ -490,7 +600,9 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
                 />
               </div>
 
-              <h3 className="text-2xl font-black text-white mb-2">CJC/IPA</h3>
+              <h3 className="text-2xl font-black text-white mb-2">
+                CJC/IPA
+              </h3>
 
               <p className="text-white/60 text-sm leading-relaxed mb-4">
                 Research involving growth hormone signaling pathways and
@@ -502,6 +614,7 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
               </span>
             </a>
 
+            {/* MOTS-C */}
             <a
               href="/products/motsc"
               className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
@@ -514,11 +627,13 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
                 />
               </div>
 
-              <h3 className="text-2xl font-black text-white mb-2">MOTS-C</h3>
+              <h3 className="text-2xl font-black text-white mb-2">
+                MOTS-C
+              </h3>
 
               <p className="text-white/60 text-sm leading-relaxed mb-4">
-                Studied in laboratory models involving mitochondrial signaling
-                and metabolic research.
+                Studied in laboratory models involving mitochondrial
+                signaling and metabolic research.
               </p>
 
               <span className="text-[#A5D8FF] font-semibold">
@@ -526,6 +641,7 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
               </span>
             </a>
 
+            {/* APX-3 */}
             <a
               href="/products/apx3"
               className="group rounded-[30px] border border-white/10 bg-white/[0.04] p-5 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all duration-300"
@@ -538,11 +654,13 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
                 />
               </div>
 
-              <h3 className="text-2xl font-black text-white mb-2">APX-3</h3>
+              <h3 className="text-2xl font-black text-white mb-2">
+                APX-3
+              </h3>
 
               <p className="text-white/60 text-sm leading-relaxed mb-4">
-                Research involving metabolic signaling, energy regulation, and
-                body composition models.
+                Research involving metabolic signaling, energy
+                regulation, and body composition models.
               </p>
 
               <span className="text-[#A5D8FF] font-semibold">
@@ -553,6 +671,7 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
         </div>
       </section>
 
+      {/* DISCLAIMERS */}
       {[
         {
           title: "FDA Disclaimer",
@@ -565,7 +684,10 @@ Receive a Complimentary Gift With Any 8 Vials                </p>
             "By purchasing this product, the customer acknowledges that this material is intended solely for lawful laboratory research purposes and will not be used for human consumption, veterinary use, medical use, diagnosis, treatment, cure, or prevention of disease. Apexx Biolabs does not provide dosing instructions, treatment recommendations, medical advice, or guidance regarding human use of any product.",
         },
       ].map((section) => (
-        <section key={section.title} className="px-6 md:px-10 pb-16">
+        <section
+          key={section.title}
+          className="px-6 md:px-10 pb-16"
+        >
           <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
             <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-sm mb-4">
               {section.title}

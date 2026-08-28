@@ -1814,6 +1814,15 @@ export default function AdminOrdersPage() {
                                 </span>
                               )}
 
+                              {/* VIEW ORDER */}
+
+<a
+  href={`/admin/orders/${order.id}`}
+  className="rounded-full border border-blue-300/30 bg-blue-500/10 px-5 py-2 text-sm font-bold text-blue-200 transition-all hover:border-blue-300/60 hover:bg-blue-500/20 hover:text-white"
+>
+  View Order
+</a>
+
                               {/* NEW MANAGE ORDER BUTTON */}
 
                               {order.status !==

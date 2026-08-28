@@ -1548,18 +1548,13 @@ export default function AdminOrdersPage() {
 
                               {order.status !==
                                 "cancelled" && (
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    setManageOrder(
-                                      order
-                                    )
-                                  }
-                                  className="rounded-full border border-purple-300/30 bg-purple-500/10 px-5 py-2 text-sm font-bold text-purple-200 transition-all hover:border-purple-300/60 hover:bg-purple-500/20 hover:text-white"
-                                >
-                                  Manage
-                                  Order
-                                </button>
+<button
+  type="button"
+  onClick={() => setManageOrder(order)}
+  className="rounded-full border border-purple-300/30 bg-purple-500/10 px-5 py-2 text-sm font-bold text-purple-200 transition-all hover:border-purple-300/60 hover:bg-purple-500/20 hover:text-white"
+>
+  Manage Order
+</button>
                               )}
 
                               {/* CONVERSATION */}

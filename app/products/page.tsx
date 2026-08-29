@@ -7,6 +7,7 @@ import {
   ArrowRight,
   FlaskConical,
   Shirt,
+  FileText,
 } from "lucide-react";
 
 type Product = {
@@ -266,15 +267,16 @@ export default function ProductsPage() {
   return (
     <main className="min-h-screen bg-[#081526] text-white">
       {/* =========================================================
-          HEADER
+          TOP
       ========================================================= */}
 
       <section className="border-b border-white/[0.07]">
-        <div className="max-w-7xl mx-auto px-5 md:px-6 pt-10 md:pt-14 pb-7">
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+        <div className="max-w-7xl mx-auto px-5 md:px-6 pt-10 md:pt-12 pb-6">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+
             {/* TITLE */}
             <div>
-              <p className="text-[10px] md:text-xs uppercase tracking-[0.28em] text-blue-300 font-semibold mb-3">
+              <p className="text-[10px] uppercase tracking-[0.28em] text-blue-300 font-semibold mb-2">
                 Apexx Biolabs
               </p>
 
@@ -282,7 +284,7 @@ export default function ProductsPage() {
                 Products
               </h1>
 
-              <p className="text-white/45 text-sm md:text-base mt-3 max-w-xl">
+              <p className="text-white/40 text-sm md:text-base mt-2 max-w-xl">
                 Research compounds, storage essentials, and Apexx apparel.
               </p>
             </div>
@@ -291,8 +293,8 @@ export default function ProductsPage() {
             <div className="w-full lg:w-[360px]">
               <div className="relative">
                 <Search
-                  size={18}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white/35"
+                  size={17}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30"
                 />
 
                 <input
@@ -302,43 +304,109 @@ export default function ProductsPage() {
                   placeholder="Search products"
                   className="
                     w-full
-                    h-12
+                    h-11
                     rounded-xl
                     border border-white/10
-                    bg-white/[0.035]
+                    bg-white/[0.03]
                     pl-11 pr-4
-                    text-sm text-white
+                    text-sm
+                    text-white
                     placeholder:text-white/30
                     outline-none
-                    transition
-                    focus:border-blue-300/50
-                    focus:bg-white/[0.05]
+                    transition-all
+                    focus:border-blue-300/40
+                    focus:bg-white/[0.045]
                   "
                 />
               </div>
             </div>
           </div>
 
-          {/* FILTERS */}
-          <div className="mt-7 overflow-x-auto scrollbar-hide">
-            <div className="flex items-center gap-2 min-w-max pb-1">
+          {/* =====================================================
+              QUICK LINKS
+          ===================================================== */}
+
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            <a
+              href="#apexx-gear"
+              className="
+                group
+                inline-flex
+                items-center
+                gap-2
+                rounded-xl
+                bg-blue-300
+                px-4
+                py-2.5
+                text-[11px]
+                font-bold
+                text-[#081526]
+                transition-all
+                hover:bg-blue-200
+              "
+            >
+              <Shirt size={14} />
+
+              Shop Apexx Gear
+
+              <ArrowRight
+                size={14}
+                className="transition-transform group-hover:translate-x-1"
+              />
+            </a>
+
+            <Link
+              href="/coas"
+              className="
+                inline-flex
+                items-center
+                gap-2
+                rounded-xl
+                border border-white/10
+                bg-white/[0.025]
+                px-4
+                py-2.5
+                text-[11px]
+                font-semibold
+                text-white/55
+                transition-all
+                hover:border-white/20
+                hover:text-white
+              "
+            >
+              <FileText size={13} />
+
+              View COAs
+            </Link>
+          </div>
+
+          {/* =====================================================
+              FILTERS
+          ===================================================== */}
+
+          <div className="mt-5 overflow-x-auto">
+            <div className="flex min-w-max items-center gap-2 pb-1">
               {categories.map((category) => {
                 const active = activeCategory === category.value;
 
                 return (
                   <button
                     key={category.value}
-                    onClick={() => setActiveCategory(category.value)}
+                    onClick={() =>
+                      setActiveCategory(category.value)
+                    }
                     className={`
                       whitespace-nowrap
                       rounded-full
-                      px-4 py-2
-                      text-xs font-semibold
+                      px-4
+                      py-2
+                      text-[11px]
+                      font-semibold
                       transition-all
                       ${
                         active
-                          ? "bg-blue-300 text-[#081526]"
-                          : "border border-white/10 bg-white/[0.025] text-white/50 hover:text-white hover:border-white/20"
+                          ? "bg-white text-[#081526]"
+                          : "border border-white/[0.08] bg-white/[0.02] text-white/45 hover:border-blue-300/30 hover:text-white"
                       }
                     `}
                   >
@@ -355,24 +423,24 @@ export default function ProductsPage() {
           RESEARCH PRODUCTS
       ========================================================= */}
 
-      <section className="max-w-7xl mx-auto px-5 md:px-6 py-9 md:py-11">
-        {/* SECTION TITLE */}
-        <div className="flex items-end justify-between gap-4 mb-6">
+      <section className="max-w-7xl mx-auto px-5 md:px-6 py-8 md:py-10">
+        <div className="flex items-end justify-between gap-4 mb-5">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.25em] text-blue-300/80 font-semibold mb-2">
+            <p className="text-[9px] uppercase tracking-[0.25em] text-blue-300/70 font-semibold mb-1.5">
               Research Catalog
             </p>
 
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+            <h2 className="text-xl md:text-2xl font-bold tracking-tight">
               {activeCategory === "All"
                 ? "Research Products"
                 : categories.find(
-                    (category) => category.value === activeCategory
+                    (category) =>
+                      category.value === activeCategory
                   )?.label}
             </h2>
           </div>
 
-          <p className="text-xs text-white/35 whitespace-nowrap">
+          <p className="text-[11px] text-white/30 whitespace-nowrap">
             {filteredProducts.length}{" "}
             {filteredProducts.length === 1
               ? "product"
@@ -380,9 +448,8 @@ export default function ProductsPage() {
           </p>
         </div>
 
-        {/* PRODUCT GRID */}
         {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
             {filteredProducts.map((product) => (
               <Link
                 key={product.name}
@@ -390,56 +457,59 @@ export default function ProductsPage() {
                 className="
                   group
                   overflow-hidden
-                  rounded-2xl
-                  border border-white/[0.08]
-                  bg-white/[0.025]
-                  transition-all duration-300
-                  hover:border-blue-300/30
-                  hover:bg-white/[0.04]
+                  rounded-xl
+                  border border-white/[0.07]
+                  bg-white/[0.02]
+                  transition-all
+                  duration-300
                   hover:-translate-y-0.5
+                  hover:border-blue-300/25
+                  hover:bg-white/[0.035]
                 "
               >
                 {/* IMAGE */}
-                <div className="relative aspect-square bg-[#06111f] overflow-hidden">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(147,197,253,0.08),transparent_70%)]" />
+                <div className="relative aspect-square overflow-hidden bg-[#06111f]">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(147,197,253,0.07),transparent_70%)]" />
 
                   <img
                     src={product.image}
                     alt={product.name}
                     className="
                       relative
-                      w-full h-full
+                      w-full
+                      h-full
                       object-contain
-                      p-5 md:p-7
+                      p-4
+                      md:p-6
                       transition-transform
                       duration-500
-                      group-hover:scale-[1.04]
+                      group-hover:scale-[1.035]
                     "
                   />
                 </div>
 
                 {/* INFO */}
-                <div className="p-4 md:p-5">
-                  <p className="text-[9px] md:text-[10px] uppercase tracking-[0.18em] text-blue-300/75 mb-2 truncate">
+                <div className="p-3.5 md:p-4">
+                  <p className="text-[8px] md:text-[9px] uppercase tracking-[0.16em] text-blue-300/65 mb-1.5 truncate">
                     {cleanCategory(product.category)}
                   </p>
 
-                  <h3 className="text-base md:text-lg font-bold leading-tight truncate">
+                  <h3 className="text-sm md:text-base font-bold leading-tight truncate">
                     {product.name}
                   </h3>
 
-                  <p className="mt-1.5 text-xs md:text-sm text-white/45 truncate">
+                  <p className="mt-1 text-[11px] md:text-xs text-white/40 truncate">
                     {product.desc}
                   </p>
 
-                  <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between">
-                    <span className="text-[11px] md:text-xs font-semibold text-white/65 group-hover:text-blue-200 transition">
+                  <div className="mt-3 pt-2.5 border-t border-white/[0.05] flex items-center justify-between">
+                    <span className="text-[10px] md:text-[11px] font-semibold text-white/45 transition-colors group-hover:text-white">
                       View Product
                     </span>
 
                     <ArrowRight
-                      size={15}
-                      className="text-blue-300 transition-transform duration-300 group-hover:translate-x-1"
+                      size={13}
+                      className="text-blue-300 transition-transform group-hover:translate-x-1"
                     />
                   </div>
                 </div>
@@ -447,8 +517,8 @@ export default function ProductsPage() {
             ))}
           </div>
         ) : (
-          <div className="py-20 text-center border border-white/[0.08] rounded-2xl bg-white/[0.02]">
-            <p className="text-white/45 text-sm">
+          <div className="rounded-xl border border-white/[0.07] bg-white/[0.02] py-16 text-center">
+            <p className="text-white/40 text-sm">
               No products found.
             </p>
 
@@ -457,7 +527,7 @@ export default function ProductsPage() {
                 setSearch("");
                 setActiveCategory("All");
               }}
-              className="mt-4 text-blue-300 text-sm font-semibold hover:text-blue-200"
+              className="mt-3 text-xs font-semibold text-blue-300 hover:text-blue-200"
             >
               Clear filters
             </button>
@@ -469,94 +539,102 @@ export default function ProductsPage() {
           APEXX GEAR
       ========================================================= */}
 
-      <section className="border-t border-white/[0.07]">
-        <div className="max-w-7xl mx-auto px-5 md:px-6 py-10 md:py-14">
-          {/* SECTION TITLE */}
-          <div className="mb-6">
-            <p className="text-[10px] uppercase tracking-[0.25em] text-blue-300/80 font-semibold mb-2">
+      <section
+        id="apexx-gear"
+        className="border-t border-white/[0.07] scroll-mt-20"
+      >
+        <div className="max-w-7xl mx-auto px-5 md:px-6 py-8 md:py-10">
+
+          {/* HEADER */}
+          <div className="mb-5">
+            <p className="text-[9px] uppercase tracking-[0.25em] text-blue-300/70 font-semibold mb-1.5">
               Beyond The Lab
             </p>
 
-            <div className="flex items-end justify-between gap-5">
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-                  Apexx Gear
-                </h2>
+            <h2 className="text-xl md:text-2xl font-bold tracking-tight">
+              Apexx Gear
+            </h2>
 
-                <p className="text-white/40 text-sm mt-2">
-                  Storage essentials and branded apparel.
-                </p>
-              </div>
-            </div>
+            <p className="text-white/35 text-xs md:text-sm mt-1">
+              Storage essentials and branded apparel.
+            </p>
           </div>
 
           {/* GEAR GRID */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+
             {/* =====================================================
-                VIAL CASE
+                VIAL STORAGE CASE
             ===================================================== */}
 
             <Link
               href="/products/vial-storage-case"
               className="
                 group
+                grid
+                grid-cols-[145px_1fr]
+                sm:grid-cols-[175px_1fr]
                 overflow-hidden
-                rounded-2xl
-                border border-white/[0.08]
-                bg-white/[0.025]
-                transition-all duration-300
-                hover:border-blue-300/30
-                hover:bg-white/[0.04]
+                rounded-xl
+                border border-white/[0.07]
+                bg-white/[0.02]
+                transition-all
+                duration-300
+                hover:border-blue-300/25
+                hover:bg-white/[0.035]
               "
             >
-              <div className="relative aspect-[16/10] overflow-hidden bg-[#93C5FD]">
+              {/* IMAGE */}
+              <div className="relative h-[155px] sm:h-[175px] overflow-hidden bg-[#93C5FD]">
                 <img
                   src="/images/vial-case.png"
                   alt="Apexx Biolabs Vial Storage Case"
                   className="
-                    w-full h-full
+                    w-full
+                    h-full
                     object-cover
-                    transition-transform duration-500
-                    group-hover:scale-[1.025]
+                    transition-transform
+                    duration-500
+                    group-hover:scale-[1.035]
                   "
                 />
-
-                <div className="absolute top-4 left-4 flex items-center gap-2 rounded-full bg-[#081526]/85 backdrop-blur-md px-3 py-1.5">
-                  <FlaskConical
-                    size={12}
-                    className="text-blue-300"
-                  />
-
-                  <span className="text-[9px] font-bold uppercase tracking-[0.18em]">
-                    Accessory
-                  </span>
-                </div>
               </div>
 
-              <div className="p-5 md:p-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-xl md:text-2xl font-bold tracking-tight">
-                      Vial Storage Case
-                    </h3>
+              {/* INFO */}
+              <div className="min-w-0 flex flex-col justify-between p-4">
 
-                    <p className="text-white/40 text-sm mt-1.5">
-                      14-vial protective storage
+                <div>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <FlaskConical
+                      size={11}
+                      className="text-blue-300"
+                    />
+
+                    <p className="text-[8px] uppercase tracking-[0.2em] text-blue-300/70 font-semibold">
+                      Accessory
                     </p>
                   </div>
 
-                  <p className="text-lg font-bold text-blue-300 whitespace-nowrap">
+                  <h3 className="text-base md:text-lg font-bold tracking-tight leading-tight">
+                    Vial Storage Case
+                  </h3>
+
+                  <p className="text-blue-300 text-sm md:text-base font-bold mt-1">
                     $14.99
+                  </p>
+
+                  <p className="text-white/35 text-[11px] md:text-xs mt-1.5">
+                    14-vial protective storage
                   </p>
                 </div>
 
-                <div className="mt-5 pt-4 border-t border-white/[0.07] flex items-center justify-between">
-                  <span className="text-xs font-semibold text-white/65 group-hover:text-white">
+                <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-white/[0.06]">
+                  <span className="text-[10px] font-semibold text-white/45 group-hover:text-white transition-colors">
                     View Product
                   </span>
 
                   <ArrowRight
-                    size={16}
+                    size={13}
                     className="text-blue-300 transition-transform group-hover:translate-x-1"
                   />
                 </div>
@@ -571,72 +649,79 @@ export default function ProductsPage() {
               href="/products/apexx-shirt"
               className="
                 group
+                grid
+                grid-cols-[145px_1fr]
+                sm:grid-cols-[175px_1fr]
                 overflow-hidden
-                rounded-2xl
-                border border-white/[0.08]
-                bg-white/[0.025]
-                transition-all duration-300
-                hover:border-blue-300/30
-                hover:bg-white/[0.04]
+                rounded-xl
+                border border-white/[0.07]
+                bg-white/[0.02]
+                transition-all
+                duration-300
+                hover:border-blue-300/25
+                hover:bg-white/[0.035]
               "
             >
-              <div className="relative aspect-[16/10] overflow-hidden bg-[#93C5FD]">
+              {/* IMAGE */}
+              <div className="relative h-[155px] sm:h-[175px] overflow-hidden bg-[#93C5FD]">
                 <img
                   src="/images/apexx-shirt-blue-front.png"
                   alt="Apexx Biolabs Signature Tee"
                   className="
-                    w-full h-full
-                    object-cover object-[center_20%]
-                    transition-transform duration-500
-                    group-hover:scale-[1.025]
+                    w-full
+                    h-full
+                    object-cover
+                    object-top
+                    transition-transform
+                    duration-500
+                    group-hover:scale-[1.035]
                   "
                 />
-
-                <div className="absolute top-4 left-4 flex items-center gap-2 rounded-full bg-[#081526]/85 backdrop-blur-md px-3 py-1.5">
-                  <Shirt
-                    size={12}
-                    className="text-blue-300"
-                  />
-
-                  <span className="text-[9px] font-bold uppercase tracking-[0.18em]">
-                    Apparel
-                  </span>
-                </div>
               </div>
 
-              <div className="p-5 md:p-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-xl md:text-2xl font-bold tracking-tight">
-                      Apexx Signature Tee
-                    </h3>
+              {/* INFO */}
+              <div className="min-w-0 flex flex-col justify-between p-4">
 
-                    <div className="flex items-center flex-wrap gap-x-3 gap-y-2 mt-1.5">
-                      <p className="text-white/40 text-sm">
-                        100% Cotton · S–XL
-                      </p>
+                <div>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <Shirt
+                      size={11}
+                      className="text-blue-300"
+                    />
 
-                      {/* COLOR DOTS */}
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-3 h-3 rounded-full bg-[#93C5FD] border border-white/20" />
-                        <span className="w-3 h-3 rounded-full bg-[#E8E1DA] border border-white/20" />
-                        <span className="w-3 h-3 rounded-full bg-[#777863] border border-white/20" />
-                      </div>
-                    </div>
+                    <p className="text-[8px] uppercase tracking-[0.2em] text-blue-300/70 font-semibold">
+                      Apparel
+                    </p>
                   </div>
 
-                  <p className="text-lg font-bold text-blue-300 whitespace-nowrap">
+                  <h3 className="text-base md:text-lg font-bold tracking-tight leading-tight">
+                    Apexx Signature Tee
+                  </h3>
+
+                  <p className="text-blue-300 text-sm md:text-base font-bold mt-1">
                     $29.99
                   </p>
+
+                  <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                    <p className="text-white/35 text-[11px] md:text-xs">
+                      100% Cotton · S–XL
+                    </p>
+
+                    <div className="flex items-center gap-1">
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#93C5FD] border border-white/20" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#E8E1DA] border border-white/20" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#777863] border border-white/20" />
+                    </div>
+                  </div>
                 </div>
 
-                <div className="mt-5 pt-4 border-t border-white/[0.07] flex items-center justify-between">
-                  <span className="text-xs font-semibold text-white/65 group-hover:text-white">
+                <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-white/[0.06]">
+                  <span className="text-[10px] font-semibold text-white/45 group-hover:text-white transition-colors">
                     View Product
                   </span>
 
                   <ArrowRight
-                    size={16}
+                    size={13}
                     className="text-blue-300 transition-transform group-hover:translate-x-1"
                   />
                 </div>
@@ -645,6 +730,13 @@ export default function ProductsPage() {
           </div>
         </div>
       </section>
+
+      {/* SMOOTH SCROLL */}
+      <style jsx global>{`
+        html {
+          scroll-behavior: smooth;
+        }
+      `}</style>
     </main>
   );
 }

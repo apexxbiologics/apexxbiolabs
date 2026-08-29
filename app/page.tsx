@@ -58,7 +58,7 @@ const startProductScroll = (direction: "left" | "right") => {
 
   autoScrollRef.current = setInterval(() => {
     productScrollRef.current?.scrollBy({
-      left: direction === "left" ? -28 : 28,
+      left: direction === "left" ? -34 : 34,
     });
   }, 16);
 };

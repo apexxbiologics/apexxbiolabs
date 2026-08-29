@@ -501,31 +501,13 @@ Receive a Complimentary Gift With Any 8 Vials
             image: "/images/apx230.png",
             href: "/products/apx2",
           },
-          {
-            name: "MITO-X",
-            desc: "120mg Research Blend",
-            image: "/images/mitox120.png",
-            href: "/products/mitox",
+                    {
+            name: "Wolverine",
+            desc: "20mg Research Peptide",
+            image: "/images/wolverine.png",
+            href: "/products/wolverine",
           },
-          {
-            name: "NEURO-X",
-            desc: "48mg Research Peptide Blend",
-            image: "/images/neurox48.png",
-            href: "/products/neurox",
-          },
-          {
-            name: "Glutathione",
-            desc: "1500mg Research Compound",
-            image: "/images/glutathione1500.png",
-            href: "/products/glutathione",
-          },
-          {
-            name: "SS-31",
-            desc: "10mg Research Peptide",
-            image: "/images/ss3110.png",
-            href: "/products/ss31",
-          },
-          {
+                    {
             name: "BPC-157",
             desc: "10mg Research Peptide",
             image: "/images/bpc157.PNG",
@@ -537,55 +519,31 @@ Receive a Complimentary Gift With Any 8 Vials
             image: "/images/tb500.PNG",
             href: "/products/tb500",
           },
-          {
-            name: "Wolverine",
-            desc: "20mg Research Peptide",
-            image: "/images/wolverine.png",
-            href: "/products/wolverine",
-          },
-          {
-            name: "KPV",
-            desc: "10mg Research Peptide",
-            image: "/images/kpv.PNG",
-            href: "/products/kpv",
-          },
-          {
-            name: "GHK-Cu",
-            desc: "100mg Research Peptide",
-            image: "/images/ghkcu.PNG",
-            href: "/products/ghkcu",
-          },
-          {
+                    {
             name: "KLOW",
             desc: "80mg Research Peptide",
             image: "/images/klow.png",
             href: "/products/klow",
           },
-          {
-            name: "MOTS-C",
+                    {
+            name: "Glutathione",
+            desc: "1500mg Research Compound",
+            image: "/images/glutathione1500.png",
+            href: "/products/glutathione",
+          },
+                    {
+            name: "KPV",
             desc: "10mg Research Peptide",
-            image: "/images/motsc.PNG",
-            href: "/products/motsc",
+            image: "/images/kpv.PNG",
+            href: "/products/kpv",
           },
-          {
-            name: "NAD+",
-            desc: "1000mg Research Compound",
-            image: "/images/nad.png",
-            href: "/products/nad",
+                    {
+            name: "GHK-Cu",
+            desc: "100mg Research Peptide",
+            image: "/images/ghkcu.PNG",
+            href: "/products/ghkcu",
           },
-          {
-            name: "5-Amino-1MQ",
-            desc: "50mg Research Compound",
-            image: "/images/5amino1mq.png",
-            href: "/products/5amino1mq",
-          },
-          {
-            name: "AOD-9604",
-            desc: "5mg Research Peptide",
-            image: "/images/aod9604.png",
-            href: "/products/aod9604",
-          },
-          {
+                    {
             name: "Tesamorelin",
             desc: "5mg • 10mg Research Peptide",
             image: "/images/tesa5.png",
@@ -598,10 +556,58 @@ Receive a Complimentary Gift With Any 8 Vials
             href: "/products/cjcipa",
           },
           {
+            name: "MITO-X",
+            desc: "120mg Research Blend",
+            image: "/images/mitox120.png",
+            href: "/products/mitox",
+          },
+                    {
+            name: "NAD+",
+            desc: "1000mg Research Compound",
+            image: "/images/nad.png",
+            href: "/products/nad",
+          },
+                    {
+            name: "MOTS-C",
+            desc: "10mg Research Peptide",
+            image: "/images/motsc.PNG",
+            href: "/products/motsc",
+          },
+          {
+            name: "5-Amino-1MQ",
+            desc: "50mg Research Compound",
+            image: "/images/5amino1mq.png",
+            href: "/products/5amino1mq",
+          },
+                    {
+            name: "SS-31",
+            desc: "10mg Research Peptide",
+            image: "/images/ss3110.png",
+            href: "/products/ss31",
+          },
+                    {
+            name: "ARA-290",
+            desc: "10mg Research Peptide",
+            image: "/images/ara290.PNG",
+            href: "/products/ara290",
+          },
+                    {
+            name: "AOD-9604",
+            desc: "5mg Research Peptide",
+            image: "/images/aod9604.png",
+            href: "/products/aod9604",
+          },
+                    {
             name: "ADAMAX",
             desc: "10mg Research Peptide",
             image: "/images/adamax.PNG",
             href: "/products/adamax",
+          },
+          {
+            name: "NEURO-X",
+            desc: "48mg Research Peptide Blend",
+            image: "/images/neurox48.png",
+            href: "/products/neurox",
           },
           {
             name: "Semax",
@@ -626,12 +632,6 @@ Receive a Complimentary Gift With Any 8 Vials
             desc: "10mg Research Peptide",
             image: "/images/pe2228.PNG",
             href: "/products/pe2228",
-          },
-          {
-            name: "ARA-290",
-            desc: "10mg Research Peptide",
-            image: "/images/ara290.PNG",
-            href: "/products/ara290",
           },
           {
             name: "Kisspeptin-10",

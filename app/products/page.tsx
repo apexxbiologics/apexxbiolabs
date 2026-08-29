@@ -204,38 +204,14 @@ const products: Product[] = [
 ];
 
 const categories = [
-  {
-    label: "All",
-    value: "All",
-  },
-  {
-    label: "Metabolic",
-    value: "Metabolic Research",
-  },
-  {
-    label: "Repair",
-    value: "Tissue Repair Research",
-  },
-  {
-    label: "Dermal",
-    value: "Dermal Research",
-  },
-  {
-    label: "Secretagogue",
-    value: "Secretagogue Research",
-  },
-  {
-    label: "Cellular",
-    value: "Cellular Research",
-  },
-  {
-    label: "Neuro",
-    value: "Neuro Research",
-  },
-  {
-    label: "Circadian",
-    value: "Circadian Research",
-  },
+  { label: "All", value: "All" },
+  { label: "Metabolic", value: "Metabolic Research" },
+  { label: "Repair", value: "Tissue Repair Research" },
+  { label: "Dermal", value: "Dermal Research" },
+  { label: "Secretagogue", value: "Secretagogue Research" },
+  { label: "Cellular", value: "Cellular Research" },
+  { label: "Neuro", value: "Neuro Research" },
+  { label: "Circadian", value: "Circadian Research" },
 ];
 
 function cleanCategory(category: string) {
@@ -251,8 +227,7 @@ export default function ProductsPage() {
 
     return products.filter((product) => {
       const matchesCategory =
-        activeCategory === "All" ||
-        product.category === activeCategory;
+        activeCategory === "All" || product.category === activeCategory;
 
       const matchesSearch =
         !query ||
@@ -264,32 +239,33 @@ export default function ProductsPage() {
     });
   }, [search, activeCategory]);
 
+  const scrollToGear = () => {
+    document.getElementById("apexx-gear")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   return (
     <main className="min-h-screen bg-[#081526] text-white">
-      {/* =========================================================
-          TOP
-      ========================================================= */}
-
+      {/* TOP */}
       <section className="border-b border-white/[0.07]">
-        <div className="max-w-7xl mx-auto px-5 md:px-6 pt-10 md:pt-12 pb-6">
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
-
-            {/* TITLE */}
+        <div className="mx-auto max-w-7xl px-5 pb-6 pt-10 md:px-6 md:pt-12">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.28em] text-blue-300 font-semibold mb-2">
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-blue-300">
                 Apexx Biolabs
               </p>
 
-              <h1 className="text-4xl md:text-5xl font-black tracking-[-0.04em]">
+              <h1 className="text-4xl font-black tracking-[-0.04em] md:text-5xl">
                 Products
               </h1>
 
-              <p className="text-white/40 text-sm md:text-base mt-2 max-w-xl">
+              <p className="mt-2 max-w-xl text-sm text-white/40 md:text-base">
                 Research compounds, storage essentials, and Apexx apparel.
               </p>
             </div>
 
-            {/* SEARCH */}
             <div className="w-full lg:w-[360px]">
               <div className="relative">
                 <Search
@@ -302,88 +278,37 @@ export default function ProductsPage() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search products"
-                  className="
-                    w-full
-                    h-11
-                    rounded-xl
-                    border border-white/10
-                    bg-white/[0.03]
-                    pl-11 pr-4
-                    text-sm
-                    text-white
-                    placeholder:text-white/30
-                    outline-none
-                    transition-all
-                    focus:border-blue-300/40
-                    focus:bg-white/[0.045]
-                  "
+                  className="h-11 w-full rounded-xl border border-white/10 bg-white/[0.03] pl-11 pr-4 text-sm text-white outline-none transition-all placeholder:text-white/30 focus:border-blue-300/40 focus:bg-white/[0.045]"
                 />
               </div>
             </div>
           </div>
 
-          {/* =====================================================
-              QUICK LINKS
-          ===================================================== */}
-
+          {/* QUICK LINKS */}
           <div className="mt-5 flex flex-wrap items-center gap-2">
-            <a
-              href="#apexx-gear"
-              className="
-                group
-                inline-flex
-                items-center
-                gap-2
-                rounded-xl
-                bg-blue-300
-                px-4
-                py-2.5
-                text-[11px]
-                font-bold
-                text-[#081526]
-                transition-all
-                hover:bg-blue-200
-              "
+            <button
+              type="button"
+              onClick={scrollToGear}
+              className="group inline-flex items-center gap-2 rounded-xl bg-blue-300 px-4 py-2.5 text-[11px] font-bold text-[#081526] transition-all hover:bg-blue-200"
             >
               <Shirt size={14} />
-
               Shop Apexx Gear
-
               <ArrowRight
                 size={14}
                 className="transition-transform group-hover:translate-x-1"
               />
-            </a>
+            </button>
 
             <Link
               href="/coas"
-              className="
-                inline-flex
-                items-center
-                gap-2
-                rounded-xl
-                border border-white/10
-                bg-white/[0.025]
-                px-4
-                py-2.5
-                text-[11px]
-                font-semibold
-                text-white/55
-                transition-all
-                hover:border-white/20
-                hover:text-white
-              "
+              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.025] px-4 py-2.5 text-[11px] font-semibold text-white/55 transition-all hover:border-white/20 hover:text-white"
             >
               <FileText size={13} />
-
               View COAs
             </Link>
           </div>
 
-          {/* =====================================================
-              FILTERS
-          ===================================================== */}
-
+          {/* FILTERS */}
           <div className="mt-5 overflow-x-auto">
             <div className="flex min-w-max items-center gap-2 pb-1">
               {categories.map((category) => {
@@ -392,23 +317,13 @@ export default function ProductsPage() {
                 return (
                   <button
                     key={category.value}
-                    onClick={() =>
-                      setActiveCategory(category.value)
-                    }
-                    className={`
-                      whitespace-nowrap
-                      rounded-full
-                      px-4
-                      py-2
-                      text-[11px]
-                      font-semibold
-                      transition-all
-                      ${
-                        active
-                          ? "bg-white text-[#081526]"
-                          : "border border-white/[0.08] bg-white/[0.02] text-white/45 hover:border-blue-300/30 hover:text-white"
-                      }
-                    `}
+                    type="button"
+                    onClick={() => setActiveCategory(category.value)}
+                    className={`whitespace-nowrap rounded-full px-4 py-2 text-[11px] font-semibold transition-all ${
+                      active
+                        ? "bg-white text-[#081526]"
+                        : "border border-white/[0.08] bg-white/[0.02] text-white/45 hover:border-blue-300/30 hover:text-white"
+                    }`}
                   >
                     {category.label}
                   </button>
@@ -419,91 +334,62 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      {/* =========================================================
-          RESEARCH PRODUCTS
-      ========================================================= */}
-
-      <section className="max-w-7xl mx-auto px-5 md:px-6 py-8 md:py-10">
-        <div className="flex items-end justify-between gap-4 mb-5">
+      {/* RESEARCH PRODUCTS */}
+      <section className="mx-auto max-w-7xl px-5 py-8 md:px-6 md:py-10">
+        <div className="mb-5 flex items-end justify-between gap-4">
           <div>
-            <p className="text-[9px] uppercase tracking-[0.25em] text-blue-300/70 font-semibold mb-1.5">
+            <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-[0.25em] text-blue-300/70">
               Research Catalog
             </p>
 
-            <h2 className="text-xl md:text-2xl font-bold tracking-tight">
+            <h2 className="text-xl font-bold tracking-tight md:text-2xl">
               {activeCategory === "All"
                 ? "Research Products"
                 : categories.find(
-                    (category) =>
-                      category.value === activeCategory
+                    (category) => category.value === activeCategory
                   )?.label}
             </h2>
           </div>
 
-          <p className="text-[11px] text-white/30 whitespace-nowrap">
+          <p className="whitespace-nowrap text-[11px] text-white/30">
             {filteredProducts.length}{" "}
-            {filteredProducts.length === 1
-              ? "product"
-              : "products"}
+            {filteredProducts.length === 1 ? "product" : "products"}
           </p>
         </div>
 
         {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
             {filteredProducts.map((product) => (
               <Link
                 key={product.name}
                 href={product.href}
-                className="
-                  group
-                  overflow-hidden
-                  rounded-xl
-                  border border-white/[0.07]
-                  bg-white/[0.02]
-                  transition-all
-                  duration-300
-                  hover:-translate-y-0.5
-                  hover:border-blue-300/25
-                  hover:bg-white/[0.035]
-                "
+                className="group overflow-hidden rounded-xl border border-white/[0.07] bg-white/[0.02] transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-300/25 hover:bg-white/[0.035]"
               >
-                {/* IMAGE */}
                 <div className="relative aspect-square overflow-hidden bg-[#06111f]">
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(147,197,253,0.07),transparent_70%)]" />
 
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="
-                      relative
-                      w-full
-                      h-full
-                      object-contain
-                      p-4
-                      md:p-6
-                      transition-transform
-                      duration-500
-                      group-hover:scale-[1.035]
-                    "
+                    className="relative h-full w-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.035] md:p-6"
                   />
                 </div>
 
-                {/* INFO */}
                 <div className="p-3.5 md:p-4">
-                  <p className="text-[8px] md:text-[9px] uppercase tracking-[0.16em] text-blue-300/65 mb-1.5 truncate">
+                  <p className="mb-1.5 truncate text-[8px] uppercase tracking-[0.16em] text-blue-300/65 md:text-[9px]">
                     {cleanCategory(product.category)}
                   </p>
 
-                  <h3 className="text-sm md:text-base font-bold leading-tight truncate">
+                  <h3 className="truncate text-sm font-bold leading-tight md:text-base">
                     {product.name}
                   </h3>
 
-                  <p className="mt-1 text-[11px] md:text-xs text-white/40 truncate">
+                  <p className="mt-1 truncate text-[11px] text-white/40 md:text-xs">
                     {product.desc}
                   </p>
 
-                  <div className="mt-3 pt-2.5 border-t border-white/[0.05] flex items-center justify-between">
-                    <span className="text-[10px] md:text-[11px] font-semibold text-white/45 transition-colors group-hover:text-white">
+                  <div className="mt-3 flex items-center justify-between border-t border-white/[0.05] pt-2.5">
+                    <span className="text-[10px] font-semibold text-white/45 transition-colors group-hover:text-white md:text-[11px]">
                       View Product
                     </span>
 
@@ -518,11 +404,10 @@ export default function ProductsPage() {
           </div>
         ) : (
           <div className="rounded-xl border border-white/[0.07] bg-white/[0.02] py-16 text-center">
-            <p className="text-white/40 text-sm">
-              No products found.
-            </p>
+            <p className="text-sm text-white/40">No products found.</p>
 
             <button
+              type="button"
               onClick={() => {
                 setSearch("");
                 setActiveCategory("All");
@@ -535,101 +420,65 @@ export default function ProductsPage() {
         )}
       </section>
 
-      {/* =========================================================
-          APEXX GEAR
-      ========================================================= */}
-
+      {/* APEXX GEAR */}
       <section
         id="apexx-gear"
-        className="border-t border-white/[0.07] scroll-mt-20"
+        className="scroll-mt-20 border-t border-white/[0.07]"
       >
-        <div className="max-w-7xl mx-auto px-5 md:px-6 py-8 md:py-10">
-
-          {/* HEADER */}
+        <div className="mx-auto max-w-7xl px-5 py-8 md:px-6 md:py-10">
           <div className="mb-5">
-            <p className="text-[9px] uppercase tracking-[0.25em] text-blue-300/70 font-semibold mb-1.5">
+            <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-[0.25em] text-blue-300/70">
               Beyond The Lab
             </p>
 
-            <h2 className="text-xl md:text-2xl font-bold tracking-tight">
+            <h2 className="text-xl font-bold tracking-tight md:text-2xl">
               Apexx Gear
             </h2>
 
-            <p className="text-white/35 text-xs md:text-sm mt-1">
+            <p className="mt-1 text-xs text-white/35 md:text-sm">
               Storage essentials and branded apparel.
             </p>
           </div>
 
-          {/* GEAR GRID */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-
-            {/* =====================================================
-                VIAL STORAGE CASE
-            ===================================================== */}
-
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
+            {/* VIAL CASE */}
             <Link
               href="/products/vial-storage-case"
-              className="
-                group
-                grid
-                grid-cols-[145px_1fr]
-                sm:grid-cols-[175px_1fr]
-                overflow-hidden
-                rounded-xl
-                border border-white/[0.07]
-                bg-white/[0.02]
-                transition-all
-                duration-300
-                hover:border-blue-300/25
-                hover:bg-white/[0.035]
-              "
+              className="group grid grid-cols-[135px_1fr] overflow-hidden rounded-xl border border-white/[0.07] bg-white/[0.02] transition-all duration-300 hover:border-blue-300/25 hover:bg-white/[0.035] sm:grid-cols-[165px_1fr]"
             >
-              {/* IMAGE */}
-              <div className="relative h-[155px] sm:h-[175px] overflow-hidden bg-[#93C5FD]">
+              <div className="relative h-[150px] overflow-hidden bg-[#93C5FD] sm:h-[165px]">
                 <img
                   src="/images/vial-case.png"
                   alt="Apexx Biolabs Vial Storage Case"
-                  className="
-                    w-full
-                    h-full
-                    object-cover
-                    transition-transform
-                    duration-500
-                    group-hover:scale-[1.035]
-                  "
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
                 />
               </div>
 
-              {/* INFO */}
-              <div className="min-w-0 flex flex-col justify-between p-4">
-
+              <div className="flex min-w-0 flex-col justify-between p-4">
                 <div>
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <FlaskConical
-                      size={11}
-                      className="text-blue-300"
-                    />
+                  <div className="mb-2 flex items-center gap-1.5">
+                    <FlaskConical size={11} className="text-blue-300" />
 
-                    <p className="text-[8px] uppercase tracking-[0.2em] text-blue-300/70 font-semibold">
+                    <p className="text-[8px] font-semibold uppercase tracking-[0.2em] text-blue-300/70">
                       Accessory
                     </p>
                   </div>
 
-                  <h3 className="text-base md:text-lg font-bold tracking-tight leading-tight">
+                  <h3 className="text-base font-bold leading-tight tracking-tight md:text-lg">
                     Vial Storage Case
                   </h3>
 
-                  <p className="text-blue-300 text-sm md:text-base font-bold mt-1">
+                  <p className="mt-1 text-sm font-bold text-blue-300 md:text-base">
                     $14.99
                   </p>
 
-                  <p className="text-white/35 text-[11px] md:text-xs mt-1.5">
+                  <p className="mt-1.5 text-[11px] text-white/35 md:text-xs">
                     14-vial protective storage
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-white/[0.06]">
-                  <span className="text-[10px] font-semibold text-white/45 group-hover:text-white transition-colors">
+                <div className="mt-3 flex items-center justify-between border-t border-white/[0.06] pt-2.5">
+                  <span className="text-[10px] font-semibold text-white/45 transition-colors group-hover:text-white">
                     View Product
                   </span>
 
@@ -641,82 +490,52 @@ export default function ProductsPage() {
               </div>
             </Link>
 
-            {/* =====================================================
-                SIGNATURE TEE
-            ===================================================== */}
-
+            {/* SIGNATURE TEE */}
             <Link
               href="/products/apexx-shirt"
-              className="
-                group
-                grid
-                grid-cols-[145px_1fr]
-                sm:grid-cols-[175px_1fr]
-                overflow-hidden
-                rounded-xl
-                border border-white/[0.07]
-                bg-white/[0.02]
-                transition-all
-                duration-300
-                hover:border-blue-300/25
-                hover:bg-white/[0.035]
-              "
+              className="group grid grid-cols-[135px_1fr] overflow-hidden rounded-xl border border-white/[0.07] bg-white/[0.02] transition-all duration-300 hover:border-blue-300/25 hover:bg-white/[0.035] sm:grid-cols-[165px_1fr]"
             >
-              {/* IMAGE */}
-              <div className="relative h-[155px] sm:h-[175px] overflow-hidden bg-[#93C5FD]">
+              <div className="relative h-[150px] overflow-hidden bg-[#93C5FD] sm:h-[165px]">
                 <img
                   src="/images/apexx-shirt-blue-front.png"
                   alt="Apexx Biolabs Signature Tee"
-                  className="
-                    w-full
-                    h-full
-                    object-cover
-                    object-top
-                    transition-transform
-                    duration-500
-                    group-hover:scale-[1.035]
-                  "
+                  className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.035]"
                 />
               </div>
 
-              {/* INFO */}
-              <div className="min-w-0 flex flex-col justify-between p-4">
-
+              <div className="flex min-w-0 flex-col justify-between p-4">
                 <div>
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <Shirt
-                      size={11}
-                      className="text-blue-300"
-                    />
+                  <div className="mb-2 flex items-center gap-1.5">
+                    <Shirt size={11} className="text-blue-300" />
 
-                    <p className="text-[8px] uppercase tracking-[0.2em] text-blue-300/70 font-semibold">
+                    <p className="text-[8px] font-semibold uppercase tracking-[0.2em] text-blue-300/70">
                       Apparel
                     </p>
                   </div>
 
-                  <h3 className="text-base md:text-lg font-bold tracking-tight leading-tight">
+                  <h3 className="text-base font-bold leading-tight tracking-tight md:text-lg">
                     Apexx Signature Tee
                   </h3>
 
-                  <p className="text-blue-300 text-sm md:text-base font-bold mt-1">
+                  <p className="mt-1 text-sm font-bold text-blue-300 md:text-base">
                     $29.99
                   </p>
 
-                  <div className="flex flex-wrap items-center gap-2 mt-1.5">
-                    <p className="text-white/35 text-[11px] md:text-xs">
+                  <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                    <p className="text-[11px] text-white/35 md:text-xs">
                       100% Cotton · S–XL
                     </p>
 
                     <div className="flex items-center gap-1">
-                      <span className="h-2.5 w-2.5 rounded-full bg-[#93C5FD] border border-white/20" />
-                      <span className="h-2.5 w-2.5 rounded-full bg-[#E8E1DA] border border-white/20" />
-                      <span className="h-2.5 w-2.5 rounded-full bg-[#777863] border border-white/20" />
+                      <span className="h-2.5 w-2.5 rounded-full border border-white/20 bg-[#93C5FD]" />
+                      <span className="h-2.5 w-2.5 rounded-full border border-white/20 bg-[#E8E1DA]" />
+                      <span className="h-2.5 w-2.5 rounded-full border border-white/20 bg-[#777863]" />
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-white/[0.06]">
-                  <span className="text-[10px] font-semibold text-white/45 group-hover:text-white transition-colors">
+                <div className="mt-3 flex items-center justify-between border-t border-white/[0.06] pt-2.5">
+                  <span className="text-[10px] font-semibold text-white/45 transition-colors group-hover:text-white">
                     View Product
                   </span>
 
@@ -730,13 +549,6 @@ export default function ProductsPage() {
           </div>
         </div>
       </section>
-
-      {/* SMOOTH SCROLL */}
-      <style jsx global>{`
-        html {
-          scroll-behavior: smooth;
-        }
-      `}</style>
     </main>
   );
 }

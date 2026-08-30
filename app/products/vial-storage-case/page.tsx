@@ -149,21 +149,21 @@ export default function VialStorageCasePage() {
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
       {/* PRODUCT HERO */}
-      <section className="relative px-6 md:px-10 py-16 overflow-hidden">
+      <section className="relative px-4 sm:px-6 md:px-10 py-10 sm:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-14 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-9 sm:gap-14 items-start">
             {/* Product Image */}
             <div>
               <div className="flex items-center justify-center">
-                <div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-white/[0.03] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <div className="relative w-full max-w-[520px] aspect-square rounded-[32px] sm:rounded-[48px] overflow-hidden border border-blue-400/10 bg-[#93C5FD] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
                   <FavoriteButton product={favoriteProduct} />
 
                   <img
                     src={productImages[selectedImage].src}
                     alt={productImages[selectedImage].alt}
-                    className="w-full h-full object-cover bg-[#93C5FD]"
+                    className="w-full h-full object-contain p-2 sm:p-3 bg-[#93C5FD]"
                   />
                 </div>
               </div>
@@ -181,11 +181,11 @@ export default function VialStorageCasePage() {
                         : "border-white/10 bg-white/[0.04] hover:border-blue-400/50"
                     }`}
                   >
-                    <div className="rounded-[18px] overflow-hidden bg-[#93C5FD]">
+                    <div className="rounded-[18px] overflow-hidden bg-[#93C5FD] aspect-[4/3]">
                       <img
                         src={image.src}
                         alt={image.alt}
-                        className="w-full h-[150px] object-cover"
+                        className="w-full h-full object-contain p-1.5 sm:p-2"
                       />
                     </div>
                   </button>

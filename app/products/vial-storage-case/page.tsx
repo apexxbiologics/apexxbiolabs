@@ -165,7 +165,7 @@ export default function VialStorageCasePage() {
                   <img
                     src={productImages[selectedImage].src}
                     alt={productImages[selectedImage].alt}
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain scale-[1.10] sm:scale-[1.08] transition-transform duration-300"
                   />
                 </div>
               </div>
@@ -189,7 +189,7 @@ export default function VialStorageCasePage() {
                       <img
                         src={image.src}
                         alt={image.alt}
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-contain scale-[1.05]"
                       />
                     </div>
                   </button>

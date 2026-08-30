@@ -157,13 +157,13 @@ export default function VialStorageCasePage() {
             {/* Product Image */}
             <div>
               <div className="flex items-center justify-center">
-                <div className="relative w-full max-w-[520px] aspect-square rounded-[32px] sm:rounded-[48px] overflow-hidden border border-blue-400/10 bg-[#93C5FD] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <div className="relative w-full max-w-[520px] aspect-square rounded-[32px] sm:rounded-[48px] overflow-hidden border border-blue-400/10 bg-transparent backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
                   <FavoriteButton product={favoriteProduct} />
 
                   <img
                     src={productImages[selectedImage].src}
                     alt={productImages[selectedImage].alt}
-                    className="w-full h-full object-contain p-2 sm:p-3 bg-[#93C5FD]"
+                    className="w-full h-full object-contain"
                   />
                 </div>
               </div>
@@ -181,11 +181,11 @@ export default function VialStorageCasePage() {
                         : "border-white/10 bg-white/[0.04] hover:border-blue-400/50"
                     }`}
                   >
-                    <div className="rounded-[18px] overflow-hidden bg-[#93C5FD] aspect-[4/3]">
+                    <div className="rounded-[18px] overflow-hidden bg-transparent aspect-[4/3]">
                       <img
                         src={image.src}
                         alt={image.alt}
-                        className="w-full h-full object-contain p-1.5 sm:p-2"
+                        className="w-full h-full object-contain"
                       />
                     </div>
                   </button>

@@ -160,9 +160,34 @@ export default function AdminProductsPage() {
     (product) => getProductGroup(product) === "peptides"
   );
 
-  const shirtProducts = filteredProducts.filter(
-    (product) => getProductGroup(product) === "shirts"
-  );
+  const sizeOrder: Record<string, number> = {
+    S: 0,
+    M: 1,
+    L: 2,
+    XL: 3,
+  };
+
+  const shirtProducts = filteredProducts
+    .filter((product) => getProductGroup(product) === "shirts")
+    .sort((a, b) => {
+      // Keep each color together first.
+      const getColor = (product: Product) => {
+        const slug = (product.slug || "").toLowerCase();
+        if (slug.includes("-blue-")) return "Blue";
+        if (slug.includes("-ivory-")) return "Ivory";
+        if (slug.includes("-olive-")) return "Olive";
+        return product.name;
+      };
+
+      const colorCompare = getColor(a).localeCompare(getColor(b));
+      if (colorCompare !== 0) return colorCompare;
+
+      // Within each color: S → M → L → XL.
+      return (
+        (sizeOrder[(a.size || "").toUpperCase()] ?? 99) -
+        (sizeOrder[(b.size || "").toUpperCase()] ?? 99)
+      );
+    });
 
   const vialCaseProducts = filteredProducts.filter(
     (product) => getProductGroup(product) === "vialCases"

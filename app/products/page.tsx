@@ -491,7 +491,7 @@ export default function ProductsPage() {
               className="group grid min-h-[190px] grid-cols-1 overflow-hidden rounded-2xl border border-white/[0.07] bg-[#0A192B] transition duration-300 hover:border-[#93C5FD]/25 sm:grid-cols-[42%_58%]"
             >
               {/* IMAGE */}
-              <div className="relative aspect-[16/10] overflow-hidden bg-transparent sm:aspect-auto">
+              <div className="relative aspect-[16/10] overflow-hidden bg-[#91C2FD] sm:aspect-auto">
                 <img
                   src="/images/vial-case.png"
                   alt="Apexx Vial Storage Case"

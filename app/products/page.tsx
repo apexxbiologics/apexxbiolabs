@@ -488,14 +488,14 @@ export default function ProductsPage() {
 
             <Link
               href="/products/vial-storage-case"
-              className="group grid min-h-[190px] grid-cols-[42%_58%] overflow-hidden rounded-2xl border border-white/[0.07] bg-[#0A192B] transition duration-300 hover:border-[#93C5FD]/25"
+              className="group grid min-h-[190px] grid-cols-1 overflow-hidden rounded-2xl border border-white/[0.07] bg-[#0A192B] transition duration-300 hover:border-[#93C5FD]/25 sm:grid-cols-[42%_58%]"
             >
               {/* IMAGE */}
-              <div className="relative overflow-hidden bg-[#93C5FD]">
+              <div className="relative aspect-[16/10] overflow-hidden bg-transparent sm:aspect-auto">
                 <img
                   src="/images/vial-case.png"
                   alt="Apexx Vial Storage Case"
-                  className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.025]"
+                  className="absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 group-hover:scale-[1.025]"
                 />
               </div>
 

@@ -232,13 +232,13 @@ export default function ApexxShirtPage() {
             {/* Product Image */}
             <div>
               <div className="flex items-center justify-center">
-                <div className="relative w-full max-w-[520px] h-[520px] rounded-[48px] overflow-hidden border border-blue-400/10 bg-[#93C5FD] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+                <div className="relative w-full max-w-[520px] aspect-square rounded-[48px] overflow-hidden border border-blue-400/10 bg-[#93C5FD] backdrop-blur-sm shadow-[0_0_30px_rgba(96,165,250,0.15)]">
                   <FavoriteButton product={favoriteProduct} />
 
                   <img
                     src={selectedColorData.images[selectedImage].src}
                     alt={`${selectedColorData.label} Apexx Biolabs Signature Tee ${selectedColorData.images[selectedImage].label}`}
-                    className="w-full h-full object-cover object-top"
+                    className="w-full h-full object-contain p-3 sm:p-4"
                   />
                 </div>
               </div>
@@ -256,11 +256,11 @@ export default function ApexxShirtPage() {
                         : "border-white/10 bg-white/[0.04] hover:border-blue-400/50"
                     }`}
                   >
-                    <div className="relative rounded-[18px] overflow-hidden bg-[#93C5FD]">
+                    <div className="relative rounded-[18px] overflow-hidden bg-[#93C5FD] aspect-[4/3]">
                       <img
                         src={image.src}
                         alt={image.label}
-                        className="w-full h-[150px] object-cover object-top"
+                        className="w-full h-full object-contain p-2"
                       />
 
                       {selectedImage === index && (

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import {
   ShoppingCart,
   FlaskConical,
@@ -23,40 +22,29 @@ type QuantityDiscountTier = {
 export default function AdamaxPage() {
   const [added, setAdded] = useState(false);
 
-  const [
-    selectedQuantity,
-    setSelectedQuantity,
-  ] = useState(1);
+  const [selectedQuantity, setSelectedQuantity] =
+    useState(1);
 
-  const [
-    inventory,
-    setInventory,
-  ] = useState<number | null>(
-    null
-  );
+  const [inventory, setInventory] =
+    useState<number | null>(null);
 
-  const [price, setPrice] =
-    useState(65);
+  const [price, setPrice] = useState(65);
 
-  const [
-    quantityDiscounts,
-    setQuantityDiscounts,
-  ] = useState<
-    QuantityDiscountTier[]
-  >([]);
+  const [quantityDiscounts, setQuantityDiscounts] =
+    useState<QuantityDiscountTier[]>([]);
 
   const product = {
     id: "adamax",
     name: "ADAMAX",
-    image:
-      "/images/adamaxblue.PNG",
-    path:
-      "/products/adamax",
+    image: "/images/adamaxblue.PNG",
+    path: "/products/adamax",
   };
 
+  const coaPath =
+    "/images/coas/adamaxcoa7-20-26.pdf";
+
   const isOutOfStock =
-    inventory !== null &&
-    inventory <= 0;
+    inventory !== null && inventory <= 0;
 
   const isLimitedStock =
     inventory !== null &&
@@ -72,79 +60,63 @@ export default function AdamaxPage() {
   };
 
   useEffect(() => {
-    const fetchProductData =
-      async () => {
-        try {
-          const response =
-            await fetch(
-              "/api/products",
-              {
-                cache:
-                  "no-store",
-              }
-            );
-
-          const data =
-            await response.json();
-
-          if (!data.success) {
-            return;
+    const fetchProductData = async () => {
+      try {
+        const response = await fetch(
+          "/api/products",
+          {
+            cache: "no-store",
           }
+        );
 
-          const adamax =
-            data.products.find(
-              (item: any) =>
-                item.slug ===
-                  "adamax" ||
-                item.slug ===
-                  "adamax-10mg" ||
-                item.id ===
-                  "adamax" ||
-                item.id ===
-                  "adamax-10mg" ||
-                item.id ===
-                  "ADAMAX-10mg" ||
-                item.name
-                  ?.toLowerCase()
-                  .includes(
-                    "adamax"
-                  )
-            );
+        const data = await response.json();
 
-          if (adamax) {
-            setInventory(
-              Number(
-                adamax.inventory ??
-                  0
-              )
-            );
+        if (!data.success) return;
 
-            setPrice(
-              Number(
-                adamax.price ??
-                  65
-              )
-            );
-          } else {
-            setInventory(
-              null
-            );
-
-            setPrice(65);
-          }
-        } catch (error) {
-          console.error(
-            "Failed to fetch ADAMAX data:",
-            error
+        const adamax =
+          data.products.find(
+            (item: any) =>
+              item.slug === "adamax" ||
+              item.slug ===
+                "adamax-10mg" ||
+              item.id === "adamax" ||
+              item.id ===
+                "adamax-10mg" ||
+              item.id ===
+                "ADAMAX-10mg" ||
+              item.name
+                ?.toLowerCase()
+                .includes("adamax")
           );
 
+        if (adamax) {
           setInventory(
-            null
+            Number(
+              adamax.inventory ??
+                0
+            )
           );
 
+          setPrice(
+            Number(
+              adamax.price ??
+                65
+            )
+          );
+        } else {
+          setInventory(null);
           setPrice(65);
         }
-      };
+      } catch (error) {
+        console.error(
+          "Failed to fetch ADAMAX data:",
+          error
+        );
+
+        setInventory(null);
+        setPrice(65);
+      }
+    };
 
     const fetchQuantityDiscounts =
       async () => {
@@ -161,9 +133,8 @@ export default function AdamaxPage() {
           const data =
             await response.json();
 
-          if (!data.success) {
+          if (!data.success)
             return;
-          }
 
           const tiers = (
             data.tiers || []
@@ -175,15 +146,13 @@ export default function AdamaxPage() {
                 ),
 
                 name: String(
-                  tier.name ||
-                    ""
+                  tier.name || ""
                 ),
 
-                quantity:
-                  Number(
-                    tier.quantity ||
-                      0
-                  ),
+                quantity: Number(
+                  tier.quantity ||
+                    0
+                ),
 
                 discount_percent:
                   Number(
@@ -248,9 +217,7 @@ export default function AdamaxPage() {
     quantity: number
   ) => {
     return (
-      [
-        ...quantityDiscounts,
-      ]
+      [...quantityDiscounts]
         .filter(
           (tier) =>
             quantity >=
@@ -270,8 +237,7 @@ export default function AdamaxPage() {
     );
 
   const selectedDiscountPercent =
-    selectedTier
-      ?.discount_percent ||
+    selectedTier?.discount_percent ||
     0;
 
   const discountedUnitPrice =
@@ -285,15 +251,12 @@ export default function AdamaxPage() {
     selectedQuantity;
 
   const regularTotal =
-    price *
-    selectedQuantity;
+    price * selectedQuantity;
 
   const formatMoney = (
     amount: number
   ) =>
-    Number(
-      amount
-    ).toFixed(2);
+    Number(amount).toFixed(2);
 
   const selectQuantity = (
     quantity: number
@@ -313,9 +276,7 @@ export default function AdamaxPage() {
   };
 
   const addToCart = () => {
-    if (isOutOfStock) {
-      return;
-    }
+    if (isOutOfStock) return;
 
     const existingCart =
       JSON.parse(
@@ -327,8 +288,7 @@ export default function AdamaxPage() {
     const existingProduct =
       existingCart.find(
         (item: any) =>
-          item.id ===
-          product.id
+          item.id === product.id
       );
 
     const existingQuantity =
@@ -345,8 +305,7 @@ export default function AdamaxPage() {
 
     if (
       inventory !== null &&
-      newQuantity >
-        inventory
+      newQuantity > inventory
     ) {
       alert(
         `Only ${inventory} vial${
@@ -367,8 +326,7 @@ export default function AdamaxPage() {
       );
 
     const newDiscountPercent =
-      newTier
-        ?.discount_percent ||
+      newTier?.discount_percent ||
       0;
 
     const newDiscountedUnitPrice =
@@ -379,6 +337,7 @@ export default function AdamaxPage() {
 
     const cartProduct = {
       id: product.id,
+
       name: product.name,
 
       price:
@@ -386,25 +345,20 @@ export default function AdamaxPage() {
 
       basePrice: price,
 
-      quantity:
-        newQuantity,
+      quantity: newQuantity,
 
-      image:
-        product.image,
+      image: product.image,
 
-      path:
-        product.path,
+      path: product.path,
 
       quantityDiscountPercent:
         newDiscountPercent,
 
       quantityDiscountTierId:
-        newTier?.id ||
-        null,
+        newTier?.id || null,
 
       quantityDiscountTierQuantity:
-        newTier?.quantity ||
-        null,
+        newTier?.quantity || null,
     };
 
     const updatedCart =
@@ -413,7 +367,10 @@ export default function AdamaxPage() {
             (item: any) =>
               item.id ===
               product.id
-                ? cartProduct
+                ? {
+                    ...item,
+                    ...cartProduct,
+                  }
                 : item
           )
         : [
@@ -439,14 +396,12 @@ export default function AdamaxPage() {
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
-
       {/* PRODUCT HERO */}
       <section className="relative px-5 md:px-10 py-10 md:py-14 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-8 lg:gap-12 items-start">
-
+          <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-start">
             {/* IMAGE */}
             <div className="flex items-center justify-center">
               <div className="relative w-full max-w-[520px] aspect-square rounded-[42px] overflow-hidden border border-blue-400/10 bg-white/[0.03] shadow-[0_0_30px_rgba(96,165,250,0.15)]">
@@ -470,63 +425,71 @@ export default function AdamaxPage() {
 
             {/* PRODUCT CARD */}
             <div className="rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 md:p-8">
-
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">
                 Research Peptide
                 Blend
               </p>
 
-              <div className="flex items-start justify-between gap-5 mb-4">
-                <div>
-                  <h1 className="text-4xl md:text-5xl font-black text-white">
-                    {
-                      product.name
-                    }
-                  </h1>
-                </div>
+              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-3">
+                <h1 className="text-4xl md:text-5xl font-black text-white">
+                  {product.name}
+                </h1>
 
-                <div className="text-right shrink-0">
-                  <p className="text-xs uppercase tracking-widest text-white/40 mb-1">
-                    Total
-                  </p>
-
-                  <p className="text-3xl font-black text-white">
+                <div className="sm:text-right">
+                  <p className="text-3xl md:text-4xl font-black text-white">
                     $
                     {formatMoney(
                       selectedTotal
                     )}
                   </p>
+
+                  {selectedDiscountPercent >
+                    0 && (
+                    <p className="text-white/35 text-sm line-through">
+                      $
+                      {formatMoney(
+                        regularTotal
+                      )}
+                    </p>
+                  )}
                 </div>
               </div>
 
-              <p className="text-white/65 leading-relaxed mb-5">
-                High-purity
-                ADAMAX research
-                peptide blend
-                intended strictly
-                for laboratory
-                research
+              <p className="text-white/60 leading-relaxed mb-5">
+                High-purity ADAMAX
+                research peptide
+                blend intended
+                strictly for
+                laboratory research
                 applications and
                 analytical use.
               </p>
 
-              {/* PRODUCT META */}
-              <div className="flex flex-wrap gap-3 mb-5">
-                <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold">
+              <div className="flex flex-wrap items-center gap-3 mb-5">
+                <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold uppercase tracking-widest">
                   10mg
                 </span>
 
-                {isOutOfStock ? (
-                  <span className="rounded-full border border-red-400/20 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-200">
-                    Out of Stock
+                {selectedDiscountPercent >
+                  0 && (
+                  <span className="rounded-full border border-green-400/20 bg-green-500/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-green-200">
+                    Save{" "}
+                    {
+                      selectedDiscountPercent
+                    }
+                    %
                   </span>
-                ) : isLimitedStock ? (
-                  <span className="rounded-full border border-yellow-400/20 bg-yellow-500/10 px-4 py-2 text-sm font-semibold text-yellow-200">
+                )}
+
+                {isLimitedStock && (
+                  <span className="text-yellow-300 text-sm font-semibold">
                     Limited Stock
                   </span>
-                ) : (
-                  <span className="rounded-full border border-green-400/20 bg-green-500/10 px-4 py-2 text-sm font-semibold text-green-200">
-                    In Stock
+                )}
+
+                {isOutOfStock && (
+                  <span className="text-red-300 text-sm font-semibold">
+                    Out of Stock
                   </span>
                 )}
               </div>
@@ -534,315 +497,267 @@ export default function AdamaxPage() {
               <div className="h-px bg-white/10 mb-5" />
 
               {/* QUANTITY */}
-              <div className="flex items-center justify-between gap-4 mb-3">
-                <div>
+              <div className="mb-5">
+                <div className="flex items-center justify-between gap-4 mb-3">
                   <p className="uppercase tracking-widest text-white/45 text-xs">
                     Quantity
                   </p>
-                </div>
 
-                <div className="text-right">
-                  {selectedDiscountPercent >
-                  0 ? (
-                    <>
-                      <p className="text-xs text-white/35 line-through">
-                        $
-                        {formatMoney(
-                          price
-                        )}{" "}
-                        each
-                      </p>
-
-                      <p className="text-sm font-bold text-blue-200">
-                        $
-                        {formatMoney(
-                          discountedUnitPrice
-                        )}{" "}
-                        each
-                      </p>
-                    </>
-                  ) : (
-                    <p className="text-sm font-bold text-white">
+                  {selectedQuantity >
+                    1 && (
+                    <p className="text-[#A5D8FF] text-sm font-semibold">
                       $
                       {formatMoney(
-                        price
+                        discountedUnitPrice
                       )}{" "}
-                      each
+                      / vial
                     </p>
                   )}
                 </div>
-              </div>
 
-              {/* QUANTITY TIER BUTTONS */}
-              <div
-                className="grid gap-3 mb-5"
-                style={{
-                  gridTemplateColumns: `repeat(${
-                    quantityDiscounts.length +
-                    1
-                  }, minmax(0, 1fr))`,
-                }}
-              >
-                {/* 1 VIAL */}
-                <button
-                  type="button"
-                  disabled={
-                    isOutOfStock
-                  }
-                  onClick={() =>
-                    selectQuantity(
-                      1
-                    )
-                  }
-                  className={`relative rounded-2xl border px-3 py-4 transition-all ${
-                    selectedQuantity ===
-                    1
-                      ? "border-blue-400 bg-blue-500/10"
-                      : "border-white/10 bg-white/[0.03] hover:border-blue-400/40"
-                  } disabled:opacity-40 disabled:cursor-not-allowed`}
-                >
-                  {selectedQuantity ===
-                    1 && (
-                    <Check
-                      size={15}
-                      className="absolute right-2 top-2 text-blue-300"
-                    />
-                  )}
-
-                  <p className="font-black text-lg">
-                    1
-                  </p>
-
-                  <p className="text-xs text-white/45">
-                    Vial
-                  </p>
-
-                  <p className="text-xs font-bold text-white mt-2">
-                    $
-                    {formatMoney(
-                      price
-                    )}
-                  </p>
-                </button>
-
-                {/* ADMIN TIERS */}
-                {quantityDiscounts.map(
-                  (tier) => {
-                    const disabled =
-                      inventory !==
-                        null &&
-                      tier.quantity >
-                        inventory;
-
-                    const tierUnitPrice =
-                      price *
-                      (1 -
-                        tier.discount_percent /
-                          100);
-
-                    const tierTotal =
-                      tierUnitPrice *
-                      tier.quantity;
-
-                    const selected =
+                <div className="grid grid-cols-3 gap-3">
+                  {/* ONE VIAL */}
+                  <button
+                    type="button"
+                    disabled={
+                      isOutOfStock
+                    }
+                    onClick={() =>
+                      selectQuantity(
+                        1
+                      )
+                    }
+                    className={`relative rounded-2xl border px-3 py-4 transition-all ${
                       selectedQuantity ===
-                      tier.quantity;
-
-                    return (
-                      <button
-                        type="button"
-                        key={
-                          tier.id
-                        }
-                        disabled={
-                          disabled
-                        }
-                        onClick={() =>
-                          selectQuantity(
-                            tier.quantity
-                          )
-                        }
-                        className={`relative rounded-2xl border px-3 py-4 transition-all ${
-                          selected
-                            ? "border-blue-400 bg-blue-500/10"
-                            : "border-white/10 bg-white/[0.03] hover:border-blue-400/40"
-                        } disabled:opacity-35 disabled:cursor-not-allowed`}
-                      >
-                        {selected && (
-                          <Check
-                            size={
-                              15
-                            }
-                            className="absolute right-2 top-2 text-blue-300"
-                          />
-                        )}
-
-                        <p className="font-black text-lg">
-                          {
-                            tier.quantity
+                      1
+                        ? "border-blue-300 bg-blue-400/10"
+                        : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"
+                    } disabled:opacity-35 disabled:cursor-not-allowed`}
+                  >
+                    {selectedQuantity ===
+                      1 && (
+                      <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                        <Check
+                          size={
+                            12
                           }
-                        </p>
-
-                        <p className="text-xs text-white/45">
-                          Vials
-                        </p>
-
-                        <p className="text-xs font-bold text-blue-200 mt-1">
-                          {
-                            tier.discount_percent
+                          strokeWidth={
+                            3
                           }
-                          % off
-                        </p>
+                        />
+                      </span>
+                    )}
 
-                        <p className="text-xs font-bold text-white mt-1">
-                          $
-                          {formatMoney(
-                            tierTotal
+                    <p className="font-black text-white">
+                      1 Vial
+                    </p>
+
+                    <p className="text-sm text-white/55 mt-1">
+                      $
+                      {formatMoney(
+                        price
+                      )}
+                    </p>
+                  </button>
+
+                  {/* ADMIN-CONTROLLED TIERS */}
+                  {quantityDiscounts.map(
+                    (tier) => {
+                      const tierUnavailable =
+                        inventory !==
+                          null &&
+                        inventory <
+                          tier.quantity;
+
+                      const tierTotal =
+                        price *
+                        tier.quantity *
+                        (1 -
+                          tier.discount_percent /
+                            100);
+
+                      const selected =
+                        selectedQuantity ===
+                        tier.quantity;
+
+                      return (
+                        <button
+                          key={
+                            tier.id
+                          }
+                          type="button"
+                          disabled={
+                            tierUnavailable
+                          }
+                          onClick={() =>
+                            selectQuantity(
+                              tier.quantity
+                            )
+                          }
+                          className={`relative rounded-2xl border px-3 py-4 transition-all ${
+                            selected
+                              ? "border-blue-300 bg-blue-400/10"
+                              : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"
+                          } disabled:opacity-35 disabled:cursor-not-allowed`}
+                        >
+                          {selected && (
+                            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                              <Check
+                                size={
+                                  12
+                                }
+                                strokeWidth={
+                                  3
+                                }
+                              />
+                            </span>
                           )}
-                        </p>
-                      </button>
-                    );
-                  }
-                )}
+
+                          <p className="font-black text-white">
+                            {
+                              tier.quantity
+                            }{" "}
+                            Vials
+                          </p>
+
+                          <p className="text-sm text-white/55 mt-1">
+                            $
+                            {formatMoney(
+                              tierTotal
+                            )}
+                          </p>
+
+                          <p className="text-[10px] uppercase tracking-widest text-green-300 mt-1">
+                            Save{" "}
+                            {
+                              tier.discount_percent
+                            }
+                            %
+                          </p>
+                        </button>
+                      );
+                    }
+                  )}
+                </div>
               </div>
 
-              {selectedDiscountPercent >
-                0 && (
-                <div className="flex items-center justify-between text-sm mb-5 rounded-xl border border-green-400/15 bg-green-500/[0.06] px-4 py-3">
-                  <span className="text-white/55">
-                    Quantity savings
-                  </span>
-
-                  <span className="font-bold text-green-300">
-                    -$
-                    {formatMoney(
-                      regularTotal -
-                        selectedTotal
-                    )}
-                  </span>
-                </div>
-              )}
-
-              {/* GIFT */}
+              {/* FREE GIFT */}
               <div className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-3 mb-5">
-                <p className="text-blue-100 text-xs sm:text-sm font-semibold text-center uppercase tracking-wider">
-                  Complimentary
-                  gift with any 8
-                  vials
+                <p className="text-center text-blue-100 text-xs font-semibold uppercase tracking-wider">
+                  Complimentary gift
+                  with any 8 vials
                 </p>
               </div>
 
-              {/* ADD TO CART */}
-              {isOutOfStock ? (
-                <button
-                  disabled
-                  className="w-full bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-4 uppercase tracking-widest text-sm font-semibold"
-                >
-                  Out of Stock
-                </button>
-              ) : (
-                <button
-                  onClick={
-                    addToCart
-                  }
-                  className="w-full bg-white text-[#081526] hover:bg-blue-100 rounded-full py-4 uppercase tracking-widest text-sm font-semibold transition-all flex items-center justify-center gap-3"
-                >
-                  <ShoppingCart
-                    size={20}
-                  />
+              {/* ACTION BUTTONS */}
+              <div className="grid grid-cols-2 gap-3">
+                {isOutOfStock ? (
+                  <button
+                    disabled
+                    className="col-span-2 bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-4 uppercase tracking-widest text-xs font-semibold"
+                  >
+                    Out of Stock
+                  </button>
+                ) : (
+                  <button
+                    onClick={
+                      addToCart
+                    }
+                    className="col-span-2 bg-white text-[#081526] hover:bg-blue-100 rounded-full py-4 uppercase tracking-widest text-xs font-bold transition-all flex items-center justify-center gap-2"
+                  >
+                    <ShoppingCart
+                      size={18}
+                    />
 
-                  {added
-                    ? "Added To Cart"
-                    : "Add To Cart"}
-                </button>
-              )}
+                    {added
+                      ? "Added To Cart"
+                      : `Add ${selectedQuantity} ${
+                          selectedQuantity ===
+                          1
+                            ? "Vial"
+                            : "Vials"
+                        } To Cart`}
+                  </button>
+                )}
 
-              {/* SECONDARY ACTIONS */}
-              <div className="grid grid-cols-2 gap-3 mt-3">
                 <a
                   href="/cart"
-                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] rounded-full py-3.5 uppercase tracking-widest text-xs font-semibold text-center transition-all"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] rounded-full py-3.5 uppercase tracking-widest text-[11px] font-semibold text-center"
                 >
                   View Cart
                 </a>
 
                 <a
                   href="/products"
-                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] rounded-full py-3.5 uppercase tracking-widest text-xs font-semibold text-center transition-all"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] rounded-full py-3.5 uppercase tracking-widest text-[11px] font-semibold text-center"
                 >
                   Keep Shopping
                 </a>
               </div>
 
-              <div className="text-center mt-4">
-                <a
-                  href="/images/coas/adamaxcoa7-20-26.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-300 hover:text-blue-200 text-sm font-semibold transition-all"
-                >
-                  View ADAMAX COA
-                  →
-                </a>
-              </div>
+              <a
+                href={coaPath}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
+              >
+                View Certificate of
+                Analysis →
+              </a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* COA */}
-      <section className="px-5 md:px-10 pb-10">
+      {/* COA SUMMARY */}
+      <section className="px-6 md:px-10 pb-12">
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
-          <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
+          <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
             <div>
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                Freedom
-                Diagnostics
+                Freedom Diagnostics
               </p>
 
-              <h3 className="text-2xl font-black mb-4">
-                Latest
-                Certificate of
-                Analysis
+              <h3 className="text-2xl font-black text-white mb-4">
+                Latest Certificate
+                of Analysis
               </h3>
 
               <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-300 text-sm font-semibold">
-                  ✓ Identity
-                  Confirmed
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+                  ✓ Identity Confirmed
                 </span>
 
-                <span className="px-3 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-200 text-sm font-semibold">
+                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
                   99.21% Purity
                 </span>
 
-                <span className="px-3 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-200 text-sm font-semibold">
+                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
                   13.71mg Content
                 </span>
 
-                <span className="px-3 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                  Lot: Black
-                  Cap-1
+                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                  Lot: Black Cap-1
                 </span>
               </div>
             </div>
 
             <div className="md:text-right">
-              <div className="text-4xl font-black text-[#A5D8FF]">
+              <p className="text-4xl font-black text-[#A5D8FF]">
                 99.21%
-              </div>
+              </p>
 
-              <div className="uppercase tracking-widest text-white/40 text-xs mt-1">
+              <p className="uppercase tracking-widest text-white/40 text-xs">
                 Purity
-              </div>
+              </p>
 
               <a
-                href="/images/coas/adamaxcoa7-20-26.pdf"
+                href={coaPath}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex mt-3 text-blue-300 font-semibold hover:text-blue-200 transition-all"
+                className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20"
               >
-                View Full COA →
+                View Full COA
               </a>
             </div>
           </div>
@@ -850,8 +765,8 @@ export default function AdamaxPage() {
       </section>
 
       {/* QUALITY */}
-      <section className="px-5 md:px-10 pb-10">
-        <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+      <section className="px-6 md:px-10 pb-10">
+        <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-7 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
             [
               FlaskConical,
@@ -877,33 +792,23 @@ export default function AdamaxPage() {
               "99%+ purity target.",
             ],
           ].map(
-            ([
-              Icon,
-              title,
-              text,
-            ]: any) => (
+            ([Icon, title, text]: any) => (
               <div
-                key={
-                  title
-                }
-                className="flex gap-3"
+                key={title}
+                className="flex gap-4"
               >
                 <Icon
-                  className="text-[#A5D8FF] shrink-0"
-                  size={27}
+                  className="text-[#A5D8FF]"
+                  size={28}
                 />
 
                 <div>
                   <h3 className="text-white uppercase tracking-widest font-bold text-xs">
-                    {
-                      title
-                    }
+                    {title}
                   </h3>
 
-                  <p className="text-white/50 text-sm mt-1 leading-relaxed">
-                    {
-                      text
-                    }
+                  <p className="text-white/50 text-sm mt-1">
+                    {text}
                   </p>
                 </div>
               </div>
@@ -912,30 +817,28 @@ export default function AdamaxPage() {
         </div>
       </section>
 
-      {/* RESEARCH */}
-      <section className="px-5 md:px-10 pb-10">
-        <div className="max-w-7xl mx-auto rounded-[30px] border border-white/10 bg-white/[0.04] p-6 md:p-8">
-          <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+      {/* RESEARCH PROFILE */}
+      <section className="px-6 md:px-10 pb-14">
+        <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] p-8">
+          <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">
             Research Profile
           </p>
 
-          <h2 className="text-3xl md:text-4xl font-black mb-3">
-            Peptide Blend
-            Research Overview
+          <h2 className="text-3xl font-black text-white mb-4">
+            ADAMAX Research
+            Overview
           </h2>
 
-          <p className="text-white/65 leading-relaxed max-w-4xl mb-6">
+          <p className="text-white/65 leading-relaxed max-w-4xl mb-7">
             ADAMAX is a
-            multi-peptide
-            research blend
-            studied in
+            multi-peptide research
+            blend studied in
             laboratory models
             involving cellular
             signaling, recovery
             pathways, metabolic
-            regulation, and
-            peptide synergy
-            research
+            regulation, and peptide
+            synergy research
             applications.
           </p>
 
@@ -961,26 +864,17 @@ export default function AdamaxPage() {
                 "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
               ],
             ].map(
-              ([
-                title,
-                text,
-              ]) => (
+              ([title, text]) => (
                 <div
-                  key={
-                    title
-                  }
+                  key={title}
                   className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
                 >
-                  <h3 className="font-bold mb-2">
-                    {
-                      title
-                    }
+                  <h3 className="text-white font-bold mb-2">
+                    {title}
                   </h3>
 
                   <p className="text-white/55 text-sm leading-relaxed">
-                    {
-                      text
-                    }
+                    {text}
                   </p>
                 </div>
               )
@@ -990,117 +884,95 @@ export default function AdamaxPage() {
       </section>
 
       {/* RELATED */}
-      <section className="px-5 md:px-10 pb-10">
+      <section className="px-6 md:px-10 pb-14">
         <div className="max-w-7xl mx-auto">
+          <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+            Frequently Researched
+            Together
+          </p>
 
-          <div className="mb-5">
-            <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-              Related Research
-            </p>
-
-            <h2 className="text-3xl font-black">
-              Frequently
-              Researched
-              Together
-            </h2>
-          </div>
+          <h2 className="text-3xl font-black text-white mb-6">
+            Pair With Related
+            Research Compounds
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              {
+                name: "APX-3",
 
-            {/* APX-3 */}
-            <a
-              href="/products/apx3"
-              className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/50 transition-all"
-            >
-              <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[210px] flex items-center justify-center">
-                <img
-                  src="/images/apx310blue.png"
-                  alt="APX-3"
-                  className="h-full w-full object-contain p-4 group-hover:scale-105 transition-transform"
-                />
-              </div>
+                image:
+                  "/images/apx310blue.png",
 
-              <h3 className="text-xl font-black mb-2">
-                APX-3
-              </h3>
+                path:
+                  "/products/apx3",
 
-              <p className="text-white/55 text-sm leading-relaxed mb-3">
-                Triple agonist
-                research peptide
-                studied in
-                metabolic
-                regulation and
-                body composition
-                models.
-              </p>
+                text:
+                  "Research peptide studied in laboratory models involving metabolic signaling and pathway regulation.",
+              },
 
-              <span className="text-[#A5D8FF] font-semibold text-sm">
-                View Product →
-              </span>
-            </a>
+              {
+                name: "MOTS-C",
 
-            {/* MOTS-C */}
-            <a
-              href="/products/motsc"
-              className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/50 transition-all"
-            >
-              <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[210px] flex items-center justify-center">
-                <img
-                  src="/images/motscblue.png"
-                  alt="MOTS-c"
-                  className="h-full w-full object-contain p-4 group-hover:scale-105 transition-transform"
-                />
-              </div>
+                image:
+                  "/images/motscblue.png",
 
-              <h3 className="text-xl font-black mb-2">
-                MOTS-c
-              </h3>
+                path:
+                  "/products/motsc",
 
-              <p className="text-white/55 text-sm leading-relaxed mb-3">
-                Studied in
-                laboratory
-                models involving
-                mitochondrial
-                signaling and
-                metabolic
-                research.
-              </p>
+                text:
+                  "Studied in laboratory models involving mitochondrial signaling and metabolic research.",
+              },
 
-              <span className="text-[#A5D8FF] font-semibold text-sm">
-                View Product →
-              </span>
-            </a>
+              {
+                name: "CJC/IPA",
 
-            {/* CJC IPA */}
-            <a
-              href="/products/cjcipa"
-              className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/50 transition-all"
-            >
-              <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[210px] flex items-center justify-center">
-                <img
-                  src="/images/cjcipablue.png"
-                  alt="CJC/IPA"
-                  className="h-full w-full object-contain p-4 group-hover:scale-105 transition-transform"
-                />
-              </div>
+                image:
+                  "/images/cjcipablue.png",
 
-              <h3 className="text-xl font-black mb-2">
-                CJC/IPA
-              </h3>
+                path:
+                  "/products/cjcipa",
 
-              <p className="text-white/55 text-sm leading-relaxed mb-3">
-                Research
-                involving growth
-                hormone signaling
-                pathways and
-                endocrine
-                response models.
-              </p>
+                text:
+                  "Research involving growth hormone signaling pathways and endocrine response models.",
+              },
+            ].map(
+              (item) => (
+                <a
+                  key={item.name}
+                  href={item.path}
+                  className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/40 transition-all"
+                >
+                  <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
+                    <img
+                      src={
+                        item.image
+                      }
+                      alt={
+                        item.name
+                      }
+                      className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
+                    />
+                  </div>
 
-              <span className="text-[#A5D8FF] font-semibold text-sm">
-                View Product →
-              </span>
-            </a>
+                  <h3 className="text-xl font-black text-white mb-2">
+                    {
+                      item.name
+                    }
+                  </h3>
+
+                  <p className="text-white/55 text-sm leading-relaxed">
+                    {
+                      item.text
+                    }
+                  </p>
+
+                  <span className="inline-block mt-3 text-[#A5D8FF] text-sm font-semibold">
+                    View Product →
+                  </span>
+                </a>
+              )
+            )}
           </div>
         </div>
       </section>
@@ -1125,22 +997,16 @@ export default function AdamaxPage() {
       ].map(
         (section) => (
           <section
-            key={
-              section.title
-            }
-            className="px-5 md:px-10 pb-8"
+            key={section.title}
+            className="px-6 md:px-10 pb-10"
           >
             <div className="max-w-7xl mx-auto rounded-[26px] border border-white/10 bg-white/[0.04] p-6">
               <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-xs mb-3">
-                {
-                  section.title
-                }
+                {section.title}
               </h3>
 
               <p className="text-white/55 text-sm leading-relaxed">
-                {
-                  section.text
-                }
+                {section.text}
               </p>
             </div>
           </section>

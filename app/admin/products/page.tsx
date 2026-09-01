@@ -21,7 +21,6 @@ type Product = {
   size: string | null;
   price: number;
   inventory: number;
-  coa_url: string | null;
   active: boolean;
 };
 
@@ -38,6 +37,7 @@ type ProductGroup = "peptides" | "shirts" | "vialCases";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
+
   const [quantityDiscounts, setQuantityDiscounts] = useState<
     QuantityDiscountTier[]
   >([]);
@@ -45,10 +45,14 @@ export default function AdminProductsPage() {
   const [search, setSearch] = useState("");
 
   const [loading, setLoading] = useState(true);
+
   const [discountLoading, setDiscountLoading] = useState(true);
 
   const [savingId, setSavingId] = useState<string | null>(null);
-  const [savingDiscountId, setSavingDiscountId] = useState<string | null>(null);
+
+  const [savingDiscountId, setSavingDiscountId] = useState<
+    string | null
+  >(null);
 
   const [statusMessage, setStatusMessage] = useState("");
 
@@ -58,7 +62,9 @@ export default function AdminProductsPage() {
     return "In Stock";
   };
 
-  const getProductGroup = (product: Product): ProductGroup => {
+  const getProductGroup = (
+    product: Product
+  ): ProductGroup => {
     const slug = (product.slug || "").toLowerCase();
     const name = (product.name || "").toLowerCase();
 
@@ -92,13 +98,18 @@ export default function AdminProductsPage() {
       const data = await response.json();
 
       if (!data.success) {
-        setStatusMessage(data.error || "Failed to load products.");
+        setStatusMessage(
+          data.error || "Failed to load products."
+        );
+
         return;
       }
 
       setProducts(data.products || []);
     } catch {
-      setStatusMessage("Something went wrong loading products.");
+      setStatusMessage(
+        "Something went wrong loading products."
+      );
     } finally {
       setLoading(false);
     }
@@ -108,16 +119,21 @@ export default function AdminProductsPage() {
     setDiscountLoading(true);
 
     try {
-      const response = await fetch("/api/admin/quantity-discounts", {
-        cache: "no-store",
-      });
+      const response = await fetch(
+        "/api/admin/quantity-discounts",
+        {
+          cache: "no-store",
+        }
+      );
 
       const data = await response.json();
 
       if (!data.success) {
         setStatusMessage(
-          data.error || "Failed to load quantity discounts."
+          data.error ||
+            "Failed to load quantity discounts."
         );
+
         return;
       }
 
@@ -145,18 +161,34 @@ export default function AdminProductsPage() {
     fetchQuantityDiscounts();
   }, []);
 
-  const updateLocalInventory = (id: string, inventory: number) => {
+  const updateLocalInventory = (
+    id: string,
+    inventory: number
+  ) => {
     setProducts((prev) =>
       prev.map((product) =>
-        product.id === id ? { ...product, inventory } : product
+        product.id === id
+          ? {
+              ...product,
+              inventory,
+            }
+          : product
       )
     );
   };
 
-  const updateLocalPrice = (id: string, price: number) => {
+  const updateLocalPrice = (
+    id: string,
+    price: number
+  ) => {
     setProducts((prev) =>
       prev.map((product) =>
-        product.id === id ? { ...product, price } : product
+        product.id === id
+          ? {
+              ...product,
+              price,
+            }
+          : product
       )
     );
   };
@@ -191,9 +223,11 @@ export default function AdminProductsPage() {
         "/api/admin/products/update-inventory",
         {
           method: "POST",
+
           headers: {
             "Content-Type": "application/json",
           },
+
           body: JSON.stringify({
             id,
             inventory,
@@ -205,13 +239,20 @@ export default function AdminProductsPage() {
       const data = await response.json();
 
       if (!data.success) {
-        setStatusMessage(data.error || "Product update failed.");
+        setStatusMessage(
+          data.error || "Product update failed."
+        );
+
         return;
       }
 
-      setStatusMessage("✓ Product updated successfully.");
+      setStatusMessage(
+        "✓ Product updated successfully."
+      );
     } catch {
-      setStatusMessage("Something went wrong saving product.");
+      setStatusMessage(
+        "Something went wrong saving product."
+      );
     } finally {
       setSavingId(null);
     }
@@ -228,16 +269,27 @@ export default function AdminProductsPage() {
         "/api/admin/quantity-discounts",
         {
           method: "POST",
+
           headers: {
             "Content-Type": "application/json",
           },
+
           body: JSON.stringify({
             id: tier.id,
+
             name: `${tier.quantity} Vials`,
+
             quantity: Number(tier.quantity),
-            discount_percent: Number(tier.discount_percent),
+
+            discount_percent: Number(
+              tier.discount_percent
+            ),
+
             active: Boolean(tier.active),
-            sort_order: Number(tier.sort_order || 0),
+
+            sort_order: Number(
+              tier.sort_order || 0
+            ),
           }),
         }
       );
@@ -246,8 +298,10 @@ export default function AdminProductsPage() {
 
       if (!data.success) {
         setStatusMessage(
-          data.error || "Quantity discount update failed."
+          data.error ||
+            "Quantity discount update failed."
         );
+
         return;
       }
 
@@ -275,20 +329,28 @@ export default function AdminProductsPage() {
   };
 
   const filteredProducts = useMemo(() => {
-    const query = search.toLowerCase().trim();
+    const query = search
+      .toLowerCase()
+      .trim();
 
-    if (!query) return products;
+    if (!query) {
+      return products;
+    }
 
     return products.filter((product) =>
-      `${product.name} ${product.slug} ${product.size || ""}`
+      `${product.name} ${product.slug} ${
+        product.size || ""
+      }`
         .toLowerCase()
         .includes(query)
     );
   }, [products, search]);
 
-  const peptideProducts = filteredProducts.filter(
-    (product) => getProductGroup(product) === "peptides"
-  );
+  const peptideProducts =
+    filteredProducts.filter(
+      (product) =>
+        getProductGroup(product) === "peptides"
+    );
 
   const sizeOrder: Record<string, number> = {
     S: 0,
@@ -298,51 +360,81 @@ export default function AdminProductsPage() {
   };
 
   const shirtProducts = filteredProducts
-    .filter((product) => getProductGroup(product) === "shirts")
+    .filter(
+      (product) =>
+        getProductGroup(product) === "shirts"
+    )
     .sort((a, b) => {
-      const getColor = (product: Product) => {
-        const slug = (product.slug || "").toLowerCase();
+      const getColor = (
+        product: Product
+      ) => {
+        const slug = (
+          product.slug || ""
+        ).toLowerCase();
 
-        if (slug.includes("-blue-")) return "Blue";
-        if (slug.includes("-ivory-")) return "Ivory";
-        if (slug.includes("-olive-")) return "Olive";
+        if (slug.includes("-blue-")) {
+          return "Blue";
+        }
+
+        if (slug.includes("-ivory-")) {
+          return "Ivory";
+        }
+
+        if (slug.includes("-olive-")) {
+          return "Olive";
+        }
 
         return product.name;
       };
 
-      const colorCompare = getColor(a).localeCompare(getColor(b));
+      const colorCompare =
+        getColor(a).localeCompare(
+          getColor(b)
+        );
 
       if (colorCompare !== 0) {
         return colorCompare;
       }
 
       return (
-        (sizeOrder[(a.size || "").toUpperCase()] ?? 99) -
-        (sizeOrder[(b.size || "").toUpperCase()] ?? 99)
+        (sizeOrder[
+          (a.size || "").toUpperCase()
+        ] ?? 99) -
+        (sizeOrder[
+          (b.size || "").toUpperCase()
+        ] ?? 99)
       );
     });
 
-  const vialCaseProducts = filteredProducts.filter(
-    (product) => getProductGroup(product) === "vialCases"
-  );
+  const vialCaseProducts =
+    filteredProducts.filter(
+      (product) =>
+        getProductGroup(product) ===
+        "vialCases"
+    );
 
   const totalInventory = products.reduce(
-    (sum, product) => sum + Number(product.inventory || 0),
+    (sum, product) =>
+      sum +
+      Number(product.inventory || 0),
     0
   );
 
-  const lowStockCount = products.filter(
-    (product) =>
-      product.inventory > 0 && product.inventory <= 5
-  ).length;
+  const lowStockCount =
+    products.filter(
+      (product) =>
+        product.inventory > 0 &&
+        product.inventory <= 5
+    ).length;
 
-  const outOfStockCount = products.filter(
-    (product) => product.inventory <= 0
-  ).length;
+  const outOfStockCount =
+    products.filter(
+      (product) =>
+        product.inventory <= 0
+    ).length;
 
   const renderProductTable = (
-    sectionProducts: Product[],
-    group: ProductGroup
+    sectionProducts: Product[]
   ) => {
     if (sectionProducts.length === 0) {
       return (
@@ -354,7 +446,7 @@ export default function AdminProductsPage() {
 
     return (
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[950px]">
+        <table className="w-full min-w-[800px]">
           <thead>
             <tr className="border-b border-white/10 text-left">
               <th className="pb-4 text-white/50 text-xs uppercase tracking-widest">
@@ -377,10 +469,6 @@ export default function AdminProductsPage() {
                 Status
               </th>
 
-              <th className="pb-4 text-white/50 text-xs uppercase tracking-widest">
-                COA
-              </th>
-
               <th className="pb-4 text-white/50 text-xs uppercase tracking-widest text-right">
                 Save
               </th>
@@ -388,131 +476,155 @@ export default function AdminProductsPage() {
           </thead>
 
           <tbody>
-            {sectionProducts.map((product) => {
-              const stockStatus = getStatus(product.inventory);
-              const requiresCoa = group === "peptides";
+            {sectionProducts.map(
+              (product) => {
+                const stockStatus =
+                  getStatus(
+                    product.inventory
+                  );
 
-              return (
-                <tr
-                  key={product.id}
-                  className="border-b border-white/5 hover:bg-white/[0.03] transition-all"
-                >
-                  <td className="py-5">
-                    <p className="font-bold text-white">
-                      {product.name}
-                    </p>
+                return (
+                  <tr
+                    key={product.id}
+                    className="border-b border-white/5 hover:bg-white/[0.03] transition-all"
+                  >
+                    <td className="py-5">
+                      <p className="font-bold text-white">
+                        {product.name}
+                      </p>
 
-                    <p className="text-white/40 text-sm">
-                      {product.slug}
-                    </p>
-                  </td>
+                      <p className="text-white/40 text-sm">
+                        {product.slug}
+                      </p>
+                    </td>
 
-                  <td className="py-5 text-white/80">
-                    {product.size || "—"}
-                  </td>
+                    <td className="py-5 text-white/80">
+                      {product.size ||
+                        "—"}
+                    </td>
 
-                  <td className="py-5">
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={product.price}
-                      onChange={(e) =>
-                        updateLocalPrice(
-                          product.id,
-                          Math.max(
-                            0,
-                            Number(e.target.value)
-                          )
-                        )
-                      }
-                      className="w-28 rounded-full bg-white/[0.06] border border-white/10 px-4 py-3 text-sm font-bold text-white outline-none focus:border-blue-400"
-                    />
-                  </td>
+                    <td className="py-5">
+                      <div className="relative w-28">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-sm">
+                          $
+                        </span>
 
-                  <td className="py-5">
-                    <input
-                      type="number"
-                      min="0"
-                      value={product.inventory}
-                      onChange={(e) =>
-                        updateLocalInventory(
-                          product.id,
-                          Math.max(
-                            0,
-                            Number(e.target.value)
-                          )
-                        )
-                      }
-                      className="w-28 rounded-full bg-white/[0.06] border border-white/10 px-4 py-3 text-sm font-bold text-white outline-none focus:border-blue-400"
-                    />
-                  </td>
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={
+                            product.price
+                          }
+                          onChange={(e) =>
+                            updateLocalPrice(
+                              product.id,
+                              Math.max(
+                                0,
+                                Number(
+                                  e.target
+                                    .value
+                                )
+                              )
+                            )
+                          }
+                          className="w-full rounded-full bg-white/[0.06] border border-white/10 py-3 pl-8 pr-3 text-sm font-bold text-white outline-none focus:border-blue-400"
+                        />
+                      </div>
+                    </td>
 
-                  <td className="py-5">
-                    <span
-                      className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold ${
-                        stockStatus === "In Stock"
-                          ? "bg-green-500/10 text-green-200 border border-green-400/20"
-                          : stockStatus === "Low Stock"
-                          ? "bg-yellow-500/10 text-yellow-200 border border-yellow-400/20"
-                          : "bg-red-500/10 text-red-200 border border-red-400/20"
-                      }`}
-                    >
-                      {stockStatus === "In Stock" ? (
-                        <CheckCircle size={15} />
-                      ) : (
-                        <AlertTriangle size={15} />
-                      )}
-
-                      {stockStatus}
-                    </span>
-                  </td>
-
-                  <td className="py-5">
-                    {!requiresCoa ? (
-                      <span className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-white/40">
-                        N/A
-                      </span>
-                    ) : product.coa_url ? (
-                      <a
-                        href={product.coa_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-200 font-bold hover:text-white"
-                      >
-                        Available
-                      </a>
-                    ) : (
-                      <span className="text-white/40">
-                        Missing
-                      </span>
-                    )}
-                  </td>
-
-                  <td className="py-5">
-                    <div className="flex justify-end">
-                      <button
-                        onClick={() =>
-                          saveInventory(
+                    <td className="py-5">
+                      <input
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={
+                          product.inventory
+                        }
+                        onChange={(e) =>
+                          updateLocalInventory(
                             product.id,
-                            Number(product.inventory),
-                            Number(product.price)
+                            Math.max(
+                              0,
+                              Math.floor(
+                                Number(
+                                  e.target
+                                    .value
+                                )
+                              )
+                            )
                           )
                         }
-                        disabled={savingId === product.id}
-                        className="rounded-full bg-white text-[#081526] px-5 py-3 font-bold uppercase tracking-widest text-xs hover:bg-blue-100 transition-all disabled:opacity-50 flex items-center gap-2"
-                      >
-                        <Save size={15} />
+                        className="w-28 rounded-full bg-white/[0.06] border border-white/10 px-4 py-3 text-sm font-bold text-white outline-none focus:border-blue-400"
+                      />
+                    </td>
 
-                        {savingId === product.id
-                          ? "Saving"
-                          : "Save"}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+                    <td className="py-5">
+                      <span
+                        className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold ${
+                          stockStatus ===
+                          "In Stock"
+                            ? "bg-green-500/10 text-green-200 border border-green-400/20"
+                            : stockStatus ===
+                              "Low Stock"
+                            ? "bg-yellow-500/10 text-yellow-200 border border-yellow-400/20"
+                            : "bg-red-500/10 text-red-200 border border-red-400/20"
+                        }`}
+                      >
+                        {stockStatus ===
+                        "In Stock" ? (
+                          <CheckCircle
+                            size={
+                              15
+                            }
+                          />
+                        ) : (
+                          <AlertTriangle
+                            size={
+                              15
+                            }
+                          />
+                        )}
+
+                        {stockStatus}
+                      </span>
+                    </td>
+
+                    <td className="py-5">
+                      <div className="flex justify-end">
+                        <button
+                          onClick={() =>
+                            saveInventory(
+                              product.id,
+                              Number(
+                                product.inventory
+                              ),
+                              Number(
+                                product.price
+                              )
+                            )
+                          }
+                          disabled={
+                            savingId ===
+                            product.id
+                          }
+                          className="rounded-full bg-white text-[#081526] px-5 py-3 font-bold uppercase tracking-widest text-xs hover:bg-blue-100 transition-all disabled:opacity-50 flex items-center gap-2"
+                        >
+                          <Save
+                            size={15}
+                          />
+
+                          {savingId ===
+                          product.id
+                            ? "Saving"
+                            : "Save"}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              }
+            )}
           </tbody>
         </table>
       </div>
@@ -545,7 +657,9 @@ export default function AdminProductsPage() {
               </h1>
 
               <p className="text-white/45 mt-2">
-                Manage product pricing, inventory, and quantity discounts.
+                Manage product pricing,
+                inventory, and quantity
+                discounts.
               </p>
             </div>
           </div>
@@ -555,7 +669,10 @@ export default function AdminProductsPage() {
               onClick={refreshAll}
               className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm font-bold uppercase tracking-widest hover:bg-white/[0.08] transition-all flex items-center justify-center gap-2"
             >
-              <RefreshCw size={16} />
+              <RefreshCw
+                size={16}
+              />
+
               Refresh
             </button>
 
@@ -568,7 +685,9 @@ export default function AdminProductsPage() {
               <input
                 value={search}
                 onChange={(e) =>
-                  setSearch(e.target.value)
+                  setSearch(
+                    e.target.value
+                  )
                 }
                 placeholder="Search all products..."
                 className="w-full rounded-full bg-white/[0.04] border border-white/10 py-3 pl-11 pr-4 text-white outline-none focus:border-blue-400/60"
@@ -635,12 +754,19 @@ export default function AdminProductsPage() {
                     </p>
 
                     <h2 className="text-2xl font-black">
-                      Quantity Discounts
+                      Quantity
+                      Discounts
                     </h2>
 
                     <p className="text-white/45 text-sm mt-2 max-w-2xl">
-                      Set the automatic discount customers receive
-                      when purchasing multiple vials of the same
+                      Set the
+                      automatic
+                      discount
+                      customers
+                      receive when
+                      purchasing
+                      multiple vials
+                      of the same
                       product.
                     </p>
                   </div>
@@ -655,166 +781,214 @@ export default function AdminProductsPage() {
             <div className="p-6 md:p-8">
               {discountLoading ? (
                 <div className="py-10 text-center text-white/40">
-                  Loading quantity discounts...
+                  Loading quantity
+                  discounts...
                 </div>
-              ) : quantityDiscounts.length === 0 ? (
+              ) : quantityDiscounts.length ===
+                0 ? (
                 <div className="rounded-2xl border border-yellow-400/20 bg-yellow-500/10 p-5">
                   <p className="text-yellow-100 font-semibold">
-                    No quantity discount tiers were found.
+                    No quantity
+                    discount tiers
+                    were found.
                   </p>
 
                   <p className="text-yellow-100/60 text-sm mt-1">
-                    Make sure the quantity_discount_tiers SQL was
-                    created successfully in Supabase.
+                    Make sure the
+                    quantity_discount_tiers
+                    table was
+                    created
+                    successfully
+                    in Supabase.
                   </p>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {quantityDiscounts.map((tier) => (
-                    <div
-                      key={tier.id}
-                      className="rounded-[26px] border border-white/10 bg-[#081526]/60 p-5 md:p-6"
-                    >
-                      <div className="grid lg:grid-cols-[1fr_1fr_1fr_auto] gap-5 lg:items-end">
-                        <div>
-                          <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
-                            Quantity
-                          </label>
+                  {quantityDiscounts.map(
+                    (tier) => (
+                      <div
+                        key={
+                          tier.id
+                        }
+                        className="rounded-[26px] border border-white/10 bg-[#081526]/60 p-5 md:p-6"
+                      >
+                        <div className="grid lg:grid-cols-[1fr_1fr_1fr_auto] gap-5 lg:items-end">
+                          <div>
+                            <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+                              Quantity
+                            </label>
 
-                          <div className="relative">
-                            <input
-                              type="number"
-                              min="2"
-                              step="1"
-                              value={tier.quantity}
-                              onChange={(e) =>
-                                updateLocalDiscountTier(
-                                  tier.id,
-                                  "quantity",
-                                  Math.max(
-                                    2,
-                                    Math.floor(
-                                      Number(
-                                        e.target.value
-                                      ) || 2
-                                    )
-                                  )
-                                )
-                              }
-                              className="w-full rounded-2xl bg-white/[0.06] border border-white/10 px-4 py-3.5 pr-16 text-white font-bold outline-none focus:border-blue-400"
-                            />
-
-                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 text-sm">
-                              vials
-                            </span>
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
-                            Discount
-                          </label>
-
-                          <div className="relative">
-                            <input
-                              type="number"
-                              min="0"
-                              max="100"
-                              step="0.01"
-                              value={tier.discount_percent}
-                              onChange={(e) =>
-                                updateLocalDiscountTier(
-                                  tier.id,
-                                  "discount_percent",
-                                  Math.min(
-                                    100,
+                            <div className="relative">
+                              <input
+                                type="number"
+                                min="2"
+                                step="1"
+                                value={
+                                  tier.quantity
+                                }
+                                onChange={(
+                                  e
+                                ) =>
+                                  updateLocalDiscountTier(
+                                    tier.id,
+                                    "quantity",
                                     Math.max(
-                                      0,
-                                      Number(
-                                        e.target.value
-                                      ) || 0
+                                      2,
+                                      Math.floor(
+                                        Number(
+                                          e
+                                            .target
+                                            .value
+                                        ) ||
+                                          2
+                                      )
                                     )
                                   )
+                                }
+                                className="w-full rounded-2xl bg-white/[0.06] border border-white/10 px-4 py-3.5 pr-16 text-white font-bold outline-none focus:border-blue-400"
+                              />
+
+                              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 text-sm">
+                                vials
+                              </span>
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+                              Discount
+                            </label>
+
+                            <div className="relative">
+                              <input
+                                type="number"
+                                min="0"
+                                max="100"
+                                step="0.01"
+                                value={
+                                  tier.discount_percent
+                                }
+                                onChange={(
+                                  e
+                                ) =>
+                                  updateLocalDiscountTier(
+                                    tier.id,
+                                    "discount_percent",
+                                    Math.min(
+                                      100,
+                                      Math.max(
+                                        0,
+                                        Number(
+                                          e
+                                            .target
+                                            .value
+                                        ) ||
+                                          0
+                                      )
+                                    )
+                                  )
+                                }
+                                className="w-full rounded-2xl bg-white/[0.06] border border-white/10 px-4 py-3.5 pr-12 text-white font-bold outline-none focus:border-blue-400"
+                              />
+
+                              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 text-sm">
+                                %
+                              </span>
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+                              Status
+                            </label>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                updateLocalDiscountTier(
+                                  tier.id,
+                                  "active",
+                                  !tier.active
                                 )
                               }
-                              className="w-full rounded-2xl bg-white/[0.06] border border-white/10 px-4 py-3.5 pr-12 text-white font-bold outline-none focus:border-blue-400"
-                            />
-
-                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 text-sm">
-                              %
-                            </span>
+                              className={`w-full rounded-2xl border px-4 py-3.5 font-bold transition-all ${
+                                tier.active
+                                  ? "border-green-400/25 bg-green-500/10 text-green-200"
+                                  : "border-white/10 bg-white/[0.04] text-white/45"
+                              }`}
+                            >
+                              {tier.active
+                                ? "Active"
+                                : "Disabled"}
+                            </button>
                           </div>
-                        </div>
-
-                        <div>
-                          <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
-                            Status
-                          </label>
 
                           <button
-                            type="button"
                             onClick={() =>
-                              updateLocalDiscountTier(
-                                tier.id,
-                                "active",
-                                !tier.active
+                              saveQuantityDiscount(
+                                tier
                               )
                             }
-                            className={`w-full rounded-2xl border px-4 py-3.5 font-bold transition-all ${
-                              tier.active
-                                ? "border-green-400/25 bg-green-500/10 text-green-200"
-                                : "border-white/10 bg-white/[0.04] text-white/45"
-                            }`}
+                            disabled={
+                              savingDiscountId ===
+                              tier.id
+                            }
+                            className="rounded-full bg-white text-[#081526] px-6 py-3.5 font-bold uppercase tracking-widest text-xs hover:bg-blue-100 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                           >
-                            {tier.active
-                              ? "Active"
-                              : "Disabled"}
+                            <Save
+                              size={
+                                15
+                              }
+                            />
+
+                            {savingDiscountId ===
+                            tier.id
+                              ? "Saving"
+                              : "Save"}
                           </button>
                         </div>
 
-                        <button
-                          onClick={() =>
-                            saveQuantityDiscount(tier)
-                          }
-                          disabled={
-                            savingDiscountId === tier.id
-                          }
-                          className="rounded-full bg-white text-[#081526] px-6 py-3.5 font-bold uppercase tracking-widest text-xs hover:bg-blue-100 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-                        >
-                          <Save size={15} />
+                        <div className="mt-4 flex flex-wrap gap-3 text-sm">
+                          <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-white/55">
+                            Customer
+                            buys{" "}
+                            <strong className="text-white">
+                              {
+                                tier.quantity
+                              }{" "}
+                              vials
+                            </strong>
+                          </span>
 
-                          {savingDiscountId === tier.id
-                            ? "Saving"
-                            : "Save"}
-                        </button>
+                          <span className="rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-blue-200">
+                            Receives{" "}
+                            <strong>
+                              {Number(
+                                tier.discount_percent
+                              ).toFixed(
+                                2
+                              )}
+                              % off
+                            </strong>
+                          </span>
+                        </div>
                       </div>
-
-                      <div className="mt-4 flex flex-wrap gap-3 text-sm">
-                        <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-white/55">
-                          Customer buys{" "}
-                          <strong className="text-white">
-                            {tier.quantity} vials
-                          </strong>
-                        </span>
-
-                        <span className="rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-blue-200">
-                          Receives{" "}
-                          <strong>
-                            {Number(
-                              tier.discount_percent
-                            ).toFixed(2)}
-                            % off
-                          </strong>
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                    )
+                  )}
 
                   <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
                     <p className="text-white/65 text-sm leading-6">
-                      Customers purchasing one vial will continue
-                      paying the normal product price. These tiers
-                      only control discounted multi-vial purchases.
+                      Customers
+                      purchasing one
+                      vial continue
+                      paying the
+                      normal product
+                      price. These
+                      tiers only
+                      control
+                      discounted
+                      multi-vial
+                      purchases.
                     </p>
                   </div>
                 </div>
@@ -834,32 +1008,38 @@ export default function AdminProductsPage() {
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-2xl border border-blue-400/20 bg-blue-500/10 flex items-center justify-center">
                         <FlaskConical
-                          size={21}
+                          size={
+                            21
+                          }
                           className="text-blue-300"
                         />
                       </div>
 
                       <div>
                         <p className="text-blue-300 text-xs uppercase tracking-[0.3em] mb-1">
-                          Research Products
+                          Research
+                          Products
                         </p>
 
                         <h2 className="text-2xl font-black">
-                          Peptide Products
+                          Peptide
+                          Products
                         </h2>
                       </div>
                     </div>
 
                     <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-bold text-white/70">
-                      {peptideProducts.length} products
+                      {
+                        peptideProducts.length
+                      }{" "}
+                      products
                     </span>
                   </div>
                 </div>
 
                 <div className="p-6 md:p-8">
                   {renderProductTable(
-                    peptideProducts,
-                    "peptides"
+                    peptideProducts
                   )}
                 </div>
               </section>
@@ -870,7 +1050,9 @@ export default function AdminProductsPage() {
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-2xl border border-white/10 bg-white/[0.05] flex items-center justify-center">
                         <Shirt
-                          size={21}
+                          size={
+                            21
+                          }
                           className="text-blue-200"
                         />
                       </div>
@@ -887,15 +1069,17 @@ export default function AdminProductsPage() {
                     </div>
 
                     <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-bold text-white/70">
-                      {shirtProducts.length} variants
+                      {
+                        shirtProducts.length
+                      }{" "}
+                      variants
                     </span>
                   </div>
                 </div>
 
                 <div className="p-6 md:p-8">
                   {renderProductTable(
-                    shirtProducts,
-                    "shirts"
+                    shirtProducts
                   )}
                 </div>
               </section>
@@ -906,7 +1090,9 @@ export default function AdminProductsPage() {
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-2xl border border-white/10 bg-white/[0.05] flex items-center justify-center">
                         <Archive
-                          size={21}
+                          size={
+                            21
+                          }
                           className="text-blue-200"
                         />
                       </div>
@@ -917,21 +1103,24 @@ export default function AdminProductsPage() {
                         </p>
 
                         <h2 className="text-2xl font-black">
-                          Vial Storage Case
+                          Vial Storage
+                          Case
                         </h2>
                       </div>
                     </div>
 
                     <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-bold text-white/70">
-                      {vialCaseProducts.length} product
+                      {
+                        vialCaseProducts.length
+                      }{" "}
+                      product
                     </span>
                   </div>
                 </div>
 
                 <div className="p-6 md:p-8">
                   {renderProductTable(
-                    vialCaseProducts,
-                    "vialCases"
+                    vialCaseProducts
                   )}
                 </div>
               </section>

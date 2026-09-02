@@ -390,7 +390,7 @@ Receive a Complimentary Gift With Any 8 Vials
           Research. Quality. Confidence.
         </p>
 
-        <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-[0.9] text-white">
+        <h1 className="text-6xl md:text-8xl font-black tracking-tight leading-[0.9] text-white">
           Research
           <br />
           <span className="text-blue-300">Without Limits.</span>
@@ -404,7 +404,7 @@ Receive a Complimentary Gift With Any 8 Vials
         <div className="flex flex-col sm:flex-row gap-4 mt-10">
           <a
             href="/products"
-            className="bg-white text-[#081526] px-8 py-3.5 rounded-full text-xs uppercase tracking-widest font-semibold text-center hover:bg-blue-100 transition-all"
+            className="bg-white text-[#081526] px-9 py-4 rounded-full text-sm uppercase tracking-widest font-semibold text-center hover:bg-blue-100 transition-all"
           >
             Shop Products
           </a>
@@ -473,7 +473,7 @@ Receive a Complimentary Gift With Any 8 Vials
 </Reveal>
 
 {/* PRODUCTS */}
-<section className="relative w-full max-w-full overflow-hidden px-4 py-10 sm:px-6 md:py-12">
+<section className="relative w-full max-w-full overflow-hidden px-4 py-12 sm:px-6 md:py-14">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
 
   <div className="relative z-10 mx-auto w-full min-w-0 max-w-7xl">
@@ -484,7 +484,7 @@ Receive a Complimentary Gift With Any 8 Vials
           Research Catalog
         </p>
 
-        <h3 className="text-3xl md:text-4xl font-black tracking-tight text-white leading-[0.95]">
+        <h3 className="text-4xl md:text-5xl font-black tracking-tight text-white leading-[0.95]">
           Featured Compounds
         </h3>
 
@@ -1207,7 +1207,7 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
     {reviews.length > 0 ? (
       <>
         <div className="rounded-[2.5rem] border border-blue-400/20 bg-white/[0.04] backdrop-blur-sm p-8 md:p-12 mb-12">
-          <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-10 items-center">
             <div className="text-center lg:text-left">
               <p className="uppercase tracking-[0.3em] text-blue-300 text-xs mb-4">
                 Overall Rating
@@ -1597,7 +1597,7 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
             onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
             className="w-full flex justify-between items-center text-left p-7 gap-6"
           >
-            <span className="text-lg md:text-xl font-black text-white">
+            <span className="text-xl md:text-2xl font-black text-white">
               {faq.question}
             </span>
 

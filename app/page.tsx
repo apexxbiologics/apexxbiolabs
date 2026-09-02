@@ -383,7 +383,7 @@ Receive a Complimentary Gift With Any 8 Vials
   <div className="absolute inset-0 z-[1] bg-gradient-to-r from-[#081526] via-[#081526]/92 to-transparent" />
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_55%)]" />
 
-  <div className="relative z-10 mx-auto flex w-full min-w-0 max-w-7xl items-center py-20">
+  <div className="relative z-10 mx-auto flex w-full min-w-0 max-w-7xl items-center py-14">
     <Reveal>
       <div className="w-full min-w-0 max-w-3xl">
         <p className="uppercase tracking-[0.3em] text-blue-300 text-xs mb-4">
@@ -441,28 +441,28 @@ Receive a Complimentary Gift With Any 8 Vials
 
 {/* BUILD YOUR OWN BUNDLE */}
 <Reveal>
-  <section className="w-full bg-[#081526] px-4 py-3 sm:px-6">
+  <section className="w-full bg-[#081526] px-4 py-7 sm:px-6 md:py-8">
     <div className="mx-auto max-w-7xl">
-      <div className="flex flex-col gap-3 rounded-2xl border border-blue-300/15 bg-white/[0.025] px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+      <div className="flex flex-col gap-6 rounded-3xl border border-blue-300/20 bg-white/[0.035] px-6 py-7 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-8 md:px-10">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-300">
+            <p className="text-sm font-black uppercase tracking-[0.2em] text-blue-300 sm:text-base">
               Build Your Own Bundle
             </p>
 
-            <span className="text-[10px] text-white/30">
+            <span className="text-sm text-white/45 sm:text-base">
               Mix & match eligible research vials
             </span>
           </div>
 
-          <p className="mt-1.5 text-[10px] text-white/45 sm:text-[11px]">
+          <p className="mt-3 text-sm text-white/60 sm:text-base">
             3 vials · 5% off &nbsp; / &nbsp; 5 · 10% &nbsp; / &nbsp; 10 · 15% &nbsp; / &nbsp; 20 · 20%
           </p>
         </div>
 
         <Link
           href="/build-a-bundle"
-          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-white px-5 py-2.5 text-[10px] font-black uppercase tracking-[0.16em] text-[#081526] transition hover:bg-blue-100"
+          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-white px-7 py-4 text-xs font-black uppercase tracking-[0.15em] text-[#081526] transition hover:bg-blue-100 sm:px-8 sm:text-sm"
         >
           Build Bundle
           <span className="text-sm leading-none">→</span>
@@ -473,7 +473,7 @@ Receive a Complimentary Gift With Any 8 Vials
 </Reveal>
 
 {/* PRODUCTS */}
-<section className="relative w-full max-w-full overflow-hidden px-4 py-14 sm:px-6 md:py-16">
+<section className="relative w-full max-w-full overflow-hidden px-4 py-12 sm:px-6 md:py-14">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
 
   <div className="relative z-10 mx-auto w-full min-w-0 max-w-7xl">
@@ -932,7 +932,7 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
 
     <div className="relative z-10 mx-auto w-full min-w-0 max-w-7xl">
       {/* ABOUT HEADER */}
-      <div className="mb-14 grid min-w-0 grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-14">
+      <div className="mb-10 grid min-w-0 grid-cols-1 items-center gap-7 lg:grid-cols-2 lg:gap-14">
         <div className="min-w-0">
           <p className="mb-5 text-xs font-black uppercase tracking-[0.25em] text-blue-300 sm:text-sm sm:tracking-[0.35em]">
             About Apexx

@@ -190,10 +190,9 @@ export default function Navbar() {
 
             <a
               href="/build-a-bundle"
-              className="relative pb-2 text-blue-200 transition hover:text-blue-300"
+              className="pb-2 transition hover:text-blue-300"
             >
               Build a Bundle
-              <span className="absolute -bottom-0.5 left-1/2 h-px w-7 -translate-x-1/2 bg-blue-300/60" />
             </a>
 
             <a

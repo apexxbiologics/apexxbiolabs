@@ -19,6 +19,15 @@ type QuantityDiscountTier = {
   sort_order: number;
 };
 
+type FlashSale = {
+  id: string;
+  product_id: string;
+  sale_price: number;
+  starts_at: string;
+  ends_at: string;
+  active: boolean;
+};
+
 export default function FiveAmino1MQPage() {
   const [added, setAdded] = useState(false);
 
@@ -29,6 +38,12 @@ export default function FiveAmino1MQPage() {
     useState<number | null>(null);
 
   const [price, setPrice] = useState(55);
+
+  const [databaseProductId, setDatabaseProductId] =
+    useState<string | null>(null);
+
+  const [flashSale, setFlashSale] =
+    useState<FlashSale | null>(null);
 
   const [quantityDiscounts, setQuantityDiscounts] =
     useState<QuantityDiscountTier[]>([]);
@@ -51,10 +66,26 @@ export default function FiveAmino1MQPage() {
     inventory > 0 &&
     inventory <= 5;
 
+  const flashSalePrice =
+    flashSale !== null
+      ? Number(flashSale.sale_price)
+      : null;
+
+  const isFlashSaleActive =
+    flashSalePrice !== null &&
+    Number.isFinite(flashSalePrice) &&
+    flashSalePrice > 0 &&
+    flashSalePrice < price;
+
+  const effectiveUnitPrice =
+    isFlashSaleActive
+      ? flashSalePrice
+      : price;
+
   const favoriteProduct = {
     id: product.id,
     name: product.name,
-    price,
+    price: effectiveUnitPrice,
     image: product.image,
     path: product.path,
   };
@@ -62,19 +93,31 @@ export default function FiveAmino1MQPage() {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await fetch(
-          "/api/products",
-          {
-            cache: "no-store",
-          }
-        );
+        const [productResponse, saleResponse] =
+          await Promise.all([
+            fetch("/api/products", {
+              cache: "no-store",
+            }),
+            fetch("/api/flash-sales", {
+              cache: "no-store",
+            }),
+          ]);
 
-        const data = await response.json();
+        const productData =
+          await productResponse.json();
 
-        if (!data.success) return;
+        const saleData =
+          await saleResponse.json().catch(
+            () => ({
+              success: false,
+              sales: [],
+            })
+          );
+
+        if (!productData.success) return;
 
         const fiveAmino =
-          data.products.find(
+          productData.products.find(
             (item: any) =>
               item.slug ===
                 "5amino1mq" ||
@@ -88,33 +131,85 @@ export default function FiveAmino1MQPage() {
                 "5-AMINO-1MQ-50mg" ||
               item.name
                 ?.toLowerCase()
-                .includes(
-                  "5-amino"
-                ) ||
+                .includes("5-amino") ||
               item.name
                 ?.toLowerCase()
-                .includes(
-                  "5amino"
-                )
+                .includes("5amino")
           );
 
         if (fiveAmino) {
+          const dbId =
+            String(fiveAmino.id);
+
+          const regularPrice =
+            Number(
+              fiveAmino.price ?? 55
+            );
+
+          setDatabaseProductId(dbId);
+
           setInventory(
             Number(
-              fiveAmino.inventory ??
-                0
+              fiveAmino.inventory ?? 0
             )
           );
 
-          setPrice(
-            Number(
-              fiveAmino.price ??
-                55
-            )
+          setPrice(regularPrice);
+
+          const now = Date.now();
+
+          const matchingSale =
+            Array.isArray(saleData.sales)
+              ? saleData.sales.find(
+                  (sale: FlashSale) => {
+                    const starts =
+                      new Date(
+                        sale.starts_at
+                      ).getTime();
+
+                    const ends =
+                      new Date(
+                        sale.ends_at
+                      ).getTime();
+
+                    const salePrice =
+                      Number(
+                        sale.sale_price
+                      );
+
+                    return (
+                      sale.active ===
+                        true &&
+                      String(
+                        sale.product_id
+                      ) === dbId &&
+                      Number.isFinite(
+                        starts
+                      ) &&
+                      Number.isFinite(
+                        ends
+                      ) &&
+                      starts <= now &&
+                      ends > now &&
+                      Number.isFinite(
+                        salePrice
+                      ) &&
+                      salePrice > 0 &&
+                      salePrice <
+                        regularPrice
+                    );
+                  }
+                )
+              : null;
+
+          setFlashSale(
+            matchingSale || null
           );
         } else {
+          setDatabaseProductId(null);
           setInventory(null);
           setPrice(55);
+          setFlashSale(null);
         }
       } catch (error) {
         console.error(
@@ -122,8 +217,10 @@ export default function FiveAmino1MQPage() {
           error
         );
 
+        setDatabaseProductId(null);
         setInventory(null);
         setPrice(55);
+        setFlashSale(null);
       }
     };
 
@@ -220,6 +317,18 @@ export default function FiveAmino1MQPage() {
 
     fetchProductData();
     fetchQuantityDiscounts();
+
+    const flashSaleRefresh =
+      window.setInterval(
+        fetchProductData,
+        30_000
+      );
+
+    return () => {
+      window.clearInterval(
+        flashSaleRefresh
+      );
+    };
   }, []);
 
   const getDiscountTier = (
@@ -246,11 +355,13 @@ export default function FiveAmino1MQPage() {
     );
 
   const selectedDiscountPercent =
-    selectedTier?.discount_percent ||
-    0;
+    isFlashSaleActive
+      ? 0
+      : selectedTier?.discount_percent ||
+        0;
 
   const discountedUnitPrice =
-    price *
+    effectiveUnitPrice *
     (1 -
       selectedDiscountPercent /
         100);
@@ -330,16 +441,20 @@ export default function FiveAmino1MQPage() {
     }
 
     const newTier =
-      getDiscountTier(
-        newQuantity
-      );
+      isFlashSaleActive
+        ? null
+        : getDiscountTier(
+            newQuantity
+          );
 
     const newDiscountPercent =
-      newTier?.discount_percent ||
-      0;
+      isFlashSaleActive
+        ? 0
+        : newTier?.discount_percent ||
+          0;
 
     const newDiscountedUnitPrice =
-      price *
+      effectiveUnitPrice *
       (1 -
         newDiscountPercent /
           100);
@@ -368,6 +483,22 @@ export default function FiveAmino1MQPage() {
 
       quantityDiscountTierQuantity:
         newTier?.quantity || null,
+
+      flashSaleApplied:
+        isFlashSaleActive,
+
+      flashSaleId:
+        isFlashSaleActive
+          ? flashSale?.id || null
+          : null,
+
+      flashSalePrice:
+        isFlashSaleActive
+          ? effectiveUnitPrice
+          : null,
+
+      databaseProductId:
+        databaseProductId,
     };
 
     const updatedCart =
@@ -451,8 +582,9 @@ export default function FiveAmino1MQPage() {
                     )}
                   </p>
 
-                  {selectedDiscountPercent >
-                    0 && (
+                  {(isFlashSaleActive ||
+                    selectedDiscountPercent >
+                      0) && (
                     <p className="text-white/35 text-sm line-through">
                       $
                       {formatMoney(
@@ -483,6 +615,15 @@ export default function FiveAmino1MQPage() {
                 <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold uppercase tracking-widest">
                   50mg
                 </span>
+
+                {isFlashSaleActive && (
+                  <span className="rounded-full border border-blue-300/25 bg-blue-400/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#A5D8FF]">
+                    Flash Sale · $
+                    {formatMoney(
+                      effectiveUnitPrice
+                    )} / vial
+                  </span>
+                )}
 
                 {selectedDiscountPercent >
                   0 && (
@@ -548,8 +689,14 @@ export default function FiveAmino1MQPage() {
       </p>
 
       <p className="text-xs text-white/45 mt-1">
-        ${formatMoney(price)}
+        ${formatMoney(effectiveUnitPrice)}
       </p>
+
+      {isFlashSaleActive && (
+        <p className="text-[10px] text-white/25 line-through mt-0.5">
+          ${formatMoney(price)}
+        </p>
+      )}
     </button>
 
     {/* ADMIN QUANTITY TIERS */}
@@ -559,9 +706,14 @@ export default function FiveAmino1MQPage() {
         inventory < tier.quantity;
 
       const tierTotal =
-        price *
-        tier.quantity *
-        (1 - tier.discount_percent / 100);
+        isFlashSaleActive
+          ? effectiveUnitPrice *
+            tier.quantity
+          : price *
+            tier.quantity *
+            (1 -
+              tier.discount_percent /
+                100);
 
       const selected =
         selectedQuantity === tier.quantity;
@@ -597,9 +749,15 @@ export default function FiveAmino1MQPage() {
             ${formatMoney(tierTotal)}
           </p>
 
-          <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
-            Save {tier.discount_percent}%
-          </p>
+          {isFlashSaleActive ? (
+            <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
+              Flash Sale
+            </p>
+          ) : (
+            <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
+              Save {tier.discount_percent}%
+            </p>
+          )}
         </button>
       );
     })}

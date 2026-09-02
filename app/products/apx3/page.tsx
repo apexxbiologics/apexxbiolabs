@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 
 import FavoriteButton from "@/components/FavoriteButton";
-import { useProductPricing } from "@/hooks/useProductPricing";
 
 type QuantityDiscountTier = {
   id: string;
@@ -20,7 +19,23 @@ type QuantityDiscountTier = {
   sort_order: number;
 };
 
+type FlashSale = {
+  id: string;
+  product_id: string;
+  sale_price: number;
+  starts_at: string;
+  ends_at: string;
+  active: boolean;
+};
+
 type ProductSize = "10mg" | "20mg";
+
+type ProductVariantData = {
+  inventory: number | null;
+  price: number;
+  databaseProductId: string | null;
+  flashSale: FlashSale | null;
+};
 
 export default function APX3Page() {
   const [added, setAdded] =
@@ -40,7 +55,6 @@ export default function APX3Page() {
   ] = useState<
     QuantityDiscountTier[]
   >([]);
-
 
   const productOptions = {
     "10mg": {
@@ -62,89 +76,26 @@ export default function APX3Page() {
     },
   };
 
-  const pricingVariants = [
-    {
-      key: "10mg" as const,
-      fallbackPrice: 70,
-      matches: (item: any) => {
-        const slug =
-          item.slug
-            ?.toLowerCase()
-            .trim();
-
-        const id =
-          String(item.id || "")
-            .toLowerCase()
-            .trim();
-
-        const name =
-          item.name
-            ?.toLowerCase()
-            .trim();
-
-        const size =
-          item.size
-            ?.toLowerCase()
-            .trim();
-
-        return (
-          slug === "apx3-10mg" ||
-          slug === "apx-3-10mg" ||
-          id === "apx3-10mg" ||
-          id === "apx-3-10mg" ||
-          (name?.includes("apx-3") &&
-            size === "10mg") ||
-          (name?.includes("apx3") &&
-            size === "10mg") ||
-          name?.includes("apx-3 10") ||
-          name?.includes("apx3 10")
-        );
+  const [productData, setProductData] =
+    useState<
+      Record<
+        ProductSize,
+        ProductVariantData
+      >
+    >({
+      "10mg": {
+        inventory: null,
+        price: 70,
+        databaseProductId: null,
+        flashSale: null,
       },
-    },
 
-    {
-      key: "20mg" as const,
-      fallbackPrice: 130,
-      matches: (item: any) => {
-        const slug =
-          item.slug
-            ?.toLowerCase()
-            .trim();
-
-        const id =
-          String(item.id || "")
-            .toLowerCase()
-            .trim();
-
-        const name =
-          item.name
-            ?.toLowerCase()
-            .trim();
-
-        const size =
-          item.size
-            ?.toLowerCase()
-            .trim();
-
-        return (
-          slug === "apx3-20mg" ||
-          slug === "apx-3-20mg" ||
-          id === "apx3-20mg" ||
-          id === "apx-3-20mg" ||
-          (name?.includes("apx-3") &&
-            size === "20mg") ||
-          (name?.includes("apx3") &&
-            size === "20mg") ||
-          name?.includes("apx-3 20") ||
-          name?.includes("apx3 20")
-        );
+      "20mg": {
+        inventory: null,
+        price: 130,
+        databaseProductId: null,
+        flashSale: null,
       },
-    },
-  ];
-
-  const { pricing } =
-    useProductPricing({
-      variants: pricingVariants,
     });
 
   const coaOptions = {
@@ -177,36 +128,107 @@ export default function APX3Page() {
   const selectedCoa =
     coaOptions[selectedMg];
 
-  const selectedPricing =
-    pricing[selectedMg];
+  const selectedVariantData =
+    productData[selectedMg];
 
   const selectedInventory =
-    selectedPricing.inventory ?? 0;
+    selectedVariantData.inventory;
 
   const selectedPrice =
-    selectedPricing.regularPrice;
-
-  const effectiveUnitPrice =
-    selectedPricing.effectiveUnitPrice;
-
-  const isFlashSaleActive =
-    selectedPricing.isFlashSaleActive;
+    selectedVariantData.price;
 
   const flashSale =
-    selectedPricing.flashSale;
+    selectedVariantData.flashSale;
 
   const databaseProductId =
-    selectedPricing.databaseProductId;
+    selectedVariantData.databaseProductId;
+
+  const flashSalePrice =
+    flashSale !== null
+      ? Number(
+          flashSale.sale_price
+        )
+      : null;
+
+  const isFlashSaleActive =
+    flashSalePrice !== null &&
+    Number.isFinite(
+      flashSalePrice
+    ) &&
+    flashSalePrice > 0 &&
+    flashSalePrice <
+      selectedPrice;
+
+  const effectiveUnitPrice =
+    isFlashSaleActive
+      ? flashSalePrice
+      : selectedPrice;
+
+  const getVariantEffectivePrice = (
+    size: ProductSize
+  ) => {
+    const variant =
+      productData[size];
+
+    const salePrice =
+      variant.flashSale !== null
+        ? Number(
+            variant.flashSale
+              .sale_price
+          )
+        : null;
+
+    const saleActive =
+      salePrice !== null &&
+      Number.isFinite(
+        salePrice
+      ) &&
+      salePrice > 0 &&
+      salePrice <
+        variant.price;
+
+    return saleActive
+      ? salePrice
+      : variant.price;
+  };
+
+  const isVariantFlashSaleActive = (
+    size: ProductSize
+  ) => {
+    const variant =
+      productData[size];
+
+    const salePrice =
+      variant.flashSale !== null
+        ? Number(
+            variant.flashSale
+              .sale_price
+          )
+        : null;
+
+    return (
+      salePrice !== null &&
+      Number.isFinite(
+        salePrice
+      ) &&
+      salePrice > 0 &&
+      salePrice <
+        variant.price
+    );
+  };
 
   const isOutOfStock =
+    selectedInventory !== null &&
     selectedInventory <= 0;
 
   const isLimitedStock =
+    selectedInventory !== null &&
     selectedInventory > 0 &&
     selectedInventory <= 5;
 
   const favoriteProduct = {
-    id: selectedProduct.id,
+    id:
+      selectedProduct.id,
 
     name:
       selectedProduct.name,
@@ -222,6 +244,287 @@ export default function APX3Page() {
   };
 
   useEffect(() => {
+    const fetchProductData =
+      async () => {
+        try {
+          const [
+            productResponse,
+            saleResponse,
+          ] =
+            await Promise.all([
+              fetch(
+                "/api/products",
+                {
+                  cache:
+                    "no-store",
+                }
+              ),
+
+              fetch(
+                "/api/flash-sales",
+                {
+                  cache:
+                    "no-store",
+                }
+              ),
+            ]);
+
+          const apiProductData =
+            await productResponse.json();
+
+          const saleData =
+            await saleResponse
+              .json()
+              .catch(() => ({
+                success: false,
+                sales: [],
+              }));
+
+          if (
+            !apiProductData.success
+          ) {
+            return;
+          }
+
+          const findProduct = (
+            size: ProductSize
+          ) => {
+            return apiProductData.products.find(
+              (item: any) => {
+                const slug =
+                  item.slug
+                    ?.toLowerCase()
+                    .trim();
+
+                const id =
+                  String(
+                    item.id || ""
+                  )
+                    .toLowerCase()
+                    .trim();
+
+                const name =
+                  item.name
+                    ?.toLowerCase()
+                    .trim();
+
+                const itemSize =
+                  item.size
+                    ?.toLowerCase()
+                    .trim();
+
+                if (
+                  size ===
+                  "10mg"
+                ) {
+                  return (
+                    slug ===
+                      "apx3-10mg" ||
+                    slug ===
+                      "apx-3-10mg" ||
+                    id ===
+                      "apx3-10mg" ||
+                    id ===
+                      "apx-3-10mg" ||
+                    (name?.includes(
+                      "apx-3"
+                    ) &&
+                      itemSize ===
+                        "10mg") ||
+                    (name?.includes(
+                      "apx3"
+                    ) &&
+                      itemSize ===
+                        "10mg") ||
+                    name?.includes(
+                      "apx-3 10"
+                    ) ||
+                    name?.includes(
+                      "apx3 10"
+                    )
+                  );
+                }
+
+                return (
+                  slug ===
+                    "apx3-20mg" ||
+                  slug ===
+                    "apx-3-20mg" ||
+                  id ===
+                    "apx3-20mg" ||
+                  id ===
+                    "apx-3-20mg" ||
+                  (name?.includes(
+                    "apx-3"
+                  ) &&
+                    itemSize ===
+                      "20mg") ||
+                  (name?.includes(
+                    "apx3"
+                  ) &&
+                    itemSize ===
+                      "20mg") ||
+                  name?.includes(
+                    "apx-3 20"
+                  ) ||
+                  name?.includes(
+                    "apx3 20"
+                  )
+                );
+              }
+            );
+          };
+
+          const buildVariantData = (
+            size: ProductSize,
+            fallbackPrice: number
+          ): ProductVariantData => {
+            const dbProduct =
+              findProduct(size);
+
+            if (!dbProduct) {
+              return {
+                inventory:
+                  null,
+                price:
+                  fallbackPrice,
+                databaseProductId:
+                  null,
+                flashSale:
+                  null,
+              };
+            }
+
+            const dbId =
+              String(
+                dbProduct.id
+              );
+
+            const regularPrice =
+              Number(
+                dbProduct.price ??
+                  fallbackPrice
+              );
+
+            const now =
+              Date.now();
+
+            const matchingSale =
+              Array.isArray(
+                saleData.sales
+              )
+                ? saleData.sales.find(
+                    (
+                      sale: FlashSale
+                    ) => {
+                      const starts =
+                        new Date(
+                          sale.starts_at
+                        ).getTime();
+
+                      const ends =
+                        new Date(
+                          sale.ends_at
+                        ).getTime();
+
+                      const salePrice =
+                        Number(
+                          sale.sale_price
+                        );
+
+                      return (
+                        sale.active ===
+                          true &&
+                        String(
+                          sale.product_id
+                        ) ===
+                          dbId &&
+                        Number.isFinite(
+                          starts
+                        ) &&
+                        Number.isFinite(
+                          ends
+                        ) &&
+                        starts <=
+                          now &&
+                        ends >
+                          now &&
+                        Number.isFinite(
+                          salePrice
+                        ) &&
+                        salePrice >
+                          0 &&
+                        salePrice <
+                          regularPrice
+                      );
+                    }
+                  )
+                : null;
+
+            return {
+              inventory:
+                Number(
+                  dbProduct.inventory ??
+                    0
+                ),
+
+              price:
+                regularPrice,
+
+              databaseProductId:
+                dbId,
+
+              flashSale:
+                matchingSale ||
+                null,
+            };
+          };
+
+          setProductData({
+            "10mg":
+              buildVariantData(
+                "10mg",
+                70
+              ),
+
+            "20mg":
+              buildVariantData(
+                "20mg",
+                130
+              ),
+          });
+        } catch (error) {
+          console.error(
+            "Failed to fetch APX-3 product data:",
+            error
+          );
+
+          setProductData({
+            "10mg": {
+              inventory:
+                null,
+              price:
+                70,
+              databaseProductId:
+                null,
+              flashSale:
+                null,
+            },
+
+            "20mg": {
+              inventory:
+                null,
+              price:
+                130,
+              databaseProductId:
+                null,
+              flashSale:
+                null,
+            },
+          });
+        }
+      };
+
     const fetchQuantityDiscounts =
       async () => {
         try {
@@ -316,7 +619,21 @@ export default function APX3Page() {
         }
       };
 
+    fetchProductData();
+
     fetchQuantityDiscounts();
+
+    const flashSaleRefresh =
+      window.setInterval(
+        fetchProductData,
+        30_000
+      );
+
+    return () => {
+      window.clearInterval(
+        flashSaleRefresh
+      );
+    };
   }, []);
 
   const getDiscountTier = (
@@ -366,14 +683,18 @@ export default function APX3Page() {
   const formatMoney = (
     amount: number
   ) =>
-    Number(amount).toFixed(2);
+    Number(
+      amount
+    ).toFixed(2);
 
   const selectQuantity = (
     quantity: number
   ) => {
     if (
+      selectedInventory !==
+        null &&
       quantity >
-      selectedInventory
+        selectedInventory
     ) {
       return;
     }
@@ -388,9 +709,13 @@ export default function APX3Page() {
   const changeSize = (
     size: ProductSize
   ) => {
-    setSelectedMg(size);
+    setSelectedMg(
+      size
+    );
 
-    setSelectedQuantity(1);
+    setSelectedQuantity(
+      1
+    );
 
     setAdded(false);
   };
@@ -427,8 +752,10 @@ export default function APX3Page() {
       selectedQuantity;
 
     if (
+      selectedInventory !==
+        null &&
       newQuantity >
-      selectedInventory
+        selectedInventory
     ) {
       alert(
         `Only ${selectedInventory} vial${
@@ -502,7 +829,8 @@ export default function APX3Page() {
 
       flashSaleId:
         isFlashSaleActive
-          ? flashSale?.id || null
+          ? flashSale?.id ||
+            null
           : null,
 
       flashSalePrice:
@@ -510,7 +838,8 @@ export default function APX3Page() {
           ? effectiveUnitPrice
           : null,
 
-      databaseProductId,
+      databaseProductId:
+        databaseProductId,
     };
 
     const updatedCart =
@@ -554,9 +883,11 @@ export default function APX3Page() {
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-start">
+
             {/* IMAGE */}
             <div className="flex items-center justify-center">
               <div className="relative w-full max-w-[520px] aspect-square rounded-[42px] overflow-hidden border border-blue-400/10 bg-white/[0.03] shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+
                 <FavoriteButton
                   product={
                     favoriteProduct
@@ -577,11 +908,13 @@ export default function APX3Page() {
 
             {/* PRODUCT CARD */}
             <div className="rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 md:p-8">
+
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">
                 Research Peptide
               </p>
 
               <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-3">
+
                 <h1 className="text-4xl md:text-5xl font-black text-white">
                   {
                     selectedProduct.name
@@ -589,6 +922,7 @@ export default function APX3Page() {
                 </h1>
 
                 <div className="sm:text-right">
+
                   <p className="text-3xl md:text-4xl font-black text-white">
                     $
                     {formatMoney(
@@ -624,11 +958,13 @@ export default function APX3Page() {
 
               {/* SIZE */}
               <div className="mb-5">
+
                 <p className="uppercase tracking-widest text-white/45 text-xs mb-3">
                   Select Size
                 </p>
 
                 <div className="grid grid-cols-2 gap-3">
+
                   {(
                     [
                       "10mg",
@@ -651,6 +987,7 @@ export default function APX3Page() {
                             : "border-white/10 bg-white/[0.03] text-white/65 hover:bg-white/[0.06]"
                         }`}
                       >
+
                         {selectedMg ===
                           mg && (
                           <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
@@ -672,28 +1009,34 @@ export default function APX3Page() {
                         <p className="text-sm text-white/50 mt-1">
                           $
                           {formatMoney(
-                            pricing[mg]
-                              .effectiveUnitPrice
+                            getVariantEffectivePrice(
+                              mg
+                            )
                           )}
                         </p>
 
-                        {pricing[mg]
-                          .isFlashSaleActive && (
+                        {isVariantFlashSaleActive(
+                          mg
+                        ) && (
                           <p className="text-[10px] text-white/25 line-through mt-0.5">
                             $
                             {formatMoney(
-                              pricing[mg]
-                                .regularPrice
+                              productData[
+                                mg
+                              ].price
                             )}
                           </p>
                         )}
+
                       </button>
                     )
                   )}
+
                 </div>
               </div>
 
               <div className="flex flex-wrap items-center gap-3 mb-5">
+
                 <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold uppercase tracking-widest">
                   {selectedMg}
                 </span>
@@ -703,7 +1046,8 @@ export default function APX3Page() {
                     Flash Sale · $
                     {formatMoney(
                       effectiveUnitPrice
-                    )} / vial
+                    )}{" "}
+                    / vial
                   </span>
                 )}
 
@@ -729,115 +1073,180 @@ export default function APX3Page() {
                     Out of Stock
                   </span>
                 )}
+
               </div>
 
               <div className="h-px bg-white/10 mb-5" />
 
-{/* QUANTITY */}
-<div className="mb-5">
-  <div className="flex items-center justify-between gap-4 mb-3">
-    <p className="uppercase tracking-widest text-white/45 text-xs">
-      Quantity
-    </p>
+              {/* QUANTITY */}
+              <div className="mb-5">
 
-    {selectedQuantity > 1 && (
-      <p className="text-[#A5D8FF] text-xs font-semibold">
-        ${formatMoney(discountedUnitPrice)} / vial
-      </p>
-    )}
-  </div>
+                <div className="flex items-center justify-between gap-4 mb-3">
 
-  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-    {/* 1 VIAL */}
-    <button
-      type="button"
-      disabled={isOutOfStock}
-      onClick={() => selectQuantity(1)}
-      className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-        selectedQuantity === 1
-          ? "border-blue-300 bg-blue-400/10"
-          : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-      } disabled:opacity-35 disabled:cursor-not-allowed`}
-    >
-      {selectedQuantity === 1 && (
-        <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-          <Check size={11} strokeWidth={3} />
-        </span>
-      )}
+                  <p className="uppercase tracking-widest text-white/45 text-xs">
+                    Quantity
+                  </p>
 
-      <p className="font-black text-white text-sm">
-        1 Vial
-      </p>
+                  {selectedQuantity >
+                    1 && (
+                    <p className="text-[#A5D8FF] text-xs font-semibold">
+                      $
+                      {formatMoney(
+                        discountedUnitPrice
+                      )}{" "}
+                      / vial
+                    </p>
+                  )}
 
-      <p className="text-xs text-white/45 mt-1">
-        ${formatMoney(effectiveUnitPrice)}
-      </p>
+                </div>
 
-      {isFlashSaleActive && (
-        <p className="text-[10px] text-white/25 line-through mt-0.5">
-          ${formatMoney(selectedPrice)}
-        </p>
-      )}
-    </button>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
 
-    {/* ADMIN QUANTITY TIERS */}
-    {quantityDiscounts.map((tier) => {
-      const tierUnavailable =
-        selectedInventory < tier.quantity;
+                  {/* 1 VIAL */}
+                  <button
+                    type="button"
+                    disabled={
+                      isOutOfStock
+                    }
+                    onClick={() =>
+                      selectQuantity(
+                        1
+                      )
+                    }
+                    className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+                      selectedQuantity ===
+                      1
+                        ? "border-blue-300 bg-blue-400/10"
+                        : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                    } disabled:opacity-35 disabled:cursor-not-allowed`}
+                  >
 
-      const tierTotal =
-        isFlashSaleActive
-          ? effectiveUnitPrice *
-            tier.quantity
-          : selectedPrice *
-            tier.quantity *
-            (1 -
-              tier.discount_percent /
-                100);
+                    {selectedQuantity ===
+                      1 && (
+                      <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                        <Check
+                          size={11}
+                          strokeWidth={
+                            3
+                          }
+                        />
+                      </span>
+                    )}
 
-      const selected =
-        selectedQuantity === tier.quantity;
+                    <p className="font-black text-white text-sm">
+                      1 Vial
+                    </p>
 
-      return (
-        <button
-          key={tier.id}
-          type="button"
-          disabled={tierUnavailable}
-          onClick={() => selectQuantity(tier.quantity)}
-          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-            selected
-              ? "border-blue-300 bg-blue-400/10"
-              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-          } disabled:opacity-30 disabled:cursor-not-allowed`}
-        >
-          {selected && (
-            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-              <Check size={11} strokeWidth={3} />
-            </span>
-          )}
+                    <p className="text-xs text-white/45 mt-1">
+                      $
+                      {formatMoney(
+                        effectiveUnitPrice
+                      )}
+                    </p>
 
-          <p className="font-black text-white text-sm">
-            {tier.quantity} Vials
-          </p>
+                    {isFlashSaleActive && (
+                      <p className="text-[10px] text-white/25 line-through mt-0.5">
+                        $
+                        {formatMoney(
+                          selectedPrice
+                        )}
+                      </p>
+                    )}
 
-          <p className="text-xs text-white/45 mt-1">
-            ${formatMoney(tierTotal)}
-          </p>
+                  </button>
 
-          {isFlashSaleActive ? (
-            <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
-              Flash Sale
-            </p>
-          ) : (
-            <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
-              Save {tier.discount_percent}%
-            </p>
-          )}
-        </button>
-      );
-    })}
-  </div>
-</div>
+                  {/* ADMIN QUANTITY TIERS */}
+                  {quantityDiscounts.map(
+                    (tier) => {
+                      const tierUnavailable =
+                        selectedInventory !==
+                          null &&
+                        selectedInventory <
+                          tier.quantity;
+
+                      const tierTotal =
+                        isFlashSaleActive
+                          ? effectiveUnitPrice *
+                            tier.quantity
+                          : selectedPrice *
+                            tier.quantity *
+                            (1 -
+                              tier.discount_percent /
+                                100);
+
+                      const selected =
+                        selectedQuantity ===
+                        tier.quantity;
+
+                      return (
+                        <button
+                          key={
+                            tier.id
+                          }
+                          type="button"
+                          disabled={
+                            tierUnavailable
+                          }
+                          onClick={() =>
+                            selectQuantity(
+                              tier.quantity
+                            )
+                          }
+                          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+                            selected
+                              ? "border-blue-300 bg-blue-400/10"
+                              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                          } disabled:opacity-30 disabled:cursor-not-allowed`}
+                        >
+
+                          {selected && (
+                            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                              <Check
+                                size={
+                                  11
+                                }
+                                strokeWidth={
+                                  3
+                                }
+                              />
+                            </span>
+                          )}
+
+                          <p className="font-black text-white text-sm">
+                            {
+                              tier.quantity
+                            }{" "}
+                            Vials
+                          </p>
+
+                          <p className="text-xs text-white/45 mt-1">
+                            $
+                            {formatMoney(
+                              tierTotal
+                            )}
+                          </p>
+
+                          {isFlashSaleActive ? (
+                            <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
+                              Flash Sale
+                            </p>
+                          ) : (
+                            <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
+                              Save{" "}
+                              {
+                                tier.discount_percent
+                              }
+                              %
+                            </p>
+                          )}
+
+                        </button>
+                      );
+                    }
+                  )}
+
+                </div>
+              </div>
 
               {/* FREE GIFT */}
               <div className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-3 mb-5">
@@ -849,6 +1258,7 @@ export default function APX3Page() {
 
               {/* ACTION BUTTONS */}
               <div className="grid grid-cols-2 gap-3">
+
                 {isOutOfStock ? (
                   <button
                     disabled
@@ -864,7 +1274,9 @@ export default function APX3Page() {
                     className="col-span-2 bg-white text-[#081526] hover:bg-blue-100 rounded-full py-4 uppercase tracking-widest text-xs font-bold transition-all flex items-center justify-center gap-2"
                   >
                     <ShoppingCart
-                      size={18}
+                      size={
+                        18
+                      }
                     />
 
                     {added
@@ -891,6 +1303,7 @@ export default function APX3Page() {
                 >
                   Keep Shopping
                 </a>
+
               </div>
 
               <a
@@ -904,6 +1317,7 @@ export default function APX3Page() {
                 View Certificate of
                 Analysis →
               </a>
+
             </div>
           </div>
         </div>
@@ -911,9 +1325,13 @@ export default function APX3Page() {
 
       {/* COA SUMMARY */}
       <section className="px-6 md:px-10 pb-12">
+
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+
           <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+
             <div>
+
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
                 Freedom Diagnostics
               </p>
@@ -924,6 +1342,7 @@ export default function APX3Page() {
               </h3>
 
               <div className="flex flex-wrap gap-2">
+
                 <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
                   ✓ Identity Confirmed
                 </span>
@@ -948,10 +1367,12 @@ export default function APX3Page() {
                     selectedCoa.lot
                   }
                 </span>
+
               </div>
             </div>
 
             <div className="md:text-right">
+
               <p className="text-4xl font-black text-[#A5D8FF]">
                 {
                   selectedCoa.purity
@@ -972,6 +1393,7 @@ export default function APX3Page() {
               >
                 View Full COA
               </a>
+
             </div>
           </div>
         </div>
@@ -979,7 +1401,9 @@ export default function APX3Page() {
 
       {/* QUALITY */}
       <section className="px-6 md:px-10 pb-10">
+
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-7 grid grid-cols-1 md:grid-cols-4 gap-6">
+
           {[
             [
               FlaskConical,
@@ -1014,10 +1438,13 @@ export default function APX3Page() {
               >
                 <Icon
                   className="text-[#A5D8FF]"
-                  size={28}
+                  size={
+                    28
+                  }
                 />
 
                 <div>
+
                   <h3 className="text-white uppercase tracking-widest font-bold text-xs">
                     {
                       title
@@ -1029,16 +1456,20 @@ export default function APX3Page() {
                       text
                     }
                   </p>
+
                 </div>
               </div>
             )
           )}
+
         </div>
       </section>
 
       {/* RESEARCH PROFILE */}
       <section className="px-6 md:px-10 pb-14">
+
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] p-8">
+
           <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">
             Research Profile
           </p>
@@ -1062,6 +1493,7 @@ export default function APX3Page() {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+
             {[
               [
                 "GIP Pathway",
@@ -1090,6 +1522,7 @@ export default function APX3Page() {
                   }
                   className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
                 >
+
                   <h3 className="text-white font-bold mb-2">
                     {
                       title
@@ -1101,16 +1534,20 @@ export default function APX3Page() {
                       text
                     }
                   </p>
+
                 </div>
               )
             )}
+
           </div>
         </div>
       </section>
 
       {/* RELATED */}
       <section className="px-6 md:px-10 pb-14">
+
         <div className="max-w-7xl mx-auto">
+
           <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
             Frequently Researched
             Together
@@ -1122,9 +1559,11 @@ export default function APX3Page() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+
             {[
               {
-                name: "Adamax",
+                name:
+                  "Adamax",
 
                 image:
                   "/images/adamaxblue.PNG",
@@ -1137,7 +1576,8 @@ export default function APX3Page() {
               },
 
               {
-                name: "MOTS-C",
+                name:
+                  "MOTS-C",
 
                 image:
                   "/images/motscblue.png",
@@ -1150,7 +1590,8 @@ export default function APX3Page() {
               },
 
               {
-                name: "CJC/IPA",
+                name:
+                  "CJC/IPA",
 
                 image:
                   "/images/cjcipablue.png",
@@ -1173,6 +1614,7 @@ export default function APX3Page() {
                   className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/40 transition-all"
                 >
                   <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
+
                     <img
                       src={
                         item.image
@@ -1182,6 +1624,7 @@ export default function APX3Page() {
                       }
                       className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
                     />
+
                   </div>
 
                   <h3 className="text-xl font-black text-white mb-2">
@@ -1199,9 +1642,11 @@ export default function APX3Page() {
                   <span className="inline-block mt-3 text-[#A5D8FF] text-sm font-semibold">
                     View Product →
                   </span>
+
                 </a>
               )
             )}
+
           </div>
         </div>
       </section>
@@ -1232,6 +1677,7 @@ export default function APX3Page() {
             className="px-6 md:px-10 pb-10"
           >
             <div className="max-w-7xl mx-auto rounded-[26px] border border-white/10 bg-white/[0.04] p-6">
+
               <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-xs mb-3">
                 {
                   section.title
@@ -1243,10 +1689,12 @@ export default function APX3Page() {
                   section.text
                 }
               </p>
+
             </div>
           </section>
         )
       )}
+
     </main>
   );
 }

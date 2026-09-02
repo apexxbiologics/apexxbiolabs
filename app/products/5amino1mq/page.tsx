@@ -868,7 +868,7 @@ export default function FiveAmino1MQPage() {
             {[
               {
                 name:
-                  "MOTS-C 10mg",
+                  "MOTS-C",
 
                 image:
                   "/images/motscblue.png",
@@ -882,13 +882,13 @@ export default function FiveAmino1MQPage() {
 
               {
                 name:
-                  "Tesamorelin 5mg",
+                  "Tesamorelin",
 
                 image:
-                  "/images/tesa5.png",
+                  "/images/tesa5blue.png",
 
                 path:
-                  "/products/tesamorelin-5mg",
+                  "/products/tesamorelin",
 
                 text:
                   "Studied in research models involving GH-axis signaling, body composition, and metabolic pathway regulation.",
@@ -896,13 +896,13 @@ export default function FiveAmino1MQPage() {
 
               {
                 name:
-                  "CJC/Ipamorelin 10mg",
+                  "CJC/IPA",
 
                 image:
-                  "/images/cjcipa.png",
+                  "/images/cjcipablue.png",
 
                 path:
-                  "/products/cjc-ipa",
+                  "/products/cjcipa",
 
                 text:
                   "Commonly evaluated in research involving growth hormone secretagogue pathways and recovery-related models.",
@@ -922,7 +922,7 @@ export default function FiveAmino1MQPage() {
                       alt={
                         item.name
                       }
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
                     />
                   </div>
 

@@ -106,7 +106,7 @@ const bundleProductImages: Record<string, string> = {
   "ss31": "/images/ss3110blue.png",
   "ara290": "/images/ara290blue.png",
   "aod9604": "/images/aod9604blue.png",
-  "adamax": "/images/adamaxblue.png",
+  "adamax": "/images/adamaxblue.PNG",
   "neurox": "/images/neurox48blue.png",
   "semax": "/images/semaxblue.png",
   "selank": "/images/selankblue.png",

@@ -88,8 +88,8 @@ const eligibleBundleKeywords = [
 const PRODUCTS_PER_PAGE = 8;
 
 const bundleProductImages: Record<string, string> = {
-  "apx3": "/images/apx310blue.png",
-  "apx2": "/images/apx230blue.png",
+  "apx3": "/images/apx3blue.png",
+  "apx2": "/images/apx2blue.png",
   "wolverine": "/images/wolverineblue.png",
   "bpc157": "/images/bpc157blue.png",
   "tb500": "/images/tb500blue.png",
@@ -106,7 +106,7 @@ const bundleProductImages: Record<string, string> = {
   "ss31": "/images/ss3110blue.png",
   "ara290": "/images/ara290blue.png",
   "aod9604": "/images/aod9604blue.png",
-  "adamax": "/images/adamaxblue.PNG",
+  "adamax": "/images/adamaxblue.png",
   "neurox": "/images/neurox48blue.png",
   "semax": "/images/semaxblue.png",
   "selank": "/images/selankblue.png",

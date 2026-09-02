@@ -17,6 +17,9 @@ import {
   Shirt,
   Archive,
   BadgePercent,
+  Zap,
+  Clock3,
+  Trash2,
 } from "lucide-react";
 
 type Product = {
@@ -38,6 +41,23 @@ type QuantityDiscountTier = {
   sort_order: number;
 };
 
+type FlashSale = {
+  id: string;
+  product_id: string;
+  sale_price: number;
+  starts_at: string;
+  ends_at: string;
+  active: boolean;
+  created_at?: string;
+};
+
+type FlashSaleForm = {
+  product_id: string;
+  sale_price: string;
+  starts_at: string;
+  ends_at: string;
+};
+
 type ProductGroup =
   | "peptides"
   | "shirts"
@@ -53,6 +73,26 @@ export default function AdminProductsPage() {
   ] = useState<
     QuantityDiscountTier[]
   >([]);
+
+  const [flashSales, setFlashSales] =
+    useState<FlashSale[]>([]);
+
+  const [flashSaleLoading, setFlashSaleLoading] =
+    useState(true);
+
+  const [savingFlashSale, setSavingFlashSale] =
+    useState(false);
+
+  const [endingFlashSaleId, setEndingFlashSaleId] =
+    useState<string | null>(null);
+
+  const [flashSaleForm, setFlashSaleForm] =
+    useState<FlashSaleForm>({
+      product_id: "",
+      sale_price: "",
+      starts_at: "",
+      ends_at: "",
+    });
 
   const [search, setSearch] =
     useState("");
@@ -264,6 +304,291 @@ export default function AdminProductsPage() {
       }
     };
 
+  const fetchFlashSales = async () => {
+    setFlashSaleLoading(true);
+
+    try {
+      const response = await fetch(
+        "/api/admin/flash-sales",
+        {
+          cache: "no-store",
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        setStatusMessage(
+          `❌ ${
+            data.error ||
+            "Failed to load flash sales."
+          }`
+        );
+        return;
+      }
+
+      setFlashSales(
+        Array.isArray(data.sales)
+          ? data.sales
+          : Array.isArray(data.flashSales)
+          ? data.flashSales
+          : []
+      );
+    } catch (error) {
+      console.error(
+        "Failed to load flash sales:",
+        error
+      );
+
+      setStatusMessage(
+        "❌ Something went wrong loading flash sales."
+      );
+    } finally {
+      setFlashSaleLoading(false);
+    }
+  };
+
+  const toIsoFromLocalInput = (
+    value: string
+  ) => {
+    if (!value) return "";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
+
+    return date.toISOString();
+  };
+
+  const formatAdminDateTime = (
+    value: string
+  ) => {
+    if (!value) return "—";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return "—";
+    }
+
+    return date.toLocaleString();
+  };
+
+  const getFlashSaleState = (
+    sale: FlashSale
+  ) => {
+    if (!sale.active) {
+      return "Ended";
+    }
+
+    const now = Date.now();
+    const starts = new Date(
+      sale.starts_at
+    ).getTime();
+    const ends = new Date(
+      sale.ends_at
+    ).getTime();
+
+    if (now < starts) {
+      return "Scheduled";
+    }
+
+    if (now >= ends) {
+      return "Expired";
+    }
+
+    return "Active";
+  };
+
+  const createFlashSale = async () => {
+    setStatusMessage("");
+
+    const product = products.find(
+      (item) =>
+        item.id ===
+        flashSaleForm.product_id
+    );
+
+    const salePrice = Number(
+      flashSaleForm.sale_price
+    );
+
+    const startsAt =
+      toIsoFromLocalInput(
+        flashSaleForm.starts_at
+      );
+
+    const endsAt =
+      toIsoFromLocalInput(
+        flashSaleForm.ends_at
+      );
+
+    if (!product) {
+      setStatusMessage(
+        "❌ Please choose a product."
+      );
+      return;
+    }
+
+    if (
+      !Number.isFinite(salePrice) ||
+      salePrice <= 0
+    ) {
+      setStatusMessage(
+        "❌ Enter a valid flash sale price."
+      );
+      return;
+    }
+
+    if (
+      salePrice >=
+      Number(product.price)
+    ) {
+      setStatusMessage(
+        "❌ Flash sale price must be lower than the regular price."
+      );
+      return;
+    }
+
+    if (!startsAt || !endsAt) {
+      setStatusMessage(
+        "❌ Choose both a start and end date/time."
+      );
+      return;
+    }
+
+    if (
+      new Date(endsAt).getTime() <=
+      new Date(startsAt).getTime()
+    ) {
+      setStatusMessage(
+        "❌ End time must be after the start time."
+      );
+      return;
+    }
+
+    setSavingFlashSale(true);
+
+    try {
+      const response = await fetch(
+        "/api/admin/flash-sales",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          cache: "no-store",
+          body: JSON.stringify({
+            product_id: product.id,
+            sale_price: salePrice,
+            starts_at: startsAt,
+            ends_at: endsAt,
+            active: true,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+        setStatusMessage(
+          `❌ ${
+            data.error ||
+            "Flash sale could not be created."
+          }`
+        );
+        return;
+      }
+
+      setFlashSaleForm({
+        product_id: "",
+        sale_price: "",
+        starts_at: "",
+        ends_at: "",
+      });
+
+      await fetchFlashSales();
+
+      setStatusMessage(
+        `✓ Flash sale created for ${product.name}.`
+      );
+    } catch (error) {
+      console.error(
+        "Create flash sale error:",
+        error
+      );
+
+      setStatusMessage(
+        "❌ Something went wrong creating the flash sale."
+      );
+    } finally {
+      setSavingFlashSale(false);
+    }
+  };
+
+  const endFlashSale = async (
+    saleId: string
+  ) => {
+    setEndingFlashSaleId(saleId);
+    setStatusMessage("");
+
+    try {
+      const response = await fetch(
+        "/api/admin/flash-sales",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          cache: "no-store",
+          body: JSON.stringify({
+            id: saleId,
+            active: false,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+        setStatusMessage(
+          `❌ ${
+            data.error ||
+            "Flash sale could not be ended."
+          }`
+        );
+        return;
+      }
+
+      await fetchFlashSales();
+
+      setStatusMessage(
+        "✓ Flash sale ended."
+      );
+    } catch (error) {
+      console.error(
+        "End flash sale error:",
+        error
+      );
+
+      setStatusMessage(
+        "❌ Something went wrong ending the flash sale."
+      );
+    } finally {
+      setEndingFlashSaleId(null);
+    }
+  };
+
   const refreshAll =
     async () => {
       setStatusMessage("");
@@ -277,6 +602,7 @@ export default function AdminProductsPage() {
   useEffect(() => {
     fetchProducts();
     fetchQuantityDiscounts();
+    fetchFlashSales();
   }, []);
 
   const updateLocalInventory = (
@@ -1071,6 +1397,430 @@ export default function AdminProductsPage() {
         )}
 
         <div className="space-y-8">
+
+          {/* FLASH SALES */}
+          <section className="rounded-[36px] border border-orange-400/20 bg-orange-500/[0.055] backdrop-blur-sm overflow-hidden">
+            <div className="p-6 md:p-8 border-b border-white/10">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl border border-orange-400/20 bg-orange-500/10 flex items-center justify-center">
+                    <Zap
+                      size={22}
+                      className="text-orange-300"
+                    />
+                  </div>
+
+                  <div>
+                    <p className="text-orange-300 text-xs uppercase tracking-[0.3em] mb-1">
+                      Limited Time Pricing
+                    </p>
+
+                    <h2 className="text-2xl font-black">
+                      Flash Sales
+                    </h2>
+
+                    <p className="text-white/45 text-sm mt-2 max-w-2xl">
+                      Schedule a temporary sale price for one specific product.
+                      The regular product price stays unchanged.
+                    </p>
+                  </div>
+                </div>
+
+                <span className="inline-flex self-start md:self-auto rounded-full border border-orange-400/20 bg-orange-500/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-orange-200">
+                  Timed Pricing
+                </span>
+              </div>
+            </div>
+
+            <div className="p-6 md:p-8 space-y-7">
+              {/* CREATE SALE */}
+              <div className="rounded-[26px] border border-white/10 bg-[#081526]/60 p-5 md:p-6">
+                <div className="grid xl:grid-cols-[1.4fr_0.8fr_1fr_1fr_auto] gap-5 xl:items-end">
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+                      Product
+                    </label>
+
+                    <select
+                      value={
+                        flashSaleForm.product_id
+                      }
+                      onChange={(e) => {
+                        const productId =
+                          e.target.value;
+
+                        setFlashSaleForm(
+                          (current) => ({
+                            ...current,
+                            product_id:
+                              productId,
+                          })
+                        );
+                      }}
+                      className="w-full rounded-2xl bg-[#0d1d30] border border-white/10 px-4 py-3.5 text-white outline-none focus:border-orange-400"
+                    >
+                      <option value="">
+                        Select product
+                      </option>
+
+                      {products.map(
+                        (product) => (
+                          <option
+                            key={product.id}
+                            value={product.id}
+                          >
+                            {product.name}
+                            {product.size
+                              ? ` · ${product.size}`
+                              : ""}{" "}
+                            · $
+                            {Number(
+                              product.price
+                            ).toFixed(2)}
+                          </option>
+                        )
+                      )}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+                      Sale Price
+                    </label>
+
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40">
+                        $
+                      </span>
+
+                      <input
+                        type="number"
+                        min="0.01"
+                        step="0.01"
+                        value={
+                          flashSaleForm.sale_price
+                        }
+                        onChange={(e) =>
+                          setFlashSaleForm(
+                            (current) => ({
+                              ...current,
+                              sale_price:
+                                e.target.value,
+                            })
+                          )
+                        }
+                        placeholder="0.00"
+                        className="w-full rounded-2xl bg-white/[0.06] border border-white/10 py-3.5 pl-8 pr-4 text-white font-bold outline-none focus:border-orange-400"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+                      Starts
+                    </label>
+
+                    <input
+                      type="datetime-local"
+                      value={
+                        flashSaleForm.starts_at
+                      }
+                      onChange={(e) =>
+                        setFlashSaleForm(
+                          (current) => ({
+                            ...current,
+                            starts_at:
+                              e.target.value,
+                          })
+                        )
+                      }
+                      className="w-full rounded-2xl bg-white/[0.06] border border-white/10 px-4 py-3.5 text-white outline-none focus:border-orange-400 [color-scheme:dark]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+                      Ends
+                    </label>
+
+                    <input
+                      type="datetime-local"
+                      value={
+                        flashSaleForm.ends_at
+                      }
+                      onChange={(e) =>
+                        setFlashSaleForm(
+                          (current) => ({
+                            ...current,
+                            ends_at:
+                              e.target.value,
+                          })
+                        )
+                      }
+                      className="w-full rounded-2xl bg-white/[0.06] border border-white/10 px-4 py-3.5 text-white outline-none focus:border-orange-400 [color-scheme:dark]"
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={
+                      createFlashSale
+                    }
+                    disabled={
+                      savingFlashSale
+                    }
+                    className="rounded-full bg-orange-300 text-[#081526] px-6 py-3.5 font-black uppercase tracking-widest text-xs hover:bg-orange-200 transition-all disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap"
+                  >
+                    <Zap size={15} />
+
+                    {savingFlashSale
+                      ? "Creating"
+                      : "Start Sale"}
+                  </button>
+                </div>
+
+                {flashSaleForm.product_id &&
+                  (() => {
+                    const selected =
+                      products.find(
+                        (product) =>
+                          product.id ===
+                          flashSaleForm.product_id
+                      );
+
+                    if (!selected) {
+                      return null;
+                    }
+
+                    const salePrice =
+                      Number(
+                        flashSaleForm.sale_price
+                      );
+
+                    const savings =
+                      Number.isFinite(
+                        salePrice
+                      ) &&
+                      salePrice > 0 &&
+                      salePrice <
+                        Number(
+                          selected.price
+                        )
+                        ? Number(
+                            selected.price
+                          ) - salePrice
+                        : 0;
+
+                    const percent =
+                      savings > 0
+                        ? (savings /
+                            Number(
+                              selected.price
+                            )) *
+                          100
+                        : 0;
+
+                    return (
+                      <div className="mt-5 flex flex-wrap gap-3 text-sm">
+                        <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-white/55">
+                          Regular{" "}
+                          <strong className="text-white">
+                            $
+                            {Number(
+                              selected.price
+                            ).toFixed(2)}
+                          </strong>
+                        </span>
+
+                        {savings > 0 && (
+                          <>
+                            <span className="rounded-full border border-orange-400/20 bg-orange-500/10 px-4 py-2 text-orange-200">
+                              Saves{" "}
+                              <strong>
+                                $
+                                {savings.toFixed(
+                                  2
+                                )}
+                              </strong>
+                            </span>
+
+                            <span className="rounded-full border border-orange-400/20 bg-orange-500/10 px-4 py-2 text-orange-200">
+                              {percent.toFixed(
+                                1
+                              )}
+                              % off
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })()}
+              </div>
+
+              {/* EXISTING SALES */}
+              <div>
+                <div className="flex items-center justify-between gap-4 mb-4">
+                  <div>
+                    <p className="text-white font-bold">
+                      Scheduled & Recent Sales
+                    </p>
+
+                    <p className="text-white/35 text-sm mt-1">
+                      Active sales automatically stop being valid after their end time.
+                    </p>
+                  </div>
+
+                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-white/60">
+                    {flashSales.length}
+                  </span>
+                </div>
+
+                {flashSaleLoading ? (
+                  <div className="py-8 text-center text-white/40">
+                    Loading flash sales...
+                  </div>
+                ) : flashSales.length ===
+                  0 ? (
+                  <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-white/45 text-sm">
+                    No flash sales have been created yet.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {flashSales.map(
+                      (sale) => {
+                        const product =
+                          products.find(
+                            (item) =>
+                              item.id ===
+                              sale.product_id
+                          );
+
+                        const state =
+                          getFlashSaleState(
+                            sale
+                          );
+
+                        return (
+                          <div
+                            key={sale.id}
+                            className="rounded-[22px] border border-white/10 bg-white/[0.035] p-5"
+                          >
+                            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+                              <div className="min-w-0">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <p className="font-black text-white">
+                                    {product?.name ||
+                                      sale.product_id}
+                                  </p>
+
+                                  {product?.size && (
+                                    <span className="text-xs text-white/40">
+                                      {product.size}
+                                    </span>
+                                  )}
+
+                                  <span
+                                    className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
+                                      state ===
+                                      "Active"
+                                        ? "border-green-400/20 bg-green-500/10 text-green-200"
+                                        : state ===
+                                          "Scheduled"
+                                        ? "border-blue-400/20 bg-blue-500/10 text-blue-200"
+                                        : "border-white/10 bg-white/[0.04] text-white/40"
+                                    }`}
+                                  >
+                                    {state}
+                                  </span>
+                                </div>
+
+                                <div className="mt-3 flex flex-wrap items-center gap-3">
+                                  {product && (
+                                    <span className="text-white/35 line-through">
+                                      $
+                                      {Number(
+                                        product.price
+                                      ).toFixed(
+                                        2
+                                      )}
+                                    </span>
+                                  )}
+
+                                  <span className="text-xl font-black text-orange-200">
+                                    $
+                                    {Number(
+                                      sale.sale_price
+                                    ).toFixed(
+                                      2
+                                    )}
+                                  </span>
+                                </div>
+
+                                <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-xs text-white/40">
+                                  <span className="inline-flex items-center gap-1.5">
+                                    <Clock3
+                                      size={
+                                        13
+                                      }
+                                    />
+                                    Starts{" "}
+                                    {formatAdminDateTime(
+                                      sale.starts_at
+                                    )}
+                                  </span>
+
+                                  <span className="inline-flex items-center gap-1.5">
+                                    <Clock3
+                                      size={
+                                        13
+                                      }
+                                    />
+                                    Ends{" "}
+                                    {formatAdminDateTime(
+                                      sale.ends_at
+                                    )}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {sale.active &&
+                                state !==
+                                  "Expired" && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      endFlashSale(
+                                        sale.id
+                                      )
+                                    }
+                                    disabled={
+                                      endingFlashSaleId ===
+                                      sale.id
+                                    }
+                                    className="rounded-full border border-red-400/20 bg-red-500/10 px-5 py-3 text-xs font-bold uppercase tracking-widest text-red-200 hover:bg-red-500/15 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                                  >
+                                    <Trash2
+                                      size={
+                                        14
+                                      }
+                                    />
+
+                                    {endingFlashSaleId ===
+                                    sale.id
+                                      ? "Ending"
+                                      : "End Sale"}
+                                  </button>
+                                )}
+                            </div>
+                          </div>
+                        );
+                      }
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
 
           {/* QUANTITY DISCOUNTS */}
           <section className="rounded-[36px] border border-blue-400/20 bg-blue-500/[0.06] backdrop-blur-sm overflow-hidden">

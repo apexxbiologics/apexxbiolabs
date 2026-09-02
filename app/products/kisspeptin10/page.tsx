@@ -790,7 +790,7 @@ export default function Kisspeptin10Page() {
                 name: "Tesamorelin",
 
                 image:
-                  "/images/tesa5.png",
+                  "/images/tesa5blue.png",
 
                 path:
                   "/products/tesamorelin",

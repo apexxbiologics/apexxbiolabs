@@ -37,8 +37,56 @@ type CartItem = {
   id?: string;
   name?: string;
   price?: number;
+  basePrice?: number;
   quantity?: number;
   image?: string;
+  quantityDiscountPercent?: number;
+  quantityDiscountTierId?: string | null;
+  quantityDiscountTierQuantity?: number | null;
+};
+
+type DatabaseProduct = {
+  id: string;
+  name: string;
+  slug: string | null;
+  size: string | null;
+  price: number;
+  inventory: number;
+  active: boolean;
+};
+
+type QuantityDiscountTier = {
+  id: string;
+  quantity: number;
+  discount_percent: number;
+  active: boolean;
+  sort_order: number;
+};
+
+const normalizeLookupValue = (value: unknown) =>
+  String(value || "")
+    .trim()
+    .toLowerCase();
+
+const compactLookupValue = (value: unknown) =>
+  normalizeLookupValue(value).replace(/[^a-z0-9]/g, "");
+
+const isQuantityDiscountEligibleProduct = (
+  product: DatabaseProduct
+) => {
+  const slug = normalizeLookupValue(product.slug);
+  const name = normalizeLookupValue(product.name);
+
+  const isShirt =
+    slug.startsWith("apexx-shirt-") ||
+    name.includes("signature tee") ||
+    name.includes("shirt");
+
+  const isVialCase =
+    slug === "vial-storage-case" ||
+    name.includes("vial storage case");
+
+  return !isShirt && !isVialCase;
 };
 
 export async function POST(request: Request) {
@@ -178,37 +226,35 @@ export async function POST(request: Request) {
     }
 
     /*
-     * Validate cart items.
+     * Validate the raw cart structure first.
+     *
+     * IMPORTANT:
+     * We intentionally DO NOT trust the price sent by the browser.
+     * The browser only tells us which product and how many units
+     * the customer wants. Pricing is rebuilt from Supabase below.
      */
-    const normalizedCart: CartItem[] =
-      cart.map(
-        (item: CartItem) => ({
-          id: item.id,
-          name: String(
-            item.name || "Product"
-          ).trim(),
-          price: Number(
-            item.price || 0
-          ),
-          quantity: Number(
-            item.quantity || 0
-          ),
-          image: item.image,
-        })
-      );
+    const rawCart = cart.map(
+      (item: CartItem) => ({
+        id: String(item.id || "").trim(),
+        name: String(
+          item.name || "Product"
+        ).trim(),
+        quantity: Number(
+          item.quantity || 0
+        ),
+        image: item.image,
+      })
+    );
 
     const invalidCartItem =
-      normalizedCart.some(
+      rawCart.some(
         (item) =>
+          !item.id ||
           !item.name ||
-          !Number.isFinite(
-            item.price
-          ) ||
-          Number(item.price) < 0 ||
           !Number.isInteger(
             item.quantity
           ) ||
-          Number(item.quantity) <= 0
+          item.quantity <= 0
       );
 
     if (invalidCartItem) {
@@ -222,12 +268,339 @@ export async function POST(request: Request) {
       );
     }
 
+    /*
+     * Load the canonical product catalog from Supabase.
+     *
+     * We fetch the fields needed to verify identity, price,
+     * availability, and whether quantity discounts apply.
+     */
+    const {
+      data: databaseProductRows,
+      error: productLookupError,
+    } = await supabaseAdmin
+      .from("products")
+      .select(
+        "id, name, slug, size, price, inventory, active"
+      );
+
+    if (productLookupError) {
+      console.error(
+        "Product pricing lookup error:",
+        productLookupError
+      );
+
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Unable to verify product pricing.",
+        },
+        { status: 500 }
+      );
+    }
+
+    const databaseProducts =
+      (databaseProductRows || []) as DatabaseProduct[];
+
+    /*
+     * Load the ACTIVE quantity-discount tiers from Supabase.
+     *
+     * This means Admin changes such as:
+     * 3 vials = 5%
+     * 5 vials = 10%
+     * 10 vials = 15%
+     * are automatically respected here without hardcoding them.
+     */
+    const {
+      data: quantityTierRows,
+      error: quantityTierError,
+    } = await supabaseAdmin
+      .from("quantity_discount_tiers")
+      .select(
+        "id, quantity, discount_percent, active, sort_order"
+      )
+      .eq("active", true)
+      .order("quantity", { ascending: true });
+
+    if (quantityTierError) {
+      console.error(
+        "Quantity discount lookup error:",
+        quantityTierError
+      );
+
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Unable to verify quantity discounts.",
+        },
+        { status: 500 }
+      );
+    }
+
+    const quantityTiers =
+      (quantityTierRows || []) as QuantityDiscountTier[];
+
+    /*
+     * Resolve each browser cart item to a real Supabase product.
+     *
+     * Exact ID is preferred. Slug/name fallbacks are included
+     * because some existing product pages use human-readable IDs
+     * such as "apx3-10mg" or "tesamorelin-5mg".
+     */
+    const resolvedCartItems: Array<{
+      product: DatabaseProduct;
+      quantity: number;
+      image?: string;
+    }> = [];
+
+    for (const item of rawCart) {
+      const itemId =
+        normalizeLookupValue(item.id);
+      const itemName =
+        normalizeLookupValue(item.name);
+      const compactItemId =
+        compactLookupValue(item.id);
+      const compactItemName =
+        compactLookupValue(item.name);
+
+      const product =
+        databaseProducts.find(
+          (candidate) =>
+            normalizeLookupValue(
+              candidate.id
+            ) === itemId
+        ) ||
+        databaseProducts.find(
+          (candidate) =>
+            normalizeLookupValue(
+              candidate.slug
+            ) === itemId
+        ) ||
+        databaseProducts.find(
+          (candidate) =>
+            normalizeLookupValue(
+              candidate.name
+            ) === itemName
+        ) ||
+        databaseProducts.find(
+          (candidate) =>
+            compactLookupValue(
+              candidate.id
+            ) === compactItemId
+        ) ||
+        databaseProducts.find(
+          (candidate) =>
+            compactLookupValue(
+              candidate.slug
+            ) === compactItemId
+        ) ||
+        databaseProducts.find(
+          (candidate) =>
+            compactLookupValue(
+              candidate.name
+            ) === compactItemName
+        );
+
+      if (!product) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: `${item.name} could not be verified. Please remove it from your cart and add it again.`,
+          },
+          { status: 400 }
+        );
+      }
+
+      if (product.active === false) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: `${product.name} is currently unavailable.`,
+          },
+          { status: 400 }
+        );
+      }
+
+      resolvedCartItems.push({
+        product,
+        quantity: item.quantity,
+        image: item.image,
+      });
+    }
+
+    /*
+     * Combine duplicate entries that resolve to the same product.
+     *
+     * This prevents someone from splitting 5 vials into separate
+     * cart lines to avoid or manipulate a quantity tier.
+     */
+    const groupedCart = new Map<
+      string,
+      {
+        product: DatabaseProduct;
+        quantity: number;
+        image?: string;
+      }
+    >();
+
+    for (const item of resolvedCartItems) {
+      const key = String(
+        item.product.id
+      );
+
+      const existing = groupedCart.get(
+        key
+      );
+
+      if (existing) {
+        existing.quantity +=
+          item.quantity;
+      } else {
+        groupedCart.set(key, {
+          ...item,
+        });
+      }
+    }
+
+    /*
+     * Rebuild the cart using ONLY trusted server-side prices.
+     */
+    const normalizedCart: CartItem[] = [];
+
+    for (const item of groupedCart.values()) {
+      const { product, quantity } = item;
+
+      const availableInventory = Number(
+        product.inventory ?? 0
+      );
+
+      if (
+        !Number.isFinite(availableInventory) ||
+        availableInventory < 0
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: `Inventory for ${product.name} could not be verified.`,
+          },
+          { status: 400 }
+        );
+      }
+
+      if (quantity > availableInventory) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: `Only ${availableInventory} unit${
+              availableInventory === 1
+                ? ""
+                : "s"
+            } of ${product.name} are currently available.`,
+          },
+          { status: 400 }
+        );
+      }
+
+      const basePrice = Number(
+        product.price
+      );
+
+      if (
+        !Number.isFinite(basePrice) ||
+        basePrice < 0
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: `The price for ${product.name} could not be verified.`,
+          },
+          { status: 400 }
+        );
+      }
+
+      const quantityDiscountEligible =
+        isQuantityDiscountEligibleProduct(
+          product
+        );
+
+      const matchingTier =
+        quantityDiscountEligible
+          ? [...quantityTiers]
+              .filter(
+                (tier) =>
+                  quantity >=
+                  Number(
+                    tier.quantity
+                  )
+              )
+              .sort(
+                (a, b) =>
+                  Number(
+                    b.quantity
+                  ) -
+                  Number(
+                    a.quantity
+                  )
+              )[0] || null
+          : null;
+
+      const discountPercent =
+        matchingTier
+          ? Number(
+              matchingTier.discount_percent ||
+                0
+            )
+          : 0;
+
+      if (
+        !Number.isFinite(
+          discountPercent
+        ) ||
+        discountPercent < 0 ||
+        discountPercent > 100
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "A quantity discount could not be verified.",
+          },
+          { status: 500 }
+        );
+      }
+
+      const verifiedUnitPrice = Number(
+        (
+          basePrice *
+          (1 -
+            discountPercent / 100)
+        ).toFixed(2)
+      );
+
+      normalizedCart.push({
+        id: String(product.id),
+        name: String(product.name),
+        basePrice,
+        price: verifiedUnitPrice,
+        quantity,
+        image: item.image,
+        quantityDiscountPercent:
+          discountPercent,
+        quantityDiscountTierId:
+          matchingTier?.id || null,
+        quantityDiscountTierQuantity:
+          matchingTier?.quantity || null,
+      });
+    }
+
     const orderNumber =
       `APX-${Date.now()}`;
 
     /*
-     * Calculate subtotal securely
-     * on the server.
+     * Calculate subtotal from the SERVER-VERIFIED cart.
+     *
+     * Browser-supplied prices never participate in this total.
      */
     const serverSubtotal = Number(
       normalizedCart

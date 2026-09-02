@@ -251,10 +251,12 @@ export default function PinealonPage() {
   const addToCart = () => {
     if (isOutOfStock) return;
 
-    const existingCart = JSON.parse(
-      localStorage.getItem("cart") ||
-        "[]"
-    );
+    const existingCart =
+      JSON.parse(
+        localStorage.getItem(
+          "cart"
+        ) || "[]"
+      );
 
     const existingProduct =
       existingCart.find(
@@ -280,7 +282,9 @@ export default function PinealonPage() {
     ) {
       alert(
         `Only ${inventory} vial${
-          inventory === 1 ? "" : "s"
+          inventory === 1
+            ? ""
+            : "s"
         } of ${
           product.name
         } are currently available.`
@@ -349,7 +353,9 @@ export default function PinealonPage() {
 
     localStorage.setItem(
       "cart",
-      JSON.stringify(updatedCart)
+      JSON.stringify(
+        updatedCart
+      )
     );
 
     window.dispatchEvent(
@@ -378,8 +384,12 @@ export default function PinealonPage() {
                 />
 
                 <img
-                  src={product.image}
-                  alt={product.name}
+                  src={
+                    product.image
+                  }
+                  alt={
+                    product.name
+                  }
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -417,16 +427,17 @@ export default function PinealonPage() {
               </div>
 
               <p className="text-white/60 leading-relaxed mb-5">
-                High-purity Pinealon
-                research peptide
-                studied in laboratory
-                models involving
-                neuroprotection,
-                neuronal signaling
-                pathways, cellular
-                aging models, and
-                cognitive function
-                research.
+                Pinealon research
+                peptide produced for
+                laboratory
+                investigation of
+                peptide-associated
+                neuronal signaling,
+                cellular aging
+                models, and
+                molecular
+                communication
+                pathways.
               </p>
 
               <div className="flex flex-wrap items-center gap-3 mb-5">
@@ -538,7 +549,9 @@ export default function PinealonPage() {
 
                       return (
                         <button
-                          key={tier.id}
+                          key={
+                            tier.id
+                          }
                           type="button"
                           disabled={
                             tierUnavailable
@@ -557,8 +570,12 @@ export default function PinealonPage() {
                           {selected && (
                             <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
                               <Check
-                                size={12}
-                                strokeWidth={3}
+                                size={
+                                  12
+                                }
+                                strokeWidth={
+                                  3
+                                }
                               />
                             </span>
                           )}
@@ -645,13 +662,9 @@ export default function PinealonPage() {
                 </a>
               </div>
 
-              <a
-                href="/coas"
-                className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
-              >
-                View Certificate of
-                Analysis →
-              </a>
+              <div className="block text-center mt-4 text-xs uppercase tracking-widest text-white/35">
+                COA Coming Soon
+              </div>
             </div>
           </div>
         </div>
@@ -663,27 +676,21 @@ export default function PinealonPage() {
           <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
             <div>
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                Certificate of
-                Analysis
+                Quality Verification
               </p>
 
               <h3 className="text-2xl font-black text-white mb-4">
-                Latest COA
-                Documentation
+                Certificate of
+                Analysis
               </h3>
 
               <div className="flex flex-wrap gap-2">
-                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
-                  ✓ Documentation
-                  Available
+                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm font-semibold">
+                  Testing Pending
                 </span>
 
-                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  Research Batch
-                </span>
-
-                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  10mg Format
+                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                  10mg
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
@@ -693,20 +700,18 @@ export default function PinealonPage() {
             </div>
 
             <div className="md:text-right">
-              <p className="text-4xl font-black text-[#A5D8FF]">
-                COA
-              </p>
-
               <p className="uppercase tracking-widest text-white/40 text-xs">
-                Available
+                Laboratory
+                Verification
               </p>
 
-              <a
-                href="/coas"
-                className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20"
+              <button
+                type="button"
+                disabled
+                className="inline-flex mt-3 cursor-not-allowed rounded-full border border-white/10 bg-white/[0.03] px-5 py-2.5 text-white/40 text-sm font-semibold"
               >
-                View COA Page
-              </a>
+                COA Coming Soon
+              </button>
             </div>
           </div>
         </div>
@@ -724,20 +729,20 @@ export default function PinealonPage() {
 
             [
               ShieldCheck,
-              "Third-Party Tested",
-              "Independent lab verified when available.",
+              "Testing Pending",
+              "Independent analytical testing has not yet been completed.",
             ],
 
             [
               ClipboardCheck,
-              "Batch Documented",
-              "Documentation available for verified lots.",
+              "Batch Documentation",
+              "Batch-specific analytical documentation will be added when available.",
             ],
 
             [
               ShieldCheck,
-              "Quality Target",
-              "99%+ purity target.",
+              "Research Material",
+              "Produced for laboratory research applications only.",
             ],
           ].map(
             ([Icon, title, text]: any) => (
@@ -773,8 +778,8 @@ export default function PinealonPage() {
           </p>
 
           <h2 className="text-3xl font-black text-white mb-4">
-            Neuroprotection
-            Research Overview
+            Pinealon Research
+            Overview
           </h2>
 
           <p className="text-white/65 leading-relaxed max-w-4xl mb-7">
@@ -782,29 +787,29 @@ export default function PinealonPage() {
             peptide studied in
             laboratory research
             involving
-            neuroprotection,
-            neuronal signaling
-            pathways, cellular
-            aging models, and
-            cognitive function
-            research.
+            peptide-associated
+            neuronal signaling,
+            cellular aging models,
+            and molecular
+            communication
+            pathways.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[
               [
-                "Neuroprotection",
-                "Studied in laboratory models evaluating neuronal resilience and cellular protection pathways.",
+                "Neuronal Research",
+                "Studied in experimental models involving neuronal signaling and cellular response pathways.",
               ],
 
               [
-                "Cognitive Research",
-                "Investigated in research involving memory, learning, and neural communication mechanisms.",
+                "Cellular Signaling",
+                "Investigated in laboratory models involving peptide-associated molecular communication.",
               ],
 
               [
                 "Cellular Aging",
-                "Explored for its potential role in cellular longevity and age-related biological processes.",
+                "Studied in research models examining age-associated cellular processes.",
               ],
 
               [
@@ -856,7 +861,7 @@ export default function PinealonPage() {
                   "/products/semax",
 
                 text:
-                  "Studied in laboratory models involving cognitive signaling pathways and neuroregulation.",
+                  "Studied in laboratory models involving peptide-associated cellular signaling and molecular pathways.",
               },
 
               {
@@ -869,7 +874,7 @@ export default function PinealonPage() {
                   "/products/selank",
 
                 text:
-                  "Research involving neuropeptide signaling and central nervous system models.",
+                  "Research involving peptide-associated signaling and biochemical mechanisms.",
               },
 
               {
@@ -882,7 +887,7 @@ export default function PinealonPage() {
                   "/products/pe2228",
 
                 text:
-                  "Studied in laboratory models involving neurobiological signaling and cognitive research pathways.",
+                  "Studied in laboratory models involving neuropeptide-associated signaling pathways.",
               },
             ].map(
               (item) => (
@@ -893,8 +898,12 @@ export default function PinealonPage() {
                 >
                   <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
                     <img
-                      src={item.image}
-                      alt={item.name}
+                      src={
+                        item.image
+                      }
+                      alt={
+                        item.name
+                      }
                       className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
                     />
                   </div>

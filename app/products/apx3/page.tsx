@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import FavoriteButton from "@/components/FavoriteButton";
+import { useProductPricing } from "@/hooks/useProductPricing";
 
 type QuantityDiscountTier = {
   id: string;
@@ -40,20 +41,6 @@ export default function APX3Page() {
     QuantityDiscountTier[]
   >([]);
 
-  const [
-    productData,
-    setProductData,
-  ] = useState({
-    "10mg": {
-      inventory: 0,
-      price: 70,
-    },
-
-    "20mg": {
-      inventory: 0,
-      price: 130,
-    },
-  });
 
   const productOptions = {
     "10mg": {
@@ -74,6 +61,91 @@ export default function APX3Page() {
         "/products/apx3",
     },
   };
+
+  const pricingVariants = [
+    {
+      key: "10mg" as const,
+      fallbackPrice: 70,
+      matches: (item: any) => {
+        const slug =
+          item.slug
+            ?.toLowerCase()
+            .trim();
+
+        const id =
+          String(item.id || "")
+            .toLowerCase()
+            .trim();
+
+        const name =
+          item.name
+            ?.toLowerCase()
+            .trim();
+
+        const size =
+          item.size
+            ?.toLowerCase()
+            .trim();
+
+        return (
+          slug === "apx3-10mg" ||
+          slug === "apx-3-10mg" ||
+          id === "apx3-10mg" ||
+          id === "apx-3-10mg" ||
+          (name?.includes("apx-3") &&
+            size === "10mg") ||
+          (name?.includes("apx3") &&
+            size === "10mg") ||
+          name?.includes("apx-3 10") ||
+          name?.includes("apx3 10")
+        );
+      },
+    },
+
+    {
+      key: "20mg" as const,
+      fallbackPrice: 130,
+      matches: (item: any) => {
+        const slug =
+          item.slug
+            ?.toLowerCase()
+            .trim();
+
+        const id =
+          String(item.id || "")
+            .toLowerCase()
+            .trim();
+
+        const name =
+          item.name
+            ?.toLowerCase()
+            .trim();
+
+        const size =
+          item.size
+            ?.toLowerCase()
+            .trim();
+
+        return (
+          slug === "apx3-20mg" ||
+          slug === "apx-3-20mg" ||
+          id === "apx3-20mg" ||
+          id === "apx-3-20mg" ||
+          (name?.includes("apx-3") &&
+            size === "20mg") ||
+          (name?.includes("apx3") &&
+            size === "20mg") ||
+          name?.includes("apx-3 20") ||
+          name?.includes("apx3 20")
+        );
+      },
+    },
+  ];
+
+  const { pricing } =
+    useProductPricing({
+      variants: pricingVariants,
+    });
 
   const coaOptions = {
     "10mg": {
@@ -105,13 +177,26 @@ export default function APX3Page() {
   const selectedCoa =
     coaOptions[selectedMg];
 
+  const selectedPricing =
+    pricing[selectedMg];
+
   const selectedInventory =
-    productData[selectedMg]
-      .inventory;
+    selectedPricing.inventory ?? 0;
 
   const selectedPrice =
-    productData[selectedMg]
-      .price;
+    selectedPricing.regularPrice;
+
+  const effectiveUnitPrice =
+    selectedPricing.effectiveUnitPrice;
+
+  const isFlashSaleActive =
+    selectedPricing.isFlashSaleActive;
+
+  const flashSale =
+    selectedPricing.flashSale;
+
+  const databaseProductId =
+    selectedPricing.databaseProductId;
 
   const isOutOfStock =
     selectedInventory <= 0;
@@ -127,7 +212,7 @@ export default function APX3Page() {
       selectedProduct.name,
 
     price:
-      selectedPrice,
+      effectiveUnitPrice,
 
     image:
       selectedProduct.image,
@@ -137,166 +222,6 @@ export default function APX3Page() {
   };
 
   useEffect(() => {
-    const fetchProductData =
-      async () => {
-        try {
-          const response =
-            await fetch(
-              "/api/products",
-              {
-                cache:
-                  "no-store",
-              }
-            );
-
-          const data =
-            await response.json();
-
-          if (!data.success) {
-            return;
-          }
-
-          const apx10 =
-            data.products.find(
-              (item: any) => {
-                const slug =
-                  item.slug
-                    ?.toLowerCase()
-                    .trim();
-
-                const id =
-                  item.id
-                    ?.toLowerCase()
-                    .trim();
-
-                const name =
-                  item.name
-                    ?.toLowerCase()
-                    .trim();
-
-                const size =
-                  item.size
-                    ?.toLowerCase()
-                    .trim();
-
-                return (
-                  slug ===
-                    "apx3-10mg" ||
-                  slug ===
-                    "apx-3-10mg" ||
-                  id ===
-                    "apx3-10mg" ||
-                  id ===
-                    "apx-3-10mg" ||
-                  (name?.includes(
-                    "apx-3"
-                  ) &&
-                    size ===
-                      "10mg") ||
-                  (name?.includes(
-                    "apx3"
-                  ) &&
-                    size ===
-                      "10mg") ||
-                  name?.includes(
-                    "apx-3 10"
-                  ) ||
-                  name?.includes(
-                    "apx3 10"
-                  )
-                );
-              }
-            );
-
-          const apx20 =
-            data.products.find(
-              (item: any) => {
-                const slug =
-                  item.slug
-                    ?.toLowerCase()
-                    .trim();
-
-                const id =
-                  item.id
-                    ?.toLowerCase()
-                    .trim();
-
-                const name =
-                  item.name
-                    ?.toLowerCase()
-                    .trim();
-
-                const size =
-                  item.size
-                    ?.toLowerCase()
-                    .trim();
-
-                return (
-                  slug ===
-                    "apx3-20mg" ||
-                  slug ===
-                    "apx-3-20mg" ||
-                  id ===
-                    "apx3-20mg" ||
-                  id ===
-                    "apx-3-20mg" ||
-                  (name?.includes(
-                    "apx-3"
-                  ) &&
-                    size ===
-                      "20mg") ||
-                  (name?.includes(
-                    "apx3"
-                  ) &&
-                    size ===
-                      "20mg") ||
-                  name?.includes(
-                    "apx-3 20"
-                  ) ||
-                  name?.includes(
-                    "apx3 20"
-                  )
-                );
-              }
-            );
-
-          setProductData({
-            "10mg": {
-              inventory:
-                Number(
-                  apx10?.inventory ??
-                    0
-                ),
-
-              price:
-                Number(
-                  apx10?.price ??
-                    70
-                ),
-            },
-
-            "20mg": {
-              inventory:
-                Number(
-                  apx20?.inventory ??
-                    0
-                ),
-
-              price:
-                Number(
-                  apx20?.price ??
-                    130
-                ),
-            },
-          });
-        } catch (error) {
-          console.error(
-            "Failed to fetch APX-3 product data:",
-            error
-          );
-        }
-      };
-
     const fetchQuantityDiscounts =
       async () => {
         try {
@@ -391,7 +316,6 @@ export default function APX3Page() {
         }
       };
 
-    fetchProductData();
     fetchQuantityDiscounts();
   }, []);
 
@@ -419,12 +343,14 @@ export default function APX3Page() {
     );
 
   const selectedDiscountPercent =
-    selectedTier
-      ?.discount_percent ||
-    0;
+    isFlashSaleActive
+      ? 0
+      : selectedTier
+          ?.discount_percent ||
+        0;
 
   const discountedUnitPrice =
-    selectedPrice *
+    effectiveUnitPrice *
     (1 -
       selectedDiscountPercent /
         100);
@@ -519,17 +445,21 @@ export default function APX3Page() {
     }
 
     const newTier =
-      getDiscountTier(
-        newQuantity
-      );
+      isFlashSaleActive
+        ? null
+        : getDiscountTier(
+            newQuantity
+          );
 
     const newDiscountPercent =
-      newTier
-        ?.discount_percent ||
-      0;
+      isFlashSaleActive
+        ? 0
+        : newTier
+            ?.discount_percent ||
+          0;
 
     const newDiscountedUnitPrice =
-      selectedPrice *
+      effectiveUnitPrice *
       (1 -
         newDiscountPercent /
           100);
@@ -566,6 +496,21 @@ export default function APX3Page() {
       quantityDiscountTierQuantity:
         newTier?.quantity ||
         null,
+
+      flashSaleApplied:
+        isFlashSaleActive,
+
+      flashSaleId:
+        isFlashSaleActive
+          ? flashSale?.id || null
+          : null,
+
+      flashSalePrice:
+        isFlashSaleActive
+          ? effectiveUnitPrice
+          : null,
+
+      databaseProductId,
     };
 
     const updatedCart =
@@ -651,8 +596,9 @@ export default function APX3Page() {
                     )}
                   </p>
 
-                  {selectedDiscountPercent >
-                    0 && (
+                  {(isFlashSaleActive ||
+                    selectedDiscountPercent >
+                      0) && (
                     <p className="text-white/35 text-sm line-through">
                       $
                       {formatMoney(
@@ -726,11 +672,21 @@ export default function APX3Page() {
                         <p className="text-sm text-white/50 mt-1">
                           $
                           {formatMoney(
-                            productData[
-                              mg
-                            ].price
+                            pricing[mg]
+                              .effectiveUnitPrice
                           )}
                         </p>
+
+                        {pricing[mg]
+                          .isFlashSaleActive && (
+                          <p className="text-[10px] text-white/25 line-through mt-0.5">
+                            $
+                            {formatMoney(
+                              pricing[mg]
+                                .regularPrice
+                            )}
+                          </p>
+                        )}
                       </button>
                     )
                   )}
@@ -741,6 +697,15 @@ export default function APX3Page() {
                 <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold uppercase tracking-widest">
                   {selectedMg}
                 </span>
+
+                {isFlashSaleActive && (
+                  <span className="rounded-full border border-blue-300/25 bg-blue-400/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#A5D8FF]">
+                    Flash Sale · $
+                    {formatMoney(
+                      effectiveUnitPrice
+                    )} / vial
+                  </span>
+                )}
 
                 {selectedDiscountPercent >
                   0 && (
@@ -805,8 +770,14 @@ export default function APX3Page() {
       </p>
 
       <p className="text-xs text-white/45 mt-1">
-        ${formatMoney(selectedPrice)}
+        ${formatMoney(effectiveUnitPrice)}
       </p>
+
+      {isFlashSaleActive && (
+        <p className="text-[10px] text-white/25 line-through mt-0.5">
+          ${formatMoney(selectedPrice)}
+        </p>
+      )}
     </button>
 
     {/* ADMIN QUANTITY TIERS */}
@@ -815,9 +786,14 @@ export default function APX3Page() {
         selectedInventory < tier.quantity;
 
       const tierTotal =
-        selectedPrice *
-        tier.quantity *
-        (1 - tier.discount_percent / 100);
+        isFlashSaleActive
+          ? effectiveUnitPrice *
+            tier.quantity
+          : selectedPrice *
+            tier.quantity *
+            (1 -
+              tier.discount_percent /
+                100);
 
       const selected =
         selectedQuantity === tier.quantity;
@@ -848,9 +824,15 @@ export default function APX3Page() {
             ${formatMoney(tierTotal)}
           </p>
 
-          <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
-            Save {tier.discount_percent}%
-          </p>
+          {isFlashSaleActive ? (
+            <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
+              Flash Sale
+            </p>
+          ) : (
+            <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
+              Save {tier.discount_percent}%
+            </p>
+          )}
         </button>
       );
     })}

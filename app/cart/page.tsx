@@ -40,6 +40,12 @@ type BundleTier = {
   discount: number;
 };
 
+type RemovedBundleItem = {
+  restoreId: string;
+  item: CartItem;
+  quantity: number;
+};
+
 const BUNDLE_TIERS: BundleTier[] = [
   { quantity: 3, discount: 5 },
   { quantity: 5, discount: 10 },
@@ -129,6 +135,9 @@ const recalculateBundlePricing = (items: CartItem[]) => {
 export default function CartPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [agreed, setAgreed] = useState(false);
+  const [removedBundleItems, setRemovedBundleItems] = useState<
+    RemovedBundleItem[]
+  >([]);
 
   useEffect(() => {
     try {
@@ -168,10 +177,40 @@ export default function CartPage() {
     window.dispatchEvent(new Event("cartUpdated"));
   };
 
+  const rememberRemovedBundleItem = (
+    item: CartItem,
+    quantity: number
+  ) => {
+    if (!isBundleItem(item) || !item.bundleId || quantity <= 0) {
+      return;
+    }
+
+    const restoreId = `${item.bundleId}-${item.id}-${Date.now()}-${Math.random()}`;
+
+    setRemovedBundleItems((current) => [
+      {
+        restoreId,
+        item: {
+          ...item,
+          quantity,
+        },
+        quantity,
+      },
+      ...current,
+    ]);
+  };
+
   const updateLineQuantity = (
     index: number,
     direction: "increase" | "decrease"
   ) => {
+    const target = cart[index];
+    if (!target) return;
+
+    if (direction === "decrease" && isBundleItem(target)) {
+      rememberRemovedBundleItem(target, 1);
+    }
+
     const updated = cart
       .map((item, itemIndex) => {
         if (itemIndex !== index) return item;
@@ -192,7 +231,63 @@ export default function CartPage() {
   };
 
   const removeLine = (index: number) => {
+    const target = cart[index];
+
+    if (target && isBundleItem(target)) {
+      rememberRemovedBundleItem(target, target.quantity);
+    }
+
     saveCart(cart.filter((_, itemIndex) => itemIndex !== index));
+  };
+
+  const addRemovedBundleItemBack = (restoreId: string) => {
+    const removed = removedBundleItems.find(
+      (entry) => entry.restoreId === restoreId
+    );
+
+    if (!removed) return;
+
+    const restoredItem = removed.item;
+
+    const existingIndex = cart.findIndex(
+      (item) =>
+        item.bundleId === restoredItem.bundleId &&
+        item.bundleType === "build-your-own" &&
+        item.id === restoredItem.id
+    );
+
+    let updatedCart: CartItem[];
+
+    if (existingIndex >= 0) {
+      updatedCart = cart.map((item, index) =>
+        index === existingIndex
+          ? {
+              ...item,
+              quantity: item.quantity + removed.quantity,
+            }
+          : item
+      );
+    } else {
+      updatedCart = [
+        ...cart,
+        {
+          ...restoredItem,
+          quantity: removed.quantity,
+        },
+      ];
+    }
+
+    setRemovedBundleItems((current) =>
+      current.filter((entry) => entry.restoreId !== restoreId)
+    );
+
+    saveCart(updatedCart);
+  };
+
+  const dismissRemovedBundleItem = (restoreId: string) => {
+    setRemovedBundleItems((current) =>
+      current.filter((entry) => entry.restoreId !== restoreId)
+    );
   };
 
   const removeBundle = (bundleId: string) => {
@@ -203,6 +298,12 @@ export default function CartPage() {
             item.bundleId === bundleId &&
             item.bundleType === "build-your-own"
           )
+      )
+    );
+
+    setRemovedBundleItems((current) =>
+      current.filter(
+        (entry) => entry.item.bundleId !== bundleId
       )
     );
   };
@@ -533,6 +634,85 @@ export default function CartPage() {
                           </div>
                         ))}
                       </div>
+
+                      {removedBundleItems.filter(
+                        (entry) =>
+                          entry.item.bundleId === group.bundleId
+                      ).length > 0 && (
+                        <div className="border-t border-white/[0.07] px-4 md:px-5 py-4 bg-[#93C5FD]/[0.035]">
+                          <p className="mb-2.5 text-[9px] uppercase tracking-[0.18em] text-white/30">
+                            Recently Removed
+                          </p>
+
+                          <div className="space-y-2">
+                            {removedBundleItems
+                              .filter(
+                                (entry) =>
+                                  entry.item.bundleId ===
+                                  group.bundleId
+                              )
+                              .map((entry) => (
+                                <div
+                                  key={entry.restoreId}
+                                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-[15px] border border-[#93C5FD]/15 bg-[#081526]/55 px-3.5 py-3"
+                                >
+                                  <div className="flex items-center gap-3 min-w-0">
+                                    <div className="w-10 h-10 shrink-0 overflow-hidden rounded-xl bg-[#93C5FD]">
+                                      <img
+                                        src={
+                                          entry.item.image ||
+                                          "/images/logo.png"
+                                        }
+                                        alt={entry.item.name}
+                                        className="w-full h-full object-contain p-1"
+                                      />
+                                    </div>
+
+                                    <div className="min-w-0">
+                                      <p className="truncate text-xs font-bold text-white/80">
+                                        {entry.item.name}
+                                      </p>
+                                      <p className="mt-0.5 text-[10px] text-white/35">
+                                        {entry.quantity}{" "}
+                                        {entry.quantity === 1
+                                          ? "vial"
+                                          : "vials"}{" "}
+                                        removed
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  <div className="flex items-center gap-2 self-end sm:self-auto">
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        dismissRemovedBundleItem(
+                                          entry.restoreId
+                                        )
+                                      }
+                                      className="px-3 py-2 text-[9px] uppercase tracking-[0.12em] text-white/25 hover:text-white/50"
+                                    >
+                                      Dismiss
+                                    </button>
+
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        addRemovedBundleItemBack(
+                                          entry.restoreId
+                                        )
+                                      }
+                                      className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2.5 text-[9px] font-black uppercase tracking-[0.13em] text-[#081526] hover:bg-[#DCEEFF] transition"
+                                    >
+                                      <Plus size={12} />
+                                      Add Back
+                                    </button>
+                                  </div>
+                                </div>
+                              ))}
+                          </div>
+                        </div>
+                      )}
 
                       <div className="border-t border-white/[0.07] px-5 md:px-6 py-4 bg-white/[0.018]">
                         <div className="flex flex-wrap items-center justify-between gap-3">

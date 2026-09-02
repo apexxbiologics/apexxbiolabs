@@ -364,9 +364,7 @@ export async function POST(request: Request) {
       error: productsLookupError,
     } = await supabaseAdmin
       .from("products")
-      .select(
-        "id, name, slug, price, inventory, active, category, size"
-      );
+      .select("*");
 
     if (productsLookupError) {
       console.error(

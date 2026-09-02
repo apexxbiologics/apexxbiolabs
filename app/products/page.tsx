@@ -17,7 +17,6 @@ type Product = {
   category: string;
   image: string;
   href: string;
-  productIds: string[];
 };
 
 type FlashSale = {
@@ -32,8 +31,10 @@ type FlashSale = {
 type StoreProduct = {
   id: string;
   name: string;
-  price: number;
+  slug?: string | null;
   size?: string | null;
+  price: number;
+  active?: boolean;
 };
 
 const products: Product[] = [
@@ -43,7 +44,6 @@ const products: Product[] = [
     category: "Metabolic Research",
     image: "/images/retatrutide.PNG",
     href: "/products/apx3",
-    productIds: ["apx3-10mg", "apx3-20mg"],
   },
   {
     name: "APX-2",
@@ -51,7 +51,6 @@ const products: Product[] = [
     category: "Metabolic Research",
     image: "/images/apx230.png",
     href: "/products/apx2",
-    productIds: ["apx2-30mg"],
   },
   {
     name: "Wolverine",
@@ -59,7 +58,6 @@ const products: Product[] = [
     category: "Tissue Repair Research",
     image: "/images/wolverine.png",
     href: "/products/wolverine",
-    productIds: ["wolverine-20mg"],
   },
   {
     name: "BPC-157",
@@ -67,7 +65,6 @@ const products: Product[] = [
     category: "Tissue Repair Research",
     image: "/images/bpc157.PNG",
     href: "/products/bpc157",
-    productIds: ["bpc157-10mg"],
   },
   {
     name: "TB-500",
@@ -75,7 +72,6 @@ const products: Product[] = [
     category: "Tissue Repair Research",
     image: "/images/tb500.PNG",
     href: "/products/tb500",
-    productIds: ["tb500-10mg"],
   },
   {
     name: "KLOW",
@@ -83,7 +79,6 @@ const products: Product[] = [
     category: "Metabolic Research",
     image: "/images/klow.png",
     href: "/products/klow",
-    productIds: ["klow-80mg"],
   },
   {
     name: "Glutathione",
@@ -91,7 +86,6 @@ const products: Product[] = [
     category: "Cellular Research",
     image: "/images/glutathione1500.png",
     href: "/products/glutathione",
-    productIds: ["glutathione-1500mg"],
   },
   {
     name: "KPV",
@@ -99,7 +93,6 @@ const products: Product[] = [
     category: "Tissue Repair Research",
     image: "/images/kpv.PNG",
     href: "/products/kpv",
-    productIds: ["kpv-10mg"],
   },
   {
     name: "GHK-Cu",
@@ -107,7 +100,6 @@ const products: Product[] = [
     category: "Dermal Research",
     image: "/images/ghkcu.PNG",
     href: "/products/ghkcu",
-    productIds: ["ghkcu-50mg", "ghkcu-100mg"],
   },
   {
     name: "Tesamorelin",
@@ -115,7 +107,6 @@ const products: Product[] = [
     category: "Secretagogue Research",
     image: "/images/tesa5.png",
     href: "/products/tesamorelin",
-    productIds: ["tesamorelin-5mg", "Tesamorelin-10mg", "tesamorelin-10mg"],
   },
   {
     name: "CJC/IPA Without DAC",
@@ -123,7 +114,6 @@ const products: Product[] = [
     category: "Secretagogue Research",
     image: "/images/cjcipa.PNG",
     href: "/products/cjcipa",
-    productIds: ["cjcipa-10mg", "cjcipa"],
   },
   {
     name: "MITO-X",
@@ -131,7 +121,6 @@ const products: Product[] = [
     category: "Cellular Research",
     image: "/images/mitox120.png",
     href: "/products/mitox",
-    productIds: ["mitox-120mg"],
   },
   {
     name: "NAD+",
@@ -139,7 +128,6 @@ const products: Product[] = [
     category: "Cellular Research",
     image: "/images/nad.png",
     href: "/products/nad",
-    productIds: ["nad-1000mg"],
   },
   {
     name: "MOTS-C",
@@ -147,7 +135,6 @@ const products: Product[] = [
     category: "Cellular Research",
     image: "/images/motsc.PNG",
     href: "/products/motsc",
-    productIds: ["motsc-10mg"],
   },
   {
     name: "5-Amino-1MQ",
@@ -155,7 +142,6 @@ const products: Product[] = [
     category: "Metabolic Research",
     image: "/images/5amino1mq.png",
     href: "/products/5amino1mq",
-    productIds: ["5amino1mq-50mg"],
   },
   {
     name: "SS-31",
@@ -163,7 +149,6 @@ const products: Product[] = [
     category: "Cellular Research",
     image: "/images/ss3110.png",
     href: "/products/ss31",
-    productIds: ["ss31-10mg"],
   },
   {
     name: "ARA-290",
@@ -171,7 +156,6 @@ const products: Product[] = [
     category: "Cellular Research",
     image: "/images/ara290.PNG",
     href: "/products/ara290",
-    productIds: ["ara290-10mg"],
   },
   {
     name: "AOD-9604",
@@ -179,7 +163,6 @@ const products: Product[] = [
     category: "Metabolic Research",
     image: "/images/aod9604.png",
     href: "/products/aod9604",
-    productIds: ["aod9604-5mg", "aod9604-10mg"],
   },
   {
     name: "ADAMAX",
@@ -187,7 +170,6 @@ const products: Product[] = [
     category: "Neuro Research",
     image: "/images/adamax.PNG",
     href: "/products/adamax",
-    productIds: ["adamax-10mg"],
   },
   {
     name: "NEURO-X",
@@ -195,7 +177,6 @@ const products: Product[] = [
     category: "Neuro Research",
     image: "/images/neurox48.png",
     href: "/products/neurox",
-    productIds: ["neurox-48mg"],
   },
   {
     name: "Semax",
@@ -203,7 +184,6 @@ const products: Product[] = [
     category: "Neuro Research",
     image: "/images/semax.PNG",
     href: "/products/semax",
-    productIds: ["semax-10mg", "semax"],
   },
   {
     name: "Selank",
@@ -211,7 +191,6 @@ const products: Product[] = [
     category: "Neuro Research",
     image: "/images/selank.PNG",
     href: "/products/selank",
-    productIds: ["selank-10mg", "selank"],
   },
   {
     name: "Pinealon",
@@ -219,7 +198,6 @@ const products: Product[] = [
     category: "Circadian Research",
     image: "/images/pinealon.PNG",
     href: "/products/pinealon",
-    productIds: ["pinealon-10mg", "pinealon"],
   },
   {
     name: "PE-22-28",
@@ -227,7 +205,6 @@ const products: Product[] = [
     category: "Neuro Research",
     image: "/images/pe2228.PNG",
     href: "/products/pe2228",
-    productIds: ["pe2228-10mg"],
   },
   {
     name: "Kisspeptin-10",
@@ -235,7 +212,6 @@ const products: Product[] = [
     category: "Neuro Research",
     image: "/images/kisspeptin10.png",
     href: "/products/kisspeptin10",
-    productIds: ["kisspeptin10-10mg"],
   },
   {
     name: "PT-141",
@@ -243,7 +219,6 @@ const products: Product[] = [
     category: "Neuro Research",
     image: "/images/pt141.png",
     href: "/products/pt141",
-    productIds: ["pt141-10mg"],
   },
 ];
 
@@ -263,6 +238,53 @@ function shortCategory(category: string) {
   return category.replace(" Research", "");
 }
 
+
+function normalizeProductName(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/without\s*dac/g, "")
+    .replace(/research\s*(peptide|compound|blend)?/g, "")
+    .replace(/[^a-z0-9]+/g, "")
+    .trim();
+}
+
+function catalogMatchesStoreProduct(
+  catalogProduct: Product,
+  storeProduct: StoreProduct
+) {
+  const catalogName = normalizeProductName(catalogProduct.name);
+  const storeName = normalizeProductName(storeProduct.name || "");
+
+  if (!catalogName || !storeName) return false;
+
+  if (
+    catalogName === storeName ||
+    catalogName.includes(storeName) ||
+    storeName.includes(catalogName)
+  ) {
+    return true;
+  }
+
+  const hrefSlug = catalogProduct.href
+    .split("/")
+    .filter(Boolean)
+    .pop()
+    ?.toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
+
+  const dbSlug = String(storeProduct.slug || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
+
+  return Boolean(
+    hrefSlug &&
+      dbSlug &&
+      (dbSlug === hrefSlug ||
+        dbSlug.startsWith(hrefSlug) ||
+        hrefSlug.startsWith(dbSlug))
+  );
+}
+
 export default function ProductsPage() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
@@ -272,11 +294,15 @@ export default function ProductsPage() {
   useEffect(() => {
     let cancelled = false;
 
-    const loadPricing = async () => {
+    async function loadFlashSalePricing() {
       try {
         const [salesResponse, productsResponse] = await Promise.all([
-          fetch("/api/flash-sales", { cache: "no-store" }),
-          fetch("/api/products", { cache: "no-store" }),
+          fetch("/api/flash-sales", {
+            cache: "no-store",
+          }),
+          fetch("/api/products", {
+            cache: "no-store",
+          }),
         ]);
 
         const salesData = await salesResponse.json().catch(() => ({}));
@@ -284,109 +310,105 @@ export default function ProductsPage() {
 
         if (cancelled) return;
 
-        if (salesResponse.ok) {
-          const rows = Array.isArray(salesData.sales)
-            ? salesData.sales
-            : Array.isArray(salesData.flashSales)
-            ? salesData.flashSales
-            : [];
-
+        if (salesResponse.ok && salesData.success) {
           const now = Date.now();
 
-          setFlashSales(
-            rows.filter((sale: FlashSale) => {
-              const starts = new Date(sale.starts_at).getTime();
-              const ends = new Date(sale.ends_at).getTime();
+          const currentSales = Array.isArray(salesData.sales)
+            ? salesData.sales.filter((sale: FlashSale) => {
+                const startsAt = new Date(sale.starts_at).getTime();
+                const endsAt = new Date(sale.ends_at).getTime();
 
-              return (
-                sale.active !== false &&
-                Number.isFinite(starts) &&
-                Number.isFinite(ends) &&
-                starts <= now &&
-                ends > now
-              );
-            })
-          );
+                return (
+                  sale.active === true &&
+                  Number.isFinite(startsAt) &&
+                  Number.isFinite(endsAt) &&
+                  startsAt <= now &&
+                  endsAt > now
+                );
+              })
+            : [];
+
+          setFlashSales(currentSales);
+        } else {
+          setFlashSales([]);
         }
 
         if (productsResponse.ok && productsData.success) {
+          const rows = Array.isArray(productsData.products)
+            ? productsData.products
+            : [];
+
           setStoreProducts(
-            Array.isArray(productsData.products)
-              ? productsData.products.map((product: any) => ({
-                  id: String(product.id),
-                  name: String(product.name || ""),
-                  price: Number(product.price || 0),
-                  size: product.size ?? null,
-                }))
-              : []
+            rows.map((product: any) => ({
+              id: String(product.id),
+              name: String(product.name || ""),
+              slug: product.slug ?? null,
+              size: product.size ?? null,
+              price: Number(product.price || 0),
+              active: product.active !== false,
+            }))
           );
         }
       } catch (error) {
-        // Keep the catalog usable at regular pricing if pricing lookup fails.
-        console.error("Unable to load storefront flash-sale pricing:", error);
+        console.error("Flash sale storefront pricing error:", error);
       }
-    };
+    }
 
-    loadPricing();
+    loadFlashSalePricing();
 
-    // Refresh periodically so scheduled sales appear/end without requiring
-    // a full browser reload.
-    const interval = window.setInterval(loadPricing, 60_000);
+    const intervalId = window.setInterval(loadFlashSalePricing, 30_000);
 
     return () => {
       cancelled = true;
-      window.clearInterval(interval);
+      window.clearInterval(intervalId);
     };
   }, []);
 
-  const getProductPricing = (product: Product) => {
+  const getFlashSalePricing = (catalogProduct: Product) => {
     const matchingStoreProducts = storeProducts.filter((storeProduct) =>
-      product.productIds.some(
-        (id) => id.toLowerCase() === storeProduct.id.toLowerCase()
-      )
+      catalogMatchesStoreProduct(catalogProduct, storeProduct)
     );
 
-    const matchingSales = flashSales
+    const activePrices = flashSales
       .map((sale) => {
         const storeProduct = matchingStoreProducts.find(
-          (item) =>
-            item.id.toLowerCase() === String(sale.product_id).toLowerCase()
+          (product) => String(product.id) === String(sale.product_id)
         );
 
         if (!storeProduct) return null;
 
-        const salePrice = Number(sale.sale_price);
         const regularPrice = Number(storeProduct.price);
+        const salePrice = Number(sale.sale_price);
 
         if (
-          !Number.isFinite(salePrice) ||
           !Number.isFinite(regularPrice) ||
-          salePrice <= 0 ||
+          !Number.isFinite(salePrice) ||
           regularPrice <= 0 ||
+          salePrice <= 0 ||
           salePrice >= regularPrice
         ) {
           return null;
         }
 
         return {
+          id: sale.id,
           productId: storeProduct.id,
           regularPrice,
           salePrice,
           size: storeProduct.size || "",
         };
       })
-      .filter(Boolean) as {
+      .filter(Boolean) as Array<{
+      id: string;
       productId: string;
       regularPrice: number;
       salePrice: number;
       size: string;
-    }[];
+    }>;
 
-    if (matchingSales.length === 0) return null;
+    if (activePrices.length === 0) return null;
 
-    // For cards that represent more than one size, show the lowest active
-    // flash-sale price and label the size so the customer knows which variant.
-    return matchingSales.sort((a, b) => a.salePrice - b.salePrice)[0];
+    return activePrices.sort((a, b) => a.salePrice - b.salePrice)[0];
   };
 
   const filteredProducts = useMemo(() => {
@@ -572,7 +594,7 @@ export default function ProductsPage() {
           {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 lg:grid-cols-4">
               {filteredProducts.map((product) => {
-                const pricing = getProductPricing(product);
+                const flashPricing = getFlashSalePricing(product);
 
                 return (
                   <Link
@@ -583,7 +605,7 @@ export default function ProductsPage() {
                     <div className="relative aspect-square overflow-hidden rounded-[22px] border border-white/[0.055] bg-[#0A1828] transition duration-300 group-hover:border-[#93C5FD]/25">
                       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(147,197,253,0.08),transparent_62%)]" />
 
-                      {pricing && (
+                      {flashPricing && (
                         <span className="absolute left-3 top-3 z-10 rounded-full border border-[#93C5FD]/25 bg-[#071423]/90 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.16em] text-[#93C5FD] backdrop-blur">
                           Flash Sale
                         </span>
@@ -611,19 +633,19 @@ export default function ProductsPage() {
                             {product.desc}
                           </p>
 
-                          {pricing && (
-                            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                          {flashPricing && (
+                            <div className="mt-2 flex flex-wrap items-center gap-2">
                               <span className="text-sm text-white/30 line-through">
-                                ${pricing.regularPrice.toFixed(2)}
+                                ${flashPricing.regularPrice.toFixed(2)}
                               </span>
 
                               <span className="text-base font-black text-[#93C5FD]">
-                                ${pricing.salePrice.toFixed(2)}
+                                ${flashPricing.salePrice.toFixed(2)}
                               </span>
 
-                              {pricing.size && product.productIds.length > 1 && (
-                                <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-white/35">
-                                  {pricing.size}
+                              {flashPricing.size && (
+                                <span className="rounded-full border border-white/[0.07] bg-white/[0.03] px-2 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-white/35">
+                                  {flashPricing.size}
                                 </span>
                               )}
                             </div>

@@ -136,15 +136,19 @@ export default function PT141Page() {
           )
             .map((tier: any) => ({
               id: String(tier.id),
+
               name: String(
                 tier.name || ""
               ),
+
               quantity: Number(
                 tier.quantity || 0
               ),
+
               discount_percent: Number(
                 tier.discount_percent || 0
               ),
+
               sort_order: Number(
                 tier.sort_order || 0
               ),
@@ -250,10 +254,12 @@ export default function PT141Page() {
   const addToCart = () => {
     if (isOutOfStock) return;
 
-    const existingCart = JSON.parse(
-      localStorage.getItem("cart") ||
-        "[]"
-    );
+    const existingCart =
+      JSON.parse(
+        localStorage.getItem(
+          "cart"
+        ) || "[]"
+      );
 
     const existingProduct =
       existingCart.find(
@@ -294,7 +300,8 @@ export default function PT141Page() {
       getDiscountTier(newQuantity);
 
     const newDiscountPercent =
-      newTier?.discount_percent || 0;
+      newTier?.discount_percent ||
+      0;
 
     const newDiscountedUnitPrice =
       price *
@@ -350,7 +357,9 @@ export default function PT141Page() {
 
     localStorage.setItem(
       "cart",
-      JSON.stringify(updatedCart)
+      JSON.stringify(
+        updatedCart
+      )
     );
 
     window.dispatchEvent(
@@ -379,8 +388,12 @@ export default function PT141Page() {
                 />
 
                 <img
-                  src={product.image}
-                  alt={product.name}
+                  src={
+                    product.image
+                  }
+                  alt={
+                    product.name
+                  }
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -518,7 +531,7 @@ export default function PT141Page() {
                     </p>
                   </button>
 
-                  {/* ADMIN-CONTROLLED TIERS */}
+                  {/* ADMIN TIERS */}
                   {quantityDiscounts.map(
                     (tier) => {
                       const tierUnavailable =
@@ -647,12 +660,9 @@ export default function PT141Page() {
                 </a>
               </div>
 
-              <a
-                href="/coas"
-                className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
-              >
-                View Certificate of Analysis →
-              </a>
+              <div className="block text-center mt-4 text-xs uppercase tracking-widest text-white/35">
+                COA Coming Soon
+              </div>
             </div>
           </div>
         </div>
@@ -664,24 +674,20 @@ export default function PT141Page() {
           <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
             <div>
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                Certificate of Analysis
+                Quality Verification
               </p>
 
               <h3 className="text-2xl font-black text-white mb-4">
-                Latest COA Documentation
+                Certificate of Analysis
               </h3>
 
               <div className="flex flex-wrap gap-2">
-                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
-                  ✓ Documentation Available
+                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm font-semibold">
+                  Testing Pending
                 </span>
 
-                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  Research Batch
-                </span>
-
-                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  10mg Format
+                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                  10mg
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
@@ -691,20 +697,17 @@ export default function PT141Page() {
             </div>
 
             <div className="md:text-right">
-              <p className="text-4xl font-black text-[#A5D8FF]">
-                COA
-              </p>
-
               <p className="uppercase tracking-widest text-white/40 text-xs">
-                Available
+                Laboratory Verification
               </p>
 
-              <a
-                href="/coas"
-                className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20"
+              <button
+                type="button"
+                disabled
+                className="inline-flex mt-3 cursor-not-allowed rounded-full border border-white/10 bg-white/[0.03] px-5 py-2.5 text-white/40 text-sm font-semibold"
               >
-                View COA Page
-              </a>
+                COA Coming Soon
+              </button>
             </div>
           </div>
         </div>
@@ -719,16 +722,19 @@ export default function PT141Page() {
               "Research Use Only",
               "Strictly for laboratory research.",
             ],
+
             [
               ShieldCheck,
-              "Third-Party Tested",
-              "Independent lab verified when available.",
+              "Third-Party Testing",
+              "Independent analytical testing when available.",
             ],
+
             [
               ClipboardCheck,
               "Batch Documented",
-              "Documentation available for verified lots.",
+              "Batch-specific documentation maintained for verified lots.",
             ],
+
             [
               ShieldCheck,
               "Quality Target",
@@ -790,14 +796,17 @@ export default function PT141Page() {
                 "Melanocortin Pathways",
                 "Studied for activity involving melanocortin receptor signaling.",
               ],
+
               [
                 "Neuroendocrine Research",
                 "Evaluated in models involving central nervous system signaling pathways.",
               ],
+
               [
                 "Receptor Activity",
                 "Frequently researched in peptide-receptor interaction studies.",
               ],
+
               [
                 "Storage",
                 "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
@@ -837,28 +846,39 @@ export default function PT141Page() {
             {[
               {
                 name: "Kisspeptin-10",
+
                 image:
                   "/images/kisspeptin10blue.png",
+
                 path:
                   "/products/kisspeptin10",
+
                 text:
                   "Research involving hypothalamic signaling, GnRH regulation, and neuroendocrine pathway models.",
               },
+
               {
                 name: "CJC/IPA",
+
                 image:
                   "/images/cjcipablue.png",
+
                 path:
                   "/products/cjcipa",
+
                 text:
                   "Research involving growth hormone signaling pathways and endocrine response models.",
               },
+
               {
                 name: "Tesamorelin",
+
                 image:
                   "/images/tesa5.png",
+
                 path:
                   "/products/tesamorelin",
+
                 text:
                   "Studied in GH-axis signaling, metabolic regulation, and endocrine pathway research.",
               },
@@ -900,12 +920,15 @@ export default function PT141Page() {
         {
           title:
             "FDA Disclaimer",
+
           text:
             "These statements have not been evaluated by the U.S. Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only and are not for human or veterinary consumption.",
         },
+
         {
           title:
             "Customer Acknowledgment",
+
           text:
             "By purchasing this product, the customer acknowledges that this material is intended solely for lawful laboratory research purposes and will not be used for human consumption, veterinary use, medical use, diagnosis, treatment, cure, or prevention of disease. Apexx Biolabs does not provide dosing instructions, treatment recommendations, medical advice, or guidance regarding human use of any product.",
         },

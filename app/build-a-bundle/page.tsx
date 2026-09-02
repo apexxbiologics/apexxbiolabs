@@ -91,8 +91,8 @@ const bundleProductImages: Record<string, string> = {
   "apx3": "/images/apx310blue.png",
   "apx310": "/images/apx310blue.png",
   "apx310mg": "/images/apx310blue.png",
-  "apx320": "/images/apx320blue.png",
-  "apx320mg": "/images/apx320blue.png",
+  "apx320": "/images/apx320.png",
+  "apx320mg": "/images/apx320.png",
 
   "apx2": "/images/apx230blue.png",
   "apx230": "/images/apx230blue.png",
@@ -143,8 +143,8 @@ const bundleProductImages: Record<string, string> = {
   "neurox48": "/images/neurox48blue.png",
   "neurox48mg": "/images/neurox48blue.png",
 
-  "semax": "/images/semaxblue.PNG",
-  "selank": "/images/selankblue.PNG",
+  "semax": "/images/semaxblue.png",
+  "selank": "/images/selankblue.png",
   "pinealon": "/images/pinealonblue.png",
   "pe2228": "/images/pe2228blue.png",
   "kisspeptin10": "/images/kisspeptin10blue.png",
@@ -168,6 +168,27 @@ const getBundleProductImage = (product: {
     normalizeProductKey(product.name),
   ];
 
+  // APX-3 has separate 10mg and 20mg product images.
+  // Check the full normalized product identity first so the 20mg vial
+  // does not accidentally fall back to the generic APX-3 10mg image.
+  const combinedIdentity = candidates.join(" ");
+
+  if (
+    combinedIdentity.includes("apx320mg") ||
+    combinedIdentity.includes("apx320") ||
+    (combinedIdentity.includes("apx3") && combinedIdentity.includes("20mg"))
+  ) {
+    return "/images/apx320.png";
+  }
+
+  if (
+    combinedIdentity.includes("apx310mg") ||
+    combinedIdentity.includes("apx310") ||
+    (combinedIdentity.includes("apx3") && combinedIdentity.includes("10mg"))
+  ) {
+    return "/images/apx310blue.png";
+  }
+
   for (const candidate of candidates) {
     if (bundleProductImages[candidate]) {
       return bundleProductImages[candidate];
@@ -178,7 +199,7 @@ const getBundleProductImage = (product: {
   // Use the exact blue image files from /public/images.
   const aliasGroups = [
     { matches: ["apx310mg", "apx310", "apx3"], image: "/images/apx310blue.png" },
-    { matches: ["apx320mg", "apx320"], image: "/images/apx3201.png" },
+    { matches: ["apx320mg", "apx320"], image: "/images/apx320.png" },
     { matches: ["apx230mg", "apx230", "apx2"], image: "/images/apx230blue.png" },
     { matches: ["glutathione1500mg", "glutathione1500", "glutathione"], image: "/images/glutathione1500blue.png" },
     { matches: ["mitox120mg", "mitox120", "mitox"], image: "/images/mitox120blue.png" },

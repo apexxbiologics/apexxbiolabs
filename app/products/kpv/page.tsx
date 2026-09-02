@@ -467,136 +467,101 @@ export default function KPVPage() {
 
               <div className="h-px bg-white/10 mb-5" />
 
-              {/* QUANTITY */}
-              <div className="mb-5">
-                <div className="flex items-center justify-between gap-4 mb-3">
-                  <p className="uppercase tracking-widest text-white/45 text-xs">
-                    Quantity
-                  </p>
+{/* QUANTITY */}
+<div className="mb-5">
+  <div className="flex items-center justify-between gap-4 mb-3">
+    <p className="uppercase tracking-widest text-white/45 text-xs">
+      Quantity
+    </p>
 
-                  {selectedQuantity >
-                    1 && (
-                    <p className="text-[#A5D8FF] text-sm font-semibold">
-                      $
-                      {formatMoney(
-                        discountedUnitPrice
-                      )}{" "}
-                      / vial
-                    </p>
-                  )}
-                </div>
+    {selectedQuantity > 1 && (
+      <p className="text-[#A5D8FF] text-xs font-semibold">
+        ${formatMoney(discountedUnitPrice)} / vial
+      </p>
+    )}
+  </div>
 
-                <div className="grid grid-cols-3 gap-3">
-                  {/* ONE VIAL */}
-                  <button
-                    type="button"
-                    disabled={
-                      isOutOfStock
-                    }
-                    onClick={() =>
-                      selectQuantity(1)
-                    }
-                    className={`relative rounded-2xl border px-3 py-4 transition-all ${
-                      selectedQuantity ===
-                      1
-                        ? "border-blue-300 bg-blue-400/10"
-                        : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"
-                    } disabled:opacity-35 disabled:cursor-not-allowed`}
-                  >
-                    {selectedQuantity ===
-                      1 && (
-                      <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-                        <Check
-                          size={12}
-                          strokeWidth={3}
-                        />
-                      </span>
-                    )}
+  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
 
-                    <p className="font-black text-white">
-                      1 Vial
-                    </p>
+    {/* 1 VIAL */}
+    <button
+      type="button"
+      disabled={isOutOfStock}
+      onClick={() => selectQuantity(1)}
+      className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+        selectedQuantity === 1
+          ? "border-blue-300 bg-blue-400/10"
+          : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+      } disabled:opacity-35 disabled:cursor-not-allowed`}
+    >
+      {selectedQuantity === 1 && (
+        <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+          <Check size={11} strokeWidth={3} />
+        </span>
+      )}
 
-                    <p className="text-sm text-white/55 mt-1">
-                      $
-                      {formatMoney(price)}
-                    </p>
-                  </button>
+      <p className="font-black text-white text-sm">
+        1 Vial
+      </p>
 
-                  {/* ADMIN-CONTROLLED TIERS */}
-                  {quantityDiscounts.map(
-                    (tier) => {
-                      const tierUnavailable =
-                        inventory !==
-                          null &&
-                        inventory <
-                          tier.quantity;
+      <p className="text-xs text-white/45 mt-1">
+        ${formatMoney(price)}
+      </p>
+    </button>
 
-                      const tierTotal =
-                        price *
-                        tier.quantity *
-                        (1 -
-                          tier.discount_percent /
-                            100);
+    {/* ADMIN QUANTITY TIERS */}
+    {quantityDiscounts.map((tier) => {
+      const tierUnavailable =
+        inventory !== null &&
+        inventory < tier.quantity;
 
-                      const selected =
-                        selectedQuantity ===
-                        tier.quantity;
+      const tierTotal =
+        price *
+        tier.quantity *
+        (1 - tier.discount_percent / 100);
 
-                      return (
-                        <button
-                          key={tier.id}
-                          type="button"
-                          disabled={
-                            tierUnavailable
-                          }
-                          onClick={() =>
-                            selectQuantity(
-                              tier.quantity
-                            )
-                          }
-                          className={`relative rounded-2xl border px-3 py-4 transition-all ${
-                            selected
-                              ? "border-blue-300 bg-blue-400/10"
-                              : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"
-                          } disabled:opacity-35 disabled:cursor-not-allowed`}
-                        >
-                          {selected && (
-                            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-                              <Check
-                                size={12}
-                                strokeWidth={3}
-                              />
-                            </span>
-                          )}
+      const selected =
+        selectedQuantity === tier.quantity;
 
-                          <p className="font-black text-white">
-                            {
-                              tier.quantity
-                            }{" "}
-                            Vials
-                          </p>
+      return (
+        <button
+          key={tier.id}
+          type="button"
+          disabled={tierUnavailable}
+          onClick={() =>
+            selectQuantity(tier.quantity)
+          }
+          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+            selected
+              ? "border-blue-300 bg-blue-400/10"
+              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+          } disabled:opacity-30 disabled:cursor-not-allowed`}
+        >
+          {selected && (
+            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+              <Check
+                size={11}
+                strokeWidth={3}
+              />
+            </span>
+          )}
 
-                          <p className="text-sm text-white/55 mt-1">
-                            $
-                            {formatMoney(
-                              tierTotal
-                            )}
-                          </p>
+          <p className="font-black text-white text-sm">
+            {tier.quantity} Vials
+          </p>
 
-                          <p className="text-[10px] uppercase tracking-widest text-green-300 mt-1">
-                            Save{" "}
-                            {
-                              tier.discount_percent
-                            }
-                            %
-                          </p>
-                        </button>
-                      );
-                    }
-                  )}
-                </div>
-              </div>
+          <p className="text-xs text-white/45 mt-1">
+            ${formatMoney(tierTotal)}
+          </p>
+
+          <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
+            Save {tier.discount_percent}%
+          </p>
+        </button>
+      );
+    })}
+  </div>
+</div>
 
               {/* FREE GIFT */}
               <div className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-3 mb-5">

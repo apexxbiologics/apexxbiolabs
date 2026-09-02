@@ -19,6 +19,15 @@ type QuantityDiscountTier = {
   sort_order: number;
 };
 
+type FlashSale = {
+  id: string;
+  product_id: string;
+  sale_price: number;
+  starts_at: string;
+  ends_at: string;
+  active: boolean;
+};
+
 export default function NeuroXPage() {
   const [added, setAdded] = useState(false);
 
@@ -29,6 +38,12 @@ export default function NeuroXPage() {
     useState<number | null>(null);
 
   const [price, setPrice] = useState(90);
+
+  const [databaseProductId, setDatabaseProductId] =
+    useState<string | null>(null);
+
+  const [flashSale, setFlashSale] =
+    useState<FlashSale | null>(null);
 
   const [quantityDiscounts, setQuantityDiscounts] =
     useState<QuantityDiscountTier[]>([]);
@@ -48,10 +63,26 @@ export default function NeuroXPage() {
     inventory > 0 &&
     inventory <= 5;
 
+  const flashSalePrice =
+    flashSale !== null
+      ? Number(flashSale.sale_price)
+      : null;
+
+  const isFlashSaleActive =
+    flashSalePrice !== null &&
+    Number.isFinite(flashSalePrice) &&
+    flashSalePrice > 0 &&
+    flashSalePrice < price;
+
+  const effectiveUnitPrice =
+    isFlashSaleActive
+      ? flashSalePrice
+      : price;
+
   const favoriteProduct = {
     id: product.id,
     name: product.name,
-    price,
+    price: effectiveUnitPrice,
     image: product.image,
     path: product.path,
   };
@@ -59,84 +90,143 @@ export default function NeuroXPage() {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await fetch(
-          "/api/products",
-          {
-            cache: "no-store",
-          }
-        );
+        const [productResponse, saleResponse] =
+          await Promise.all([
+            fetch("/api/products", {
+              cache: "no-store",
+            }),
 
-        const data = await response.json();
+            fetch("/api/flash-sales", {
+              cache: "no-store",
+            }),
+          ]);
 
-        if (!data.success) return;
+        const productData =
+          await productResponse.json();
 
-        const neuroX = data.products.find(
-          (item: any) => {
-            const slug =
-              item.slug
-                ?.toLowerCase()
-                .trim();
+        const saleData =
+          await saleResponse.json().catch(
+            () => ({
+              success: false,
+              sales: [],
+            })
+          );
 
-            const id =
-              item.id
-                ?.toLowerCase()
-                .trim();
+        if (!productData.success) return;
 
-            const name =
-              item.name
-                ?.toLowerCase()
-                .trim();
+        const neuroX =
+          productData.products.find(
+            (item: any) => {
+              const slug =
+                item.slug
+                  ?.toLowerCase()
+                  .trim();
 
-            const size =
-              item.size
-                ?.toLowerCase()
-                .trim();
+              const id =
+                String(item.id || "")
+                  .toLowerCase()
+                  .trim();
 
-            return (
-              slug === "neurox" ||
-              slug === "neuro-x" ||
-              slug ===
-                "neurox-48mg" ||
-              slug ===
-                "neuro-x-48mg" ||
-              id ===
-                "neurox-48mg" ||
-              id ===
-                "neuro-x-48mg" ||
-              (name?.includes(
-                "neuro-x"
-              ) &&
-                size === "48mg") ||
-              (name?.includes(
-                "neurox"
-              ) &&
-                size === "48mg") ||
-              name?.includes(
-                "neuro-x 48"
-              ) ||
-              name?.includes(
-                "neurox 48"
-              )
-            );
-          }
-        );
+              const name =
+                item.name
+                  ?.toLowerCase()
+                  .trim();
+
+              const size =
+                item.size
+                  ?.toLowerCase()
+                  .trim();
+
+              return (
+                slug === "neurox" ||
+                slug === "neuro-x" ||
+                slug === "neurox-48mg" ||
+                slug === "neuro-x-48mg" ||
+                id === "neurox" ||
+                id === "neuro-x" ||
+                id === "neurox-48mg" ||
+                id === "neuro-x-48mg" ||
+                (name?.includes("neuro-x") &&
+                  size === "48mg") ||
+                (name?.includes("neurox") &&
+                  size === "48mg") ||
+                name?.includes("neuro-x 48") ||
+                name?.includes("neurox 48")
+              );
+            }
+          );
 
         if (neuroX) {
+          const dbId =
+            String(neuroX.id);
+
+          const regularPrice =
+            Number(
+              neuroX.price ?? 90
+            );
+
+          setDatabaseProductId(dbId);
+
           setInventory(
             Number(
-              neuroX.inventory ??
-                0
+              neuroX.inventory ?? 0
             )
           );
 
-          setPrice(
-            Number(
-              neuroX.price ?? 90
-            )
+          setPrice(regularPrice);
+
+          const now = Date.now();
+
+          const matchingSale =
+            Array.isArray(saleData.sales)
+              ? saleData.sales.find(
+                  (sale: FlashSale) => {
+                    const starts =
+                      new Date(
+                        sale.starts_at
+                      ).getTime();
+
+                    const ends =
+                      new Date(
+                        sale.ends_at
+                      ).getTime();
+
+                    const salePrice =
+                      Number(
+                        sale.sale_price
+                      );
+
+                    return (
+                      sale.active === true &&
+                      String(
+                        sale.product_id
+                      ) === dbId &&
+                      Number.isFinite(
+                        starts
+                      ) &&
+                      Number.isFinite(
+                        ends
+                      ) &&
+                      starts <= now &&
+                      ends > now &&
+                      Number.isFinite(
+                        salePrice
+                      ) &&
+                      salePrice > 0 &&
+                      salePrice < regularPrice
+                    );
+                  }
+                )
+              : null;
+
+          setFlashSale(
+            matchingSale || null
           );
         } else {
+          setDatabaseProductId(null);
           setInventory(null);
           setPrice(90);
+          setFlashSale(null);
         }
       } catch (error) {
         console.error(
@@ -144,8 +234,10 @@ export default function NeuroXPage() {
           error
         );
 
+        setDatabaseProductId(null);
         setInventory(null);
         setPrice(90);
+        setFlashSale(null);
       }
     };
 
@@ -229,6 +321,18 @@ export default function NeuroXPage() {
 
     fetchProductData();
     fetchQuantityDiscounts();
+
+    const flashSaleRefresh =
+      window.setInterval(
+        fetchProductData,
+        30_000
+      );
+
+    return () => {
+      window.clearInterval(
+        flashSaleRefresh
+      );
+    };
   }, []);
 
   const getDiscountTier = (
@@ -255,11 +359,13 @@ export default function NeuroXPage() {
     );
 
   const selectedDiscountPercent =
-    selectedTier?.discount_percent ||
-    0;
+    isFlashSaleActive
+      ? 0
+      : selectedTier?.discount_percent ||
+        0;
 
   const discountedUnitPrice =
-    price *
+    effectiveUnitPrice *
     (1 -
       selectedDiscountPercent /
         100);
@@ -336,16 +442,20 @@ export default function NeuroXPage() {
     }
 
     const newTier =
-      getDiscountTier(
-        newQuantity
-      );
+      isFlashSaleActive
+        ? null
+        : getDiscountTier(
+            newQuantity
+          );
 
     const newDiscountPercent =
-      newTier?.discount_percent ||
-      0;
+      isFlashSaleActive
+        ? 0
+        : newTier?.discount_percent ||
+          0;
 
     const newDiscountedUnitPrice =
-      price *
+      effectiveUnitPrice *
       (1 -
         newDiscountPercent /
           100);
@@ -377,6 +487,22 @@ export default function NeuroXPage() {
 
       quantityDiscountTierQuantity:
         newTier?.quantity || null,
+
+      flashSaleApplied:
+        isFlashSaleActive,
+
+      flashSaleId:
+        isFlashSaleActive
+          ? flashSale?.id || null
+          : null,
+
+      flashSalePrice:
+        isFlashSaleActive
+          ? effectiveUnitPrice
+          : null,
+
+      databaseProductId:
+        databaseProductId,
     };
 
     const updatedCart =
@@ -420,9 +546,11 @@ export default function NeuroXPage() {
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-start">
+
             {/* IMAGE */}
             <div className="flex items-center justify-center">
               <div className="relative w-full max-w-[520px] aspect-square rounded-[42px] overflow-hidden border border-blue-400/10 bg-white/[0.03] shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+
                 <FavoriteButton
                   product={
                     favoriteProduct
@@ -438,21 +566,25 @@ export default function NeuroXPage() {
                   }
                   className="w-full h-full object-cover"
                 />
+
               </div>
             </div>
 
             {/* PRODUCT CARD */}
             <div className="rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 md:p-8">
+
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">
                 Research Blend
               </p>
 
               <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-3">
+
                 <h1 className="text-4xl md:text-5xl font-black text-white">
                   {product.name}
                 </h1>
 
                 <div className="sm:text-right">
+
                   <p className="text-3xl md:text-4xl font-black text-white">
                     $
                     {formatMoney(
@@ -460,8 +592,9 @@ export default function NeuroXPage() {
                     )}
                   </p>
 
-                  {selectedDiscountPercent >
-                    0 && (
+                  {(isFlashSaleActive ||
+                    selectedDiscountPercent >
+                      0) && (
                     <p className="text-white/35 text-sm line-through">
                       $
                       {formatMoney(
@@ -469,6 +602,7 @@ export default function NeuroXPage() {
                       )}
                     </p>
                   )}
+
                 </div>
               </div>
 
@@ -489,9 +623,20 @@ export default function NeuroXPage() {
               </p>
 
               <div className="flex flex-wrap items-center gap-3 mb-5">
+
                 <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold uppercase tracking-widest">
                   48mg
                 </span>
+
+                {isFlashSaleActive && (
+                  <span className="rounded-full border border-blue-300/25 bg-blue-400/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#A5D8FF]">
+                    Flash Sale · $
+                    {formatMoney(
+                      effectiveUnitPrice
+                    )}{" "}
+                    / vial
+                  </span>
+                )}
 
                 {selectedDiscountPercent >
                   0 && (
@@ -515,105 +660,180 @@ export default function NeuroXPage() {
                     Out of Stock
                   </span>
                 )}
+
               </div>
 
               <div className="h-px bg-white/10 mb-5" />
 
-{/* QUANTITY */}
-<div className="mb-5">
-  <div className="flex items-center justify-between gap-4 mb-3">
-    <p className="uppercase tracking-widest text-white/45 text-xs">
-      Quantity
-    </p>
+              {/* QUANTITY */}
+              <div className="mb-5">
 
-    {selectedQuantity > 1 && (
-      <p className="text-[#A5D8FF] text-xs font-semibold">
-        ${formatMoney(discountedUnitPrice)} / vial
-      </p>
-    )}
-  </div>
+                <div className="flex items-center justify-between gap-4 mb-3">
 
-  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <p className="uppercase tracking-widest text-white/45 text-xs">
+                    Quantity
+                  </p>
 
-    {/* 1 VIAL */}
-    <button
-      type="button"
-      disabled={isOutOfStock}
-      onClick={() => selectQuantity(1)}
-      className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-        selectedQuantity === 1
-          ? "border-blue-300 bg-blue-400/10"
-          : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-      } disabled:opacity-35 disabled:cursor-not-allowed`}
-    >
-      {selectedQuantity === 1 && (
-        <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-          <Check size={11} strokeWidth={3} />
-        </span>
-      )}
+                  {selectedQuantity >
+                    1 && (
+                    <p className="text-[#A5D8FF] text-xs font-semibold">
+                      $
+                      {formatMoney(
+                        discountedUnitPrice
+                      )}{" "}
+                      / vial
+                    </p>
+                  )}
 
-      <p className="font-black text-white text-sm">
-        1 Vial
-      </p>
+                </div>
 
-      <p className="text-xs text-white/45 mt-1">
-        ${formatMoney(price)}
-      </p>
-    </button>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
 
-    {/* ADMIN QUANTITY TIERS */}
-    {quantityDiscounts.map((tier) => {
-      const tierUnavailable =
-        inventory !== null &&
-        inventory < tier.quantity;
+                  {/* 1 VIAL */}
+                  <button
+                    type="button"
+                    disabled={
+                      isOutOfStock
+                    }
+                    onClick={() =>
+                      selectQuantity(
+                        1
+                      )
+                    }
+                    className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+                      selectedQuantity ===
+                      1
+                        ? "border-blue-300 bg-blue-400/10"
+                        : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                    } disabled:opacity-35 disabled:cursor-not-allowed`}
+                  >
 
-      const tierTotal =
-        price *
-        tier.quantity *
-        (1 - tier.discount_percent / 100);
+                    {selectedQuantity ===
+                      1 && (
+                      <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                        <Check
+                          size={11}
+                          strokeWidth={
+                            3
+                          }
+                        />
+                      </span>
+                    )}
 
-      const selected =
-        selectedQuantity === tier.quantity;
+                    <p className="font-black text-white text-sm">
+                      1 Vial
+                    </p>
 
-      return (
-        <button
-          key={tier.id}
-          type="button"
-          disabled={tierUnavailable}
-          onClick={() =>
-            selectQuantity(tier.quantity)
-          }
-          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-            selected
-              ? "border-blue-300 bg-blue-400/10"
-              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-          } disabled:opacity-30 disabled:cursor-not-allowed`}
-        >
-          {selected && (
-            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-              <Check
-                size={11}
-                strokeWidth={3}
-              />
-            </span>
-          )}
+                    <p className="text-xs text-white/45 mt-1">
+                      $
+                      {formatMoney(
+                        effectiveUnitPrice
+                      )}
+                    </p>
 
-          <p className="font-black text-white text-sm">
-            {tier.quantity} Vials
-          </p>
+                    {isFlashSaleActive && (
+                      <p className="text-[10px] text-white/25 line-through mt-0.5">
+                        $
+                        {formatMoney(
+                          price
+                        )}
+                      </p>
+                    )}
 
-          <p className="text-xs text-white/45 mt-1">
-            ${formatMoney(tierTotal)}
-          </p>
+                  </button>
 
-          <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
-            Save {tier.discount_percent}%
-          </p>
-        </button>
-      );
-    })}
-  </div>
-</div>
+                  {/* ADMIN QUANTITY TIERS */}
+                  {quantityDiscounts.map(
+                    (tier) => {
+                      const tierUnavailable =
+                        inventory !==
+                          null &&
+                        inventory <
+                          tier.quantity;
+
+                      const tierTotal =
+                        isFlashSaleActive
+                          ? effectiveUnitPrice *
+                            tier.quantity
+                          : price *
+                            tier.quantity *
+                            (1 -
+                              tier.discount_percent /
+                                100);
+
+                      const selected =
+                        selectedQuantity ===
+                        tier.quantity;
+
+                      return (
+                        <button
+                          key={
+                            tier.id
+                          }
+                          type="button"
+                          disabled={
+                            tierUnavailable
+                          }
+                          onClick={() =>
+                            selectQuantity(
+                              tier.quantity
+                            )
+                          }
+                          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+                            selected
+                              ? "border-blue-300 bg-blue-400/10"
+                              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                          } disabled:opacity-30 disabled:cursor-not-allowed`}
+                        >
+
+                          {selected && (
+                            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                              <Check
+                                size={
+                                  11
+                                }
+                                strokeWidth={
+                                  3
+                                }
+                              />
+                            </span>
+                          )}
+
+                          <p className="font-black text-white text-sm">
+                            {
+                              tier.quantity
+                            }{" "}
+                            Vials
+                          </p>
+
+                          <p className="text-xs text-white/45 mt-1">
+                            $
+                            {formatMoney(
+                              tierTotal
+                            )}
+                          </p>
+
+                          {isFlashSaleActive ? (
+                            <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
+                              Flash Sale
+                            </p>
+                          ) : (
+                            <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
+                              Save{" "}
+                              {
+                                tier.discount_percent
+                              }
+                              %
+                            </p>
+                          )}
+
+                        </button>
+                      );
+                    }
+                  )}
+
+                </div>
+              </div>
 
               {/* FREE GIFT */}
               <div className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-3 mb-5">
@@ -625,6 +845,7 @@ export default function NeuroXPage() {
 
               {/* ACTION BUTTONS */}
               <div className="grid grid-cols-2 gap-3">
+
                 {isOutOfStock ? (
                   <button
                     disabled
@@ -639,6 +860,7 @@ export default function NeuroXPage() {
                     }
                     className="col-span-2 bg-white text-[#081526] hover:bg-blue-100 rounded-full py-4 uppercase tracking-widest text-xs font-bold transition-all flex items-center justify-center gap-2"
                   >
+
                     <ShoppingCart
                       size={18}
                     />
@@ -651,6 +873,7 @@ export default function NeuroXPage() {
                             ? "Vial"
                             : "Vials"
                         } To Cart`}
+
                   </button>
                 )}
 
@@ -667,11 +890,13 @@ export default function NeuroXPage() {
                 >
                   Keep Shopping
                 </a>
+
               </div>
 
               <div className="block text-center mt-4 text-xs uppercase tracking-widest text-white/35">
                 COA Coming Soon
               </div>
+
             </div>
           </div>
         </div>
@@ -679,12 +904,15 @@ export default function NeuroXPage() {
 
       {/* COA SUMMARY */}
       <section className="px-6 md:px-10 pb-12">
+
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+
           <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+
             <div>
+
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                Quality
-                Verification
+                Quality Verification
               </p>
 
               <h3 className="text-2xl font-black text-white mb-4">
@@ -693,6 +921,7 @@ export default function NeuroXPage() {
               </h3>
 
               <div className="flex flex-wrap gap-2">
+
                 <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm font-semibold">
                   Testing Pending
                 </span>
@@ -700,10 +929,12 @@ export default function NeuroXPage() {
                 <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
                   48mg Blend
                 </span>
+
               </div>
             </div>
 
             <div className="md:text-right">
+
               <p className="uppercase tracking-widest text-white/40 text-xs">
                 Laboratory
                 Verification
@@ -716,6 +947,7 @@ export default function NeuroXPage() {
               >
                 COA Coming Soon
               </button>
+
             </div>
           </div>
         </div>
@@ -723,7 +955,9 @@ export default function NeuroXPage() {
 
       {/* QUALITY */}
       <section className="px-6 md:px-10 pb-10">
+
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-7 grid grid-cols-1 md:grid-cols-4 gap-6">
+
           {[
             [
               FlaskConical,
@@ -751,32 +985,44 @@ export default function NeuroXPage() {
           ].map(
             ([Icon, title, text]: any) => (
               <div
-                key={title}
+                key={
+                  title
+                }
                 className="flex gap-4"
               >
+
                 <Icon
                   className="text-[#A5D8FF]"
                   size={28}
                 />
 
                 <div>
+
                   <h3 className="text-white uppercase tracking-widest font-bold text-xs">
-                    {title}
+                    {
+                      title
+                    }
                   </h3>
 
                   <p className="text-white/50 text-sm mt-1">
-                    {text}
+                    {
+                      text
+                    }
                   </p>
+
                 </div>
               </div>
             )
           )}
+
         </div>
       </section>
 
       {/* RESEARCH PROFILE */}
       <section className="px-6 md:px-10 pb-14">
+
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] p-8">
+
           <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">
             Research Profile
           </p>
@@ -802,6 +1048,7 @@ export default function NeuroXPage() {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+
             {[
               [
                 "Semax Research",
@@ -825,22 +1072,32 @@ export default function NeuroXPage() {
             ].map(
               ([title, text]) => (
                 <div
-                  key={title}
+                  key={
+                    title
+                  }
                   className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
                 >
+
                   <h3 className="text-white font-bold mb-2">
-                    {title}
+                    {
+                      title
+                    }
                   </h3>
 
                   <p className="text-white/55 text-sm leading-relaxed">
-                    {text}
+                    {
+                      text
+                    }
                   </p>
+
                 </div>
               )
             )}
+
           </div>
 
           <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+
             <h3 className="text-white font-bold mb-2">
               Storage
             </h3>
@@ -852,13 +1109,16 @@ export default function NeuroXPage() {
               from light until
               research use.
             </p>
+
           </div>
         </div>
       </section>
 
       {/* RELATED */}
       <section className="px-6 md:px-10 pb-14">
+
         <div className="max-w-7xl mx-auto">
+
           <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
             Frequently Researched
             Together
@@ -870,6 +1130,7 @@ export default function NeuroXPage() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+
             {[
               {
                 name: "Semax",
@@ -912,32 +1173,49 @@ export default function NeuroXPage() {
             ].map(
               (item) => (
                 <a
-                  key={item.name}
-                  href={item.path}
+                  key={
+                    item.name
+                  }
+                  href={
+                    item.path
+                  }
                   className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/40 transition-all"
                 >
+
                   <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
+
                     <img
-                      src={item.image}
-                      alt={item.name}
+                      src={
+                        item.image
+                      }
+                      alt={
+                        item.name
+                      }
                       className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
                     />
+
                   </div>
 
                   <h3 className="text-xl font-black text-white mb-2">
-                    {item.name}
+                    {
+                      item.name
+                    }
                   </h3>
 
                   <p className="text-white/55 text-sm leading-relaxed">
-                    {item.text}
+                    {
+                      item.text
+                    }
                   </p>
 
                   <span className="inline-block mt-3 text-[#A5D8FF] text-sm font-semibold">
                     View Product →
                   </span>
+
                 </a>
               )
             )}
+
           </div>
         </div>
       </section>
@@ -962,21 +1240,31 @@ export default function NeuroXPage() {
       ].map(
         (section) => (
           <section
-            key={section.title}
+            key={
+              section.title
+            }
             className="px-6 md:px-10 pb-10"
           >
+
             <div className="max-w-7xl mx-auto rounded-[26px] border border-white/10 bg-white/[0.04] p-6">
+
               <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-xs mb-3">
-                {section.title}
+                {
+                  section.title
+                }
               </h3>
 
               <p className="text-white/55 text-sm leading-relaxed">
-                {section.text}
+                {
+                  section.text
+                }
               </p>
+
             </div>
           </section>
         )
       )}
+
     </main>
   );
 }

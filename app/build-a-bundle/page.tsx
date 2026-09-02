@@ -87,6 +87,61 @@ const eligibleBundleKeywords = [
 
 const PRODUCTS_PER_PAGE = 8;
 
+const bundleProductImages: Record<string, string> = {
+  "apx3": "/images/apx3blue.png",
+  "apx2": "/images/apx2blue.png",
+  "wolverine": "/images/wolverineblue.png",
+  "bpc157": "/images/bpc157blue.png",
+  "tb500": "/images/tb500blue.png",
+  "klow": "/images/klowblue.png",
+  "glutathione": "/images/glutathione1500blue.png",
+  "kpv": "/images/kpvblue.png",
+  "ghkcu": "/images/ghkcublue.png",
+  "tesamorelin": "/images/tesa5blue.png",
+  "cjcipa": "/images/cjcipablue.png",
+  "mitox": "/images/mitoxblue.png",
+  "nad": "/images/nadblue.png",
+  "motsc": "/images/motscblue.png",
+  "5amino1mq": "/images/5amino1mqblue.png",
+  "ss31": "/images/ss3110blue.png",
+  "ara290": "/images/ara290blue.png",
+  "aod9604": "/images/aod9604blue.png",
+  "adamax": "/images/adamaxblue.png",
+  "neurox": "/images/neurox48blue.png",
+  "semax": "/images/semaxblue.png",
+  "selank": "/images/selankblue.png",
+  "pinealon": "/images/pinealonblue.png",
+  "pe2228": "/images/pe2228blue.png",
+  "kisspeptin10": "/images/kisspeptin10blue.png",
+  "pt141": "/images/pt141blue.png",
+};
+
+const normalizeProductKey = (value?: string) =>
+  String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+
+const getBundleProductImage = (product: {
+  id?: string;
+  name?: string;
+  slug?: string;
+  image?: string;
+}) => {
+  const candidates = [
+    normalizeProductKey(product.slug),
+    normalizeProductKey(product.id),
+    normalizeProductKey(product.name),
+  ];
+
+  for (const candidate of candidates) {
+    if (bundleProductImages[candidate]) {
+      return bundleProductImages[candidate];
+    }
+  }
+
+  return product.image || "";
+};
+
 export default function BuildABundlePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [bundle, setBundle] = useState<BundleItem[]>([]);
@@ -173,7 +228,11 @@ export default function BuildABundlePage() {
           })
           .sort((a: Product, b: Product) =>
             a.name.localeCompare(b.name)
-          );
+          )
+          .map((product: Product) => ({
+            ...product,
+            image: getBundleProductImage(product),
+          }));
 
         setProducts(normalizedProducts);
       } catch (error) {

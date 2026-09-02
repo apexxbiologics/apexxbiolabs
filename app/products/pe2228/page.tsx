@@ -21,15 +21,9 @@ type QuantityDiscountTier = {
 
 export default function PE2228Page() {
   const [added, setAdded] = useState(false);
-
-  const [selectedQuantity, setSelectedQuantity] =
-    useState(1);
-
-  const [inventory, setInventory] =
-    useState<number | null>(null);
-
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [inventory, setInventory] = useState<number | null>(null);
   const [price, setPrice] = useState(55);
-
   const [quantityDiscounts, setQuantityDiscounts] =
     useState<QuantityDiscountTier[]>([]);
 
@@ -59,49 +53,35 @@ export default function PE2228Page() {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await fetch(
-          "/api/products",
-          {
-            cache: "no-store",
-          }
-        );
+        const response = await fetch("/api/products", {
+          cache: "no-store",
+        });
 
         const data = await response.json();
 
         if (!data.success) return;
 
-        const pe2228 =
-          data.products.find(
-            (item: any) =>
-              item.slug === "pe2228" ||
-              item.slug === "pe-22-28" ||
-              item.slug === "pe2228-10mg" ||
-              item.slug ===
-                "pe-22-28-10mg" ||
-              item.id === "pe2228" ||
-              item.id === "pe-22-28" ||
-              item.id === "pe2228-10mg" ||
-              item.id ===
-                "PE-22-28-10mg" ||
-              item.name
-                ?.toLowerCase()
-                .includes("pe-22-28") ||
-              item.name
-                ?.toLowerCase()
-                .includes("pe2228")
-          );
+        const pe2228 = data.products.find(
+          (item: any) =>
+            item.slug === "pe2228" ||
+            item.slug === "pe-22-28" ||
+            item.slug === "pe2228-10mg" ||
+            item.slug === "pe-22-28-10mg" ||
+            item.id === "pe2228" ||
+            item.id === "pe-22-28" ||
+            item.id === "pe2228-10mg" ||
+            item.id === "PE-22-28-10mg" ||
+            item.name?.toLowerCase().includes("pe-22-28") ||
+            item.name?.toLowerCase().includes("pe2228")
+        );
 
         if (pe2228) {
           setInventory(
-            Number(
-              pe2228.inventory ?? 0
-            )
+            Number(pe2228.inventory ?? 0)
           );
 
           setPrice(
-            Number(
-              pe2228.price ?? 55
-            )
+            Number(pe2228.price ?? 55)
           );
         } else {
           setInventory(null);
@@ -118,88 +98,63 @@ export default function PE2228Page() {
       }
     };
 
-    const fetchQuantityDiscounts =
-      async () => {
-        try {
-          const response = await fetch(
-            "/api/quantity-discounts",
-            {
-              cache: "no-store",
+    const fetchQuantityDiscounts = async () => {
+      try {
+        const response = await fetch(
+          "/api/quantity-discounts",
+          {
+            cache: "no-store",
+          }
+        );
+
+        const data = await response.json();
+
+        if (!data.success) return;
+
+        const tiers = (data.tiers || [])
+          .map((tier: any) => ({
+            id: String(tier.id),
+            name: String(tier.name || ""),
+            quantity: Number(tier.quantity || 0),
+            discount_percent: Number(
+              tier.discount_percent || 0
+            ),
+            sort_order: Number(
+              tier.sort_order || 0
+            ),
+          }))
+          .filter(
+            (tier: QuantityDiscountTier) =>
+              tier.quantity > 1 &&
+              tier.discount_percent >= 0
+          )
+          .sort(
+            (
+              a: QuantityDiscountTier,
+              b: QuantityDiscountTier
+            ) => {
+              if (a.sort_order !== b.sort_order) {
+                return a.sort_order - b.sort_order;
+              }
+
+              return a.quantity - b.quantity;
             }
           );
 
-          const data =
-            await response.json();
-
-          if (!data.success) return;
-
-          const tiers = (
-            data.tiers || []
-          )
-            .map((tier: any) => ({
-              id: String(tier.id),
-
-              name: String(
-                tier.name || ""
-              ),
-
-              quantity: Number(
-                tier.quantity || 0
-              ),
-
-              discount_percent: Number(
-                tier.discount_percent || 0
-              ),
-
-              sort_order: Number(
-                tier.sort_order || 0
-              ),
-            }))
-            .filter(
-              (
-                tier: QuantityDiscountTier
-              ) =>
-                tier.quantity > 1 &&
-                tier.discount_percent >= 0
-            )
-            .sort(
-              (
-                a: QuantityDiscountTier,
-                b: QuantityDiscountTier
-              ) => {
-                if (
-                  a.sort_order !==
-                  b.sort_order
-                ) {
-                  return (
-                    a.sort_order -
-                    b.sort_order
-                  );
-                }
-
-                return (
-                  a.quantity -
-                  b.quantity
-                );
-              }
-            );
-
-          setQuantityDiscounts(tiers);
-        } catch (error) {
-          console.error(
-            "Failed to fetch quantity discounts:",
-            error
-          );
-        }
-      };
+        setQuantityDiscounts(tiers);
+      } catch (error) {
+        console.error(
+          "Failed to fetch quantity discounts:",
+          error
+        );
+      }
+    };
 
     fetchProductData();
     fetchQuantityDiscounts();
   }, []);
 
-  const getDiscountTier = (
-    quantity: number
-  ) => {
+  const getDiscountTier = (quantity: number) => {
     return (
       [...quantityDiscounts]
         .filter(
@@ -214,9 +169,7 @@ export default function PE2228Page() {
   };
 
   const selectedTier =
-    getDiscountTier(
-      selectedQuantity
-    );
+    getDiscountTier(selectedQuantity);
 
   const selectedDiscountPercent =
     selectedTier?.discount_percent || 0;
@@ -234,14 +187,10 @@ export default function PE2228Page() {
   const regularTotal =
     price * selectedQuantity;
 
-  const formatMoney = (
-    amount: number
-  ) =>
+  const formatMoney = (amount: number) =>
     Number(amount).toFixed(2);
 
-  const selectQuantity = (
-    quantity: number
-  ) => {
+  const selectQuantity = (quantity: number) => {
     if (
       inventory !== null &&
       quantity > inventory
@@ -256,12 +205,9 @@ export default function PE2228Page() {
   const addToCart = () => {
     if (isOutOfStock) return;
 
-    const existingCart =
-      JSON.parse(
-        localStorage.getItem(
-          "cart"
-        ) || "[]"
-      );
+    const existingCart = JSON.parse(
+      localStorage.getItem("cart") || "[]"
+    );
 
     const existingProduct =
       existingCart.find(
@@ -272,8 +218,7 @@ export default function PE2228Page() {
     const existingQuantity =
       existingProduct
         ? Number(
-            existingProduct.quantity ||
-              0
+            existingProduct.quantity || 0
           )
         : 0;
 
@@ -287,9 +232,7 @@ export default function PE2228Page() {
     ) {
       alert(
         `Only ${inventory} vial${
-          inventory === 1
-            ? ""
-            : "s"
+          inventory === 1 ? "" : "s"
         } of ${
           product.name
         } are currently available.`
@@ -302,8 +245,7 @@ export default function PE2228Page() {
       getDiscountTier(newQuantity);
 
     const newDiscountPercent =
-      newTier?.discount_percent ||
-      0;
+      newTier?.discount_percent || 0;
 
     const newDiscountedUnitPrice =
       price *
@@ -313,55 +255,35 @@ export default function PE2228Page() {
 
     const cartProduct = {
       id: product.id,
-
       name: product.name,
-
-      price:
-        newDiscountedUnitPrice,
-
+      price: newDiscountedUnitPrice,
       basePrice: price,
-
-      quantity:
-        newQuantity,
-
-      image:
-        product.image,
-
-      path:
-        product.path,
-
+      quantity: newQuantity,
+      image: product.image,
+      path: product.path,
       quantityDiscountPercent:
         newDiscountPercent,
-
       quantityDiscountTierId:
         newTier?.id || null,
-
       quantityDiscountTierQuantity:
         newTier?.quantity || null,
     };
 
     const updatedCart =
       existingProduct
-        ? existingCart.map(
-            (item: any) =>
-              item.id ===
-              product.id
-                ? {
-                    ...item,
-                    ...cartProduct,
-                  }
-                : item
+        ? existingCart.map((item: any) =>
+            item.id === product.id
+              ? {
+                  ...item,
+                  ...cartProduct,
+                }
+              : item
           )
-        : [
-            ...existingCart,
-            cartProduct,
-          ];
+        : [...existingCart, cartProduct];
 
     localStorage.setItem(
       "cart",
-      JSON.stringify(
-        updatedCart
-      )
+      JSON.stringify(updatedCart)
     );
 
     window.dispatchEvent(
@@ -384,9 +306,7 @@ export default function PE2228Page() {
             <div className="flex items-center justify-center">
               <div className="relative w-full max-w-[520px] aspect-square rounded-[42px] overflow-hidden border border-blue-400/10 bg-white/[0.03] shadow-[0_0_30px_rgba(96,165,250,0.15)]">
                 <FavoriteButton
-                  product={
-                    favoriteProduct
-                  }
+                  product={favoriteProduct}
                 />
 
                 <img
@@ -416,8 +336,7 @@ export default function PE2228Page() {
                     )}
                   </p>
 
-                  {selectedDiscountPercent >
-                    0 && (
+                  {selectedDiscountPercent > 0 && (
                     <p className="text-white/35 text-sm line-through">
                       $
                       {formatMoney(
@@ -429,17 +348,15 @@ export default function PE2228Page() {
               </div>
 
               <p className="text-white/60 leading-relaxed mb-5">
-                High-purity PE-22-28
-                research peptide
-                studied in laboratory
-                models involving
-                neuropeptide
+                PE-22-28 research
+                peptide produced for
+                laboratory
+                investigation of
+                neuropeptide-associated
                 signaling,
                 stress-response
-                pathways,
-                mood-related
-                research models,
-                and cellular
+                pathways, and
+                cellular
                 communication
                 mechanisms.
               </p>
@@ -449,8 +366,7 @@ export default function PE2228Page() {
                   10mg
                 </span>
 
-                {selectedDiscountPercent >
-                  0 && (
+                {selectedDiscountPercent > 0 && (
                   <span className="rounded-full border border-green-400/20 bg-green-500/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-green-200">
                     Save{" "}
                     {
@@ -482,8 +398,7 @@ export default function PE2228Page() {
                     Quantity
                   </p>
 
-                  {selectedQuantity >
-                    1 && (
+                  {selectedQuantity > 1 && (
                     <p className="text-[#A5D8FF] text-sm font-semibold">
                       $
                       {formatMoney(
@@ -498,21 +413,17 @@ export default function PE2228Page() {
                   {/* ONE VIAL */}
                   <button
                     type="button"
-                    disabled={
-                      isOutOfStock
-                    }
+                    disabled={isOutOfStock}
                     onClick={() =>
                       selectQuantity(1)
                     }
                     className={`relative rounded-2xl border px-3 py-4 transition-all ${
-                      selectedQuantity ===
-                      1
+                      selectedQuantity === 1
                         ? "border-blue-300 bg-blue-400/10"
                         : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"
                     } disabled:opacity-35 disabled:cursor-not-allowed`}
                   >
-                    {selectedQuantity ===
-                      1 && (
+                    {selectedQuantity === 1 && (
                       <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
                         <Check
                           size={12}
@@ -531,12 +442,11 @@ export default function PE2228Page() {
                     </p>
                   </button>
 
-                  {/* ADMIN-CONTROLLED TIERS */}
+                  {/* ADMIN TIERS */}
                   {quantityDiscounts.map(
                     (tier) => {
                       const tierUnavailable =
-                        inventory !==
-                          null &&
+                        inventory !== null &&
                         inventory <
                           tier.quantity;
 
@@ -614,7 +524,7 @@ export default function PE2228Page() {
                 </p>
               </div>
 
-              {/* ACTION BUTTONS */}
+              {/* ACTIONS */}
               <div className="grid grid-cols-2 gap-3">
                 {isOutOfStock ? (
                   <button
@@ -625,20 +535,15 @@ export default function PE2228Page() {
                   </button>
                 ) : (
                   <button
-                    onClick={
-                      addToCart
-                    }
+                    onClick={addToCart}
                     className="col-span-2 bg-white text-[#081526] hover:bg-blue-100 rounded-full py-4 uppercase tracking-widest text-xs font-bold transition-all flex items-center justify-center gap-2"
                   >
-                    <ShoppingCart
-                      size={18}
-                    />
+                    <ShoppingCart size={18} />
 
                     {added
                       ? "Added To Cart"
                       : `Add ${selectedQuantity} ${
-                          selectedQuantity ===
-                          1
+                          selectedQuantity === 1
                             ? "Vial"
                             : "Vials"
                         } To Cart`}
@@ -659,6 +564,55 @@ export default function PE2228Page() {
                   Keep Shopping
                 </a>
               </div>
+
+              <div className="block text-center mt-4 text-xs uppercase tracking-widest text-white/35">
+                COA Coming Soon
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* COA SUMMARY */}
+      <section className="px-6 md:px-10 pb-12">
+        <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+          <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+            <div>
+              <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+                Quality Verification
+              </p>
+
+              <h3 className="text-2xl font-black text-white mb-4">
+                Certificate of Analysis
+              </h3>
+
+              <div className="flex flex-wrap gap-2">
+                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm font-semibold">
+                  Testing Pending
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                  10mg
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                  PE-22-28
+                </span>
+              </div>
+            </div>
+
+            <div className="md:text-right">
+              <p className="uppercase tracking-widest text-white/40 text-xs">
+                Laboratory Verification
+              </p>
+
+              <button
+                type="button"
+                disabled
+                className="inline-flex mt-3 cursor-not-allowed rounded-full border border-white/10 bg-white/[0.03] px-5 py-2.5 text-white/40 text-sm font-semibold"
+              >
+                COA Coming Soon
+              </button>
             </div>
           </div>
         </div>
@@ -676,20 +630,20 @@ export default function PE2228Page() {
 
             [
               ShieldCheck,
-              "Third-Party Tested",
-              "Independent lab verified when available.",
+              "Testing Pending",
+              "Independent analytical testing has not yet been completed.",
             ],
 
             [
               ClipboardCheck,
-              "Batch Documented",
-              "Documentation available for verified lots.",
+              "Batch Documentation",
+              "Batch-specific analytical documentation will be added when available.",
             ],
 
             [
               ShieldCheck,
-              "Quality Target",
-              "99%+ purity target.",
+              "Research Material",
+              "Produced for laboratory research applications only.",
             ],
           ].map(
             ([Icon, title, text]: any) => (
@@ -731,12 +685,12 @@ export default function PE2228Page() {
           <p className="text-white/65 leading-relaxed max-w-4xl mb-7">
             PE-22-28 is studied in
             laboratory research
-            involving neuropeptide
+            involving
+            neuropeptide-associated
             signaling,
-            stress-response
-            models, mood-related
-            pathway research, and
-            cellular communication
+            stress-response models,
+            and cellular
+            communication
             mechanisms.
           </p>
 
@@ -744,17 +698,17 @@ export default function PE2228Page() {
             {[
               [
                 "Neuropeptide Signaling",
-                "Studied in models involving peptide-mediated neural communication.",
+                "Studied in laboratory models involving peptide-associated neural signaling pathways.",
               ],
 
               [
                 "Stress-Response Models",
-                "Evaluated in laboratory research involving adaptive stress pathways.",
+                "Evaluated in experimental research involving adaptive cellular signaling pathways.",
               ],
 
               [
                 "Cellular Communication",
-                "Research focuses on receptor-pathway interactions and signaling behavior.",
+                "Investigated in research involving receptor-pathway interactions and molecular signaling behavior.",
               ],
 
               [
@@ -785,84 +739,71 @@ export default function PE2228Page() {
       <section className="px-6 md:px-10 pb-14">
         <div className="max-w-7xl mx-auto">
           <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-            Frequently Researched
-            Together
+            Frequently Researched Together
           </p>
 
           <h2 className="text-3xl font-black text-white mb-6">
-            Pair With Related
-            Research Compounds
+            Pair With Related Research Compounds
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {[
               {
                 name: "Semax",
-
                 image:
                   "/images/semaxblue.png",
-
                 path:
                   "/products/semax",
-
                 text:
-                  "Studied in laboratory models involving cognitive signaling pathways and neuroregulation.",
+                  "Studied in laboratory models involving peptide-associated cellular signaling and molecular pathways.",
               },
 
               {
                 name: "Selank",
-
                 image:
                   "/images/selankblue.png",
-
                 path:
                   "/products/selank",
-
                 text:
-                  "Research involving neuropeptide signaling and central nervous system models.",
+                  "Research involving peptide-associated signaling and biochemical mechanisms.",
               },
 
               {
                 name: "Pinealon",
-
                 image:
                   "/images/pinealonblue.png",
-
                 path:
                   "/products/pinealon",
-
                 text:
-                  "Studied in laboratory models involving neuroregulation and cellular signaling pathways.",
+                  "Studied in laboratory models involving neuronal signaling and cellular research pathways.",
               },
-            ].map(
-              (item) => (
-                <a
-                  key={item.name}
-                  href={item.path}
-                  className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/40 transition-all"
-                >
-                  <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
-                    />
-                  </div>
+            ].map((item) => (
+              <a
+                key={item.name}
+                href={item.path}
+                className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/40 transition-all"
+              >
+                <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
+                  />
+                </div>
 
-                  <h3 className="text-xl font-black text-white mb-2">
-                    {item.name}
-                  </h3>
+                <h3 className="text-xl font-black text-white mb-2">
+                  {item.name}
+                </h3>
 
-                  <p className="text-white/55 text-sm leading-relaxed">
-                    {item.text}
-                  </p>
+                <p className="text-white/55 text-sm leading-relaxed">
+                  {item.text}
+                </p>
 
-                  <span className="inline-block mt-3 text-[#A5D8FF] text-sm font-semibold">
-                    View Product →
-                  </span>
-                </a>
-              )
-            )}
+                <span className="inline-block mt-3 text-[#A5D8FF] text-sm font-semibold">
+                  View Product →
+                </span>
+              </a>
+            ))}
           </div>
         </div>
       </section>
@@ -870,38 +811,34 @@ export default function PE2228Page() {
       {/* DISCLAIMERS */}
       {[
         {
-          title:
-            "FDA Disclaimer",
+          title: "FDA Disclaimer",
 
           text:
             "These statements have not been evaluated by the U.S. Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only and are not for human or veterinary consumption.",
         },
 
         {
-          title:
-            "Customer Acknowledgment",
+          title: "Customer Acknowledgment",
 
           text:
             "By purchasing this product, the customer acknowledges that this material is intended solely for lawful laboratory research purposes and will not be used for human consumption, veterinary use, medical use, diagnosis, treatment, cure, or prevention of disease. Apexx Biolabs does not provide dosing instructions, treatment recommendations, medical advice, or guidance regarding human use of any product.",
         },
-      ].map(
-        (section) => (
-          <section
-            key={section.title}
-            className="px-6 md:px-10 pb-10"
-          >
-            <div className="max-w-7xl mx-auto rounded-[26px] border border-white/10 bg-white/[0.04] p-6">
-              <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-xs mb-3">
-                {section.title}
-              </h3>
+      ].map((section) => (
+        <section
+          key={section.title}
+          className="px-6 md:px-10 pb-10"
+        >
+          <div className="max-w-7xl mx-auto rounded-[26px] border border-white/10 bg-white/[0.04] p-6">
+            <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-xs mb-3">
+              {section.title}
+            </h3>
 
-              <p className="text-white/55 text-sm leading-relaxed">
-                {section.text}
-              </p>
-            </div>
-          </section>
-        )
-      )}
+            <p className="text-white/55 text-sm leading-relaxed">
+              {section.text}
+            </p>
+          </div>
+        </section>
+      ))}
     </main>
   );
 }

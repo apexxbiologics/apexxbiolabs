@@ -88,32 +88,67 @@ const eligibleBundleKeywords = [
 const PRODUCTS_PER_PAGE = 8;
 
 const bundleProductImages: Record<string, string> = {
-  "apx3": "/images/retatrutide.PNG",
-  "apx2": "/images/apx230.png",
-  "wolverine": "/images/wolverine.png",
-  "bpc157": "/images/bpc157.PNG",
-  "tb500": "/images/tb500.PNG",
-  "klow": "/images/klow.png",
-  "glutathione": "/images/glutathione1500.png",
-  "kpv": "/images/kpv.PNG",
-  "ghkcu": "/images/ghkcu.PNG",
-  "tesamorelin": "/images/tesa5.png",
-  "cjcipa": "/images/cjcipa.PNG",
-  "mitox": "/images/mitox120.png",
-  "nad": "/images/nad.png",
-  "motsc": "/images/motsc.PNG",
-  "5amino1mq": "/images/5amino1mq.png",
-  "ss31": "/images/ss3110.png",
-  "ara290": "/images/ara290.PNG",
-  "aod9604": "/images/aod9604.png",
-  "adamax": "/images/adamax.PNG",
-  "neurox": "/images/neurox48.png",
-  "semax": "/images/semax.PNG",
-  "selank": "/images/selank.PNG",
-  "pinealon": "/images/pinealon.PNG",
-  "pe2228": "/images/pe2228.PNG",
-  "kisspeptin10": "/images/kisspeptin10.png",
-  "pt141": "/images/pt141.png",
+  "apx3": "/images/apx310blue.png",
+  "apx310": "/images/apx310blue.png",
+  "apx310mg": "/images/apx310blue.png",
+  "apx320": "/images/apx320blue.png",
+  "apx320mg": "/images/apx320blue.png",
+
+  "apx2": "/images/apx230blue.png",
+  "apx230": "/images/apx230blue.png",
+  "apx230mg": "/images/apx230blue.png",
+
+  "wolverine": "/images/wolverineblue.png",
+  "bpc157": "/images/bpc157blue.png",
+  "tb500": "/images/tb500blue.png",
+  "klow": "/images/klowblue.png",
+
+  "glutathione": "/images/glutathione1500blue.png",
+  "glutathione1500": "/images/glutathione1500blue.png",
+  "glutathione1500mg": "/images/glutathione1500blue.png",
+
+  "kpv": "/images/kpvblue.png",
+  "ghkcu": "/images/ghkcublue.png",
+
+  "tesamorelin": "/images/tesa5blue.png",
+  "tesamorelin5": "/images/tesa5blue.png",
+  "tesamorelin5mg": "/images/tesa5blue.png",
+
+  "cjcipa": "/images/cjcipablue.png",
+  "cjcipawithoutdac": "/images/cjcipablue.png",
+
+  "mitox": "/images/mitox120blue.png",
+  "mitox120": "/images/mitox120blue.png",
+  "mitox120mg": "/images/mitox120blue.png",
+
+  "nad": "/images/nadblue.png",
+  "nad1000": "/images/nadblue.png",
+  "nad1000mg": "/images/nadblue.png",
+
+  "motsc": "/images/motscblue.png",
+
+  "5amino1mq": "/images/5amino1mqblue.png",
+  "5amino1mq50": "/images/5amino1mqblue.png",
+  "5amino1mq50mg": "/images/5amino1mqblue.png",
+
+  "ss31": "/images/ss3110blue.png",
+  "ss3110": "/images/ss3110blue.png",
+  "ss3110mg": "/images/ss3110blue.png",
+
+  "ara290": "/images/ara290blue.png",
+  "aod9604": "/images/aod9604blue.png",
+  "adamax": "/images/adamaxblue.PNG",
+
+  "neurox": "/images/neurox48blue.png",
+  "neurox48": "/images/neurox48blue.png",
+  "neurox48mg": "/images/neurox48blue.png",
+
+  "semax": "/images/semaxblue.PNG",
+  "selank": "/images/selankblue.PNG",
+  "pinealon": "/images/pinealonblue.png",
+  "pe2228": "/images/pe2228blue.png",
+  "kisspeptin10": "/images/kisspeptin10blue.png",
+  "pt141": "/images/pt141blue.png",
 };
 
 const normalizeProductKey = (value?: string) =>
@@ -139,29 +174,39 @@ const getBundleProductImage = (product: {
     }
   }
 
-  // Some Supabase product IDs/names include the vial size, for example:
-  // glutathione1500mg, mitox120mg, neurox48mg, ss3110mg.
-  // Match those safely to the same blue catalog images.
-  const sizedProductAliases = [
-    {
-      matches: ["glutathione1500mg", "glutathione1500", "glutathione"],
-      image: "/images/glutathione1500.png",
-    },
-    {
-      matches: ["mitox120mg", "mitox120", "mitox"],
-      image: "/images/mitox120.png",
-    },
-    {
-      matches: ["neurox48mg", "neurox48", "neurox"],
-      image: "/images/neurox48.png",
-    },
-    {
-      matches: ["ss3110mg", "ss3110", "ss31"],
-      image: "/images/ss3110.png",
-    },
+  // Some Supabase IDs/names include vial size or punctuation.
+  // Use the exact blue image files from /public/images.
+  const aliasGroups = [
+    { matches: ["apx310mg", "apx310", "apx3"], image: "/images/apx310blue.png" },
+    { matches: ["apx320mg", "apx320"], image: "/images/apx320blue.png" },
+    { matches: ["apx230mg", "apx230", "apx2"], image: "/images/apx230blue.png" },
+    { matches: ["glutathione1500mg", "glutathione1500", "glutathione"], image: "/images/glutathione1500blue.png" },
+    { matches: ["mitox120mg", "mitox120", "mitox"], image: "/images/mitox120blue.png" },
+    { matches: ["neurox48mg", "neurox48", "neurox"], image: "/images/neurox48blue.png" },
+    { matches: ["ss3110mg", "ss3110", "ss31"], image: "/images/ss3110blue.png" },
+    { matches: ["5amino1mq50mg", "5amino1mq50", "5amino1mq"], image: "/images/5amino1mqblue.png" },
+    { matches: ["aod9604"], image: "/images/aod9604blue.png" },
+    { matches: ["ara290"], image: "/images/ara290blue.png" },
+    { matches: ["adamax"], image: "/images/adamaxblue.PNG" },
+    { matches: ["bpc157"], image: "/images/bpc157blue.png" },
+    { matches: ["cjcipa", "cjcipawithoutdac"], image: "/images/cjcipablue.png" },
+    { matches: ["ghkcu"], image: "/images/ghkcublue.png" },
+    { matches: ["kisspeptin10", "kisspeptin"], image: "/images/kisspeptin10blue.png" },
+    { matches: ["klow"], image: "/images/klowblue.png" },
+    { matches: ["kpv"], image: "/images/kpvblue.png" },
+    { matches: ["motsc"], image: "/images/motscblue.png" },
+    { matches: ["nad1000mg", "nad1000", "nad"], image: "/images/nadblue.png" },
+    { matches: ["pe2228"], image: "/images/pe2228blue.png" },
+    { matches: ["pinealon"], image: "/images/pinealonblue.png" },
+    { matches: ["pt141"], image: "/images/pt141blue.png" },
+    { matches: ["semax"], image: "/images/semaxblue.PNG" },
+    { matches: ["selank"], image: "/images/selankblue.PNG" },
+    { matches: ["tb500"], image: "/images/tb500blue.png" },
+    { matches: ["tesamorelin5mg", "tesamorelin5", "tesamorelin"], image: "/images/tesa5blue.png" },
+    { matches: ["wolverine"], image: "/images/wolverineblue.png" },
   ];
 
-  for (const alias of sizedProductAliases) {
+  for (const alias of aliasGroups) {
     if (
       candidates.some((candidate) =>
         alias.matches.some(

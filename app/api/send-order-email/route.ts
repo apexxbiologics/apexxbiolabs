@@ -40,6 +40,13 @@ type CartItem = {
   basePrice?: number;
   quantity?: number;
   image?: string;
+  path?: string;
+  bundleId?: string | null;
+  bundleType?: string | null;
+  bundleDiscountPercent?: number;
+  bundleTierQuantity?: number | null;
+  bundleBaseUnitPrice?: number;
+  bundleDiscountedUnitPrice?: number;
   quantityDiscountPercent?: number;
   quantityDiscountTierId?: string | null;
   quantityDiscountTierQuantity?: number | null;
@@ -48,11 +55,12 @@ type CartItem = {
 type DatabaseProduct = {
   id: string;
   name: string;
-  slug: string | null;
-  size: string | null;
+  slug?: string | null;
   price: number;
   inventory: number;
-  active: boolean;
+  active?: boolean | null;
+  category?: string | null;
+  size?: string | null;
 };
 
 type QuantityDiscountTier = {
@@ -63,30 +71,94 @@ type QuantityDiscountTier = {
   sort_order: number;
 };
 
-const normalizeLookupValue = (value: unknown) =>
-  String(value || "")
-    .trim()
-    .toLowerCase();
+const BUNDLE_TIERS = [
+  { quantity: 3, discount: 5 },
+  { quantity: 5, discount: 10 },
+  { quantity: 10, discount: 15 },
+  { quantity: 20, discount: 20 },
+];
 
-const compactLookupValue = (value: unknown) =>
-  normalizeLookupValue(value).replace(/[^a-z0-9]/g, "");
+const ELIGIBLE_BUNDLE_KEYWORDS = [
+  "apx-3",
+  "apx3",
+  "apx-2",
+  "apx2",
+  "bpc-157",
+  "bpc157",
+  "tb-500",
+  "tb500",
+  "ghk-cu",
+  "ghkcu",
+  "cjc",
+  "ipamorelin",
+  "cjcipa",
+  "cjc-ipa",
+  "mots-c",
+  "motsc",
+  "pe-22-28",
+  "pe2228",
+  "pinealon",
+  "selank",
+  "semax",
+  "adamax",
+  "ara-290",
+  "ara290",
+  "nad+",
+  "nad",
+  "aod-9604",
+  "aod9604",
+  "pt-141",
+  "pt141",
+  "5-amino-1mq",
+  "5amino1mq",
+  "kisspeptin",
+  "kisspeptin-10",
+  "kisspeptin10",
+  "tesamorelin",
+  "glutathione",
+  "wolverine",
+  "klow",
+  "ss-31",
+  "ss31",
+  "mito-x",
+  "mitox",
+  "neuro-x",
+  "neurox",
+  "kpv",
+];
 
-const isQuantityDiscountEligibleProduct = (
-  product: DatabaseProduct
-) => {
-  const slug = normalizeLookupValue(product.slug);
-  const name = normalizeLookupValue(product.name);
+const isPhysicalProduct = (product: DatabaseProduct) => {
+  const name = String(product.name || "").toLowerCase();
+  const slug = String(product.slug || "").toLowerCase();
+  const category = String(product.category || "").toLowerCase();
 
-  const isShirt =
-    slug.startsWith("apexx-shirt-") ||
-    name.includes("signature tee") ||
-    name.includes("shirt");
+  return (
+    name.includes("shirt") ||
+    name.includes("t-shirt") ||
+    name.includes("tee") ||
+    name.includes("vial case") ||
+    name.includes("storage case") ||
+    slug.includes("shirt") ||
+    slug.includes("vial-storage-case") ||
+    category.includes("accessor") ||
+    category.includes("apparel") ||
+    category.includes("shirt")
+  );
+};
 
-  const isVialCase =
-    slug === "vial-storage-case" ||
-    name.includes("vial storage case");
+const isBundleEligibleProduct = (product: DatabaseProduct) => {
+  if (isPhysicalProduct(product)) return false;
 
-  return !isShirt && !isVialCase;
+  const id = String(product.id || "").toLowerCase();
+  const name = String(product.name || "").toLowerCase();
+  const slug = String(product.slug || "").toLowerCase();
+
+  return ELIGIBLE_BUNDLE_KEYWORDS.some(
+    (keyword) =>
+      id.includes(keyword) ||
+      name.includes(keyword) ||
+      slug.includes(keyword)
+  );
 };
 
 export async function POST(request: Request) {
@@ -229,33 +301,32 @@ export async function POST(request: Request) {
      * Validate the raw cart structure first.
      *
      * IMPORTANT:
-     * We intentionally DO NOT trust the price sent by the browser.
-     * The browser only tells us which product and how many units
-     * the customer wants. Pricing is rebuilt from Supabase below.
+     * Browser-supplied prices and discount metadata are NOT trusted.
+     * The server rebuilds all merchandise pricing from Supabase.
      */
-    const rawCart = cart.map(
+    const rawCart: CartItem[] = cart.map(
       (item: CartItem) => ({
         id: String(item.id || "").trim(),
-        name: String(
-          item.name || "Product"
-        ).trim(),
-        quantity: Number(
-          item.quantity || 0
-        ),
+        name: String(item.name || "Product").trim(),
+        quantity: Number(item.quantity || 0),
         image: item.image,
+        path: item.path,
+        bundleId: item.bundleId
+          ? String(item.bundleId).trim()
+          : null,
+        bundleType: item.bundleType
+          ? String(item.bundleType).trim()
+          : null,
       })
     );
 
-    const invalidCartItem =
-      rawCart.some(
-        (item) =>
-          !item.id ||
-          !item.name ||
-          !Number.isInteger(
-            item.quantity
-          ) ||
-          item.quantity <= 0
-      );
+    const invalidCartItem = rawCart.some(
+      (item) =>
+        !item.id ||
+        !item.name ||
+        !Number.isInteger(item.quantity) ||
+        Number(item.quantity) <= 0
+    );
 
     if (invalidCartItem) {
       return NextResponse.json(
@@ -269,24 +340,26 @@ export async function POST(request: Request) {
     }
 
     /*
-     * Load the canonical product catalog from Supabase.
+     * Load canonical products from Supabase.
      *
-     * We fetch the fields needed to verify identity, price,
-     * availability, and whether quantity discounts apply.
+     * We load the full active catalog because some cart item IDs
+     * are human-readable product identifiers while others may
+     * match a product slug. Matching both keeps existing product
+     * pages compatible without trusting any browser price.
      */
     const {
       data: databaseProductRows,
-      error: productLookupError,
+      error: productsLookupError,
     } = await supabaseAdmin
       .from("products")
       .select(
-        "id, name, slug, size, price, inventory, active"
+        "id, name, slug, price, inventory, active, category, size"
       );
 
-    if (productLookupError) {
+    if (productsLookupError) {
       console.error(
         "Product pricing lookup error:",
-        productLookupError
+        productsLookupError
       );
 
       return NextResponse.json(
@@ -303,13 +376,10 @@ export async function POST(request: Request) {
       (databaseProductRows || []) as DatabaseProduct[];
 
     /*
-     * Load the ACTIVE quantity-discount tiers from Supabase.
+     * Load active same-product quantity discount tiers.
      *
-     * This means Admin changes such as:
-     * 3 vials = 5%
-     * 5 vials = 10%
-     * 10 vials = 15%
-     * are automatically respected here without hardcoding them.
+     * These are the tiers controlled by Admin > Products.
+     * Build-a-Bundle has separate bundle-wide tiers below.
      */
     const {
       data: quantityTierRows,
@@ -341,76 +411,86 @@ export async function POST(request: Request) {
     const quantityTiers =
       (quantityTierRows || []) as QuantityDiscountTier[];
 
+    const findDatabaseProduct = (cartItem: CartItem) => {
+      const requestedId = String(
+        cartItem.id || ""
+      )
+        .trim()
+        .toLowerCase();
+
+      return (
+        databaseProducts.find((product) => {
+          const productId = String(
+            product.id || ""
+          )
+            .trim()
+            .toLowerCase();
+
+          const productSlug = String(
+            product.slug || ""
+          )
+            .trim()
+            .toLowerCase();
+
+          return (
+            productId === requestedId ||
+            productSlug === requestedId
+          );
+        }) || null
+      );
+    };
+
     /*
-     * Resolve each browser cart item to a real Supabase product.
-     *
-     * Exact ID is preferred. Slug/name fallbacks are included
-     * because some existing product pages use human-readable IDs
-     * such as "apx3-10mg" or "tesamorelin-5mg".
+     * Resolve every raw cart item to a trusted Supabase product.
      */
-    const resolvedCartItems: Array<{
-      product: DatabaseProduct;
-      quantity: number;
-      image?: string;
-    }> = [];
+    const resolvedCart = rawCart.map((item) => ({
+      raw: item,
+      product: findDatabaseProduct(item),
+    }));
 
-    for (const item of rawCart) {
-      const itemId =
-        normalizeLookupValue(item.id);
-      const itemName =
-        normalizeLookupValue(item.name);
-      const compactItemId =
-        compactLookupValue(item.id);
-      const compactItemName =
-        compactLookupValue(item.name);
+    const unresolvedItem = resolvedCart.find(
+      (entry) => !entry.product
+    );
 
-      const product =
-        databaseProducts.find(
-          (candidate) =>
-            normalizeLookupValue(
-              candidate.id
-            ) === itemId
-        ) ||
-        databaseProducts.find(
-          (candidate) =>
-            normalizeLookupValue(
-              candidate.slug
-            ) === itemId
-        ) ||
-        databaseProducts.find(
-          (candidate) =>
-            normalizeLookupValue(
-              candidate.name
-            ) === itemName
-        ) ||
-        databaseProducts.find(
-          (candidate) =>
-            compactLookupValue(
-              candidate.id
-            ) === compactItemId
-        ) ||
-        databaseProducts.find(
-          (candidate) =>
-            compactLookupValue(
-              candidate.slug
-            ) === compactItemId
-        ) ||
-        databaseProducts.find(
-          (candidate) =>
-            compactLookupValue(
-              candidate.name
-            ) === compactItemName
-        );
+    if (unresolvedItem) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `${unresolvedItem.raw.name} could not be verified. Please remove it from your cart and add it again.`,
+        },
+        { status: 400 }
+      );
+    }
 
-      if (!product) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: `${item.name} could not be verified. Please remove it from your cart and add it again.`,
-          },
-          { status: 400 }
-        );
-      }
+    /*
+     * Validate aggregate inventory across the ENTIRE cart.
+     *
+     * This prevents a customer from splitting the same product
+     * across a normal cart line and one or more bundles to exceed
+     * the available inventory.
+     */
+    const requestedInventoryByProduct =
+      new Map<string, number>();
+
+    for (const entry of resolvedCart) {
+      const product = entry.product!;
+      const key = String(product.id);
+      const previous =
+        requestedInventoryByProduct.get(key) || 0;
+
+      requestedInventoryByProduct.set(
+        key,
+        previous + Number(entry.raw.quantity || 0)
+      );
+    }
+
+    for (const [productId, requestedQuantity] of
+      requestedInventoryByProduct.entries()) {
+      const product = databaseProducts.find(
+        (row) => String(row.id) === productId
+      );
+
+      if (!product) continue;
 
       if (product.active === false) {
         return NextResponse.json(
@@ -422,197 +502,289 @@ export async function POST(request: Request) {
         );
       }
 
-      resolvedCartItems.push({
-        product,
-        quantity: item.quantity,
-        image: item.image,
-      });
-    }
-
-    /*
-     * Combine duplicate entries that resolve to the same product.
-     *
-     * This prevents someone from splitting 5 vials into separate
-     * cart lines to avoid or manipulate a quantity tier.
-     */
-    const groupedCart = new Map<
-      string,
-      {
-        product: DatabaseProduct;
-        quantity: number;
-        image?: string;
-      }
-    >();
-
-    for (const item of resolvedCartItems) {
-      const key = String(
-        item.product.id
-      );
-
-      const existing = groupedCart.get(
-        key
-      );
-
-      if (existing) {
-        existing.quantity +=
-          item.quantity;
-      } else {
-        groupedCart.set(key, {
-          ...item,
-        });
-      }
-    }
-
-    /*
-     * Rebuild the cart using ONLY trusted server-side prices.
-     */
-    const normalizedCart: CartItem[] = [];
-
-    for (const item of groupedCart.values()) {
-      const { product, quantity } = item;
-
       const availableInventory = Number(
-        product.inventory ?? 0
+        product.inventory || 0
       );
 
-      if (
-        !Number.isFinite(availableInventory) ||
-        availableInventory < 0
-      ) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: `Inventory for ${product.name} could not be verified.`,
-          },
-          { status: 400 }
-        );
-      }
-
-      if (quantity > availableInventory) {
+      if (requestedQuantity > availableInventory) {
         return NextResponse.json(
           {
             success: false,
             error: `Only ${availableInventory} unit${
-              availableInventory === 1
-                ? ""
-                : "s"
+              availableInventory === 1 ? "" : "s"
             } of ${product.name} are currently available.`,
           },
           { status: 400 }
         );
       }
+    }
 
-      const basePrice = Number(
-        product.price
-      );
+    /*
+     * Validate Build-a-Bundle groups.
+     *
+     * Bundle discount is based on TOTAL vials in the same bundle,
+     * not the quantity of one individual product.
+     */
+    const bundleGroups = new Map<
+      string,
+      typeof resolvedCart
+    >();
 
+    for (const entry of resolvedCart) {
       if (
-        !Number.isFinite(basePrice) ||
-        basePrice < 0
+        entry.raw.bundleType !== "build-your-own"
       ) {
+        continue;
+      }
+
+      const bundleId = String(
+        entry.raw.bundleId || ""
+      ).trim();
+
+      if (!bundleId) {
         return NextResponse.json(
           {
             success: false,
-            error: `The price for ${product.name} could not be verified.`,
+            error:
+              "A bundle in your cart is missing its bundle ID. Please rebuild the bundle.",
           },
           { status: 400 }
         );
       }
 
-      const quantityDiscountEligible =
-        isQuantityDiscountEligibleProduct(
-          product
-        );
+      const current =
+        bundleGroups.get(bundleId) || [];
 
-      const matchingTier =
-        quantityDiscountEligible
-          ? [...quantityTiers]
-              .filter(
-                (tier) =>
-                  quantity >=
-                  Number(
-                    tier.quantity
-                  )
-              )
-              .sort(
-                (a, b) =>
-                  Number(
-                    b.quantity
-                  ) -
-                  Number(
-                    a.quantity
-                  )
-              )[0] || null
-          : null;
+      current.push(entry);
+      bundleGroups.set(bundleId, current);
+    }
 
-      const discountPercent =
-        matchingTier
-          ? Number(
-              matchingTier.discount_percent ||
-                0
-            )
-          : 0;
+    const verifiedBundleData = new Map<
+      string,
+      {
+        totalVials: number;
+        tierQuantity: number;
+        discountPercent: number;
+      }
+    >();
 
-      if (
-        !Number.isFinite(
-          discountPercent
-        ) ||
-        discountPercent < 0 ||
-        discountPercent > 100
-      ) {
+    for (const [bundleId, entries] of
+      bundleGroups.entries()) {
+      const totalVials = entries.reduce(
+        (sum, entry) =>
+          sum + Number(entry.raw.quantity || 0),
+        0
+      );
+
+      if (totalVials < 3) {
         return NextResponse.json(
           {
             success: false,
             error:
-              "A quantity discount could not be verified.",
+              "Build Your Own Bundle requires at least 3 eligible vials.",
           },
-          { status: 500 }
+          { status: 400 }
         );
       }
 
-      const verifiedUnitPrice = Number(
-        (
-          basePrice *
-          (1 -
-            discountPercent / 100)
-        ).toFixed(2)
+      const invalidBundleProduct = entries.find(
+        (entry) =>
+          !isBundleEligibleProduct(
+            entry.product!
+          )
       );
 
-      normalizedCart.push({
-        id: String(product.id),
-        name: String(product.name),
-        basePrice,
-        price: verifiedUnitPrice,
-        quantity,
-        image: item.image,
-        quantityDiscountPercent:
-          discountPercent,
-        quantityDiscountTierId:
-          matchingTier?.id || null,
-        quantityDiscountTierQuantity:
-          matchingTier?.quantity || null,
+      if (invalidBundleProduct) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: `${invalidBundleProduct.product!.name} is not eligible for Build Your Own Bundle pricing.`,
+          },
+          { status: 400 }
+        );
+      }
+
+      const verifiedTier =
+        [...BUNDLE_TIERS]
+          .filter(
+            (tier) =>
+              totalVials >= tier.quantity
+          )
+          .sort(
+            (a, b) =>
+              b.quantity - a.quantity
+          )[0] || null;
+
+      if (!verifiedTier) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "The bundle discount could not be verified.",
+          },
+          { status: 400 }
+        );
+      }
+
+      verifiedBundleData.set(bundleId, {
+        totalVials,
+        tierQuantity: verifiedTier.quantity,
+        discountPercent: verifiedTier.discount,
       });
     }
+
+    /*
+     * Rebuild the cart with trusted prices.
+     *
+     * - Normal research products use the Admin quantity tiers.
+     * - Shirts/accessories do NOT receive vial quantity pricing.
+     * - Build-a-Bundle items use the verified bundle-wide tier and
+     *   NEVER receive the normal same-product quantity tier again.
+     */
+    const normalizedCart: CartItem[] =
+      resolvedCart.map((entry) => {
+        const product = entry.product!;
+        const quantity = Number(
+          entry.raw.quantity || 0
+        );
+
+        const basePrice = Number(
+          product.price || 0
+        );
+
+        if (
+          !Number.isFinite(basePrice) ||
+          basePrice < 0
+        ) {
+          throw new Error(
+            `Invalid database price for product ${product.id}`
+          );
+        }
+
+        const isBundleItem =
+          entry.raw.bundleType ===
+          "build-your-own";
+
+        if (isBundleItem) {
+          const bundleId = String(
+            entry.raw.bundleId || ""
+          );
+
+          const bundleData =
+            verifiedBundleData.get(bundleId);
+
+          if (!bundleData) {
+            throw new Error(
+              `Verified bundle data missing for ${bundleId}`
+            );
+          }
+
+          const discountedUnitPrice = Number(
+            (
+              basePrice *
+              (1 -
+                bundleData.discountPercent /
+                  100)
+            ).toFixed(2)
+          );
+
+          return {
+            id: String(product.id),
+            name: String(product.name),
+            price: discountedUnitPrice,
+            basePrice,
+            quantity,
+            image: entry.raw.image,
+            path:
+              entry.raw.path ||
+              (product.slug
+                ? `/products/${product.slug}`
+                : "/products"),
+            bundleId,
+            bundleType: "build-your-own",
+            bundleDiscountPercent:
+              bundleData.discountPercent,
+            bundleTierQuantity:
+              bundleData.tierQuantity,
+            bundleBaseUnitPrice: basePrice,
+            bundleDiscountedUnitPrice:
+              discountedUnitPrice,
+            quantityDiscountPercent: 0,
+            quantityDiscountTierId: null,
+            quantityDiscountTierQuantity:
+              null,
+          };
+        }
+
+        const physical =
+          isPhysicalProduct(product);
+
+        const matchingTier = physical
+          ? null
+          : [...quantityTiers]
+              .filter(
+                (tier) =>
+                  quantity >=
+                  Number(tier.quantity)
+              )
+              .sort(
+                (a, b) =>
+                  Number(b.quantity) -
+                  Number(a.quantity)
+              )[0] || null;
+
+        const discountPercent = Number(
+          matchingTier?.discount_percent || 0
+        );
+
+        const verifiedUnitPrice = Number(
+          (
+            basePrice *
+            (1 - discountPercent / 100)
+          ).toFixed(2)
+        );
+
+        return {
+          id: String(product.id),
+          name: String(product.name),
+          price: verifiedUnitPrice,
+          basePrice,
+          quantity,
+          image: entry.raw.image,
+          path:
+            entry.raw.path ||
+            (product.slug
+              ? `/products/${product.slug}`
+              : "/products"),
+          bundleId: null,
+          bundleType: null,
+          bundleDiscountPercent: 0,
+          bundleTierQuantity: null,
+          bundleBaseUnitPrice: basePrice,
+          bundleDiscountedUnitPrice:
+            verifiedUnitPrice,
+          quantityDiscountPercent:
+            discountPercent,
+          quantityDiscountTierId:
+            matchingTier?.id || null,
+          quantityDiscountTierQuantity:
+            matchingTier?.quantity || null,
+        };
+      });
 
     const orderNumber =
       `APX-${Date.now()}`;
 
     /*
      * Calculate subtotal from the SERVER-VERIFIED cart.
-     *
-     * Browser-supplied prices never participate in this total.
      */
     const serverSubtotal = Number(
       normalizedCart
         .reduce(
           (sum, item) =>
             sum +
-            Number(
-              item.price || 0
-            ) *
-              Number(
-                item.quantity || 0
-              ),
+            Number(item.price || 0) *
+              Number(item.quantity || 0),
           0
         )
         .toFixed(2)

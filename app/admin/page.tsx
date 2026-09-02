@@ -82,6 +82,12 @@ export default async function AdminPage() {
       href: "/admin/campaigns",
     },
     {
+  title: "Promos",
+  description:
+    "Manage flash sales and promotional pricing.",
+  href: "/admin/promos",
+},
+    {
       title: "Products",
       description:
         "Manage inventory and product listings.",

@@ -233,7 +233,7 @@ const handlePromoSignup = async (e: React.FormEvent) => {
 
     <div className="relative flex min-h-screen w-full min-w-0 items-start justify-center md:items-center">
 
-      <div className="w-full min-w-0 max-w-3xl overflow-hidden rounded-[32px] border border-blue-400/20 bg-gradient-to-b from-[#0f1d33] to-[#081526] shadow-[0_0_80px_rgba(59,130,246,0.22)]">
+      <div className="w-full min-w-0 max-w-3xl overflow-hidden rounded-[36px] border border-blue-400/20 bg-gradient-to-b from-[#0f1d33] to-[#081526] shadow-[0_0_80px_rgba(59,130,246,0.22)]">
 
         {/* Glow */}
 <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.18),transparent_55%)]" />
@@ -250,7 +250,7 @@ const handlePromoSignup = async (e: React.FormEvent) => {
             Research Use Verification
           </p>
 
-          <h1 className="text-4xl md:text-4xl font-black leading-none tracking-tight text-white mb-6">
+          <h1 className="text-4xl md:text-6xl font-black leading-none tracking-tight text-white mb-6">
             Welcome to
             <span className="block bg-gradient-to-r from-blue-200 via-white to-blue-300 bg-clip-text text-transparent">
               Apexx Biolabs
@@ -269,7 +269,7 @@ const handlePromoSignup = async (e: React.FormEvent) => {
         {/* Main Content */}
         <div className="px-8 md:px-14 pb-10">
 
-          <div className="rounded-3xl border border-blue-400/15 bg-white/[0.03] p-6 md:p-7 mb-8">
+          <div className="rounded-3xl border border-blue-400/15 bg-white/[0.03] p-6 md:p-8 mb-8">
 
             <div className="flex items-start gap-4">
 
@@ -351,7 +351,7 @@ const handlePromoSignup = async (e: React.FormEvent) => {
   </div>
 
   {/* Promo Banners */}
-  <div className="relative z-20 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+  <div className="relative z-20 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
     <div className="rounded-full border border-blue-400/30 bg-blue-500/10 backdrop-blur-sm px-8 py-5 text-center">
       <p className="text-white font-bold uppercase tracking-[0.25em] text-xs md:text-sm">
         JOIN THE LIST
@@ -390,7 +390,7 @@ Receive a Complimentary Gift With Any 8 Vials
           Research. Quality. Confidence.
         </p>
 
-        <h1 className="text-4xl md:text-4xl font-black tracking-tight leading-[0.9] text-white">
+        <h1 className="text-6xl md:text-8xl font-black tracking-tight leading-[0.9] text-white">
           Research
           <br />
           <span className="text-blue-300">Without Limits.</span>
@@ -404,7 +404,7 @@ Receive a Complimentary Gift With Any 8 Vials
         <div className="flex flex-col sm:flex-row gap-4 mt-10">
           <a
             href="/products"
-            className="bg-white text-[#081526] px-8 py-3.5 rounded-full text-xs uppercase tracking-widest font-semibold text-center hover:bg-blue-100 transition-all"
+            className="bg-white text-[#081526] px-9 py-4 rounded-full text-sm uppercase tracking-widest font-semibold text-center hover:bg-blue-100 transition-all"
           >
             Shop Products
           </a>
@@ -473,7 +473,7 @@ Receive a Complimentary Gift With Any 8 Vials
 </Reveal>
 
 {/* PRODUCTS */}
-<section className="relative w-full max-w-full overflow-hidden px-4 py-10 sm:px-6 md:py-12">
+<section className="relative w-full max-w-full overflow-hidden px-4 py-12 sm:px-6 md:py-14">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
 
   <div className="relative z-10 mx-auto w-full min-w-0 max-w-7xl">
@@ -484,7 +484,7 @@ Receive a Complimentary Gift With Any 8 Vials
           Research Catalog
         </p>
 
-        <h3 className="text-3xl md:text-4xl font-black tracking-tight text-white leading-[0.95]">
+        <h3 className="text-4xl md:text-5xl font-black tracking-tight text-white leading-[0.95]">
           Featured Compounds
         </h3>
 
@@ -744,7 +744,7 @@ Receive a Complimentary Gift With Any 8 Vials
 
 {/* QUALITY VERIFICATION */}
 
-<section className="relative py-14 px-6 bg-[#081526] border-b border-white/10 overflow-hidden">
+<section className="relative py-24 px-6 bg-[#081526] border-b border-white/10 overflow-hidden">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
 
   <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -754,7 +754,7 @@ Receive a Complimentary Gift With Any 8 Vials
         Quality Verification
       </p>
 
-      <h2 className="text-4xl md:text-4xl font-black tracking-tight text-white leading-[0.95] mb-8">
+      <h2 className="text-5xl md:text-7xl font-black tracking-tight text-white leading-[0.95] mb-8">
         Quality You Can Verify.
       </h2>
 
@@ -803,7 +803,7 @@ Receive a Complimentary Gift With Any 8 Vials
         ))}
       </div>
 
-      <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-7">
+      <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
         {activeQuality === "potency" && (
           <div>
             <h3 className="text-2xl font-black mb-4 text-white">
@@ -898,14 +898,14 @@ Receive a Complimentary Gift With Any 8 Vials
       </div>
     </div>
 
-    <div className="relative min-h-[520px] w-full min-w-0 max-w-full overflow-hidden rounded-[34px] sm:min-h-[650px]">
+    <div className="relative min-h-[520px] w-full min-w-0 max-w-full overflow-hidden rounded-[40px] sm:min-h-[650px]">
       <img
         src="/images/tb500hex.png"
         alt="TB-500"
         className="absolute inset-0 w-full h-full object-cover"
       />
 
-      <div className="absolute top-7 right-8 z-20 text-right">
+      <div className="absolute top-8 right-8 z-20 text-right">
         <p className="text-white text-3xl font-black">99%+ Purity</p>
         <p className="text-white/80 text-lg">Verified by HPLC</p>
       </div>
@@ -927,7 +927,7 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
 
 {/* ABOUT + WHY CHOOSE APEXX */}
 <Reveal>
-  <section className="relative overflow-hidden border-y border-white/10 bg-[#081526] px-4 py-14 sm:px-6 md:py-14">
+  <section className="relative overflow-hidden border-y border-white/10 bg-[#081526] px-4 py-20 sm:px-6 md:py-24">
     <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_58%)]" />
 
     <div className="relative z-10 mx-auto w-full min-w-0 max-w-7xl">
@@ -938,7 +938,7 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
             About Apexx
           </p>
 
-          <h2 className="break-words text-4xl font-black leading-[0.95] tracking-tight text-white sm:text-4xl md:text-4xl">
+          <h2 className="break-words text-4xl font-black leading-[0.95] tracking-tight text-white sm:text-5xl md:text-7xl">
             Scientific Precision.
             <span className="block text-blue-300">
               Trusted Quality.
@@ -962,8 +962,8 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
       </div>
 
       {/* CORE QUALITY CARDS */}
-      <div className="mb-10 grid min-w-0 grid-cols-1 gap-5 md:grid-cols-3">
-        <div className="group min-w-0 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 transition-all hover:border-blue-400/50 hover:bg-white/[0.07] sm:p-7">
+      <div className="mb-14 grid min-w-0 grid-cols-1 gap-5 md:grid-cols-3">
+        <div className="group min-w-0 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 transition-all hover:border-blue-400/50 hover:bg-white/[0.07] sm:p-8">
           <div className="mb-7 flex h-12 w-12 items-center justify-center rounded-full border border-blue-300/30 bg-blue-400/10">
             <Check
               size={24}
@@ -982,7 +982,7 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
           </p>
         </div>
 
-        <div className="group min-w-0 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 transition-all hover:border-blue-400/50 hover:bg-white/[0.07] sm:p-7">
+        <div className="group min-w-0 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 transition-all hover:border-blue-400/50 hover:bg-white/[0.07] sm:p-8">
           <div className="mb-7 flex h-12 w-12 items-center justify-center rounded-full border border-blue-300/30 bg-blue-400/10">
             <FlaskConical
               size={24}
@@ -1001,7 +1001,7 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
           </p>
         </div>
 
-        <div className="group min-w-0 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 transition-all hover:border-blue-400/50 hover:bg-white/[0.07] sm:p-7">
+        <div className="group min-w-0 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 transition-all hover:border-blue-400/50 hover:bg-white/[0.07] sm:p-8">
           <div className="mb-7 flex h-12 w-12 items-center justify-center rounded-full border border-blue-300/30 bg-blue-400/10">
             <Microscope
               size={24}
@@ -1027,7 +1027,7 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
           Why Researchers Choose Apexx Biolabs
         </p>
 
-        <h3 className="mx-auto max-w-3xl break-words text-3xl font-black leading-tight text-white sm:text-4xl md:text-4xl">
+        <h3 className="mx-auto max-w-3xl break-words text-3xl font-black leading-tight text-white sm:text-4xl md:text-5xl">
           More than a product catalog.
         </h3>
 
@@ -1039,8 +1039,8 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
 
       <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2">
         {/* RESEARCH CUSTOMERS */}
-        <div className="min-w-0 rounded-[2rem] border border-blue-400/25 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:bg-white/[0.07] sm:p-7 md:p-7">
-          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-7">
+        <div className="min-w-0 rounded-[2rem] border border-blue-400/25 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:bg-white/[0.07] sm:p-8 md:p-10">
+          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-8">
             <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-300">
               <Users size={30} strokeWidth={2.2} />
             </div>
@@ -1067,8 +1067,8 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
         </div>
 
         {/* QUALITY REVIEW */}
-        <div className="min-w-0 rounded-[2rem] border border-blue-400/25 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:bg-white/[0.07] sm:p-7 md:p-7">
-          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-7">
+        <div className="min-w-0 rounded-[2rem] border border-blue-400/25 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:bg-white/[0.07] sm:p-8 md:p-10">
+          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-8">
             <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-300">
               <ShieldCheck size={30} strokeWidth={2.2} />
             </div>
@@ -1095,8 +1095,8 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
         </div>
 
         {/* SUPPORT */}
-        <div className="min-w-0 rounded-[2rem] border border-blue-400/25 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:bg-white/[0.07] sm:p-7 md:p-7">
-          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-7">
+        <div className="min-w-0 rounded-[2rem] border border-blue-400/25 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:bg-white/[0.07] sm:p-8 md:p-10">
+          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-8">
             <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-300">
               <Headphones size={30} strokeWidth={2.2} />
             </div>
@@ -1123,8 +1123,8 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
         </div>
 
         {/* RESEARCH INFORMATION */}
-        <div className="min-w-0 rounded-[2rem] border border-blue-400/25 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:bg-white/[0.07] sm:p-7 md:p-7">
-          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-7">
+        <div className="min-w-0 rounded-[2rem] border border-blue-400/25 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:bg-white/[0.07] sm:p-8 md:p-10">
+          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-8">
             <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-300">
               <BookOpen size={30} strokeWidth={2.2} />
             </div>
@@ -1151,9 +1151,9 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
       </div>
 
       {/* ORDER PROTECTION */}
-      <div className="mt-6 min-w-0 rounded-[2rem] border border-blue-400/25 bg-gradient-to-r from-white/[0.04] to-blue-500/[0.08] p-6 backdrop-blur-sm sm:p-7 md:p-7">
-        <div className="grid min-w-0 grid-cols-1 items-center gap-7 lg:grid-cols-[minmax(0,1fr)_auto]">
-          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-7">
+      <div className="mt-6 min-w-0 rounded-[2rem] border border-blue-400/25 bg-gradient-to-r from-white/[0.04] to-blue-500/[0.08] p-6 backdrop-blur-sm sm:p-8 md:p-10">
+        <div className="grid min-w-0 grid-cols-1 items-center gap-8 lg:grid-cols-[minmax(0,1fr)_auto]">
+          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-8">
             <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-300">
               <Truck size={30} strokeWidth={2.2} />
             </div>
@@ -1207,7 +1207,7 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
     {reviews.length > 0 ? (
       <>
         <div className="rounded-[2.5rem] border border-blue-400/20 bg-white/[0.04] backdrop-blur-sm p-8 md:p-12 mb-12">
-          <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-10 items-center">
             <div className="text-center lg:text-left">
               <p className="uppercase tracking-[0.3em] text-blue-300 text-xs mb-4">
                 Overall Rating
@@ -1597,7 +1597,7 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
             onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
             className="w-full flex justify-between items-center text-left p-7 gap-6"
           >
-            <span className="text-lg md:text-xl font-black text-white">
+            <span className="text-xl md:text-2xl font-black text-white">
               {faq.question}
             </span>
 

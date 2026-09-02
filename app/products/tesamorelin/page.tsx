@@ -19,7 +19,23 @@ type QuantityDiscountTier = {
   sort_order: number;
 };
 
+type FlashSale = {
+  id: string;
+  product_id: string;
+  sale_price: number;
+  starts_at: string;
+  ends_at: string;
+  active: boolean;
+};
+
 type TesamorelinSize = "5mg" | "10mg";
+
+type ProductVariantData = {
+  inventory: number;
+  price: number;
+  databaseProductId: string | null;
+  flashSale: FlashSale | null;
+};
 
 type CoaData = {
   lab: string;
@@ -41,15 +57,21 @@ export default function TesamorelinPage() {
   const [quantityDiscounts, setQuantityDiscounts] =
     useState<QuantityDiscountTier[]>([]);
 
-  const [productData, setProductData] = useState({
+  const [productData, setProductData] = useState<
+    Record<TesamorelinSize, ProductVariantData>
+  >({
     "5mg": {
       inventory: 0,
       price: 45,
+      databaseProductId: null,
+      flashSale: null,
     },
 
     "10mg": {
       inventory: 0,
       price: 85,
+      databaseProductId: null,
+      flashSale: null,
     },
   });
 
@@ -96,14 +118,39 @@ export default function TesamorelinPage() {
   const selectedProduct =
     productOptions[selectedMg];
 
+  const selectedVariant =
+    productData[selectedMg];
+
   const selectedInventory =
-    productData[selectedMg].inventory;
+    selectedVariant.inventory;
 
   const selectedPrice =
-    productData[selectedMg].price;
+    selectedVariant.price;
+
+  const databaseProductId =
+    selectedVariant.databaseProductId;
+
+  const flashSale =
+    selectedVariant.flashSale;
 
   const selectedCoa =
     coaData[selectedMg];
+
+  const flashSalePrice =
+    flashSale !== null
+      ? Number(flashSale.sale_price)
+      : null;
+
+  const isFlashSaleActive =
+    flashSalePrice !== null &&
+    Number.isFinite(flashSalePrice) &&
+    flashSalePrice > 0 &&
+    flashSalePrice < selectedPrice;
+
+  const effectiveUnitPrice =
+    isFlashSaleActive
+      ? flashSalePrice
+      : selectedPrice;
 
   const isOutOfStock =
     selectedInventory <= 0;
@@ -115,7 +162,7 @@ export default function TesamorelinPage() {
   const favoriteProduct = {
     id: selectedProduct.id,
     name: selectedProduct.name,
-    price: selectedPrice,
+    price: effectiveUnitPrice,
     image: selectedProduct.image,
     path: selectedProduct.path,
   };
@@ -123,98 +170,207 @@ export default function TesamorelinPage() {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await fetch(
-          "/api/products",
-          {
+        const [
+          productResponse,
+          saleResponse,
+        ] = await Promise.all([
+          fetch("/api/products", {
             cache: "no-store",
-          }
-        );
+          }),
 
-        const data =
-          await response.json();
+          fetch("/api/flash-sales", {
+            cache: "no-store",
+          }),
+        ]);
 
-        if (!data.success) return;
+        const productResponseData =
+          await productResponse.json();
+
+        const saleResponseData =
+          await saleResponse
+            .json()
+            .catch(() => ({
+              success: false,
+              sales: [],
+            }));
+
+        if (!productResponseData.success) {
+          return;
+        }
+
+        const products =
+          productResponseData.products || [];
+
+        const sales =
+          Array.isArray(saleResponseData.sales)
+            ? saleResponseData.sales
+            : [];
+
+        const now = Date.now();
 
         const tesa5 =
-          data.products.find(
-            (item: any) => {
-              const slug =
-                item.slug
-                  ?.toLowerCase()
-                  .trim();
+          products.find((item: any) => {
+            const slug = String(
+              item.slug || ""
+            )
+              .toLowerCase()
+              .trim();
 
-              const name =
-                item.name
-                  ?.toLowerCase()
-                  .trim();
+            const id = String(
+              item.id || ""
+            )
+              .toLowerCase()
+              .trim();
 
-              const size =
-                item.size
-                  ?.toLowerCase()
-                  .trim();
+            const name = String(
+              item.name || ""
+            )
+              .toLowerCase()
+              .trim();
 
-              return (
-                slug === "tesamorelin-5mg" ||
-                slug === "tesa-5mg" ||
-                item.id === "tesamorelin-5mg" ||
-                item.id === "TESAMORELIN-5mg" ||
-                (name?.includes("tesamorelin") &&
-                  size === "5mg") ||
-                name?.includes("tesamorelin 5")
-              );
-            }
-          );
+            const size = String(
+              item.size || ""
+            )
+              .toLowerCase()
+              .trim();
+
+            return (
+              slug === "tesamorelin-5mg" ||
+              slug === "tesa-5mg" ||
+              id === "tesamorelin-5mg" ||
+              id === "tesa-5mg" ||
+              (name.includes("tesamorelin") &&
+                size === "5mg") ||
+              name.includes("tesamorelin 5")
+            );
+          });
 
         const tesa10 =
-          data.products.find(
-            (item: any) => {
-              const slug =
-                item.slug
-                  ?.toLowerCase()
-                  .trim();
+          products.find((item: any) => {
+            const slug = String(
+              item.slug || ""
+            )
+              .toLowerCase()
+              .trim();
 
-              const name =
-                item.name
-                  ?.toLowerCase()
-                  .trim();
+            const id = String(
+              item.id || ""
+            )
+              .toLowerCase()
+              .trim();
 
-              const size =
-                item.size
-                  ?.toLowerCase()
-                  .trim();
+            const name = String(
+              item.name || ""
+            )
+              .toLowerCase()
+              .trim();
 
-              return (
-                slug === "tesamorelin-10mg" ||
-                slug === "tesa-10mg" ||
-                item.id === "tesamorelin-10mg" ||
-                item.id === "TESAMORELIN-10mg" ||
-                (name?.includes("tesamorelin") &&
-                  size === "10mg") ||
-                name?.includes("tesamorelin 10")
-              );
-            }
-          );
+            const size = String(
+              item.size || ""
+            )
+              .toLowerCase()
+              .trim();
+
+            return (
+              slug === "tesamorelin-10mg" ||
+              slug === "tesa-10mg" ||
+              id === "tesamorelin-10mg" ||
+              id === "tesa-10mg" ||
+              (name.includes("tesamorelin") &&
+                size === "10mg") ||
+              name.includes("tesamorelin 10")
+            );
+          });
+
+        const buildVariant = (
+          databaseProduct: any,
+          fallbackPrice: number
+        ): ProductVariantData => {
+          if (!databaseProduct) {
+            return {
+              inventory: 0,
+              price: fallbackPrice,
+              databaseProductId: null,
+              flashSale: null,
+            };
+          }
+
+          const dbId =
+            String(databaseProduct.id);
+
+          const regularPrice =
+            Number(
+              databaseProduct.price ??
+                fallbackPrice
+            );
+
+          const matchingSale =
+            sales.find(
+              (sale: FlashSale) => {
+                const starts =
+                  new Date(
+                    sale.starts_at
+                  ).getTime();
+
+                const ends =
+                  new Date(
+                    sale.ends_at
+                  ).getTime();
+
+                const salePrice =
+                  Number(
+                    sale.sale_price
+                  );
+
+                return (
+                  sale.active === true &&
+                  String(
+                    sale.product_id
+                  ) === dbId &&
+                  Number.isFinite(
+                    starts
+                  ) &&
+                  Number.isFinite(
+                    ends
+                  ) &&
+                  starts <= now &&
+                  ends > now &&
+                  Number.isFinite(
+                    salePrice
+                  ) &&
+                  salePrice > 0 &&
+                  salePrice <
+                    regularPrice
+                );
+              }
+            ) || null;
+
+          return {
+            inventory: Number(
+              databaseProduct.inventory ??
+                0
+            ),
+
+            price: regularPrice,
+
+            databaseProductId:
+              dbId,
+
+            flashSale:
+              matchingSale,
+          };
+        };
 
         setProductData({
-          "5mg": {
-            inventory: Number(
-              tesa5?.inventory ?? 0
-            ),
+          "5mg": buildVariant(
+            tesa5,
+            45
+          ),
 
-            price: Number(
-              tesa5?.price ?? 45
-            ),
-          },
-
-          "10mg": {
-            inventory: Number(
-              tesa10?.inventory ?? 0
-            ),
-
-            price: Number(
-              tesa10?.price ?? 85
-            ),
-          },
+          "10mg": buildVariant(
+            tesa10,
+            85
+          ),
         });
       } catch (error) {
         console.error(
@@ -227,46 +383,56 @@ export default function TesamorelinPage() {
     const fetchQuantityDiscounts =
       async () => {
         try {
-          const response = await fetch(
-            "/api/quantity-discounts",
-            {
-              cache: "no-store",
-            }
-          );
+          const response =
+            await fetch(
+              "/api/quantity-discounts",
+              {
+                cache: "no-store",
+              }
+            );
 
           const data =
             await response.json();
 
-          if (!data.success) return;
+          if (!data.success) {
+            return;
+          }
 
           const tiers = (
             data.tiers || []
           )
-            .map((tier: any) => ({
-              id: String(tier.id),
+            .map(
+              (tier: any) => ({
+                id: String(
+                  tier.id
+                ),
 
-              name: String(
-                tier.name || ""
-              ),
+                name: String(
+                  tier.name || ""
+                ),
 
-              quantity: Number(
-                tier.quantity || 0
-              ),
+                quantity: Number(
+                  tier.quantity || 0
+                ),
 
-              discount_percent: Number(
-                tier.discount_percent || 0
-              ),
+                discount_percent:
+                  Number(
+                    tier.discount_percent ||
+                      0
+                  ),
 
-              sort_order: Number(
-                tier.sort_order || 0
-              ),
-            }))
+                sort_order: Number(
+                  tier.sort_order || 0
+                ),
+              })
+            )
             .filter(
               (
                 tier: QuantityDiscountTier
               ) =>
                 tier.quantity > 1 &&
-                tier.discount_percent >= 0
+                tier.discount_percent >=
+                  0
             )
             .sort(
               (
@@ -303,6 +469,18 @@ export default function TesamorelinPage() {
 
     fetchProductData();
     fetchQuantityDiscounts();
+
+    const flashSaleRefresh =
+      window.setInterval(
+        fetchProductData,
+        30_000
+      );
+
+    return () => {
+      window.clearInterval(
+        flashSaleRefresh
+      );
+    };
   }, []);
 
   const getDiscountTier = (
@@ -312,11 +490,13 @@ export default function TesamorelinPage() {
       [...quantityDiscounts]
         .filter(
           (tier) =>
-            quantity >= tier.quantity
+            quantity >=
+            tier.quantity
         )
         .sort(
           (a, b) =>
-            b.quantity - a.quantity
+            b.quantity -
+            a.quantity
         )[0] || null
     );
   };
@@ -326,12 +506,19 @@ export default function TesamorelinPage() {
       selectedQuantity
     );
 
+  /*
+   * FLASH SALE RULE:
+   * Flash Sale replaces the quantity discount.
+   * The two discounts do not stack.
+   */
   const selectedDiscountPercent =
-    selectedTier?.discount_percent ||
-    0;
+    isFlashSaleActive
+      ? 0
+      : selectedTier
+          ?.discount_percent || 0;
 
   const discountedUnitPrice =
-    selectedPrice *
+    effectiveUnitPrice *
     (1 -
       selectedDiscountPercent /
         100);
@@ -349,13 +536,44 @@ export default function TesamorelinPage() {
   ) =>
     Number(amount).toFixed(2);
 
+  const getVariantFlashSaleInfo = (
+    mg: TesamorelinSize
+  ) => {
+    const variant =
+      productData[mg];
+
+    const sale =
+      variant.flashSale;
+
+    const salePrice =
+      sale !== null
+        ? Number(
+            sale.sale_price
+          )
+        : null;
+
+    const active =
+      salePrice !== null &&
+      Number.isFinite(
+        salePrice
+      ) &&
+      salePrice > 0 &&
+      salePrice <
+        variant.price;
+
+    return {
+      isActive: active,
+      effectivePrice: active
+        ? salePrice
+        : variant.price,
+    };
+  };
+
   const selectSize = (
     mg: TesamorelinSize
   ) => {
     setSelectedMg(mg);
-
     setSelectedQuantity(1);
-
     setAdded(false);
   };
 
@@ -377,7 +595,9 @@ export default function TesamorelinPage() {
   };
 
   const addToCart = () => {
-    if (isOutOfStock) return;
+    if (isOutOfStock) {
+      return;
+    }
 
     const existingCart =
       JSON.parse(
@@ -423,22 +643,27 @@ export default function TesamorelinPage() {
     }
 
     const newTier =
-      getDiscountTier(
-        newQuantity
-      );
+      isFlashSaleActive
+        ? null
+        : getDiscountTier(
+            newQuantity
+          );
 
     const newDiscountPercent =
-      newTier?.discount_percent ||
-      0;
+      isFlashSaleActive
+        ? 0
+        : newTier
+            ?.discount_percent || 0;
 
     const newDiscountedUnitPrice =
-      selectedPrice *
+      effectiveUnitPrice *
       (1 -
         newDiscountPercent /
           100);
 
     const cartProduct = {
-      id: selectedProduct.id,
+      id:
+        selectedProduct.id,
 
       name:
         selectedProduct.name,
@@ -458,6 +683,9 @@ export default function TesamorelinPage() {
       path:
         selectedProduct.path,
 
+      size:
+        selectedMg,
+
       quantityDiscountPercent:
         newDiscountPercent,
 
@@ -465,7 +693,24 @@ export default function TesamorelinPage() {
         newTier?.id || null,
 
       quantityDiscountTierQuantity:
-        newTier?.quantity || null,
+        newTier?.quantity ||
+        null,
+
+      flashSaleApplied:
+        isFlashSaleActive,
+
+      flashSaleId:
+        isFlashSaleActive
+          ? flashSale?.id ||
+            null
+          : null,
+
+      flashSalePrice:
+        isFlashSaleActive
+          ? effectiveUnitPrice
+          : null,
+
+      databaseProductId,
     };
 
     const updatedCart =
@@ -493,7 +738,9 @@ export default function TesamorelinPage() {
     );
 
     window.dispatchEvent(
-      new Event("cartUpdated")
+      new Event(
+        "cartUpdated"
+      )
     );
 
     setAdded(true);
@@ -559,8 +806,9 @@ export default function TesamorelinPage() {
                     )}
                   </p>
 
-                  {selectedDiscountPercent >
-                    0 && (
+                  {(isFlashSaleActive ||
+                    selectedDiscountPercent >
+                      0) && (
                     <p className="text-white/35 text-sm line-through">
                       $
                       {formatMoney(
@@ -602,7 +850,6 @@ export default function TesamorelinPage() {
                       "10mg",
                     ] as const
                   ).map((mg) => {
-
                     const option =
                       productData[mg];
 
@@ -612,6 +859,11 @@ export default function TesamorelinPage() {
                     const optionOutOfStock =
                       option.inventory <=
                       0;
+
+                    const optionSale =
+                      getVariantFlashSaleInfo(
+                        mg
+                      );
 
                     return (
                       <button
@@ -630,8 +882,12 @@ export default function TesamorelinPage() {
                         {selected && (
                           <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
                             <Check
-                              size={12}
-                              strokeWidth={3}
+                              size={
+                                12
+                              }
+                              strokeWidth={
+                                3
+                              }
                             />
                           </span>
                         )}
@@ -643,9 +899,24 @@ export default function TesamorelinPage() {
                         <p className="text-white/55 text-sm mt-1">
                           $
                           {formatMoney(
-                            option.price
+                            optionSale.effectivePrice
                           )}
                         </p>
+
+                        {optionSale.isActive && (
+                          <>
+                            <p className="text-white/25 text-[10px] line-through mt-0.5">
+                              $
+                              {formatMoney(
+                                option.price
+                              )}
+                            </p>
+
+                            <p className="text-[#A5D8FF] text-[9px] uppercase tracking-widest mt-1">
+                              Flash Sale
+                            </p>
+                          </>
+                        )}
 
                         {optionOutOfStock && (
                           <p className="text-red-300 text-[10px] uppercase tracking-widest mt-1">
@@ -665,6 +936,16 @@ export default function TesamorelinPage() {
                 <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold uppercase tracking-widest">
                   {selectedMg}
                 </span>
+
+                {isFlashSaleActive && (
+                  <span className="rounded-full border border-blue-300/25 bg-blue-400/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#A5D8FF]">
+                    Flash Sale · $
+                    {formatMoney(
+                      effectiveUnitPrice
+                    )}{" "}
+                    / vial
+                  </span>
+                )}
 
                 {selectedDiscountPercent >
                   0 && (
@@ -693,100 +974,168 @@ export default function TesamorelinPage() {
 
               <div className="h-px bg-white/10 mb-5" />
 
-{/* QUANTITY */}
-<div className="mb-5">
-  <div className="flex items-center justify-between gap-4 mb-3">
-    <p className="uppercase tracking-widest text-white/45 text-xs">
-      Quantity
-    </p>
+              {/* QUANTITY */}
+              <div className="mb-5">
 
-    {selectedQuantity > 1 && (
-      <p className="text-[#A5D8FF] text-xs font-semibold">
-        ${formatMoney(discountedUnitPrice)} / vial
-      </p>
-    )}
-  </div>
+                <div className="flex items-center justify-between gap-4 mb-3">
 
-  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <p className="uppercase tracking-widest text-white/45 text-xs">
+                    Quantity
+                  </p>
 
-    {/* 1 VIAL */}
-    <button
-      type="button"
-      disabled={isOutOfStock}
-      onClick={() => selectQuantity(1)}
-      className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-        selectedQuantity === 1
-          ? "border-blue-300 bg-blue-400/10"
-          : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-      } disabled:opacity-35 disabled:cursor-not-allowed`}
-    >
-      {selectedQuantity === 1 && (
-        <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-          <Check size={11} strokeWidth={3} />
-        </span>
-      )}
+                  {selectedQuantity > 1 && (
+                    <p className="text-[#A5D8FF] text-xs font-semibold">
+                      $
+                      {formatMoney(
+                        discountedUnitPrice
+                      )}{" "}
+                      / vial
+                    </p>
+                  )}
 
-      <p className="font-black text-white text-sm">
-        1 Vial
-      </p>
+                </div>
 
-      <p className="text-xs text-white/45 mt-1">
-        ${formatMoney(selectedPrice)}
-      </p>
-    </button>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
 
-    {/* ADMIN QUANTITY TIERS */}
-    {quantityDiscounts.map((tier) => {
-      const tierUnavailable =
-        selectedInventory < tier.quantity;
+                  {/* 1 VIAL */}
+                  <button
+                    type="button"
+                    disabled={
+                      isOutOfStock
+                    }
+                    onClick={() =>
+                      selectQuantity(1)
+                    }
+                    className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+                      selectedQuantity ===
+                      1
+                        ? "border-blue-300 bg-blue-400/10"
+                        : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                    } disabled:opacity-35 disabled:cursor-not-allowed`}
+                  >
 
-      const tierTotal =
-        selectedPrice *
-        tier.quantity *
-        (1 - tier.discount_percent / 100);
+                    {selectedQuantity ===
+                      1 && (
+                      <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                        <Check
+                          size={11}
+                          strokeWidth={3}
+                        />
+                      </span>
+                    )}
 
-      const selected =
-        selectedQuantity === tier.quantity;
+                    <p className="font-black text-white text-sm">
+                      1 Vial
+                    </p>
 
-      return (
-        <button
-          key={tier.id}
-          type="button"
-          disabled={tierUnavailable}
-          onClick={() =>
-            selectQuantity(tier.quantity)
-          }
-          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-            selected
-              ? "border-blue-300 bg-blue-400/10"
-              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-          } disabled:opacity-30 disabled:cursor-not-allowed`}
-        >
-          {selected && (
-            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-              <Check
-                size={11}
-                strokeWidth={3}
-              />
-            </span>
-          )}
+                    <p className="text-xs text-white/45 mt-1">
+                      $
+                      {formatMoney(
+                        effectiveUnitPrice
+                      )}
+                    </p>
 
-          <p className="font-black text-white text-sm">
-            {tier.quantity} Vials
-          </p>
+                    {isFlashSaleActive && (
+                      <p className="text-[10px] text-white/25 line-through mt-0.5">
+                        $
+                        {formatMoney(
+                          selectedPrice
+                        )}
+                      </p>
+                    )}
 
-          <p className="text-xs text-white/45 mt-1">
-            ${formatMoney(tierTotal)}
-          </p>
+                  </button>
 
-          <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
-            Save {tier.discount_percent}%
-          </p>
-        </button>
-      );
-    })}
-  </div>
-</div>
+                  {/* ADMIN QUANTITY TIERS */}
+                  {quantityDiscounts.map(
+                    (tier) => {
+                      const tierUnavailable =
+                        selectedInventory <
+                        tier.quantity;
+
+                      const tierTotal =
+                        isFlashSaleActive
+                          ? effectiveUnitPrice *
+                            tier.quantity
+                          : selectedPrice *
+                            tier.quantity *
+                            (1 -
+                              tier.discount_percent /
+                                100);
+
+                      const selected =
+                        selectedQuantity ===
+                        tier.quantity;
+
+                      return (
+                        <button
+                          key={
+                            tier.id
+                          }
+                          type="button"
+                          disabled={
+                            tierUnavailable
+                          }
+                          onClick={() =>
+                            selectQuantity(
+                              tier.quantity
+                            )
+                          }
+                          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+                            selected
+                              ? "border-blue-300 bg-blue-400/10"
+                              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                          } disabled:opacity-30 disabled:cursor-not-allowed`}
+                        >
+
+                          {selected && (
+                            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                              <Check
+                                size={
+                                  11
+                                }
+                                strokeWidth={
+                                  3
+                                }
+                              />
+                            </span>
+                          )}
+
+                          <p className="font-black text-white text-sm">
+                            {
+                              tier.quantity
+                            }{" "}
+                            Vials
+                          </p>
+
+                          <p className="text-xs text-white/45 mt-1">
+                            $
+                            {formatMoney(
+                              tierTotal
+                            )}
+                          </p>
+
+                          {isFlashSaleActive ? (
+                            <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
+                              Flash Sale
+                            </p>
+                          ) : (
+                            <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
+                              Save{" "}
+                              {
+                                tier.discount_percent
+                              }
+                              %
+                            </p>
+                          )}
+
+                        </button>
+                      );
+                    }
+                  )}
+
+                </div>
+              </div>
 
               {/* FREE GIFT */}
               <div className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-3 mb-5">
@@ -850,7 +1199,9 @@ export default function TesamorelinPage() {
 
               {/* SIZE-SPECIFIC COA LINK */}
               <a
-                href={selectedCoa.href}
+                href={
+                  selectedCoa.href
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
@@ -912,7 +1263,9 @@ export default function TesamorelinPage() {
               </p>
 
               <a
-                href={selectedCoa.href}
+                href={
+                  selectedCoa.href
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"

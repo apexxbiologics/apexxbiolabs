@@ -19,6 +19,15 @@ type QuantityDiscountTier = {
   sort_order: number;
 };
 
+type FlashSale = {
+  id: string;
+  product_id: string;
+  sale_price: number;
+  starts_at: string;
+  ends_at: string;
+  active: boolean;
+};
+
 export default function PinealonPage() {
   const [added, setAdded] = useState(false);
 
@@ -29,6 +38,12 @@ export default function PinealonPage() {
     useState<number | null>(null);
 
   const [price, setPrice] = useState(55);
+
+  const [databaseProductId, setDatabaseProductId] =
+    useState<string | null>(null);
+
+  const [flashSale, setFlashSale] =
+    useState<FlashSale | null>(null);
 
   const [quantityDiscounts, setQuantityDiscounts] =
     useState<QuantityDiscountTier[]>([]);
@@ -48,10 +63,26 @@ export default function PinealonPage() {
     inventory > 0 &&
     inventory <= 5;
 
+  const flashSalePrice =
+    flashSale !== null
+      ? Number(flashSale.sale_price)
+      : null;
+
+  const isFlashSaleActive =
+    flashSalePrice !== null &&
+    Number.isFinite(flashSalePrice) &&
+    flashSalePrice > 0 &&
+    flashSalePrice < price;
+
+  const effectiveUnitPrice =
+    isFlashSaleActive
+      ? flashSalePrice
+      : price;
+
   const favoriteProduct = {
     id: product.id,
     name: product.name,
-    price,
+    price: effectiveUnitPrice,
     image: product.image,
     path: product.path,
   };
@@ -59,48 +90,147 @@ export default function PinealonPage() {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await fetch(
-          "/api/products",
-          {
-            cache: "no-store",
-          }
-        );
+        const [productResponse, saleResponse] =
+          await Promise.all([
+            fetch("/api/products", {
+              cache: "no-store",
+            }),
 
-        const data = await response.json();
+            fetch("/api/flash-sales", {
+              cache: "no-store",
+            }),
+          ]);
 
-        if (!data.success) return;
+        const productData =
+          await productResponse.json();
+
+        const saleData =
+          await saleResponse.json().catch(
+            () => ({
+              success: false,
+              sales: [],
+            })
+          );
+
+        if (!productData.success) return;
 
         const pinealon =
-          data.products.find(
-            (item: any) =>
-              item.slug === "pinealon" ||
-              item.slug ===
-                "pinealon-10mg" ||
-              item.id === "pinealon" ||
-              item.id ===
-                "pinealon-10mg" ||
-              item.id ===
-                "PINEALON-10mg" ||
-              item.name
-                ?.toLowerCase()
-                .includes("pinealon")
+          productData.products.find(
+            (item: any) => {
+              const slug =
+                item.slug
+                  ?.toLowerCase()
+                  .trim();
+
+              const id =
+                String(item.id || "")
+                  .toLowerCase()
+                  .trim();
+
+              const name =
+                item.name
+                  ?.toLowerCase()
+                  .trim();
+
+              const size =
+                item.size
+                  ?.toLowerCase()
+                  .trim();
+
+              return (
+                slug === "pinealon" ||
+                slug ===
+                  "pinealon-10mg" ||
+                id === "pinealon" ||
+                id ===
+                  "pinealon-10mg" ||
+                id ===
+                  "pinealon-10mg" ||
+                (name?.includes(
+                  "pinealon"
+                ) &&
+                  (
+                    size === "10mg" ||
+                    name?.includes(
+                      "10"
+                    )
+                  ))
+              );
+            }
           );
 
         if (pinealon) {
+          const dbId =
+            String(pinealon.id);
+
+          const regularPrice =
+            Number(
+              pinealon.price ?? 55
+            );
+
+          setDatabaseProductId(dbId);
+
           setInventory(
             Number(
               pinealon.inventory ?? 0
             )
           );
 
-          setPrice(
-            Number(
-              pinealon.price ?? 55
-            )
+          setPrice(regularPrice);
+
+          const now = Date.now();
+
+          const matchingSale =
+            Array.isArray(saleData.sales)
+              ? saleData.sales.find(
+                  (sale: FlashSale) => {
+                    const starts =
+                      new Date(
+                        sale.starts_at
+                      ).getTime();
+
+                    const ends =
+                      new Date(
+                        sale.ends_at
+                      ).getTime();
+
+                    const salePrice =
+                      Number(
+                        sale.sale_price
+                      );
+
+                    return (
+                      sale.active === true &&
+                      String(
+                        sale.product_id
+                      ) === dbId &&
+                      Number.isFinite(
+                        starts
+                      ) &&
+                      Number.isFinite(
+                        ends
+                      ) &&
+                      starts <= now &&
+                      ends > now &&
+                      Number.isFinite(
+                        salePrice
+                      ) &&
+                      salePrice > 0 &&
+                      salePrice <
+                        regularPrice
+                    );
+                  }
+                )
+              : null;
+
+          setFlashSale(
+            matchingSale || null
           );
         } else {
+          setDatabaseProductId(null);
           setInventory(null);
           setPrice(55);
+          setFlashSale(null);
         }
       } catch (error) {
         console.error(
@@ -108,8 +238,10 @@ export default function PinealonPage() {
           error
         );
 
+        setDatabaseProductId(null);
         setInventory(null);
         setPrice(55);
+        setFlashSale(null);
       }
     };
 
@@ -190,6 +322,18 @@ export default function PinealonPage() {
 
     fetchProductData();
     fetchQuantityDiscounts();
+
+    const flashSaleRefresh =
+      window.setInterval(
+        fetchProductData,
+        30_000
+      );
+
+    return () => {
+      window.clearInterval(
+        flashSaleRefresh
+      );
+    };
   }, []);
 
   const getDiscountTier = (
@@ -214,10 +358,12 @@ export default function PinealonPage() {
     );
 
   const selectedDiscountPercent =
-    selectedTier?.discount_percent || 0;
+    isFlashSaleActive
+      ? 0
+      : selectedTier?.discount_percent || 0;
 
   const discountedUnitPrice =
-    price *
+    effectiveUnitPrice *
     (1 -
       selectedDiscountPercent /
         100);
@@ -294,13 +440,19 @@ export default function PinealonPage() {
     }
 
     const newTier =
-      getDiscountTier(newQuantity);
+      isFlashSaleActive
+        ? null
+        : getDiscountTier(
+            newQuantity
+          );
 
     const newDiscountPercent =
-      newTier?.discount_percent || 0;
+      isFlashSaleActive
+        ? 0
+        : newTier?.discount_percent || 0;
 
     const newDiscountedUnitPrice =
-      price *
+      effectiveUnitPrice *
       (1 -
         newDiscountPercent /
           100);
@@ -332,6 +484,22 @@ export default function PinealonPage() {
 
       quantityDiscountTierQuantity:
         newTier?.quantity || null,
+
+      flashSaleApplied:
+        isFlashSaleActive,
+
+      flashSaleId:
+        isFlashSaleActive
+          ? flashSale?.id || null
+          : null,
+
+      flashSalePrice:
+        isFlashSaleActive
+          ? effectiveUnitPrice
+          : null,
+
+      databaseProductId:
+        databaseProductId,
     };
 
     const updatedCart =
@@ -397,6 +565,7 @@ export default function PinealonPage() {
 
             {/* PRODUCT CARD */}
             <div className="rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 md:p-8">
+
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">
                 Research Peptide
               </p>
@@ -414,8 +583,9 @@ export default function PinealonPage() {
                     )}
                   </p>
 
-                  {selectedDiscountPercent >
-                    0 && (
+                  {(isFlashSaleActive ||
+                    selectedDiscountPercent >
+                      0) && (
                     <p className="text-white/35 text-sm line-through">
                       $
                       {formatMoney(
@@ -445,6 +615,16 @@ export default function PinealonPage() {
                   10mg
                 </span>
 
+                {isFlashSaleActive && (
+                  <span className="rounded-full border border-blue-300/25 bg-blue-400/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#A5D8FF]">
+                    Flash Sale · $
+                    {formatMoney(
+                      effectiveUnitPrice
+                    )}{" "}
+                    / vial
+                  </span>
+                )}
+
                 {selectedDiscountPercent >
                   0 && (
                   <span className="rounded-full border border-green-400/20 bg-green-500/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-green-200">
@@ -471,101 +651,170 @@ export default function PinealonPage() {
 
               <div className="h-px bg-white/10 mb-5" />
 
-{/* QUANTITY */}
-<div className="mb-5">
-  <div className="flex items-center justify-between gap-4 mb-3">
-    <p className="uppercase tracking-widest text-white/45 text-xs">
-      Quantity
-    </p>
+              {/* QUANTITY */}
+              <div className="mb-5">
+                <div className="flex items-center justify-between gap-4 mb-3">
+                  <p className="uppercase tracking-widest text-white/45 text-xs">
+                    Quantity
+                  </p>
 
-    {selectedQuantity > 1 && (
-      <p className="text-[#A5D8FF] text-xs font-semibold">
-        ${formatMoney(discountedUnitPrice)} / vial
-      </p>
-    )}
-  </div>
+                  {selectedQuantity > 1 && (
+                    <p className="text-[#A5D8FF] text-xs font-semibold">
+                      $
+                      {formatMoney(
+                        discountedUnitPrice
+                      )}{" "}
+                      / vial
+                    </p>
+                  )}
+                </div>
 
-  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
 
-    {/* 1 VIAL */}
-    <button
-      type="button"
-      disabled={isOutOfStock}
-      onClick={() => selectQuantity(1)}
-      className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-        selectedQuantity === 1
-          ? "border-blue-300 bg-blue-400/10"
-          : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-      } disabled:opacity-35 disabled:cursor-not-allowed`}
-    >
-      {selectedQuantity === 1 && (
-        <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-          <Check size={11} strokeWidth={3} />
-        </span>
-      )}
+                  {/* 1 VIAL */}
+                  <button
+                    type="button"
+                    disabled={
+                      isOutOfStock
+                    }
+                    onClick={() =>
+                      selectQuantity(
+                        1
+                      )
+                    }
+                    className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+                      selectedQuantity ===
+                      1
+                        ? "border-blue-300 bg-blue-400/10"
+                        : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                    } disabled:opacity-35 disabled:cursor-not-allowed`}
+                  >
 
-      <p className="font-black text-white text-sm">
-        1 Vial
-      </p>
+                    {selectedQuantity ===
+                      1 && (
+                      <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                        <Check
+                          size={11}
+                          strokeWidth={
+                            3
+                          }
+                        />
+                      </span>
+                    )}
 
-      <p className="text-xs text-white/45 mt-1">
-        ${formatMoney(price)}
-      </p>
-    </button>
+                    <p className="font-black text-white text-sm">
+                      1 Vial
+                    </p>
 
-    {/* ADMIN QUANTITY TIERS */}
-    {quantityDiscounts.map((tier) => {
-      const tierUnavailable =
-        inventory !== null &&
-        inventory < tier.quantity;
+                    <p className="text-xs text-white/45 mt-1">
+                      $
+                      {formatMoney(
+                        effectiveUnitPrice
+                      )}
+                    </p>
 
-      const tierTotal =
-        price *
-        tier.quantity *
-        (1 - tier.discount_percent / 100);
+                    {isFlashSaleActive && (
+                      <p className="text-[10px] text-white/25 line-through mt-0.5">
+                        $
+                        {formatMoney(
+                          price
+                        )}
+                      </p>
+                    )}
+                  </button>
 
-      const selected =
-        selectedQuantity === tier.quantity;
+                  {/* ADMIN QUANTITY TIERS */}
+                  {quantityDiscounts.map(
+                    (tier) => {
+                      const tierUnavailable =
+                        inventory !==
+                          null &&
+                        inventory <
+                          tier.quantity;
 
-      return (
-        <button
-          key={tier.id}
-          type="button"
-          disabled={tierUnavailable}
-          onClick={() =>
-            selectQuantity(tier.quantity)
-          }
-          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-            selected
-              ? "border-blue-300 bg-blue-400/10"
-              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-          } disabled:opacity-30 disabled:cursor-not-allowed`}
-        >
-          {selected && (
-            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-              <Check
-                size={11}
-                strokeWidth={3}
-              />
-            </span>
-          )}
+                      const tierTotal =
+                        isFlashSaleActive
+                          ? effectiveUnitPrice *
+                            tier.quantity
+                          : price *
+                            tier.quantity *
+                            (1 -
+                              tier.discount_percent /
+                                100);
 
-          <p className="font-black text-white text-sm">
-            {tier.quantity} Vials
-          </p>
+                      const selected =
+                        selectedQuantity ===
+                        tier.quantity;
 
-          <p className="text-xs text-white/45 mt-1">
-            ${formatMoney(tierTotal)}
-          </p>
+                      return (
+                        <button
+                          key={
+                            tier.id
+                          }
+                          type="button"
+                          disabled={
+                            tierUnavailable
+                          }
+                          onClick={() =>
+                            selectQuantity(
+                              tier.quantity
+                            )
+                          }
+                          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+                            selected
+                              ? "border-blue-300 bg-blue-400/10"
+                              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                          } disabled:opacity-30 disabled:cursor-not-allowed`}
+                        >
 
-          <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
-            Save {tier.discount_percent}%
-          </p>
-        </button>
-      );
-    })}
-  </div>
-</div>
+                          {selected && (
+                            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                              <Check
+                                size={
+                                  11
+                                }
+                                strokeWidth={
+                                  3
+                                }
+                              />
+                            </span>
+                          )}
+
+                          <p className="font-black text-white text-sm">
+                            {
+                              tier.quantity
+                            }{" "}
+                            Vials
+                          </p>
+
+                          <p className="text-xs text-white/45 mt-1">
+                            $
+                            {formatMoney(
+                              tierTotal
+                            )}
+                          </p>
+
+                          {isFlashSaleActive ? (
+                            <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
+                              Flash Sale
+                            </p>
+                          ) : (
+                            <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
+                              Save{" "}
+                              {
+                                tier.discount_percent
+                              }
+                              %
+                            </p>
+                          )}
+
+                        </button>
+                      );
+                    }
+                  )}
+
+                </div>
+              </div>
 
               {/* FREE GIFT */}
               <div className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-3 mb-5">
@@ -577,6 +826,7 @@ export default function PinealonPage() {
 
               {/* ACTION BUTTONS */}
               <div className="grid grid-cols-2 gap-3">
+
                 {isOutOfStock ? (
                   <button
                     disabled
@@ -857,12 +1107,8 @@ export default function PinealonPage() {
                 >
                   <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
                     <img
-                      src={
-                        item.image
-                      }
-                      alt={
-                        item.name
-                      }
+                      src={item.image}
+                      alt={item.name}
                       className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
                     />
                   </div>

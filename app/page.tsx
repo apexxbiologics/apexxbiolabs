@@ -386,7 +386,7 @@ Receive a Complimentary Gift With Any 8 Vials
   <div className="relative z-10 mx-auto flex w-full min-w-0 max-w-7xl items-center py-20">
     <Reveal>
       <div className="w-full min-w-0 max-w-3xl">
-        <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
+        <p className="uppercase tracking-[0.3em] text-blue-300 text-xs mb-4">
           Research. Quality. Confidence.
         </p>
 
@@ -401,19 +401,12 @@ Receive a Complimentary Gift With Any 8 Vials
           batch documentation, and research-use transparency.
         </p>
 
-        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 mt-10">
+        <div className="flex flex-col sm:flex-row gap-4 mt-10">
           <a
             href="/products"
             className="bg-white text-[#081526] px-9 py-4 rounded-full text-sm uppercase tracking-widest font-semibold text-center hover:bg-blue-100 transition-all"
           >
             Shop Products
-          </a>
-
-          <a
-            href="/build-a-bundle"
-            className="border border-blue-300/40 bg-blue-400/10 text-blue-100 px-9 py-4 rounded-full text-sm uppercase tracking-widest font-semibold text-center hover:border-blue-300/70 hover:bg-blue-400/20 transition-all"
-          >
-            Build Your Bundle
           </a>
 
           <a
@@ -448,92 +441,54 @@ Receive a Complimentary Gift With Any 8 Vials
 
 {/* BUILD YOUR OWN BUNDLE */}
 <Reveal>
-  <section className="relative w-full overflow-hidden bg-[#081526] px-4 py-6 sm:px-6 md:py-8">
+  <section className="w-full bg-[#081526] px-4 py-3 sm:px-6">
     <div className="mx-auto max-w-7xl">
-      <div className="relative overflow-hidden rounded-[2rem] border border-blue-300/20 bg-gradient-to-r from-[#0B1D33] via-[#102A49] to-[#0B1D33] px-6 py-7 shadow-[0_18px_55px_rgba(59,130,246,0.10)] sm:px-8 md:px-10">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_right,rgba(96,165,250,0.20),transparent_42%)]" />
-
-        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="max-w-3xl">
-            <div className="mb-3 flex flex-wrap items-center gap-3">
-              <p className="text-xs font-black uppercase tracking-[0.3em] text-blue-300">
-                Build Your Own Bundle
-              </p>
-
-              <span className="rounded-full border border-blue-300/20 bg-blue-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-blue-100">
-                Mix & Match
-              </span>
-            </div>
-
-            <h2 className="text-2xl font-black leading-tight text-white sm:text-3xl md:text-4xl">
-              Choose your research vials.
-              <span className="block text-blue-300">
-                Save more as your bundle grows.
-              </span>
-            </h2>
-
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/60 sm:text-base">
-              Build a custom research bundle from eligible Apexx products with
-              automatic bundle pricing at 3, 5, 10, and 20 vials.
+      <div className="flex flex-col gap-3 rounded-2xl border border-blue-300/15 bg-white/[0.025] px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-300">
+              Build Your Own Bundle
             </p>
 
-            <div className="mt-5 flex flex-wrap gap-2">
-              {[
-                "3 Vials • 5% Off",
-                "5 Vials • 10% Off",
-                "10 Vials • 15% Off",
-                "20 Vials • 20% Off",
-              ].map((tier) => (
-                <span
-                  key={tier}
-                  className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white/65"
-                >
-                  {tier}
-                </span>
-              ))}
-            </div>
+            <span className="text-[10px] text-white/30">
+              Mix & match eligible research vials
+            </span>
           </div>
 
-          <div className="shrink-0">
-            <Link
-              href="/build-a-bundle"
-              className="inline-flex w-full items-center justify-center gap-3 rounded-full bg-white px-7 py-4 text-center text-xs font-black uppercase tracking-[0.2em] text-[#081526] transition hover:bg-blue-100 sm:w-auto"
-            >
-              Build My Bundle
-              <span className="text-lg leading-none">→</span>
-            </Link>
-          </div>
-        </div>
-
-        <div className="relative z-10 mt-6 border-t border-white/10 pt-5">
-          <p className="text-[11px] leading-relaxed text-white/35">
-            Bundle pricing applies to eligible research products only. Products
-            are intended strictly for lawful laboratory research use and are not
-            for human or veterinary use.
+          <p className="mt-1.5 text-[10px] text-white/45 sm:text-[11px]">
+            3 vials · 5% off &nbsp; / &nbsp; 5 · 10% &nbsp; / &nbsp; 10 · 15% &nbsp; / &nbsp; 20 · 20%
           </p>
         </div>
+
+        <Link
+          href="/build-a-bundle"
+          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-white px-5 py-2.5 text-[10px] font-black uppercase tracking-[0.16em] text-[#081526] transition hover:bg-blue-100"
+        >
+          Build Bundle
+          <span className="text-sm leading-none">→</span>
+        </Link>
       </div>
     </div>
   </section>
 </Reveal>
 
 {/* PRODUCTS */}
-<section className="relative w-full max-w-full overflow-hidden px-4 py-20 sm:px-6">
+<section className="relative w-full max-w-full overflow-hidden px-4 py-14 sm:px-6 md:py-16">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
 
   <div className="relative z-10 mx-auto w-full min-w-0 max-w-7xl">
 
-    <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-14">
+    <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
       <div>
         <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
           Research Catalog
         </p>
 
-        <h3 className="text-5xl md:text-7xl font-black tracking-tight text-white leading-[0.95]">
+        <h3 className="text-4xl md:text-5xl font-black tracking-tight text-white leading-[0.95]">
           Featured Compounds
         </h3>
 
-        <p className="text-white/70 text-lg md:text-xl leading-relaxed mt-6 max-w-2xl">
+        <p className="text-white/60 text-base md:text-lg leading-relaxed mt-4 max-w-2xl">
           Research peptides, third-party identity tested, and batch documented.
         </p>
       </div>

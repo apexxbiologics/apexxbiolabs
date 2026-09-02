@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import FavoriteButton from "@/components/FavoriteButton";
+import { useProductPricing } from "@/hooks/useProductPricing";
 
 type QuantityDiscountTier = {
   id: string;
@@ -25,10 +26,6 @@ export default function TB500Page() {
   const [selectedQuantity, setSelectedQuantity] =
     useState(1);
 
-  const [inventory, setInventory] =
-    useState<number | null>(null);
-
-  const [price, setPrice] = useState(60);
 
   const [quantityDiscounts, setQuantityDiscounts] =
     useState<QuantityDiscountTier[]>([]);
@@ -43,6 +40,53 @@ export default function TB500Page() {
     path: "/products/tb500",
   };
 
+  const pricingVariants = [
+    {
+      key: "tb500" as const,
+      fallbackPrice: 60,
+      matches: (item: any) =>
+        item.slug === "tb500" ||
+        item.slug === "tb-500" ||
+        item.slug === "tb500-10mg" ||
+        item.slug === "tb-500-10mg" ||
+        item.id === "tb500" ||
+        item.id === "tb-500" ||
+        item.id === "tb500-10mg" ||
+        item.id === "TB-500-10mg" ||
+        item.name
+          ?.toLowerCase()
+          .includes("tb-500") ||
+        item.name
+          ?.toLowerCase()
+          .includes("tb500"),
+    },
+  ];
+
+  const { pricing } = useProductPricing({
+    variants: pricingVariants,
+  });
+
+  const tb500Pricing =
+    pricing.tb500;
+
+  const inventory =
+    tb500Pricing.inventory;
+
+  const price =
+    tb500Pricing.regularPrice;
+
+  const effectiveUnitPrice =
+    tb500Pricing.effectiveUnitPrice;
+
+  const isFlashSaleActive =
+    tb500Pricing.isFlashSaleActive;
+
+  const flashSale =
+    tb500Pricing.flashSale;
+
+  const databaseProductId =
+    tb500Pricing.databaseProductId;
+
   const isOutOfStock =
     inventory !== null && inventory <= 0;
 
@@ -54,76 +98,12 @@ export default function TB500Page() {
   const favoriteProduct = {
     id: product.id,
     name: product.name,
-    price,
+    price: effectiveUnitPrice,
     image: product.image,
     path: product.path,
   };
 
   useEffect(() => {
-    const fetchProductData = async () => {
-      try {
-        const response = await fetch(
-          "/api/products",
-          {
-            cache: "no-store",
-          }
-        );
-
-        const data =
-          await response.json();
-
-        if (!data.success) return;
-
-        const tb500 =
-          data.products.find(
-            (item: any) =>
-              item.slug === "tb500" ||
-              item.slug === "tb-500" ||
-              item.slug ===
-                "tb500-10mg" ||
-              item.slug ===
-                "tb-500-10mg" ||
-              item.id === "tb500" ||
-              item.id === "tb-500" ||
-              item.id ===
-                "tb500-10mg" ||
-              item.id ===
-                "TB-500-10mg" ||
-              item.name
-                ?.toLowerCase()
-                .includes("tb-500") ||
-              item.name
-                ?.toLowerCase()
-                .includes("tb500")
-          );
-
-        if (tb500) {
-          setInventory(
-            Number(
-              tb500.inventory ?? 0
-            )
-          );
-
-          setPrice(
-            Number(
-              tb500.price ?? 60
-            )
-          );
-        } else {
-          setInventory(null);
-          setPrice(60);
-        }
-      } catch (error) {
-        console.error(
-          "Failed to fetch TB-500 data:",
-          error
-        );
-
-        setInventory(null);
-        setPrice(60);
-      }
-    };
-
     const fetchQuantityDiscounts =
       async () => {
         try {
@@ -203,7 +183,6 @@ export default function TB500Page() {
         }
       };
 
-    fetchProductData();
     fetchQuantityDiscounts();
   }, []);
 
@@ -231,11 +210,13 @@ export default function TB500Page() {
     );
 
   const selectedDiscountPercent =
-    selectedTier?.discount_percent ||
-    0;
+    isFlashSaleActive
+      ? 0
+      : selectedTier?.discount_percent ||
+        0;
 
   const discountedUnitPrice =
-    price *
+    effectiveUnitPrice *
     (1 -
       selectedDiscountPercent /
         100);
@@ -315,16 +296,20 @@ export default function TB500Page() {
     }
 
     const newTier =
-      getDiscountTier(
-        newQuantity
-      );
+      isFlashSaleActive
+        ? null
+        : getDiscountTier(
+            newQuantity
+          );
 
     const newDiscountPercent =
-      newTier?.discount_percent ||
-      0;
+      isFlashSaleActive
+        ? 0
+        : newTier?.discount_percent ||
+          0;
 
     const newDiscountedUnitPrice =
-      price *
+      effectiveUnitPrice *
       (1 -
         newDiscountPercent /
           100);
@@ -356,6 +341,21 @@ export default function TB500Page() {
 
       quantityDiscountTierQuantity:
         newTier?.quantity || null,
+
+      flashSaleApplied:
+        isFlashSaleActive,
+
+      flashSaleId:
+        isFlashSaleActive
+          ? flashSale?.id || null
+          : null,
+
+      flashSalePrice:
+        isFlashSaleActive
+          ? effectiveUnitPrice
+          : null,
+
+      databaseProductId,
     };
 
     const updatedCart =
@@ -447,8 +447,9 @@ export default function TB500Page() {
                     )}
                   </p>
 
-                  {selectedDiscountPercent >
-                    0 && (
+                  {(isFlashSaleActive ||
+                    selectedDiscountPercent >
+                      0) && (
                     <p className="text-white/35 text-sm line-through">
                       $
                       {formatMoney(
@@ -478,6 +479,15 @@ export default function TB500Page() {
                 <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold uppercase tracking-widest">
                   10mg
                 </span>
+
+                {isFlashSaleActive && (
+                  <span className="rounded-full border border-blue-300/25 bg-blue-400/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#A5D8FF]">
+                    Flash Sale · $
+                    {formatMoney(
+                      effectiveUnitPrice
+                    )} / vial
+                  </span>
+                )}
 
                 {selectedDiscountPercent >
                   0 && (
@@ -544,8 +554,14 @@ export default function TB500Page() {
       </p>
 
       <p className="text-xs text-white/45 mt-1">
-        ${formatMoney(price)}
+        ${formatMoney(effectiveUnitPrice)}
       </p>
+
+      {isFlashSaleActive && (
+        <p className="text-[10px] text-white/25 line-through mt-0.5">
+          ${formatMoney(price)}
+        </p>
+      )}
     </button>
 
     {/* ADMIN QUANTITY TIERS */}
@@ -555,9 +571,14 @@ export default function TB500Page() {
         inventory < tier.quantity;
 
       const tierTotal =
-        price *
-        tier.quantity *
-        (1 - tier.discount_percent / 100);
+        isFlashSaleActive
+          ? effectiveUnitPrice *
+            tier.quantity
+          : price *
+            tier.quantity *
+            (1 -
+              tier.discount_percent /
+                100);
 
       const selected =
         selectedQuantity === tier.quantity;
@@ -593,9 +614,15 @@ export default function TB500Page() {
             ${formatMoney(tierTotal)}
           </p>
 
-          <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
-            Save {tier.discount_percent}%
-          </p>
+          {isFlashSaleActive ? (
+            <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
+              Flash Sale
+            </p>
+          ) : (
+            <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
+              Save {tier.discount_percent}%
+            </p>
+          )}
         </button>
       );
     })}

@@ -19,11 +19,31 @@ type QuantityDiscountTier = {
   sort_order: number;
 };
 
+type FlashSale = {
+  id: string;
+  product_id: string;
+  sale_price: number;
+  starts_at: string;
+  ends_at: string;
+  active: boolean;
+};
+
 export default function WolverinePage() {
   const [added, setAdded] = useState(false);
-  const [selectedQuantity, setSelectedQuantity] = useState(1);
-  const [inventory, setInventory] = useState<number | null>(null);
+
+  const [selectedQuantity, setSelectedQuantity] =
+    useState(1);
+
+  const [inventory, setInventory] =
+    useState<number | null>(null);
+
   const [price, setPrice] = useState(90);
+
+  const [databaseProductId, setDatabaseProductId] =
+    useState<string | null>(null);
+
+  const [flashSale, setFlashSale] =
+    useState<FlashSale | null>(null);
 
   const [quantityDiscounts, setQuantityDiscounts] =
     useState<QuantityDiscountTier[]>([]);
@@ -35,18 +55,38 @@ export default function WolverinePage() {
     path: "/products/wolverine",
   };
 
+  const coaPath =
+    "/images/coas/7-31-wolverine-coa.pdf";
+
   const isOutOfStock =
-    inventory !== null && inventory <= 0;
+    inventory !== null &&
+    inventory <= 0;
 
   const isLimitedStock =
     inventory !== null &&
     inventory > 0 &&
     inventory <= 5;
 
+  const flashSalePrice =
+    flashSale !== null
+      ? Number(flashSale.sale_price)
+      : null;
+
+  const isFlashSaleActive =
+    flashSalePrice !== null &&
+    Number.isFinite(flashSalePrice) &&
+    flashSalePrice > 0 &&
+    flashSalePrice < price;
+
+  const effectiveUnitPrice =
+    isFlashSaleActive
+      ? flashSalePrice
+      : price;
+
   const favoriteProduct = {
     id: product.id,
     name: product.name,
-    price,
+    price: effectiveUnitPrice,
     image: product.image,
     path: product.path,
   };
@@ -54,35 +94,169 @@ export default function WolverinePage() {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await fetch("/api/products", {
-          cache: "no-store",
-        });
+        const [
+          productResponse,
+          saleResponse,
+        ] = await Promise.all([
+          fetch("/api/products", {
+            cache: "no-store",
+          }),
 
-        const data = await response.json();
+          fetch("/api/flash-sales", {
+            cache: "no-store",
+          }),
+        ]);
 
-        if (!data.success) return;
+        const productData =
+          await productResponse.json();
 
-        const wolverine = data.products.find(
-          (item: any) =>
-            item.slug === "wolverine" ||
-            item.slug === "wolverine-20mg" ||
-            item.id === "wolverine" ||
-            item.id === "wolverine-20mg" ||
-            item.id === "WOLVERINE-20mg" ||
-            item.name?.toLowerCase().includes("wolverine")
-        );
+        const saleData =
+          await saleResponse
+            .json()
+            .catch(() => ({
+              success: false,
+              sales: [],
+            }));
+
+        if (!productData.success) {
+          return;
+        }
+
+        const wolverine =
+          productData.products.find(
+            (item: any) => {
+              const slug =
+                String(
+                  item.slug || ""
+                )
+                  .toLowerCase()
+                  .trim();
+
+              const id =
+                String(
+                  item.id || ""
+                )
+                  .toLowerCase()
+                  .trim();
+
+              const name =
+                String(
+                  item.name || ""
+                )
+                  .toLowerCase()
+                  .trim();
+
+              const size =
+                String(
+                  item.size || ""
+                )
+                  .toLowerCase()
+                  .trim();
+
+              return (
+                slug === "wolverine" ||
+                slug ===
+                  "wolverine-20mg" ||
+                id === "wolverine" ||
+                id ===
+                  "wolverine-20mg" ||
+                (name.includes(
+                  "wolverine"
+                ) &&
+                  size === "20mg") ||
+                name.includes(
+                  "wolverine 20"
+                )
+              );
+            }
+          );
 
         if (wolverine) {
+          const dbId =
+            String(wolverine.id);
+
+          const regularPrice =
+            Number(
+              wolverine.price ?? 90
+            );
+
+          setDatabaseProductId(
+            dbId
+          );
+
           setInventory(
-            Number(wolverine.inventory ?? 0)
+            Number(
+              wolverine.inventory ??
+                0
+            )
           );
 
           setPrice(
-            Number(wolverine.price ?? 90)
+            regularPrice
+          );
+
+          const now =
+            Date.now();
+
+          const matchingSale =
+            Array.isArray(
+              saleData.sales
+            )
+              ? saleData.sales.find(
+                  (
+                    sale: FlashSale
+                  ) => {
+                    const starts =
+                      new Date(
+                        sale.starts_at
+                      ).getTime();
+
+                    const ends =
+                      new Date(
+                        sale.ends_at
+                      ).getTime();
+
+                    const salePrice =
+                      Number(
+                        sale.sale_price
+                      );
+
+                    return (
+                      sale.active ===
+                        true &&
+                      String(
+                        sale.product_id
+                      ) === dbId &&
+                      Number.isFinite(
+                        starts
+                      ) &&
+                      Number.isFinite(
+                        ends
+                      ) &&
+                      starts <= now &&
+                      ends > now &&
+                      Number.isFinite(
+                        salePrice
+                      ) &&
+                      salePrice > 0 &&
+                      salePrice <
+                        regularPrice
+                    );
+                  }
+                )
+              : null;
+
+          setFlashSale(
+            matchingSale || null
           );
         } else {
+          setDatabaseProductId(
+            null
+          );
+
           setInventory(null);
           setPrice(90);
+          setFlashSale(null);
         }
       } catch (error) {
         console.error(
@@ -90,105 +264,177 @@ export default function WolverinePage() {
           error
         );
 
+        setDatabaseProductId(
+          null
+        );
+
         setInventory(null);
         setPrice(90);
+        setFlashSale(null);
       }
     };
 
-    const fetchQuantityDiscounts = async () => {
-      try {
-        const response = await fetch(
-          "/api/quantity-discounts",
-          {
-            cache: "no-store",
-          }
-        );
-
-        const data = await response.json();
-
-        if (!data.success) return;
-
-        const tiers = (data.tiers || [])
-          .map((tier: any) => ({
-            id: String(tier.id),
-            name: String(tier.name || ""),
-            quantity: Number(tier.quantity || 0),
-
-            discount_percent: Number(
-              tier.discount_percent || 0
-            ),
-
-            sort_order: Number(
-              tier.sort_order || 0
-            ),
-          }))
-          .filter(
-            (tier: QuantityDiscountTier) =>
-              tier.quantity > 1 &&
-              tier.discount_percent >= 0
-          )
-          .sort(
-            (
-              a: QuantityDiscountTier,
-              b: QuantityDiscountTier
-            ) => {
-              if (a.sort_order !== b.sort_order) {
-                return a.sort_order - b.sort_order;
+    const fetchQuantityDiscounts =
+      async () => {
+        try {
+          const response =
+            await fetch(
+              "/api/quantity-discounts",
+              {
+                cache:
+                  "no-store",
               }
+            );
 
-              return a.quantity - b.quantity;
-            }
+          const data =
+            await response.json();
+
+          if (!data.success) {
+            return;
+          }
+
+          const tiers = (
+            data.tiers || []
+          )
+            .map(
+              (tier: any) => ({
+                id: String(
+                  tier.id
+                ),
+
+                name: String(
+                  tier.name || ""
+                ),
+
+                quantity: Number(
+                  tier.quantity ||
+                    0
+                ),
+
+                discount_percent:
+                  Number(
+                    tier.discount_percent ||
+                      0
+                  ),
+
+                sort_order: Number(
+                  tier.sort_order ||
+                    0
+                ),
+              })
+            )
+            .filter(
+              (
+                tier: QuantityDiscountTier
+              ) =>
+                tier.quantity >
+                  1 &&
+                tier.discount_percent >=
+                  0
+            )
+            .sort(
+              (
+                a: QuantityDiscountTier,
+                b: QuantityDiscountTier
+              ) => {
+                if (
+                  a.sort_order !==
+                  b.sort_order
+                ) {
+                  return (
+                    a.sort_order -
+                    b.sort_order
+                  );
+                }
+
+                return (
+                  a.quantity -
+                  b.quantity
+                );
+              }
+            );
+
+          setQuantityDiscounts(
+            tiers
           );
-
-        setQuantityDiscounts(tiers);
-      } catch (error) {
-        console.error(
-          "Failed to fetch quantity discounts:",
-          error
-        );
-      }
-    };
+        } catch (error) {
+          console.error(
+            "Failed to fetch quantity discounts:",
+            error
+          );
+        }
+      };
 
     fetchProductData();
     fetchQuantityDiscounts();
+
+    const flashSaleRefresh =
+      window.setInterval(
+        fetchProductData,
+        30_000
+      );
+
+    return () => {
+      window.clearInterval(
+        flashSaleRefresh
+      );
+    };
   }, []);
 
-  const getDiscountTier = (quantity: number) => {
+  const getDiscountTier = (
+    quantity: number
+  ) => {
     return (
       [...quantityDiscounts]
         .filter(
           (tier) =>
-            quantity >= tier.quantity
+            quantity >=
+            tier.quantity
         )
         .sort(
           (a, b) =>
-            b.quantity - a.quantity
+            b.quantity -
+            a.quantity
         )[0] || null
     );
   };
 
   const selectedTier =
-    getDiscountTier(selectedQuantity);
+    getDiscountTier(
+      selectedQuantity
+    );
 
   const selectedDiscountPercent =
-    selectedTier?.discount_percent || 0;
+    isFlashSaleActive
+      ? 0
+      : selectedTier
+          ?.discount_percent ||
+        0;
 
   const discountedUnitPrice =
-    price *
+    effectiveUnitPrice *
     (1 -
-      selectedDiscountPercent / 100);
+      selectedDiscountPercent /
+        100);
 
   const selectedTotal =
     discountedUnitPrice *
     selectedQuantity;
 
   const regularTotal =
-    price * selectedQuantity;
+    price *
+    selectedQuantity;
 
-  const formatMoney = (amount: number) =>
-    Number(amount).toFixed(2);
+  const formatMoney = (
+    amount: number
+  ) =>
+    Number(
+      amount
+    ).toFixed(2);
 
-  const selectQuantity = (quantity: number) => {
+  const selectQuantity = (
+    quantity: number
+  ) => {
     if (
       inventory !== null &&
       quantity > inventory
@@ -196,27 +442,37 @@ export default function WolverinePage() {
       return;
     }
 
-    setSelectedQuantity(quantity);
+    setSelectedQuantity(
+      quantity
+    );
+
     setAdded(false);
   };
 
   const addToCart = () => {
-    if (isOutOfStock) return;
+    if (isOutOfStock) {
+      return;
+    }
 
-    const existingCart = JSON.parse(
-      localStorage.getItem("cart") || "[]"
-    );
+    const existingCart =
+      JSON.parse(
+        localStorage.getItem(
+          "cart"
+        ) || "[]"
+      );
 
     const existingProduct =
       existingCart.find(
         (item: any) =>
-          item.id === product.id
+          item.id ===
+          product.id
       );
 
     const existingQuantity =
       existingProduct
         ? Number(
-            existingProduct.quantity || 0
+            existingProduct.quantity ||
+              0
           )
         : 0;
 
@@ -226,11 +482,14 @@ export default function WolverinePage() {
 
     if (
       inventory !== null &&
-      newQuantity > inventory
+      newQuantity >
+        inventory
     ) {
       alert(
         `Only ${inventory} vial${
-          inventory === 1 ? "" : "s"
+          inventory === 1
+            ? ""
+            : "s"
         } of ${
           product.name
         } are currently available.`
@@ -240,19 +499,31 @@ export default function WolverinePage() {
     }
 
     const newTier =
-      getDiscountTier(newQuantity);
+      isFlashSaleActive
+        ? null
+        : getDiscountTier(
+            newQuantity
+          );
 
     const newDiscountPercent =
-      newTier?.discount_percent || 0;
+      isFlashSaleActive
+        ? 0
+        : newTier
+            ?.discount_percent ||
+          0;
 
     const newDiscountedUnitPrice =
-      price *
+      effectiveUnitPrice *
       (1 -
-        newDiscountPercent / 100);
+        newDiscountPercent /
+          100);
 
     const cartProduct = {
-      id: product.id,
-      name: product.name,
+      id:
+        product.id,
+
+      name:
+        product.name,
 
       price:
         newDiscountedUnitPrice,
@@ -273,21 +544,42 @@ export default function WolverinePage() {
         newDiscountPercent,
 
       quantityDiscountTierId:
-        newTier?.id || null,
+        newTier?.id ||
+        null,
 
       quantityDiscountTierQuantity:
-        newTier?.quantity || null,
+        newTier?.quantity ||
+        null,
+
+      flashSaleApplied:
+        isFlashSaleActive,
+
+      flashSaleId:
+        isFlashSaleActive
+          ? flashSale?.id ||
+            null
+          : null,
+
+      flashSalePrice:
+        isFlashSaleActive
+          ? effectiveUnitPrice
+          : null,
+
+      databaseProductId:
+        databaseProductId,
     };
 
     const updatedCart =
       existingProduct
-        ? existingCart.map((item: any) =>
-            item.id === product.id
-              ? {
-                  ...item,
-                  ...cartProduct,
-                }
-              : item
+        ? existingCart.map(
+            (item: any) =>
+              item.id ===
+              product.id
+                ? {
+                    ...item,
+                    ...cartProduct,
+                  }
+                : item
           )
         : [
             ...existingCart,
@@ -296,11 +588,15 @@ export default function WolverinePage() {
 
     localStorage.setItem(
       "cart",
-      JSON.stringify(updatedCart)
+      JSON.stringify(
+        updatedCart
+      )
     );
 
     window.dispatchEvent(
-      new Event("cartUpdated")
+      new Event(
+        "cartUpdated"
+      )
     );
 
     setAdded(true);
@@ -324,12 +620,18 @@ export default function WolverinePage() {
               <div className="relative w-full max-w-[520px] aspect-square rounded-[42px] overflow-hidden border border-blue-400/10 bg-white/[0.03] shadow-[0_0_30px_rgba(96,165,250,0.15)]">
 
                 <FavoriteButton
-                  product={favoriteProduct}
+                  product={
+                    favoriteProduct
+                  }
                 />
 
                 <img
-                  src={product.image}
-                  alt={product.name}
+                  src={
+                    product.image
+                  }
+                  alt={
+                    product.name
+                  }
                   className="w-full h-full object-cover"
                 />
 
@@ -358,7 +660,9 @@ export default function WolverinePage() {
                     )}
                   </p>
 
-                  {selectedDiscountPercent > 0 && (
+                  {(isFlashSaleActive ||
+                    selectedDiscountPercent >
+                      0) && (
                     <p className="text-white/35 text-sm line-through">
                       $
                       {formatMoney(
@@ -389,7 +693,18 @@ export default function WolverinePage() {
                   20mg
                 </span>
 
-                {selectedDiscountPercent > 0 && (
+                {isFlashSaleActive && (
+                  <span className="rounded-full border border-blue-300/25 bg-blue-400/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#A5D8FF]">
+                    Flash Sale · $
+                    {formatMoney(
+                      effectiveUnitPrice
+                    )}{" "}
+                    / vial
+                  </span>
+                )}
+
+                {selectedDiscountPercent >
+                  0 && (
                   <span className="rounded-full border border-green-400/20 bg-green-500/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-green-200">
                     Save{" "}
                     {
@@ -415,101 +730,177 @@ export default function WolverinePage() {
 
               <div className="h-px bg-white/10 mb-5" />
 
-{/* QUANTITY */}
-<div className="mb-5">
-  <div className="flex items-center justify-between gap-4 mb-3">
-    <p className="uppercase tracking-widest text-white/45 text-xs">
-      Quantity
-    </p>
+              {/* QUANTITY */}
+              <div className="mb-5">
 
-    {selectedQuantity > 1 && (
-      <p className="text-[#A5D8FF] text-xs font-semibold">
-        ${formatMoney(discountedUnitPrice)} / vial
-      </p>
-    )}
-  </div>
+                <div className="flex items-center justify-between gap-4 mb-3">
 
-  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <p className="uppercase tracking-widest text-white/45 text-xs">
+                    Quantity
+                  </p>
 
-    {/* 1 VIAL */}
-    <button
-      type="button"
-      disabled={isOutOfStock}
-      onClick={() => selectQuantity(1)}
-      className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-        selectedQuantity === 1
-          ? "border-blue-300 bg-blue-400/10"
-          : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-      } disabled:opacity-35 disabled:cursor-not-allowed`}
-    >
-      {selectedQuantity === 1 && (
-        <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-          <Check size={11} strokeWidth={3} />
-        </span>
-      )}
+                  {selectedQuantity >
+                    1 && (
+                    <p className="text-[#A5D8FF] text-xs font-semibold">
+                      $
+                      {formatMoney(
+                        discountedUnitPrice
+                      )}{" "}
+                      / vial
+                    </p>
+                  )}
 
-      <p className="font-black text-white text-sm">
-        1 Vial
-      </p>
+                </div>
 
-      <p className="text-xs text-white/45 mt-1">
-        ${formatMoney(price)}
-      </p>
-    </button>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
 
-    {/* ADMIN QUANTITY TIERS */}
-    {quantityDiscounts.map((tier) => {
-      const tierUnavailable =
-        inventory !== null &&
-        inventory < tier.quantity;
+                  {/* 1 VIAL */}
+                  <button
+                    type="button"
+                    disabled={
+                      isOutOfStock
+                    }
+                    onClick={() =>
+                      selectQuantity(
+                        1
+                      )
+                    }
+                    className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+                      selectedQuantity ===
+                      1
+                        ? "border-blue-300 bg-blue-400/10"
+                        : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                    } disabled:opacity-35 disabled:cursor-not-allowed`}
+                  >
 
-      const tierTotal =
-        price *
-        tier.quantity *
-        (1 - tier.discount_percent / 100);
+                    {selectedQuantity ===
+                      1 && (
+                      <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                        <Check
+                          size={
+                            11
+                          }
+                          strokeWidth={
+                            3
+                          }
+                        />
+                      </span>
+                    )}
 
-      const selected =
-        selectedQuantity === tier.quantity;
+                    <p className="font-black text-white text-sm">
+                      1 Vial
+                    </p>
 
-      return (
-        <button
-          key={tier.id}
-          type="button"
-          disabled={tierUnavailable}
-          onClick={() =>
-            selectQuantity(tier.quantity)
-          }
-          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-            selected
-              ? "border-blue-300 bg-blue-400/10"
-              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-          } disabled:opacity-30 disabled:cursor-not-allowed`}
-        >
-          {selected && (
-            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-              <Check
-                size={11}
-                strokeWidth={3}
-              />
-            </span>
-          )}
+                    <p className="text-xs text-white/45 mt-1">
+                      $
+                      {formatMoney(
+                        effectiveUnitPrice
+                      )}
+                    </p>
 
-          <p className="font-black text-white text-sm">
-            {tier.quantity} Vials
-          </p>
+                    {isFlashSaleActive && (
+                      <p className="text-[10px] text-white/25 line-through mt-0.5">
+                        $
+                        {formatMoney(
+                          price
+                        )}
+                      </p>
+                    )}
 
-          <p className="text-xs text-white/45 mt-1">
-            ${formatMoney(tierTotal)}
-          </p>
+                  </button>
 
-          <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
-            Save {tier.discount_percent}%
-          </p>
-        </button>
-      );
-    })}
-  </div>
-</div>
+                  {/* ADMIN QUANTITY TIERS */}
+                  {quantityDiscounts.map(
+                    (tier) => {
+                      const tierUnavailable =
+                        inventory !==
+                          null &&
+                        inventory <
+                          tier.quantity;
+
+                      const tierTotal =
+                        isFlashSaleActive
+                          ? effectiveUnitPrice *
+                            tier.quantity
+                          : price *
+                            tier.quantity *
+                            (1 -
+                              tier.discount_percent /
+                                100);
+
+                      const selected =
+                        selectedQuantity ===
+                        tier.quantity;
+
+                      return (
+                        <button
+                          key={
+                            tier.id
+                          }
+                          type="button"
+                          disabled={
+                            tierUnavailable
+                          }
+                          onClick={() =>
+                            selectQuantity(
+                              tier.quantity
+                            )
+                          }
+                          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+                            selected
+                              ? "border-blue-300 bg-blue-400/10"
+                              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                          } disabled:opacity-30 disabled:cursor-not-allowed`}
+                        >
+
+                          {selected && (
+                            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                              <Check
+                                size={
+                                  11
+                                }
+                                strokeWidth={
+                                  3
+                                }
+                              />
+                            </span>
+                          )}
+
+                          <p className="font-black text-white text-sm">
+                            {
+                              tier.quantity
+                            }{" "}
+                            Vials
+                          </p>
+
+                          <p className="text-xs text-white/45 mt-1">
+                            $
+                            {formatMoney(
+                              tierTotal
+                            )}
+                          </p>
+
+                          {isFlashSaleActive ? (
+                            <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
+                              Flash Sale
+                            </p>
+                          ) : (
+                            <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
+                              Save{" "}
+                              {
+                                tier.discount_percent
+                              }
+                              %
+                            </p>
+                          )}
+
+                        </button>
+                      );
+                    }
+                  )}
+
+                </div>
+              </div>
 
               {/* FREE GIFT */}
               <div className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-3 mb-5">
@@ -533,18 +924,23 @@ export default function WolverinePage() {
                   </button>
                 ) : (
                   <button
-                    onClick={addToCart}
+                    onClick={
+                      addToCart
+                    }
                     className="col-span-2 bg-white text-[#081526] hover:bg-blue-100 rounded-full py-4 uppercase tracking-widest text-xs font-bold transition-all flex items-center justify-center gap-2"
                   >
 
                     <ShoppingCart
-                      size={18}
+                      size={
+                        18
+                      }
                     />
 
                     {added
                       ? "Added To Cart"
                       : `Add ${selectedQuantity} ${
-                          selectedQuantity === 1
+                          selectedQuantity ===
+                          1
                             ? "Vial"
                             : "Vials"
                         } To Cart`}
@@ -569,7 +965,9 @@ export default function WolverinePage() {
               </div>
 
               <a
-                href="/images/coas/7-31-wolverine-coa.pdf"
+                href={
+                  coaPath
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
@@ -631,7 +1029,9 @@ export default function WolverinePage() {
               </p>
 
               <a
-                href="/images/coas/7-31-wolverine-coa.pdf"
+                href={
+                  coaPath
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
@@ -640,6 +1040,7 @@ export default function WolverinePage() {
               </a>
 
             </div>
+
           </div>
         </div>
       </section>
@@ -674,26 +1075,40 @@ export default function WolverinePage() {
               "Current analytical documentation reports 99.34% purity.",
             ],
           ].map(
-            ([Icon, title, text]: any) => (
+            (
+              [
+                Icon,
+                title,
+                text,
+              ]: any
+            ) => (
 
               <div
-                key={title}
+                key={
+                  title
+                }
                 className="flex gap-4"
               >
 
                 <Icon
                   className="text-[#A5D8FF]"
-                  size={28}
+                  size={
+                    28
+                  }
                 />
 
                 <div>
 
                   <h3 className="text-white uppercase tracking-widest font-bold text-xs">
-                    {title}
+                    {
+                      title
+                    }
                   </h3>
 
                   <p className="text-white/50 text-sm mt-1">
-                    {text}
+                    {
+                      text
+                    }
                   </p>
 
                 </div>
@@ -753,19 +1168,30 @@ export default function WolverinePage() {
                 "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
               ],
             ].map(
-              ([title, text]) => (
+              (
+                [
+                  title,
+                  text,
+                ]
+              ) => (
 
                 <div
-                  key={title}
+                  key={
+                    title
+                  }
                   className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
                 >
 
                   <h3 className="text-white font-bold mb-2">
-                    {title}
+                    {
+                      title
+                    }
                   </h3>
 
                   <p className="text-white/55 text-sm leading-relaxed">
-                    {text}
+                    {
+                      text
+                    }
                   </p>
 
                 </div>
@@ -793,7 +1219,8 @@ export default function WolverinePage() {
 
             {[
               {
-                name: "BPC-157",
+                name:
+                  "BPC-157",
 
                 image:
                   "/images/bpc157blue.png",
@@ -806,7 +1233,8 @@ export default function WolverinePage() {
               },
 
               {
-                name: "TB-500",
+                name:
+                  "TB-500",
 
                 image:
                   "/images/tb500blue.png",
@@ -819,7 +1247,8 @@ export default function WolverinePage() {
               },
 
               {
-                name: "ARA-290",
+                name:
+                  "ARA-290",
 
                 image:
                   "/images/ara290blue.png",
@@ -830,38 +1259,52 @@ export default function WolverinePage() {
                 text:
                   "Research involving tissue protection pathways and cellular response signaling.",
               },
-            ].map((item) => (
+            ].map(
+              (item) => (
 
-              <a
-                key={item.name}
-                href={item.path}
-                className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/40 transition-all"
-              >
+                <a
+                  key={
+                    item.name
+                  }
+                  href={
+                    item.path
+                  }
+                  className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/40 transition-all"
+                >
 
-                <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
+                  <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
 
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
-                  />
+                    <img
+                      src={
+                        item.image
+                      }
+                      alt={
+                        item.name
+                      }
+                      className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
+                    />
 
-                </div>
+                  </div>
 
-                <h3 className="text-xl font-black text-white mb-2">
-                  {item.name}
-                </h3>
+                  <h3 className="text-xl font-black text-white mb-2">
+                    {
+                      item.name
+                    }
+                  </h3>
 
-                <p className="text-white/55 text-sm leading-relaxed">
-                  {item.text}
-                </p>
+                  <p className="text-white/55 text-sm leading-relaxed">
+                    {
+                      item.text
+                    }
+                  </p>
 
-                <span className="inline-block mt-3 text-[#A5D8FF] text-sm font-semibold">
-                  View Product →
-                </span>
+                  <span className="inline-block mt-3 text-[#A5D8FF] text-sm font-semibold">
+                    View Product →
+                  </span>
 
-              </a>
-            ))}
+                </a>
+              )
+            )}
 
           </div>
         </div>
@@ -885,21 +1328,29 @@ export default function WolverinePage() {
             "By purchasing this product, the customer acknowledges that this material is intended solely for lawful laboratory research purposes and will not be used for human consumption, veterinary use, medical use, diagnosis, treatment, cure, or prevention of disease. Apexx Biolabs does not provide dosing instructions, treatment recommendations, medical advice, or guidance regarding human use of any product.",
         },
       ].map(
-        (section) => (
+        (
+          section
+        ) => (
 
           <section
-            key={section.title}
+            key={
+              section.title
+            }
             className="px-6 md:px-10 pb-10"
           >
 
             <div className="max-w-7xl mx-auto rounded-[26px] border border-white/10 bg-white/[0.04] p-6">
 
               <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-xs mb-3">
-                {section.title}
+                {
+                  section.title
+                }
               </h3>
 
               <p className="text-white/55 text-sm leading-relaxed">
-                {section.text}
+                {
+                  section.text
+                }
               </p>
 
             </div>

@@ -10,6 +10,50 @@ type Carrier =
   | "FedEx"
   | "DHL";
 
+type AdminCartItem = {
+  id?: string;
+  name?: string;
+  price?: number;
+  basePrice?: number;
+  quantity?: number;
+  image?: string;
+  path?: string;
+
+  quantityDiscountPercent?: number;
+  quantityDiscountTierId?: string | null;
+  quantityDiscountTierQuantity?: number | null;
+
+  bundleId?: string | null;
+  bundleType?: string | null;
+  bundleDiscountPercent?: number;
+  bundleTierQuantity?: number | null;
+  bundleBaseUnitPrice?: number;
+  bundleDiscountedUnitPrice?: number;
+
+  flashSaleApplied?: boolean;
+  flashSaleId?: string | null;
+  flashSalePrice?: number | null;
+};
+
+type OrderPricingSummary = {
+  bundleGroups: Array<{
+    bundleId: string;
+    quantity: number;
+    discountPercent: number;
+  }>;
+  bulkItems: Array<{
+    name: string;
+    quantity: number;
+    discountPercent: number;
+  }>;
+  flashSaleItems: Array<{
+    name: string;
+    quantity: number;
+    salePrice: number;
+    basePrice: number;
+  }>;
+};
+
 type Order = {
   id: string;
   order_number: string;
@@ -23,6 +67,7 @@ type Order = {
   status: string;
   tracking_number: string | null;
   created_at: string;
+  cart?: AdminCartItem[] | string | null;
 };
 
 type ConversationMessage = {
@@ -89,6 +134,132 @@ function detectCarrier(
   }
 
   return null;
+}
+
+function normalizeOrderCart(
+  cart: Order["cart"]
+): AdminCartItem[] {
+  if (Array.isArray(cart)) {
+    return cart;
+  }
+
+  if (typeof cart === "string") {
+    try {
+      const parsed = JSON.parse(cart);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  return [];
+}
+
+function getOrderPricingSummary(
+  order: Order
+): OrderPricingSummary {
+  const items = normalizeOrderCart(order.cart);
+
+  const bundleMap = new Map<
+    string,
+    { quantity: number; discountPercent: number }
+  >();
+
+  const bulkItems: OrderPricingSummary["bulkItems"] = [];
+  const flashSaleItems: OrderPricingSummary["flashSaleItems"] = [];
+
+  items.forEach((item) => {
+    const quantity = Math.max(
+      0,
+      Number(item.quantity || 0)
+    );
+
+    const itemName = String(
+      item.name || "Product"
+    );
+
+    const isBundle =
+      item.bundleType === "build-your-own" &&
+      Boolean(item.bundleId);
+
+    if (isBundle && item.bundleId) {
+      const current = bundleMap.get(item.bundleId) || {
+        quantity: 0,
+        discountPercent: 0,
+      };
+
+      bundleMap.set(item.bundleId, {
+        quantity: current.quantity + quantity,
+        discountPercent: Math.max(
+          current.discountPercent,
+          Number(item.bundleDiscountPercent || 0)
+        ),
+      });
+
+      return;
+    }
+
+    if (item.flashSaleApplied) {
+      flashSaleItems.push({
+        name: itemName,
+        quantity,
+        salePrice: Number(
+          item.flashSalePrice ?? item.price ?? 0
+        ),
+        basePrice: Number(
+          item.basePrice ?? item.price ?? 0
+        ),
+      });
+
+      return;
+    }
+
+    const quantityDiscountPercent = Number(
+      item.quantityDiscountPercent || 0
+    );
+
+    if (quantityDiscountPercent > 0) {
+      bulkItems.push({
+        name: itemName,
+        quantity,
+        discountPercent: quantityDiscountPercent,
+      });
+    }
+  });
+
+  const bundleGroups = Array.from(bundleMap.entries()).map(
+    ([bundleId, data]) => ({
+      bundleId,
+      quantity: data.quantity,
+      discountPercent: data.discountPercent,
+    })
+  );
+
+  return {
+    bundleGroups,
+    bulkItems,
+    flashSaleItems,
+  };
+}
+
+function getOrderPricingSearchText(order: Order) {
+  const pricing = getOrderPricingSummary(order);
+
+  const parts: string[] = [];
+
+  if (pricing.bundleGroups.length > 0) {
+    parts.push("bundle build your own");
+  }
+
+  if (pricing.bulkItems.length > 0) {
+    parts.push("bulk quantity pricing");
+  }
+
+  if (pricing.flashSaleItems.length > 0) {
+    parts.push("flash sale");
+  }
+
+  return parts.join(" ");
 }
 
 export default function AdminOrdersPage() {
@@ -996,7 +1167,10 @@ export default function AdminOrdersPage() {
             ?.toLowerCase()
             .includes(
               search
-            )
+            ) ||
+          getOrderPricingSearchText(order).includes(
+            search
+          )
         );
       }
     );
@@ -1316,7 +1490,7 @@ export default function AdminOrdersPage() {
           ) : (
             <div className="overflow-x-auto">
 
-              <table className="w-full min-w-[1600px] text-left">
+              <table className="w-full min-w-[1810px] text-left">
 
                 <thead className="bg-white/[0.06] text-xs uppercase tracking-widest text-blue-200">
                   <tr>
@@ -1338,6 +1512,10 @@ export default function AdminOrdersPage() {
 
                     <th className="p-5">
                       Promo
+                    </th>
+
+                    <th className="p-5">
+                      Pricing
                     </th>
 
                     <th className="p-5">
@@ -1379,6 +1557,14 @@ export default function AdminOrdersPage() {
                               enteredTracking
                             )
                           : selectedCarrier;
+
+                      const pricingSummary =
+                        getOrderPricingSummary(order);
+
+                      const hasSpecialPricing =
+                        pricingSummary.bundleGroups.length > 0 ||
+                        pricingSummary.bulkItems.length > 0 ||
+                        pricingSummary.flashSaleItems.length > 0;
 
                       return (
                         <tr
@@ -1592,6 +1778,107 @@ export default function AdminOrdersPage() {
                             ) : (
                               <span className="text-sm text-white/30">
                                 None
+                              </span>
+                            )}
+                          </td>
+
+                          {/* PRICING */}
+
+                          <td className="p-5 align-top">
+                            {hasSpecialPricing ? (
+                              <div className="flex min-w-[230px] flex-col gap-2">
+                                {pricingSummary.bundleGroups.map(
+                                  (bundle) => (
+                                    <div
+                                      key={`bundle-${order.id}-${bundle.bundleId}`}
+                                      className="rounded-2xl border border-purple-300/20 bg-purple-500/10 px-3.5 py-3"
+                                    >
+                                      <div className="flex items-center justify-between gap-3">
+                                        <span className="rounded-full border border-purple-300/25 bg-purple-400/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-purple-200">
+                                          Bundle
+                                        </span>
+
+                                        {bundle.discountPercent > 0 && (
+                                          <span className="text-[10px] font-black text-purple-200">
+                                            {bundle.discountPercent}% OFF
+                                          </span>
+                                        )}
+                                      </div>
+
+                                      <p className="mt-2 text-xs font-bold text-white/80">
+                                        {bundle.quantity}{" "}
+                                        {bundle.quantity === 1 ? "Vial" : "Vials"}
+                                      </p>
+
+                                      <p className="mt-0.5 text-[10px] text-white/35">
+                                        Build Your Own Bundle
+                                      </p>
+                                    </div>
+                                  )
+                                )}
+
+                                {pricingSummary.bulkItems.map(
+                                  (item, pricingIndex) => (
+                                    <div
+                                      key={`bulk-${order.id}-${pricingIndex}-${item.name}`}
+                                      className="rounded-2xl border border-blue-300/20 bg-blue-500/10 px-3.5 py-3"
+                                    >
+                                      <div className="flex items-center justify-between gap-3">
+                                        <span className="rounded-full border border-blue-300/25 bg-blue-400/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-blue-200">
+                                          Bulk
+                                        </span>
+
+                                        <span className="text-[10px] font-black text-blue-200">
+                                          {item.discountPercent}% OFF
+                                        </span>
+                                      </div>
+
+                                      <p className="mt-2 max-w-[200px] truncate text-xs font-bold text-white/80">
+                                        {item.name}
+                                      </p>
+
+                                      <p className="mt-0.5 text-[10px] text-white/35">
+                                        Qty {item.quantity} · Quantity Pricing
+                                      </p>
+                                    </div>
+                                  )
+                                )}
+
+                                {pricingSummary.flashSaleItems.map(
+                                  (item, pricingIndex) => (
+                                    <div
+                                      key={`flash-${order.id}-${pricingIndex}-${item.name}`}
+                                      className="rounded-2xl border border-cyan-300/20 bg-cyan-500/10 px-3.5 py-3"
+                                    >
+                                      <div className="flex items-center justify-between gap-3">
+                                        <span className="rounded-full border border-cyan-300/25 bg-cyan-400/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-cyan-200">
+                                          Flash Sale
+                                        </span>
+
+                                        <span className="text-[10px] font-black text-cyan-200">
+                                          ${Number(item.salePrice || 0).toFixed(2)}
+                                        </span>
+                                      </div>
+
+                                      <p className="mt-2 max-w-[200px] truncate text-xs font-bold text-white/80">
+                                        {item.name}
+                                      </p>
+
+                                      <p className="mt-0.5 text-[10px] text-white/35">
+                                        Qty {item.quantity}
+                                        {item.basePrice > item.salePrice
+                                          ? ` · Regular $${Number(
+                                              item.basePrice
+                                            ).toFixed(2)}`
+                                          : ""}
+                                      </p>
+                                    </div>
+                                  )
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-sm text-white/30">
+                                Standard
                               </span>
                             )}
                           </td>

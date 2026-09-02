@@ -19,43 +19,69 @@ type FlashSaleRow = {
   starts_at: string;
   ends_at: string;
   active: boolean;
-  created_at?: string;
+  created_at?: string | null;
 };
 
-function validDate(value: unknown) {
+function isValidDate(value: unknown) {
   const date = new Date(String(value || ""));
   return Number.isFinite(date.getTime());
 }
 
+/* =========================================================
+   GET
+   Load products + all flash sales for Admin Promos page
+========================================================= */
+
 export async function GET() {
   try {
-    const { data: sales, error: salesError } =
-      await supabaseAdmin
-        .from("flash_sales")
-        .select(
-          "id, product_id, sale_price, starts_at, ends_at, active, created_at"
-        )
-        .order("starts_at", { ascending: false });
+    /* -------------------------
+       LOAD FLASH SALES
+    ------------------------- */
 
-    if (salesError) {
-      console.error("Flash sale GET error:", salesError);
+    const {
+      data: flashSaleRows,
+      error: flashSalesError,
+    } = await supabaseAdmin
+      .from("flash_sales")
+      .select("*")
+      .order("starts_at", {
+        ascending: false,
+      });
+
+    if (flashSalesError) {
+      console.error(
+        "Flash sale GET error:",
+        flashSalesError
+      );
 
       return NextResponse.json(
         {
           success: false,
-          error: "Unable to load flash sales.",
+          error:
+            "Unable to load flash sales.",
+          details:
+            flashSalesError.message,
         },
-        { status: 500 }
+        {
+          status: 500,
+        }
       );
     }
 
-    const { data: products, error: productsError } =
-      await supabaseAdmin
-        .from("products")
-        .select(
-          "id, name, slug, price, size, category, active"
-        )
-        .order("name", { ascending: true });
+    /* -------------------------
+       LOAD PRODUCTS
+
+       Using select("*") so this route
+       doesn't depend on optional
+       columns existing in your table.
+    ------------------------- */
+
+    const {
+      data: productRows,
+      error: productsError,
+    } = await supabaseAdmin
+      .from("products")
+      .select("*");
 
     if (productsError) {
       console.error(
@@ -68,32 +94,59 @@ export async function GET() {
           success: false,
           error:
             "Unable to load products for flash sales.",
+          details:
+            productsError.message,
         },
-        { status: 500 }
+        {
+          status: 500,
+        }
       );
     }
 
+    /* -------------------------
+       NORMALIZE PRODUCTS
+    ------------------------- */
+
+    const products = [
+      ...(productRows || []),
+    ].sort((a, b) =>
+      String(a?.name || "").localeCompare(
+        String(b?.name || "")
+      )
+    );
+
     const productMap = new Map(
-      (products || []).map((product) => [
+      products.map((product) => [
         String(product.id),
         product,
       ])
     );
 
-    const enrichedSales = (
-      (sales || []) as FlashSaleRow[]
+    /* -------------------------
+       ADD PRODUCT INFO TO SALES
+    ------------------------- */
+
+    const sales = (
+      (flashSaleRows || []) as FlashSaleRow[]
     ).map((sale) => {
       const product =
-        productMap.get(String(sale.product_id)) || null;
+        productMap.get(
+          String(sale.product_id)
+        ) || null;
 
       return {
         ...sale,
+
         product_name:
-          product?.name || sale.product_id,
+          product?.name ||
+          String(sale.product_id),
+
         product_size:
           product?.size || null,
+
         product_slug:
           product?.slug || null,
+
         regular_price: Number(
           product?.price || 0
         ),
@@ -102,8 +155,8 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      sales: enrichedSales,
-      products: products || [],
+      sales,
+      products,
     });
   } catch (error) {
     console.error(
@@ -116,47 +169,100 @@ export async function GET() {
         success: false,
         error:
           "Unexpected error while loading flash sales.",
+        details:
+          error instanceof Error
+            ? error.message
+            : String(error),
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
 }
 
-export async function POST(request: Request) {
+/* =========================================================
+   POST
+   Create a new Flash Sale
+========================================================= */
+
+export async function POST(
+  request: Request
+) {
   try {
-    const body = await request.json();
+    const body =
+      await request.json();
 
     const productId = String(
       body?.product_id || ""
     ).trim();
 
-    const salePrice = Number(body?.sale_price);
+    const salePrice = Number(
+      body?.sale_price
+    );
+
     const startsAt = String(
       body?.starts_at || ""
     ).trim();
+
     const endsAt = String(
       body?.ends_at || ""
     ).trim();
 
+    /* -------------------------
+       BASIC VALIDATION
+    ------------------------- */
+
+    if (!productId) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Please select a product.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
     if (
-      !productId ||
       !Number.isFinite(salePrice) ||
-      salePrice <= 0 ||
-      !validDate(startsAt) ||
-      !validDate(endsAt)
+      salePrice <= 0
     ) {
       return NextResponse.json(
         {
           success: false,
           error:
-            "Product, sale price, start time, and end time are required.",
+            "Please enter a valid sale price.",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
-    const startDate = new Date(startsAt);
-    const endDate = new Date(endsAt);
+    if (
+      !isValidDate(startsAt) ||
+      !isValidDate(endsAt)
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Please enter valid start and end times.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    const startDate =
+      new Date(startsAt);
+
+    const endDate =
+      new Date(endsAt);
 
     if (endDate <= startDate) {
       return NextResponse.json(
@@ -165,18 +271,22 @@ export async function POST(request: Request) {
           error:
             "Flash sale end time must be after the start time.",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
+
+    /* -------------------------
+       VERIFY PRODUCT
+    ------------------------- */
 
     const {
       data: product,
       error: productError,
     } = await supabaseAdmin
       .from("products")
-      .select(
-        "id, name, price, active"
-      )
+      .select("*")
       .eq("id", productId)
       .maybeSingle();
 
@@ -191,8 +301,12 @@ export async function POST(request: Request) {
           success: false,
           error:
             "Unable to verify this product.",
+          details:
+            productError.message,
         },
-        { status: 500 }
+        {
+          status: 500,
+        }
       );
     }
 
@@ -200,18 +314,27 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          error: "Product not found.",
+          error:
+            "Product not found.",
         },
-        { status: 404 }
+        {
+          status: 404,
+        }
       );
     }
+
+    /* -------------------------
+       VERIFY REGULAR PRICE
+    ------------------------- */
 
     const regularPrice = Number(
       product.price || 0
     );
 
     if (
-      !Number.isFinite(regularPrice) ||
+      !Number.isFinite(
+        regularPrice
+      ) ||
       regularPrice <= 0
     ) {
       return NextResponse.json(
@@ -220,39 +343,48 @@ export async function POST(request: Request) {
           error:
             "This product does not have a valid regular price.",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
-    if (salePrice >= regularPrice) {
+    if (
+      salePrice >= regularPrice
+    ) {
       return NextResponse.json(
         {
           success: false,
-          error: `Flash sale price must be lower than the regular price of $${regularPrice.toFixed(
-            2
-          )}.`,
+          error:
+            `Flash sale price must be lower than the regular price of $${regularPrice.toFixed(
+              2
+            )}.`,
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
-    /*
-     * Prevent overlapping ACTIVE/SCHEDULED sales
-     * for the same product.
-     *
-     * Overlap condition:
-     * existing.starts_at < new.ends_at
-     * existing.ends_at   > new.starts_at
-     */
+    /* -------------------------
+       CHECK FOR OVERLAPPING SALE
+
+       Existing sale overlaps if:
+       existing start < new end
+       AND
+       existing end > new start
+    ------------------------- */
+
     const {
       data: overlappingSales,
       error: overlapError,
     } = await supabaseAdmin
       .from("flash_sales")
-      .select(
-        "id, starts_at, ends_at, active"
+      .select("*")
+      .eq(
+        "product_id",
+        productId
       )
-      .eq("product_id", productId)
       .eq("active", true)
       .lt(
         "starts_at",
@@ -265,7 +397,7 @@ export async function POST(request: Request) {
 
     if (overlapError) {
       console.error(
-        "Flash sale overlap lookup error:",
+        "Flash sale overlap error:",
         overlapError
       );
 
@@ -273,9 +405,13 @@ export async function POST(request: Request) {
         {
           success: false,
           error:
-            "Unable to verify existing flash sales.",
+            "Unable to check existing flash sales.",
+          details:
+            overlapError.message,
         },
-        { status: 500 }
+        {
+          status: 500,
+        }
       );
     }
 
@@ -289,9 +425,15 @@ export async function POST(request: Request) {
           error:
             "This product already has an active or scheduled flash sale during that time.",
         },
-        { status: 409 }
+        {
+          status: 409,
+        }
       );
     }
+
+    /* -------------------------
+       CREATE SALE
+    ------------------------- */
 
     const {
       data: createdSale,
@@ -300,18 +442,20 @@ export async function POST(request: Request) {
       .from("flash_sales")
       .insert({
         product_id: productId,
+
         sale_price: Number(
           salePrice.toFixed(2)
         ),
+
         starts_at:
           startDate.toISOString(),
+
         ends_at:
           endDate.toISOString(),
+
         active: true,
       })
-      .select(
-        "id, product_id, sale_price, starts_at, ends_at, active, created_at"
-      )
+      .select("*")
       .single();
 
     if (insertError) {
@@ -324,10 +468,13 @@ export async function POST(request: Request) {
         {
           success: false,
           error:
-            insertError.message ||
             "Unable to create flash sale.",
+          details:
+            insertError.message,
         },
-        { status: 500 }
+        {
+          status: 500,
+        }
       );
     }
 
@@ -346,15 +493,29 @@ export async function POST(request: Request) {
         success: false,
         error:
           "Unexpected error while creating flash sale.",
+        details:
+          error instanceof Error
+            ? error.message
+            : String(error),
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
 }
 
-export async function PATCH(request: Request) {
+/* =========================================================
+   PATCH
+   End / update an existing Flash Sale
+========================================================= */
+
+export async function PATCH(
+  request: Request
+) {
   try {
-    const body = await request.json();
+    const body =
+      await request.json();
 
     const saleId = String(
       body?.id || ""
@@ -364,120 +525,45 @@ export async function PATCH(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          error: "Flash sale ID is required.",
-        },
-        { status: 400 }
-      );
-    }
-
-    const updates: Record<
-      string,
-      boolean | string | number
-    > = {};
-
-    if (
-      typeof body?.active === "boolean"
-    ) {
-      updates.active = body.active;
-    }
-
-    if (
-      body?.sale_price !== undefined
-    ) {
-      const salePrice = Number(
-        body.sale_price
-      );
-
-      if (
-        !Number.isFinite(salePrice) ||
-        salePrice <= 0
-      ) {
-        return NextResponse.json(
-          {
-            success: false,
-            error:
-              "Sale price must be greater than zero.",
-          },
-          { status: 400 }
-        );
-      }
-
-      updates.sale_price = Number(
-        salePrice.toFixed(2)
-      );
-    }
-
-    if (body?.starts_at !== undefined) {
-      if (!validDate(body.starts_at)) {
-        return NextResponse.json(
-          {
-            success: false,
-            error:
-              "Invalid flash sale start time.",
-          },
-          { status: 400 }
-        );
-      }
-
-      updates.starts_at = new Date(
-        body.starts_at
-      ).toISOString();
-    }
-
-    if (body?.ends_at !== undefined) {
-      if (!validDate(body.ends_at)) {
-        return NextResponse.json(
-          {
-            success: false,
-            error:
-              "Invalid flash sale end time.",
-          },
-          { status: 400 }
-        );
-      }
-
-      updates.ends_at = new Date(
-        body.ends_at
-      ).toISOString();
-    }
-
-    if (
-      Object.keys(updates).length === 0
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
           error:
-            "No flash sale changes were provided.",
+            "Flash sale ID is required.",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
+
+    /* -------------------------
+       FIND EXISTING SALE
+    ------------------------- */
 
     const {
       data: existingSale,
-      error: existingSaleError,
+      error: lookupError,
     } = await supabaseAdmin
       .from("flash_sales")
-      .select(
-        "id, product_id, sale_price, starts_at, ends_at, active"
-      )
+      .select("*")
       .eq("id", saleId)
       .maybeSingle();
 
-    if (existingSaleError) {
+    if (lookupError) {
       console.error(
-        "Flash sale PATCH lookup error:",
-        existingSaleError
+        "Flash sale lookup error:",
+        lookupError
       );
 
       return NextResponse.json(
         {
           success: false,
           error:
-            "Unable to verify this flash sale.",
+            "Unable to find this flash sale.",
+          details:
+            lookupError.message,
         },
-        { status: 500 }
+        {
+          status: 500,
+        }
       );
     }
 
@@ -485,62 +571,219 @@ export async function PATCH(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          error: "Flash sale not found.",
+          error:
+            "Flash sale not found.",
         },
-        { status: 404 }
+        {
+          status: 404,
+        }
       );
     }
 
-    const finalStartsAt = new Date(
-      String(
-        updates.starts_at ||
-          existingSale.starts_at
-      )
-    );
+    /* -------------------------
+       BUILD UPDATE OBJECT
+    ------------------------- */
 
-    const finalEndsAt = new Date(
-      String(
-        updates.ends_at ||
-          existingSale.ends_at
-      )
-    );
+    const updates: Record<
+      string,
+      boolean | string | number
+    > = {};
 
-    if (finalEndsAt <= finalStartsAt) {
+    if (
+      typeof body?.active ===
+      "boolean"
+    ) {
+      updates.active =
+        body.active;
+    }
+
+    if (
+      body?.sale_price !==
+      undefined
+    ) {
+      const newSalePrice =
+        Number(
+          body.sale_price
+        );
+
+      if (
+        !Number.isFinite(
+          newSalePrice
+        ) ||
+        newSalePrice <= 0
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "Sale price must be greater than zero.",
+          },
+          {
+            status: 400,
+          }
+        );
+      }
+
+      updates.sale_price =
+        Number(
+          newSalePrice.toFixed(
+            2
+          )
+        );
+    }
+
+    if (
+      body?.starts_at !==
+      undefined
+    ) {
+      if (
+        !isValidDate(
+          body.starts_at
+        )
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "Invalid flash sale start time.",
+          },
+          {
+            status: 400,
+          }
+        );
+      }
+
+      updates.starts_at =
+        new Date(
+          body.starts_at
+        ).toISOString();
+    }
+
+    if (
+      body?.ends_at !==
+      undefined
+    ) {
+      if (
+        !isValidDate(
+          body.ends_at
+        )
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "Invalid flash sale end time.",
+          },
+          {
+            status: 400,
+          }
+        );
+      }
+
+      updates.ends_at =
+        new Date(
+          body.ends_at
+        ).toISOString();
+    }
+
+    if (
+      Object.keys(updates)
+        .length === 0
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "No flash sale changes were provided.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    /* -------------------------
+       VALIDATE FINAL DATES
+    ------------------------- */
+
+    const finalStartsAt =
+      new Date(
+        String(
+          updates.starts_at ??
+            existingSale.starts_at
+        )
+      );
+
+    const finalEndsAt =
+      new Date(
+        String(
+          updates.ends_at ??
+            existingSale.ends_at
+        )
+      );
+
+    if (
+      finalEndsAt <=
+      finalStartsAt
+    ) {
       return NextResponse.json(
         {
           success: false,
           error:
             "Flash sale end time must be after the start time.",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
-    const finalSalePrice = Number(
-      updates.sale_price ??
-        existingSale.sale_price
-    );
+    /* -------------------------
+       VERIFY PRODUCT PRICE
+    ------------------------- */
 
     const {
       data: product,
       error: productError,
     } = await supabaseAdmin
       .from("products")
-      .select("id, price")
+      .select("*")
       .eq(
         "id",
         existingSale.product_id
       )
       .maybeSingle();
 
-    if (productError || !product) {
+    if (productError) {
+      console.error(
+        "Flash sale PATCH product error:",
+        productError
+      );
+
       return NextResponse.json(
         {
           success: false,
           error:
-            "Unable to verify the product price.",
+            "Unable to verify the product.",
+          details:
+            productError.message,
         },
-        { status: 500 }
+        {
+          status: 500,
+        }
+      );
+    }
+
+    if (!product) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Product associated with this flash sale no longer exists.",
+        },
+        {
+          status: 404,
+        }
       );
     }
 
@@ -548,19 +791,33 @@ export async function PATCH(request: Request) {
       product.price || 0
     );
 
+    const finalSalePrice =
+      Number(
+        updates.sale_price ??
+          existingSale.sale_price
+      );
+
     if (
-      finalSalePrice >= regularPrice
+      finalSalePrice >=
+      regularPrice
     ) {
       return NextResponse.json(
         {
           success: false,
-          error: `Flash sale price must be lower than the regular price of $${regularPrice.toFixed(
-            2
-          )}.`,
+          error:
+            `Flash sale price must be lower than the regular price of $${regularPrice.toFixed(
+              2
+            )}.`,
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
+
+    /* -------------------------
+       UPDATE SALE
+    ------------------------- */
 
     const {
       data: updatedSale,
@@ -569,14 +826,12 @@ export async function PATCH(request: Request) {
       .from("flash_sales")
       .update(updates)
       .eq("id", saleId)
-      .select(
-        "id, product_id, sale_price, starts_at, ends_at, active, created_at"
-      )
+      .select("*")
       .single();
 
     if (updateError) {
       console.error(
-        "Flash sale PATCH update error:",
+        "Flash sale update error:",
         updateError
       );
 
@@ -584,10 +839,13 @@ export async function PATCH(request: Request) {
         {
           success: false,
           error:
-            updateError.message ||
             "Unable to update flash sale.",
+          details:
+            updateError.message,
         },
-        { status: 500 }
+        {
+          status: 500,
+        }
       );
     }
 
@@ -606,8 +864,14 @@ export async function PATCH(request: Request) {
         success: false,
         error:
           "Unexpected error while updating flash sale.",
+        details:
+          error instanceof Error
+            ? error.message
+            : String(error),
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
 }

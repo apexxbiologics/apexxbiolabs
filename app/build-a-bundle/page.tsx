@@ -9,6 +9,7 @@ import {
   PackageOpen,
   ShoppingCart,
   Sparkles,
+  X,
 } from "lucide-react";
 
 type Product = {
@@ -46,6 +47,83 @@ const bundleTiers = [
   },
 ];
 
+/*
+ * ONLY THESE RESEARCH / PEPTIDE PRODUCTS
+ * WILL APPEAR IN THE BUNDLE BUILDER.
+ *
+ * Add another keyword here later if you
+ * create another eligible vial product.
+ */
+const eligibleBundleKeywords = [
+  "apx-3",
+  "apx3",
+  "apx-2",
+  "apx2",
+
+  "bpc-157",
+  "bpc157",
+
+  "tb-500",
+  "tb500",
+
+  "ghk-cu",
+  "ghkcu",
+
+  "cjc",
+  "ipamorelin",
+  "cjcipa",
+  "cjc-ipa",
+
+  "mots-c",
+  "motsc",
+
+  "pe-22-28",
+  "pe2228",
+
+  "pinealon",
+  "selank",
+  "semax",
+  "adamax",
+
+  "ara-290",
+  "ara290",
+
+  "nad+",
+  "nad",
+
+  "aod-9604",
+  "aod9604",
+
+  "pt-141",
+  "pt141",
+
+  "5-amino-1mq",
+  "5amino1mq",
+
+  "kisspeptin",
+  "kisspeptin-10",
+  "kisspeptin10",
+
+  "tesamorelin",
+
+  "glutathione",
+
+  "wolverine",
+
+  "klow",
+
+  "ss-31",
+  "ss31",
+
+  "mito-x",
+  "mitox",
+
+  "neuro-x",
+  "neurox",
+
+  "kpv",
+];
+
 export default function BuildABundlePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [bundle, setBundle] = useState<BundleItem[]>([]);
@@ -65,54 +143,104 @@ export default function BuildABundlePage() {
         const data = await response.json();
 
         if (!data.success) {
-          console.error("Failed to load products:", data);
+          console.error(
+            "Failed to load products:",
+            data
+          );
+
           return;
         }
 
         const normalizedProducts = (data.products || [])
           .map((product: any) => ({
-            id: String(product.id),
+            id: String(product.id || ""),
             name: String(product.name || ""),
+
             slug: product.slug
               ? String(product.slug)
               : undefined,
+
             price: Number(product.price || 0),
-            inventory: Number(product.inventory || 0),
+
+            inventory: Number(
+              product.inventory || 0
+            ),
+
             image: product.image
               ? String(product.image)
               : product.image_url
               ? String(product.image_url)
               : "",
+
             category: product.category
               ? String(product.category)
               : "",
+
             size: product.size
               ? String(product.size)
               : "",
+
             active:
               product.active === undefined
                 ? true
                 : Boolean(product.active),
           }))
           .filter((product: Product) => {
-            const category =
-              product.category?.toLowerCase() || "";
+            const normalizedId =
+              product.id
+                .toLowerCase()
+                .trim();
 
-            const name =
-              product.name?.toLowerCase() || "";
+            const normalizedName =
+              product.name
+                .toLowerCase()
+                .trim();
 
-            const isPhysicalProduct =
-              category.includes("accessor") ||
-              category.includes("shirt") ||
-              category.includes("apparel") ||
-              name.includes("shirt") ||
-              name.includes("vial case") ||
-              name.includes("storage case");
+            const normalizedSlug =
+              product.slug
+                ?.toLowerCase()
+                .trim() || "";
+
+            /*
+             * HARD EXCLUSION:
+             * shirts / accessories / cases
+             */
+            const physicalProduct =
+              normalizedName.includes("shirt") ||
+              normalizedName.includes("t-shirt") ||
+              normalizedName.includes("tee") ||
+              normalizedName.includes("vial case") ||
+              normalizedName.includes("storage case") ||
+              normalizedName.includes("case") ||
+              product.category
+                ?.toLowerCase()
+                .includes("accessor") ||
+              product.category
+                ?.toLowerCase()
+                .includes("apparel") ||
+              product.category
+                ?.toLowerCase()
+                .includes("shirt");
+
+            if (physicalProduct) {
+              return false;
+            }
+
+            /*
+             * RESEARCH / PEPTIDE ALLOWLIST
+             */
+            const isEligibleResearchProduct =
+              eligibleBundleKeywords.some(
+                (keyword) =>
+                  normalizedId.includes(keyword) ||
+                  normalizedName.includes(keyword) ||
+                  normalizedSlug.includes(keyword)
+              );
 
             return (
               product.active !== false &&
               product.price > 0 &&
-              !isPhysicalProduct
+              isEligibleResearchProduct
             );
           })
           .sort((a: Product, b: Product) =>
@@ -133,6 +261,9 @@ export default function BuildABundlePage() {
     fetchProducts();
   }, []);
 
+  /*
+   * TOTAL VIALS
+   */
   const totalVials = useMemo(() => {
     return bundle.reduce(
       (total, item) =>
@@ -141,15 +272,22 @@ export default function BuildABundlePage() {
     );
   }, [bundle]);
 
+  /*
+   * REGULAR SUBTOTAL
+   */
   const subtotal = useMemo(() => {
     return bundle.reduce(
       (total, item) =>
         total +
-        item.price * item.quantity,
+        item.price *
+          item.quantity,
       0
     );
   }, [bundle]);
 
+  /*
+   * CURRENT DISCOUNT TIER
+   */
   const currentTier = useMemo(() => {
     return (
       [...bundleTiers]
@@ -169,13 +307,22 @@ export default function BuildABundlePage() {
   const currentDiscount =
     currentTier?.discount || 0;
 
+  /*
+   * SAVINGS
+   */
   const savings =
     subtotal *
     (currentDiscount / 100);
 
+  /*
+   * FINAL BUNDLE TOTAL
+   */
   const bundleTotal =
     subtotal - savings;
 
+  /*
+   * NEXT DISCOUNT TIER
+   */
   const nextTier = useMemo(() => {
     return (
       bundleTiers.find(
@@ -200,6 +347,10 @@ export default function BuildABundlePage() {
       bundleTiers.length - 1
     ];
 
+  /*
+   * PROGRESS IS TOWARD
+   * THE NEXT MILESTONE
+   */
   const progressPercent =
     nextTier
       ? Math.min(
@@ -210,6 +361,9 @@ export default function BuildABundlePage() {
         )
       : 100;
 
+  /*
+   * SEARCH
+   */
   const filteredProducts =
     useMemo(() => {
       const query =
@@ -217,7 +371,9 @@ export default function BuildABundlePage() {
           .trim()
           .toLowerCase();
 
-      if (!query) return products;
+      if (!query) {
+        return products;
+      }
 
       return products.filter(
         (product) =>
@@ -226,26 +382,40 @@ export default function BuildABundlePage() {
             .includes(query) ||
           product.size
             ?.toLowerCase()
+            .includes(query) ||
+          product.slug
+            ?.toLowerCase()
             .includes(query)
       );
     }, [products, search]);
 
+  /*
+   * PRODUCT QUANTITY
+   * CURRENTLY INSIDE BUNDLE
+   */
   const getBundleQuantity = (
     productId: string
   ) => {
     return (
       bundle.find(
         (item) =>
-          item.id === productId
+          item.id ===
+          productId
       )?.quantity || 0
     );
   };
 
+  /*
+   * ADD ONE PRODUCT
+   */
   const addProduct = (
     product: Product
   ) => {
-    if (product.inventory <= 0)
+    if (
+      product.inventory <= 0
+    ) {
       return;
+    }
 
     const currentQuantity =
       getBundleQuantity(
@@ -274,6 +444,7 @@ export default function BuildABundlePage() {
             product.id
               ? {
                   ...item,
+
                   quantity:
                     item.quantity +
                     1,
@@ -284,6 +455,7 @@ export default function BuildABundlePage() {
 
       return [
         ...current,
+
         {
           ...product,
           quantity: 1,
@@ -294,15 +466,20 @@ export default function BuildABundlePage() {
     setAddedToCart(false);
   };
 
+  /*
+   * REMOVE ONE
+   */
   const removeProduct = (
     productId: string
   ) => {
     setBundle((current) =>
       current
         .map((item) =>
-          item.id === productId
+          item.id ===
+          productId
             ? {
                 ...item,
+
                 quantity:
                   item.quantity -
                   1,
@@ -318,19 +495,26 @@ export default function BuildABundlePage() {
     setAddedToCart(false);
   };
 
+  /*
+   * REMOVE PRODUCT COMPLETELY
+   */
   const removeAllProduct = (
     productId: string
   ) => {
     setBundle((current) =>
       current.filter(
         (item) =>
-          item.id !== productId
+          item.id !==
+          productId
       )
     );
 
     setAddedToCart(false);
   };
 
+  /*
+   * CLEAR BUNDLE
+   */
   const clearBundle = () => {
     setBundle([]);
     setAddedToCart(false);
@@ -341,6 +525,10 @@ export default function BuildABundlePage() {
   ) =>
     Number(amount).toFixed(2);
 
+  /*
+   * ADD COMPLETED BUNDLE
+   * TO CART
+   */
   const addBundleToCart = () => {
     if (totalVials < 3) {
       return;
@@ -353,7 +541,12 @@ export default function BuildABundlePage() {
         ) || "[]"
       );
 
-    const bundleId = `bundle-${Date.now()}`;
+    /*
+     * Unique ID keeps separate
+     * bundles grouped.
+     */
+    const bundleId =
+      `bundle-${Date.now()}`;
 
     const newBundleItems =
       bundle.map((item) => {
@@ -365,21 +558,31 @@ export default function BuildABundlePage() {
 
         return {
           id: item.id,
+
           name: item.name,
+
           price:
             discountedUnitPrice,
+
           basePrice:
             item.price,
+
           quantity:
             item.quantity,
+
           image:
             item.image || "",
+
           path:
             item.slug
               ? `/products/${item.slug}`
               : "/products",
 
+          /*
+           * BUNDLE METADATA
+           */
           bundleId,
+
           bundleType:
             "build-your-own",
 
@@ -399,13 +602,11 @@ export default function BuildABundlePage() {
       });
 
     /*
-     * TEMPORARY FIRST VERSION:
+     * DO NOT MERGE THESE WITH
+     * NORMAL CART PRODUCT LINES.
      *
-     * Keep bundle items separate from
-     * ordinary cart items so we preserve
-     * bundle metadata.
-     *
-     * We'll improve cart grouping next.
+     * They belong to a specific
+     * bundle group.
      */
     const updatedCart = [
       ...existingCart,
@@ -420,7 +621,9 @@ export default function BuildABundlePage() {
     );
 
     window.dispatchEvent(
-      new Event("cartUpdated")
+      new Event(
+        "cartUpdated"
+      )
     );
 
     setAddedToCart(true);
@@ -430,7 +633,7 @@ export default function BuildABundlePage() {
     <main className="min-h-screen bg-[#081526] text-white">
 
       {/* HERO */}
-      <section className="relative px-5 md:px-10 pt-10 md:pt-14 pb-8 overflow-hidden">
+      <section className="relative px-5 md:px-10 pt-10 md:pt-14 pb-7 overflow-hidden">
 
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.13),transparent_55%)]" />
 
@@ -448,18 +651,21 @@ export default function BuildABundlePage() {
 
             <p className="text-white/60 text-base md:text-lg leading-relaxed max-w-2xl">
               Build your own research
-              bundle and unlock bigger
-              savings as you add more
-              vials.
+              bundle. Mix and match
+              eligible vials and
+              automatically unlock
+              greater savings as your
+              bundle grows.
             </p>
 
           </div>
 
         </div>
+
       </section>
 
-      {/* MILESTONES */}
-      <section className="px-5 md:px-10 pb-8">
+      {/* DISCOUNT MILESTONES */}
+      <section className="px-5 md:px-10 pb-6">
 
         <div className="max-w-7xl mx-auto">
 
@@ -490,10 +696,12 @@ export default function BuildABundlePage() {
 
                     {unlocked && (
                       <span className="absolute top-3 right-3 w-6 h-6 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+
                         <Check
                           size={14}
                           strokeWidth={3}
                         />
+
                       </span>
                     )}
 
@@ -527,22 +735,23 @@ export default function BuildABundlePage() {
           </div>
 
         </div>
+
       </section>
 
-      {/* BUNDLE PROGRESS */}
-      <section className="px-5 md:px-10 pb-8">
+      {/* PROGRESS */}
+      <section className="px-5 md:px-10 pb-7">
 
-        <div className="max-w-7xl mx-auto rounded-[26px] border border-white/10 bg-white/[0.04] p-5 md:p-6">
+        <div className="max-w-7xl mx-auto rounded-[24px] border border-white/10 bg-white/[0.04] px-5 py-4">
 
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
 
             <div>
 
-              <p className="text-white/45 text-xs uppercase tracking-[0.2em] mb-1">
+              <p className="text-white/40 text-[10px] uppercase tracking-[0.22em] mb-1">
                 Your Bundle
               </p>
 
-              <p className="text-2xl md:text-3xl font-black">
+              <p className="text-xl md:text-2xl font-black">
                 {totalVials}{" "}
                 {totalVials === 1
                   ? "Vial"
@@ -556,7 +765,7 @@ export default function BuildABundlePage() {
 
               {nextTier ? (
                 <>
-                  <p className="text-[#A5D8FF] font-bold">
+                  <p className="text-[#A5D8FF] text-sm font-bold">
                     Add{" "}
                     {
                       vialsUntilNextTier
@@ -575,29 +784,27 @@ export default function BuildABundlePage() {
 
                   {currentDiscount >
                     0 && (
-                    <p className="text-green-300 text-sm mt-1">
+                    <p className="text-green-300 text-xs mt-1">
                       ✓{" "}
                       {
                         currentDiscount
                       }
-                      % savings currently
-                      unlocked
+                      % savings unlocked
                     </p>
                   )}
                 </>
               ) : (
                 <>
-                  <p className="text-green-300 font-black">
+                  <p className="text-green-300 text-sm font-black">
                     Maximum Bundle
                     Savings Unlocked
                   </p>
 
-                  <p className="text-white/55 text-sm">
+                  <p className="text-white/45 text-xs mt-1">
                     {
                       maxTier.discount
                     }
-                    % off your eligible
-                    bundle
+                    % off
                   </p>
                 </>
               )}
@@ -606,33 +813,36 @@ export default function BuildABundlePage() {
 
           </div>
 
-          <div className="mt-5 h-2.5 rounded-full overflow-hidden bg-white/[0.07]">
+          <div className="mt-4 h-2 rounded-full overflow-hidden bg-white/[0.07]">
 
             <div
               className="h-full rounded-full bg-blue-300 transition-all duration-300"
               style={{
-                width: `${progressPercent}%`,
+                width:
+                  `${progressPercent}%`,
               }}
             />
 
           </div>
 
         </div>
+
       </section>
 
-      {/* MAIN CONTENT */}
+      {/* MAIN BUILDER */}
       <section className="px-5 md:px-10 pb-16">
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 items-start">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-7 items-start">
 
-          {/* PRODUCTS */}
-          <div>
+          {/* LEFT SIDE */}
+          <div className="min-w-0">
 
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
+            {/* SEARCH HEADER */}
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-4">
 
               <div>
 
-                <p className="uppercase tracking-[0.25em] text-[#A5D8FF] text-xs mb-1">
+                <p className="uppercase tracking-[0.25em] text-[#A5D8FF] text-[10px] mb-1">
                   Choose Your Products
                 </p>
 
@@ -640,9 +850,15 @@ export default function BuildABundlePage() {
                   Research Vials
                 </h2>
 
+                <p className="text-white/40 text-sm mt-1">
+                  Mix and match your
+                  selections.
+                </p>
+
               </div>
 
-              <div className="relative w-full sm:max-w-[320px]">
+              {/* SEARCH */}
+              <div className="relative w-full sm:max-w-[330px]">
 
                 <Search
                   size={17}
@@ -656,187 +872,253 @@ export default function BuildABundlePage() {
                       e.target.value
                     )
                   }
-                  placeholder="Search products..."
-                  className="w-full rounded-full border border-white/10 bg-white/[0.04] pl-11 pr-4 py-3 text-base text-white placeholder:text-white/30 outline-none focus:border-blue-300/50"
+                  placeholder="Search research vials..."
+                  className="w-full rounded-full border border-white/10 bg-white/[0.04] pl-11 pr-11 py-3 text-base text-white placeholder:text-white/30 outline-none focus:border-blue-300/50"
                 />
+
+                {search && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSearch("")
+                    }
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center text-white/35 hover:text-white hover:bg-white/[0.06]"
+                  >
+
+                    <X
+                      size={15}
+                    />
+
+                  </button>
+                )}
 
               </div>
 
             </div>
 
-            {loading ? (
-              <div className="rounded-[26px] border border-white/10 bg-white/[0.03] p-8 text-center text-white/50">
-                Loading products...
-              </div>
-            ) : filteredProducts.length ===
-              0 ? (
-              <div className="rounded-[26px] border border-white/10 bg-white/[0.03] p-8 text-center text-white/50">
-                No matching products.
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {/* PRODUCT PICKER */}
+            <div className="rounded-[26px] border border-white/10 bg-white/[0.025] p-3 md:p-4">
 
-                {filteredProducts.map(
-                  (product) => {
-                    const selectedQty =
-                      getBundleQuantity(
-                        product.id
-                      );
+              {loading ? (
+                <div className="py-16 text-center text-white/45">
+                  Loading research
+                  vials...
+                </div>
+              ) : filteredProducts.length ===
+                0 ? (
+                <div className="py-16 text-center">
 
-                    const outOfStock =
-                      product.inventory <=
-                      0;
+                  <PackageOpen
+                    size={34}
+                    className="mx-auto text-white/20 mb-3"
+                  />
 
-                    const atInventoryLimit =
-                      selectedQty >=
-                      product.inventory;
+                  <p className="text-white/45 text-sm">
+                    No matching
+                    research vials.
+                  </p>
 
-                    return (
-                      <div
-                        key={
-                          product.id
-                        }
-                        className="rounded-[24px] border border-white/10 bg-white/[0.04] overflow-hidden flex flex-col"
-                      >
+                </div>
+              ) : (
+                /*
+                 * INTERNAL SCROLL AREA
+                 *
+                 * The entire webpage no
+                 * longer becomes extremely
+                 * long.
+                 */
+                <div className="max-h-[620px] overflow-y-auto pr-1 md:pr-2">
 
-                        <div className="aspect-square bg-[#93C5FD] overflow-hidden">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 
-                          {product.image ? (
-                            <img
-                              src={
-                                product.image
-                              }
-                              alt={
-                                product.name
-                              }
-                              className="w-full h-full object-contain p-3"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-[#081526]/50">
-                              <PackageOpen
-                                size={44}
-                              />
-                            </div>
-                          )}
+                    {filteredProducts.map(
+                      (product) => {
+                        const selectedQty =
+                          getBundleQuantity(
+                            product.id
+                          );
 
-                        </div>
+                        const outOfStock =
+                          product.inventory <=
+                          0;
 
-                        <div className="p-4 flex flex-col flex-1">
+                        const atInventoryLimit =
+                          selectedQty >=
+                          product.inventory;
 
-                          <div className="flex-1">
+                        return (
+                          <div
+                            key={
+                              product.id
+                            }
+                            className={`rounded-2xl border p-3 flex items-center gap-3 transition-all ${
+                              selectedQty >
+                              0
+                                ? "border-blue-300/30 bg-blue-400/[0.07]"
+                                : "border-white/10 bg-white/[0.035]"
+                            }`}
+                          >
 
-                            <h3 className="text-sm md:text-base font-black text-white leading-tight">
-                              {
-                                product.name
-                              }
-                            </h3>
+                            {/* SMALL IMAGE */}
+                            <div className="relative w-[72px] h-[72px] rounded-xl overflow-hidden bg-[#93C5FD] shrink-0">
 
-                            {product.size && (
-                              <p className="text-white/40 text-xs mt-1">
-                                {
-                                  product.size
-                                }
-                              </p>
-                            )}
+                              {product.image ? (
+                                <img
+                                  src={
+                                    product.image
+                                  }
+                                  alt={
+                                    product.name
+                                  }
+                                  className="w-full h-full object-contain p-1.5"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-[#081526]/40">
 
-                            <p className="text-lg font-black mt-2">
-                              $
-                              {formatMoney(
-                                product.price
+                                  <PackageOpen
+                                    size={28}
+                                  />
+
+                                </div>
                               )}
-                            </p>
 
-                            {outOfStock && (
-                              <p className="text-red-300 text-[10px] uppercase tracking-widest mt-2">
-                                Out of Stock
+                              {selectedQty >
+                                0 && (
+                                <div className="absolute top-1 right-1 min-w-5 h-5 px-1 rounded-full bg-[#081526] text-white text-[10px] font-black flex items-center justify-center">
+                                  {
+                                    selectedQty
+                                  }
+                                </div>
+                              )}
+
+                            </div>
+
+                            {/* PRODUCT INFO */}
+                            <div className="min-w-0 flex-1">
+
+                              <h3 className="font-black text-sm text-white leading-tight line-clamp-2">
+                                {
+                                  product.name
+                                }
+                              </h3>
+
+                              {product.size && (
+                                <p className="text-white/35 text-xs mt-1">
+                                  {
+                                    product.size
+                                  }
+                                </p>
+                              )}
+
+                              <p className="text-base font-black mt-1.5">
+                                $
+                                {formatMoney(
+                                  product.price
+                                )}
                               </p>
-                            )}
+
+                              {outOfStock && (
+                                <p className="text-red-300 text-[9px] uppercase tracking-widest mt-1">
+                                  Out of Stock
+                                </p>
+                              )}
+
+                            </div>
+
+                            {/* CONTROLS */}
+                            <div className="shrink-0">
+
+                              {selectedQty >
+                              0 ? (
+                                <div className="flex flex-col items-center gap-1.5">
+
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      addProduct(
+                                        product
+                                      )
+                                    }
+                                    disabled={
+                                      atInventoryLimit
+                                    }
+                                    className="w-9 h-9 rounded-full bg-white text-[#081526] flex items-center justify-center hover:bg-blue-100 disabled:opacity-30"
+                                  >
+
+                                    <Plus
+                                      size={
+                                        16
+                                      }
+                                    />
+
+                                  </button>
+
+                                  <span className="text-xs font-black">
+                                    {
+                                      selectedQty
+                                    }
+                                  </span>
+
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      removeProduct(
+                                        product.id
+                                      )
+                                    }
+                                    className="w-9 h-9 rounded-full border border-white/10 bg-white/[0.04] text-[#A5D8FF] flex items-center justify-center hover:bg-white/[0.08]"
+                                  >
+
+                                    <Minus
+                                      size={
+                                        16
+                                      }
+                                    />
+
+                                  </button>
+
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  disabled={
+                                    outOfStock
+                                  }
+                                  onClick={() =>
+                                    addProduct(
+                                      product
+                                    )
+                                  }
+                                  className="rounded-full bg-white text-[#081526] px-4 py-2.5 text-[10px] uppercase tracking-widest font-black hover:bg-blue-100 disabled:opacity-30"
+                                >
+                                  Add
+                                </button>
+                              )}
+
+                            </div>
 
                           </div>
+                        );
+                      }
+                    )}
 
-                          {selectedQty >
-                          0 ? (
-                            <div className="mt-4 flex items-center justify-between rounded-full border border-blue-300/30 bg-blue-400/10 p-1">
+                  </div>
 
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  removeProduct(
-                                    product.id
-                                  )
-                                }
-                                className="w-10 h-10 rounded-full hover:bg-white/[0.08] flex items-center justify-center text-[#A5D8FF]"
-                              >
-                                <Minus
-                                  size={
-                                    17
-                                  }
-                                />
-                              </button>
+                </div>
+              )}
 
-                              <span className="font-black">
-                                {
-                                  selectedQty
-                                }
-                              </span>
-
-                              <button
-                                type="button"
-                                disabled={
-                                  atInventoryLimit
-                                }
-                                onClick={() =>
-                                  addProduct(
-                                    product
-                                  )
-                                }
-                                className="w-10 h-10 rounded-full hover:bg-white/[0.08] flex items-center justify-center text-[#A5D8FF] disabled:opacity-30"
-                              >
-                                <Plus
-                                  size={
-                                    17
-                                  }
-                                />
-                              </button>
-
-                            </div>
-                          ) : (
-                            <button
-                              type="button"
-                              disabled={
-                                outOfStock
-                              }
-                              onClick={() =>
-                                addProduct(
-                                  product
-                                )
-                              }
-                              className="mt-4 w-full rounded-full border border-white/10 bg-white/[0.05] hover:bg-white/[0.09] py-3 text-xs uppercase tracking-widest font-bold transition-all disabled:opacity-30"
-                            >
-                              + Add
-                            </button>
-                          )}
-
-                        </div>
-
-                      </div>
-                    );
-                  }
-                )}
-
-              </div>
-            )}
+            </div>
 
           </div>
 
-          {/* SUMMARY */}
+          {/* BUNDLE SUMMARY */}
           <aside className="lg:sticky lg:top-24 rounded-[28px] border border-white/10 bg-white/[0.05] p-5 md:p-6">
 
             <div className="flex items-start justify-between gap-4 mb-5">
 
               <div>
 
-                <p className="uppercase tracking-[0.25em] text-[#A5D8FF] text-xs mb-1">
+                <p className="uppercase tracking-[0.25em] text-[#A5D8FF] text-[10px] mb-1">
                   Bundle Summary
                 </p>
 
@@ -846,7 +1128,8 @@ export default function BuildABundlePage() {
 
               </div>
 
-              {bundle.length > 0 && (
+              {bundle.length >
+                0 && (
                 <button
                   type="button"
                   onClick={
@@ -860,7 +1143,9 @@ export default function BuildABundlePage() {
 
             </div>
 
-            {bundle.length === 0 ? (
+            {/* BUNDLE ITEMS */}
+            {bundle.length ===
+            0 ? (
               <div className="rounded-2xl border border-dashed border-white/10 p-6 text-center">
 
                 <PackageOpen
@@ -876,7 +1161,7 @@ export default function BuildABundlePage() {
 
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="max-h-[260px] overflow-y-auto pr-1 space-y-3">
 
                 {bundle.map(
                   (item) => (
@@ -888,7 +1173,8 @@ export default function BuildABundlePage() {
                       className="flex gap-3 items-center"
                     >
 
-                      <div className="w-12 h-12 rounded-xl overflow-hidden bg-[#93C5FD] shrink-0">
+                      {/* THUMBNAIL */}
+                      <div className="w-11 h-11 rounded-xl overflow-hidden bg-[#93C5FD] shrink-0">
 
                         {item.image && (
                           <img
@@ -904,15 +1190,16 @@ export default function BuildABundlePage() {
 
                       </div>
 
+                      {/* INFO */}
                       <div className="min-w-0 flex-1">
 
-                        <p className="font-bold text-sm truncate">
+                        <p className="font-bold text-xs truncate">
                           {
                             item.name
                           }
                         </p>
 
-                        <p className="text-white/40 text-xs">
+                        <p className="text-white/40 text-[11px] mt-0.5">
                           $
                           {formatMoney(
                             item.price
@@ -925,9 +1212,10 @@ export default function BuildABundlePage() {
 
                       </div>
 
-                      <div className="text-right">
+                      {/* LINE TOTAL */}
+                      <div className="text-right shrink-0">
 
-                        <p className="font-bold text-sm">
+                        <p className="font-bold text-xs">
                           $
                           {formatMoney(
                             item.price *
@@ -942,7 +1230,7 @@ export default function BuildABundlePage() {
                               item.id
                             )
                           }
-                          className="text-[10px] uppercase tracking-widest text-white/30 hover:text-red-300"
+                          className="text-[9px] uppercase tracking-widest text-white/30 hover:text-red-300 mt-1"
                         >
                           Remove
                         </button>
@@ -956,23 +1244,28 @@ export default function BuildABundlePage() {
               </div>
             )}
 
+            {/* DIVIDER */}
             <div className="h-px bg-white/10 my-5" />
 
+            {/* TOTALS */}
             <div className="space-y-3 text-sm">
 
               <div className="flex justify-between text-white/55">
+
                 <span>
                   Vials Selected
                 </span>
 
-                <span>
+                <span className="font-bold text-white">
                   {totalVials}
                 </span>
+
               </div>
 
               <div className="flex justify-between text-white/55">
+
                 <span>
-                  Subtotal
+                  Regular Total
                 </span>
 
                 <span>
@@ -981,11 +1274,13 @@ export default function BuildABundlePage() {
                     subtotal
                   )}
                 </span>
+
               </div>
 
               <div className="flex justify-between text-green-300">
+
                 <span>
-                  Bundle Discount
+                  Bundle Savings
                   {currentDiscount >
                     0 &&
                     ` (${currentDiscount}%)`}
@@ -998,17 +1293,19 @@ export default function BuildABundlePage() {
                     savings
                   )}
                 </span>
+
               </div>
 
             </div>
 
             <div className="h-px bg-white/10 my-5" />
 
-            <div className="flex items-end justify-between mb-5">
+            {/* BUNDLE TOTAL */}
+            <div className="flex items-end justify-between gap-4 mb-5">
 
               <div>
 
-                <p className="text-white/40 text-xs uppercase tracking-widest">
+                <p className="text-white/40 text-[10px] uppercase tracking-widest">
                   Bundle Total
                 </p>
 
@@ -1024,16 +1321,16 @@ export default function BuildABundlePage() {
               {currentDiscount >
                 0 && (
                 <div className="rounded-full border border-green-400/20 bg-green-500/10 px-3 py-2 text-green-300 text-xs font-bold">
-                  Save{" "}
                   {
                     currentDiscount
                   }
-                  %
+                  % Off
                 </div>
               )}
 
             </div>
 
+            {/* NEXT INCENTIVE */}
             {nextTier && (
               <div className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-3 mb-4">
 
@@ -1045,7 +1342,9 @@ export default function BuildABundlePage() {
                   />
 
                   <p className="text-blue-100 text-xs leading-relaxed">
+
                     Add{" "}
+
                     <strong>
                       {
                         vialsUntilNextTier
@@ -1055,15 +1354,19 @@ export default function BuildABundlePage() {
                       1
                         ? "vial"
                         : "vials"}
-                    </strong>{" "}
-                    to unlock{" "}
+                    </strong>
+
+                    {" "}to unlock{" "}
+
                     <strong>
                       {
                         nextTier.discount
                       }
                       % off
                     </strong>
+
                     .
+
                   </p>
 
                 </div>
@@ -1071,22 +1374,53 @@ export default function BuildABundlePage() {
               </div>
             )}
 
-            {totalVials < 3 ? (
+            {/* MAX TIER */}
+            {!nextTier &&
+              totalVials >=
+                20 && (
+                <div className="rounded-xl border border-green-400/20 bg-green-500/10 px-4 py-3 mb-4">
+
+                  <div className="flex items-center gap-2">
+
+                    <Check
+                      size={16}
+                      className="text-green-300 shrink-0"
+                    />
+
+                    <p className="text-green-200 text-xs font-bold">
+                      Maximum
+                      savings
+                      unlocked —
+                      20% off
+                    </p>
+
+                  </div>
+
+                </div>
+              )}
+
+            {/* BUTTON */}
+            {totalVials <
+            3 ? (
               <button
                 type="button"
                 disabled
                 className="w-full rounded-full bg-white/[0.07] py-4 text-white/35 uppercase tracking-widest text-xs font-bold cursor-not-allowed"
               >
+
                 Add{" "}
+
                 {3 -
                   totalVials}{" "}
+
                 More{" "}
+
                 {3 -
                   totalVials ===
                 1
                   ? "Vial"
-                  : "Vials"}{" "}
-                To Unlock Bundle
+                  : "Vials"}
+
               </button>
             ) : (
               <button
@@ -1096,6 +1430,7 @@ export default function BuildABundlePage() {
                 }
                 className="w-full rounded-full bg-white text-[#081526] hover:bg-blue-100 py-4 uppercase tracking-widest text-xs font-black transition-all flex items-center justify-center gap-2"
               >
+
                 <ShoppingCart
                   size={17}
                 />
@@ -1103,6 +1438,7 @@ export default function BuildABundlePage() {
                 {addedToCart
                   ? "Bundle Added To Cart"
                   : "Add Bundle To Cart"}
+
               </button>
             )}
 
@@ -1118,6 +1454,7 @@ export default function BuildABundlePage() {
           </aside>
 
         </div>
+
       </section>
 
     </main>

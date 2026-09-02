@@ -119,12 +119,16 @@ export default function CJCIPAPage() {
             (item: any) =>
               item.slug === "cjcipa" ||
               item.slug === "cjc-ipa" ||
-              item.slug === "cjcipa-10mg" ||
-              item.slug === "cjc-ipa-10mg" ||
+              item.slug ===
+                "cjcipa-10mg" ||
+              item.slug ===
+                "cjc-ipa-10mg" ||
               item.id === "cjcipa" ||
               item.id === "cjc-ipa" ||
-              item.id === "cjcipa-10mg" ||
-              item.id === "CJC-IPA-10mg" ||
+              item.id ===
+                "cjcipa-10mg" ||
+              item.id ===
+                "CJC-IPA-10mg" ||
               item.name
                 ?.toLowerCase()
                 .includes("cjc") ||
@@ -142,7 +146,9 @@ export default function CJCIPAPage() {
               cjcipa.price ?? 55
             );
 
-          setDatabaseProductId(dbId);
+          setDatabaseProductId(
+            dbId
+          );
 
           setInventory(
             Number(
@@ -150,14 +156,21 @@ export default function CJCIPAPage() {
             )
           );
 
-          setPrice(regularPrice);
+          setPrice(
+            regularPrice
+          );
 
-          const now = Date.now();
+          const now =
+            Date.now();
 
           const matchingSale =
-            Array.isArray(saleData.sales)
+            Array.isArray(
+              saleData.sales
+            )
               ? saleData.sales.find(
-                  (sale: FlashSale) => {
+                  (
+                    sale: FlashSale
+                  ) => {
                     const starts =
                       new Date(
                         sale.starts_at
@@ -174,7 +187,8 @@ export default function CJCIPAPage() {
                       );
 
                     return (
-                      sale.active === true &&
+                      sale.active ===
+                        true &&
                       String(
                         sale.product_id
                       ) === dbId &&
@@ -190,7 +204,8 @@ export default function CJCIPAPage() {
                         salePrice
                       ) &&
                       salePrice > 0 &&
-                      salePrice < regularPrice
+                      salePrice <
+                        regularPrice
                     );
                   }
                 )
@@ -200,7 +215,10 @@ export default function CJCIPAPage() {
             matchingSale || null
           );
         } else {
-          setDatabaseProductId(null);
+          setDatabaseProductId(
+            null
+          );
+
           setInventory(null);
           setPrice(55);
           setFlashSale(null);
@@ -211,7 +229,10 @@ export default function CJCIPAPage() {
           error
         );
 
-        setDatabaseProductId(null);
+        setDatabaseProductId(
+          null
+        );
+
         setInventory(null);
         setPrice(55);
         setFlashSale(null);
@@ -225,7 +246,8 @@ export default function CJCIPAPage() {
             await fetch(
               "/api/quantity-discounts",
               {
-                cache: "no-store",
+                cache:
+                  "no-store",
               }
             );
 
@@ -237,32 +259,40 @@ export default function CJCIPAPage() {
           const tiers = (
             data.tiers || []
           )
-            .map((tier: any) => ({
-              id: String(tier.id),
+            .map(
+              (tier: any) => ({
+                id: String(
+                  tier.id
+                ),
 
-              name: String(
-                tier.name || ""
-              ),
+                name: String(
+                  tier.name || ""
+                ),
 
-              quantity: Number(
-                tier.quantity || 0
-              ),
-
-              discount_percent:
-                Number(
-                  tier.discount_percent ||
+                quantity: Number(
+                  tier.quantity ||
                     0
                 ),
 
-              sort_order: Number(
-                tier.sort_order || 0
-              ),
-            }))
+                discount_percent:
+                  Number(
+                    tier.discount_percent ||
+                      0
+                  ),
+
+                sort_order:
+                  Number(
+                    tier.sort_order ||
+                      0
+                  ),
+              })
+            )
             .filter(
               (
                 tier: QuantityDiscountTier
               ) =>
-                tier.quantity > 1 &&
+                tier.quantity >
+                  1 &&
                 tier.discount_percent >=
                   0
             )
@@ -322,11 +352,13 @@ export default function CJCIPAPage() {
       [...quantityDiscounts]
         .filter(
           (tier) =>
-            quantity >= tier.quantity
+            quantity >=
+            tier.quantity
         )
         .sort(
           (a, b) =>
-            b.quantity - a.quantity
+            b.quantity -
+            a.quantity
         )[0] || null
     );
   };
@@ -370,22 +402,28 @@ export default function CJCIPAPage() {
       return;
     }
 
-    setSelectedQuantity(quantity);
+    setSelectedQuantity(
+      quantity
+    );
+
     setAdded(false);
   };
 
   const addToCart = () => {
     if (isOutOfStock) return;
 
-    const existingCart = JSON.parse(
-      localStorage.getItem("cart") ||
-        "[]"
-    );
+    const existingCart =
+      JSON.parse(
+        localStorage.getItem(
+          "cart"
+        ) || "[]"
+      );
 
     const existingProduct =
       existingCart.find(
         (item: any) =>
-          item.id === product.id
+          item.id ===
+          product.id
       );
 
     const existingQuantity =
@@ -437,36 +475,45 @@ export default function CJCIPAPage() {
           100);
 
     const cartProduct = {
-      id: product.id,
+      id:
+        product.id,
 
-      name: product.name,
+      name:
+        product.name,
 
       price:
         newDiscountedUnitPrice,
 
-      basePrice: price,
+      basePrice:
+        price,
 
-      quantity: newQuantity,
+      quantity:
+        newQuantity,
 
-      image: product.image,
+      image:
+        product.image,
 
-      path: product.path,
+      path:
+        product.path,
 
       quantityDiscountPercent:
         newDiscountPercent,
 
       quantityDiscountTierId:
-        newTier?.id || null,
+        newTier?.id ||
+        null,
 
       quantityDiscountTierQuantity:
-        newTier?.quantity || null,
+        newTier?.quantity ||
+        null,
 
       flashSaleApplied:
         isFlashSaleActive,
 
       flashSaleId:
         isFlashSaleActive
-          ? flashSale?.id || null
+          ? flashSale?.id ||
+            null
           : null,
 
       flashSalePrice:
@@ -482,7 +529,8 @@ export default function CJCIPAPage() {
       existingProduct
         ? existingCart.map(
             (item: any) =>
-              item.id === product.id
+              item.id ===
+              product.id
                 ? {
                     ...item,
                     ...cartProduct,
@@ -502,7 +550,9 @@ export default function CJCIPAPage() {
     );
 
     window.dispatchEvent(
-      new Event("cartUpdated")
+      new Event(
+        "cartUpdated"
+      )
     );
 
     setAdded(true);
@@ -516,8 +566,11 @@ export default function CJCIPAPage() {
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-start">
+
+            {/* IMAGE */}
             <div className="flex items-center justify-center">
               <div className="relative w-full max-w-[520px] aspect-square rounded-[42px] overflow-hidden border border-blue-400/10 bg-white/[0.03] shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+
                 <FavoriteButton
                   product={
                     favoriteProduct
@@ -533,21 +586,26 @@ export default function CJCIPAPage() {
                   }
                   className="w-full h-full object-cover"
                 />
+
               </div>
             </div>
 
+            {/* PRODUCT CARD */}
             <div className="rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 md:p-8">
+
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">
                 Research Peptide
                 Blend
               </p>
 
               <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-3">
+
                 <h1 className="text-4xl md:text-5xl font-black text-white">
                   {product.name}
                 </h1>
 
                 <div className="sm:text-right">
+
                   <p className="text-3xl md:text-4xl font-black text-white">
                     $
                     {formatMoney(
@@ -565,6 +623,7 @@ export default function CJCIPAPage() {
                       )}
                     </p>
                   )}
+
                 </div>
               </div>
 
@@ -584,6 +643,7 @@ export default function CJCIPAPage() {
               </p>
 
               <div className="flex flex-wrap items-center gap-3 mb-5">
+
                 <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold uppercase tracking-widest">
                   10mg
                 </span>
@@ -620,13 +680,16 @@ export default function CJCIPAPage() {
                     Out of Stock
                   </span>
                 )}
+
               </div>
 
               <div className="h-px bg-white/10 mb-5" />
 
               {/* QUANTITY */}
               <div className="mb-5">
+
                 <div className="flex items-center justify-between gap-4 mb-3">
+
                   <p className="uppercase tracking-widest text-white/45 text-xs">
                     Quantity
                   </p>
@@ -641,9 +704,12 @@ export default function CJCIPAPage() {
                       / vial
                     </p>
                   )}
+
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+
+                  {/* 1 VIAL */}
                   <button
                     type="button"
                     disabled={
@@ -661,6 +727,7 @@ export default function CJCIPAPage() {
                         : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
                     } disabled:opacity-35 disabled:cursor-not-allowed`}
                   >
+
                     {selectedQuantity ===
                       1 && (
                       <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
@@ -692,8 +759,10 @@ export default function CJCIPAPage() {
                         )}
                       </p>
                     )}
+
                   </button>
 
+                  {/* ADMIN QUANTITY TIERS */}
                   {quantityDiscounts.map(
                     (tier) => {
                       const tierUnavailable =
@@ -736,6 +805,7 @@ export default function CJCIPAPage() {
                               : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
                           } disabled:opacity-30 disabled:cursor-not-allowed`}
                         >
+
                           {selected && (
                             <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
                               <Check
@@ -776,11 +846,345 @@ export default function CJCIPAPage() {
                               %
                             </p>
                           )}
+
                         </button>
                       );
                     }
                   )}
+
                 </div>
               </div>
 
-              {/* KEEP THE REST OF YOUR EXISTING CJC/IPA JSX HERE */}
+              {/* FREE GIFT */}
+              <div className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-3 mb-5">
+                <p className="text-center text-blue-100 text-xs font-semibold uppercase tracking-wider">
+                  Complimentary gift
+                  with any 8 vials
+                </p>
+              </div>
+
+              {/* ACTION BUTTONS */}
+              <div className="grid grid-cols-2 gap-3">
+
+                {isOutOfStock ? (
+                  <button
+                    disabled
+                    className="col-span-2 bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-4 uppercase tracking-widest text-xs font-semibold"
+                  >
+                    Out of Stock
+                  </button>
+                ) : (
+                  <button
+                    onClick={
+                      addToCart
+                    }
+                    className="col-span-2 bg-white text-[#081526] hover:bg-blue-100 rounded-full py-4 uppercase tracking-widest text-xs font-bold transition-all flex items-center justify-center gap-2"
+                  >
+
+                    <ShoppingCart
+                      size={18}
+                    />
+
+                    {added
+                      ? "Added To Cart"
+                      : `Add ${selectedQuantity} ${
+                          selectedQuantity ===
+                          1
+                            ? "Vial"
+                            : "Vials"
+                        } To Cart`}
+
+                  </button>
+                )}
+
+                <a
+                  href="/cart"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] rounded-full py-3.5 uppercase tracking-widest text-[11px] font-semibold text-center"
+                >
+                  View Cart
+                </a>
+
+                <a
+                  href="/products"
+                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] rounded-full py-3.5 uppercase tracking-widest text-[11px] font-semibold text-center"
+                >
+                  Keep Shopping
+                </a>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* QUALITY */}
+      <section className="px-6 md:px-10 pb-10">
+
+        <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-7 grid grid-cols-1 md:grid-cols-4 gap-6">
+
+          {[
+            [
+              FlaskConical,
+              "Research Use Only",
+              "Strictly for laboratory research.",
+            ],
+
+            [
+              ShieldCheck,
+              "Third-Party Tested",
+              "Independent lab verified when available.",
+            ],
+
+            [
+              ClipboardCheck,
+              "Batch Documented",
+              "Documentation available for verified lots.",
+            ],
+
+            [
+              ShieldCheck,
+              "Quality Target",
+              "99%+ purity target.",
+            ],
+          ].map(
+            ([Icon, title, text]: any) => (
+              <div
+                key={title}
+                className="flex gap-4"
+              >
+
+                <Icon
+                  className="text-[#A5D8FF]"
+                  size={28}
+                />
+
+                <div>
+
+                  <h3 className="text-white uppercase tracking-widest font-bold text-xs">
+                    {title}
+                  </h3>
+
+                  <p className="text-white/50 text-sm mt-1">
+                    {text}
+                  </p>
+
+                </div>
+              </div>
+            )
+          )}
+
+        </div>
+      </section>
+
+      {/* RESEARCH PROFILE */}
+      <section className="px-6 md:px-10 pb-14">
+
+        <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] p-8">
+
+          <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">
+            Research Profile
+          </p>
+
+          <h2 className="text-3xl font-black text-white mb-4">
+            Growth Hormone
+            Secretagogue Research
+            Overview
+          </h2>
+
+          <p className="text-white/65 leading-relaxed max-w-4xl mb-7">
+            CJC/IPA is studied in
+            laboratory research
+            models involving growth
+            hormone secretagogue
+            pathways, peptide
+            signaling,
+            pituitary-response
+            models, and metabolic
+            research applications.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+            {[
+              [
+                "GHRH Pathway",
+                "Studied for growth-hormone-releasing hormone pathway signaling.",
+              ],
+
+              [
+                "Secretagogue Research",
+                "Evaluated in models involving peptide-stimulated signaling responses.",
+              ],
+
+              [
+                "Metabolic Models",
+                "Researched in laboratory models involving energy regulation pathways.",
+              ],
+
+              [
+                "Storage",
+                "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
+              ],
+            ].map(
+              ([title, text]) => (
+                <div
+                  key={title}
+                  className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
+                >
+
+                  <h3 className="text-white font-bold mb-2">
+                    {title}
+                  </h3>
+
+                  <p className="text-white/55 text-sm leading-relaxed">
+                    {text}
+                  </p>
+
+                </div>
+              )
+            )}
+
+          </div>
+        </div>
+      </section>
+
+      {/* RELATED */}
+      <section className="px-6 md:px-10 pb-14">
+
+        <div className="max-w-7xl mx-auto">
+
+          <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+            Frequently Researched
+            Together
+          </p>
+
+          <h2 className="text-3xl font-black text-white mb-6">
+            Pair With Related
+            Research Compounds
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+            {[
+              {
+                name: "APX-3",
+
+                image:
+                  "/images/apx310blue.png",
+
+                path:
+                  "/products/apx3",
+
+                text:
+                  "Triple agonist research peptide studied in metabolic regulation and body composition models.",
+              },
+
+              {
+                name: "MOTS-C",
+
+                image:
+                  "/images/motscblue.png",
+
+                path:
+                  "/products/motsc",
+
+                text:
+                  "Studied in laboratory models involving mitochondrial signaling and metabolic research.",
+              },
+
+              {
+                name: "Adamax",
+
+                image:
+                  "/images/adamaxblue.PNG",
+
+                path:
+                  "/products/adamax",
+
+                text:
+                  "Research involving metabolic regulation and performance-focused laboratory models.",
+              },
+            ].map(
+              (item) => (
+                <a
+                  key={item.name}
+                  href={item.path}
+                  className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/40 transition-all"
+                >
+
+                  <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
+
+                    <img
+                      src={
+                        item.image
+                      }
+                      alt={
+                        item.name
+                      }
+                      className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
+                    />
+
+                  </div>
+
+                  <h3 className="text-xl font-black text-white mb-2">
+                    {item.name}
+                  </h3>
+
+                  <p className="text-white/55 text-sm leading-relaxed">
+                    {item.text}
+                  </p>
+
+                  <span className="inline-block mt-3 text-[#A5D8FF] text-sm font-semibold">
+                    View Product →
+                  </span>
+
+                </a>
+              )
+            )}
+
+          </div>
+        </div>
+      </section>
+
+      {/* DISCLAIMERS */}
+      {[
+        {
+          title:
+            "FDA Disclaimer",
+
+          text:
+            "These statements have not been evaluated by the U.S. Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only and are not for human or veterinary consumption.",
+        },
+
+        {
+          title:
+            "Customer Acknowledgment",
+
+          text:
+            "By purchasing this product, the customer acknowledges that this material is intended solely for lawful laboratory research purposes and will not be used for human consumption, veterinary use, medical use, diagnosis, treatment, cure, or prevention of disease. Apexx Biolabs does not provide dosing instructions, treatment recommendations, medical advice, or guidance regarding human use of any product.",
+        },
+      ].map(
+        (section) => (
+          <section
+            key={section.title}
+            className="px-6 md:px-10 pb-10"
+          >
+
+            <div className="max-w-7xl mx-auto rounded-[26px] border border-white/10 bg-white/[0.04] p-6">
+
+              <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-xs mb-3">
+                {section.title}
+              </h3>
+
+              <p className="text-white/55 text-sm leading-relaxed">
+                {section.text}
+              </p>
+
+            </div>
+          </section>
+        )
+      )}
+
+    </main>
+  );
+}

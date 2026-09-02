@@ -50,6 +50,9 @@ type CartItem = {
   quantityDiscountPercent?: number;
   quantityDiscountTierId?: string | null;
   quantityDiscountTierQuantity?: number | null;
+  flashSaleApplied?: boolean;
+  flashSaleId?: string | null;
+  flashSalePrice?: number | null;
 };
 
 type DatabaseProduct = {
@@ -69,6 +72,15 @@ type QuantityDiscountTier = {
   discount_percent: number;
   active: boolean;
   sort_order: number;
+};
+
+type FlashSale = {
+  id: string;
+  product_id: string;
+  sale_price: number;
+  starts_at: string;
+  ends_at: string;
+  active: boolean;
 };
 
 const BUNDLE_TIERS = [
@@ -411,6 +423,72 @@ export async function POST(request: Request) {
     const quantityTiers =
       (quantityTierRows || []) as QuantityDiscountTier[];
 
+    /*
+     * Load flash sales that are ACTIVE RIGHT NOW.
+     *
+     * IMPORTANT:
+     * The service-role client bypasses RLS, so the checkout route
+     * explicitly verifies active=true and the current time window.
+     * Browser-supplied sale prices are never trusted.
+     */
+    const checkoutNowIso = new Date().toISOString();
+
+    const {
+      data: flashSaleRows,
+      error: flashSaleLookupError,
+    } = await supabaseAdmin
+      .from("flash_sales")
+      .select(
+        "id, product_id, sale_price, starts_at, ends_at, active"
+      )
+      .eq("active", true)
+      .lte("starts_at", checkoutNowIso)
+      .gt("ends_at", checkoutNowIso)
+      .order("starts_at", { ascending: false });
+
+    if (flashSaleLookupError) {
+      console.error(
+        "Flash sale lookup error:",
+        flashSaleLookupError
+      );
+
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Unable to verify current sale pricing.",
+        },
+        { status: 500 }
+      );
+    }
+
+    const flashSales =
+      (flashSaleRows || []) as FlashSale[];
+
+    /*
+     * If overlapping flash sales somehow exist for the same product,
+     * use the most recently-started active sale. The Admin API should
+     * prevent overlaps, but checkout still protects itself.
+     */
+    const activeFlashSaleByProduct =
+      new Map<string, FlashSale>();
+
+    for (const sale of flashSales) {
+      const productId = String(
+        sale.product_id || ""
+      ).trim();
+
+      if (
+        productId &&
+        !activeFlashSaleByProduct.has(productId)
+      ) {
+        activeFlashSaleByProduct.set(
+          productId,
+          sale
+        );
+      }
+    }
+
     const findDatabaseProduct = (cartItem: CartItem) => {
       const requestedId = String(
         cartItem.id || ""
@@ -636,10 +714,16 @@ export async function POST(request: Request) {
     /*
      * Rebuild the cart with trusted prices.
      *
-     * - Normal research products use the Admin quantity tiers.
+     * Pricing priority:
+     * - Build-a-Bundle items use the verified bundle-wide tier.
+     *   Flash sale pricing does NOT stack with bundle pricing.
+     * - Normal items use a verified active flash-sale price when one
+     *   exists. Quantity discounts do NOT stack on top of flash sales.
+     * - Otherwise, normal research products use Admin quantity tiers.
      * - Shirts/accessories do NOT receive vial quantity pricing.
-     * - Build-a-Bundle items use the verified bundle-wide tier and
-     *   NEVER receive the normal same-product quantity tier again.
+     *
+     * Promo/affiliate discounts and rewards are applied later to the
+     * already server-verified merchandise subtotal.
      */
     const normalizedCart: CartItem[] =
       resolvedCart.map((entry) => {
@@ -713,6 +797,66 @@ export async function POST(request: Request) {
             quantityDiscountTierId: null,
             quantityDiscountTierQuantity:
               null,
+            flashSaleApplied: false,
+            flashSaleId: null,
+            flashSalePrice: null,
+          };
+        }
+
+        /*
+         * Flash-sale pricing is checked only for NON-bundle items.
+         *
+         * A flash sale replaces the normal unit price for this item.
+         * It does not stack with same-product quantity discounts.
+         */
+        const activeFlashSale =
+          activeFlashSaleByProduct.get(
+            String(product.id)
+          ) || null;
+
+        const rawFlashSalePrice = Number(
+          activeFlashSale?.sale_price
+        );
+
+        const hasValidFlashSale =
+          !!activeFlashSale &&
+          Number.isFinite(rawFlashSalePrice) &&
+          rawFlashSalePrice > 0 &&
+          rawFlashSalePrice < basePrice;
+
+        if (hasValidFlashSale) {
+          const flashSaleUnitPrice = Number(
+            rawFlashSalePrice.toFixed(2)
+          );
+
+          return {
+            id: String(product.id),
+            name: String(product.name),
+            price: flashSaleUnitPrice,
+            basePrice,
+            quantity,
+            image: entry.raw.image,
+            path:
+              entry.raw.path ||
+              (product.slug
+                ? `/products/${product.slug}`
+                : "/products"),
+            bundleId: null,
+            bundleType: null,
+            bundleDiscountPercent: 0,
+            bundleTierQuantity: null,
+            bundleBaseUnitPrice: basePrice,
+            bundleDiscountedUnitPrice:
+              flashSaleUnitPrice,
+            quantityDiscountPercent: 0,
+            quantityDiscountTierId: null,
+            quantityDiscountTierQuantity:
+              null,
+            flashSaleApplied: true,
+            flashSaleId:
+              activeFlashSale!.id,
+            flashSalePrice:
+              flashSaleUnitPrice,
           };
         }
 
@@ -769,6 +913,9 @@ export async function POST(request: Request) {
             matchingTier?.id || null,
           quantityDiscountTierQuantity:
             matchingTier?.quantity || null,
+          flashSaleApplied: false,
+          flashSaleId: null,
+          flashSalePrice: null,
         };
       });
 

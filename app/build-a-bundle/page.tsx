@@ -178,7 +178,7 @@ const getBundleProductImage = (product: {
   // Use the exact blue image files from /public/images.
   const aliasGroups = [
     { matches: ["apx310mg", "apx310", "apx3"], image: "/images/apx310blue.png" },
-    { matches: ["apx320mg", "apx320"], image: "/images/apx320.png" },
+    { matches: ["apx320mg", "apx320"], image: "/images/apx3201.png" },
     { matches: ["apx230mg", "apx230", "apx2"], image: "/images/apx230blue.png" },
     { matches: ["glutathione1500mg", "glutathione1500", "glutathione"], image: "/images/glutathione1500blue.png" },
     { matches: ["mitox120mg", "mitox120", "mitox"], image: "/images/mitox120blue.png" },

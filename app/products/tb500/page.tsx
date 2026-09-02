@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 
 import FavoriteButton from "@/components/FavoriteButton";
-import { useProductPricing } from "@/hooks/useProductPricing";
 
 type QuantityDiscountTier = {
   id: string;
@@ -20,12 +19,31 @@ type QuantityDiscountTier = {
   sort_order: number;
 };
 
+type FlashSale = {
+  id: string;
+  product_id: string;
+  sale_price: number;
+  starts_at: string;
+  ends_at: string;
+  active: boolean;
+};
+
 export default function TB500Page() {
   const [added, setAdded] = useState(false);
 
   const [selectedQuantity, setSelectedQuantity] =
     useState(1);
 
+  const [inventory, setInventory] =
+    useState<number | null>(null);
+
+  const [price, setPrice] = useState(60);
+
+  const [databaseProductId, setDatabaseProductId] =
+    useState<string | null>(null);
+
+  const [flashSale, setFlashSale] =
+    useState<FlashSale | null>(null);
 
   const [quantityDiscounts, setQuantityDiscounts] =
     useState<QuantityDiscountTier[]>([]);
@@ -40,60 +58,36 @@ export default function TB500Page() {
     path: "/products/tb500",
   };
 
-  const pricingVariants = [
-    {
-      key: "tb500" as const,
-      fallbackPrice: 60,
-      matches: (item: any) =>
-        item.slug === "tb500" ||
-        item.slug === "tb-500" ||
-        item.slug === "tb500-10mg" ||
-        item.slug === "tb-500-10mg" ||
-        item.id === "tb500" ||
-        item.id === "tb-500" ||
-        item.id === "tb500-10mg" ||
-        item.id === "TB-500-10mg" ||
-        item.name
-          ?.toLowerCase()
-          .includes("tb-500") ||
-        item.name
-          ?.toLowerCase()
-          .includes("tb500"),
-    },
-  ];
+  const latestCoaPath =
+    "/images/coas/tb500.pdf";
 
-  const { pricing } = useProductPricing({
-    variants: pricingVariants,
-  });
-
-  const tb500Pricing =
-    pricing.tb500;
-
-  const inventory =
-    tb500Pricing.inventory;
-
-  const price =
-    tb500Pricing.regularPrice;
-
-  const effectiveUnitPrice =
-    tb500Pricing.effectiveUnitPrice;
-
-  const isFlashSaleActive =
-    tb500Pricing.isFlashSaleActive;
-
-  const flashSale =
-    tb500Pricing.flashSale;
-
-  const databaseProductId =
-    tb500Pricing.databaseProductId;
+  const previousCoaPath =
+    "/images/coas/tb500-10mg-blue-cap-coa.pdf";
 
   const isOutOfStock =
-    inventory !== null && inventory <= 0;
+    inventory !== null &&
+    inventory <= 0;
 
   const isLimitedStock =
     inventory !== null &&
     inventory > 0 &&
     inventory <= 5;
+
+  const flashSalePrice =
+    flashSale !== null
+      ? Number(flashSale.sale_price)
+      : null;
+
+  const isFlashSaleActive =
+    flashSalePrice !== null &&
+    Number.isFinite(flashSalePrice) &&
+    flashSalePrice > 0 &&
+    flashSalePrice < price;
+
+  const effectiveUnitPrice =
+    isFlashSaleActive
+      ? flashSalePrice
+      : price;
 
   const favoriteProduct = {
     id: product.id,
@@ -104,49 +98,249 @@ export default function TB500Page() {
   };
 
   useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        const [
+          productResponse,
+          saleResponse,
+        ] = await Promise.all([
+          fetch("/api/products", {
+            cache: "no-store",
+          }),
+
+          fetch("/api/flash-sales", {
+            cache: "no-store",
+          }),
+        ]);
+
+        const productData =
+          await productResponse.json();
+
+        const saleData =
+          await saleResponse
+            .json()
+            .catch(() => ({
+              success: false,
+              sales: [],
+            }));
+
+        if (!productData.success) {
+          return;
+        }
+
+        const tb500 =
+          productData.products.find(
+            (item: any) => {
+              const slug =
+                item.slug
+                  ?.toLowerCase()
+                  .trim();
+
+              const id =
+                String(
+                  item.id || ""
+                )
+                  .toLowerCase()
+                  .trim();
+
+              const name =
+                item.name
+                  ?.toLowerCase()
+                  .trim();
+
+              const size =
+                item.size
+                  ?.toLowerCase()
+                  .trim();
+
+              return (
+                slug === "tb500" ||
+                slug === "tb-500" ||
+                slug ===
+                  "tb500-10mg" ||
+                slug ===
+                  "tb-500-10mg" ||
+                id === "tb500" ||
+                id === "tb-500" ||
+                id ===
+                  "tb500-10mg" ||
+                id ===
+                  "tb-500-10mg" ||
+                (name?.includes(
+                  "tb-500"
+                ) &&
+                  size === "10mg") ||
+                (name?.includes(
+                  "tb500"
+                ) &&
+                  size === "10mg") ||
+                name?.includes(
+                  "tb-500 10"
+                ) ||
+                name?.includes(
+                  "tb500 10"
+                )
+              );
+            }
+          );
+
+        if (tb500) {
+          const dbId =
+            String(tb500.id);
+
+          const regularPrice =
+            Number(
+              tb500.price ?? 60
+            );
+
+          setDatabaseProductId(
+            dbId
+          );
+
+          setInventory(
+            Number(
+              tb500.inventory ?? 0
+            )
+          );
+
+          setPrice(
+            regularPrice
+          );
+
+          const now =
+            Date.now();
+
+          const matchingSale =
+            Array.isArray(
+              saleData.sales
+            )
+              ? saleData.sales.find(
+                  (
+                    sale: FlashSale
+                  ) => {
+                    const starts =
+                      new Date(
+                        sale.starts_at
+                      ).getTime();
+
+                    const ends =
+                      new Date(
+                        sale.ends_at
+                      ).getTime();
+
+                    const salePrice =
+                      Number(
+                        sale.sale_price
+                      );
+
+                    return (
+                      sale.active ===
+                        true &&
+                      String(
+                        sale.product_id
+                      ) === dbId &&
+                      Number.isFinite(
+                        starts
+                      ) &&
+                      Number.isFinite(
+                        ends
+                      ) &&
+                      starts <= now &&
+                      ends > now &&
+                      Number.isFinite(
+                        salePrice
+                      ) &&
+                      salePrice > 0 &&
+                      salePrice <
+                        regularPrice
+                    );
+                  }
+                )
+              : null;
+
+          setFlashSale(
+            matchingSale || null
+          );
+        } else {
+          setDatabaseProductId(
+            null
+          );
+
+          setInventory(null);
+          setPrice(60);
+          setFlashSale(null);
+        }
+      } catch (error) {
+        console.error(
+          "Failed to fetch TB-500 data:",
+          error
+        );
+
+        setDatabaseProductId(
+          null
+        );
+
+        setInventory(null);
+        setPrice(60);
+        setFlashSale(null);
+      }
+    };
+
     const fetchQuantityDiscounts =
       async () => {
         try {
-          const response = await fetch(
-            "/api/quantity-discounts",
-            {
-              cache: "no-store",
-            }
-          );
+          const response =
+            await fetch(
+              "/api/quantity-discounts",
+              {
+                cache:
+                  "no-store",
+              }
+            );
 
           const data =
             await response.json();
 
-          if (!data.success) return;
+          if (!data.success) {
+            return;
+          }
 
           const tiers = (
             data.tiers || []
           )
-            .map((tier: any) => ({
-              id: String(tier.id),
+            .map(
+              (tier: any) => ({
+                id: String(
+                  tier.id
+                ),
 
-              name: String(
-                tier.name || ""
-              ),
+                name: String(
+                  tier.name || ""
+                ),
 
-              quantity: Number(
-                tier.quantity || 0
-              ),
+                quantity: Number(
+                  tier.quantity ||
+                    0
+                ),
 
-              discount_percent: Number(
-                tier.discount_percent ||
-                  0
-              ),
+                discount_percent:
+                  Number(
+                    tier.discount_percent ||
+                      0
+                  ),
 
-              sort_order: Number(
-                tier.sort_order || 0
-              ),
-            }))
+                sort_order: Number(
+                  tier.sort_order ||
+                    0
+                ),
+              })
+            )
             .filter(
               (
                 tier: QuantityDiscountTier
               ) =>
-                tier.quantity > 1 &&
+                tier.quantity >
+                  1 &&
                 tier.discount_percent >=
                   0
             )
@@ -183,7 +377,20 @@ export default function TB500Page() {
         }
       };
 
+    fetchProductData();
     fetchQuantityDiscounts();
+
+    const flashSaleRefresh =
+      window.setInterval(
+        fetchProductData,
+        30_000
+      );
+
+    return () => {
+      window.clearInterval(
+        flashSaleRefresh
+      );
+    };
   }, []);
 
   const getDiscountTier = (
@@ -212,7 +419,8 @@ export default function TB500Page() {
   const selectedDiscountPercent =
     isFlashSaleActive
       ? 0
-      : selectedTier?.discount_percent ||
+      : selectedTier
+          ?.discount_percent ||
         0;
 
   const discountedUnitPrice =
@@ -226,12 +434,15 @@ export default function TB500Page() {
     selectedQuantity;
 
   const regularTotal =
-    price * selectedQuantity;
+    price *
+    selectedQuantity;
 
   const formatMoney = (
     amount: number
   ) =>
-    Number(amount).toFixed(2);
+    Number(
+      amount
+    ).toFixed(2);
 
   const selectQuantity = (
     quantity: number
@@ -251,7 +462,9 @@ export default function TB500Page() {
   };
 
   const addToCart = () => {
-    if (isOutOfStock) return;
+    if (isOutOfStock) {
+      return;
+    }
 
     const existingCart =
       JSON.parse(
@@ -263,7 +476,8 @@ export default function TB500Page() {
     const existingProduct =
       existingCart.find(
         (item: any) =>
-          item.id === product.id
+          item.id ===
+          product.id
       );
 
     const existingQuantity =
@@ -280,7 +494,8 @@ export default function TB500Page() {
 
     if (
       inventory !== null &&
-      newQuantity > inventory
+      newQuantity >
+        inventory
     ) {
       alert(
         `Only ${inventory} vial${
@@ -305,7 +520,8 @@ export default function TB500Page() {
     const newDiscountPercent =
       isFlashSaleActive
         ? 0
-        : newTier?.discount_percent ||
+        : newTier
+            ?.discount_percent ||
           0;
 
     const newDiscountedUnitPrice =
@@ -317,12 +533,14 @@ export default function TB500Page() {
     const cartProduct = {
       id: product.id,
 
-      name: product.name,
+      name:
+        product.name,
 
       price:
         newDiscountedUnitPrice,
 
-      basePrice: price,
+      basePrice:
+        price,
 
       quantity:
         newQuantity,
@@ -337,17 +555,20 @@ export default function TB500Page() {
         newDiscountPercent,
 
       quantityDiscountTierId:
-        newTier?.id || null,
+        newTier?.id ||
+        null,
 
       quantityDiscountTierQuantity:
-        newTier?.quantity || null,
+        newTier?.quantity ||
+        null,
 
       flashSaleApplied:
         isFlashSaleActive,
 
       flashSaleId:
         isFlashSaleActive
-          ? flashSale?.id || null
+          ? flashSale?.id ||
+            null
           : null,
 
       flashSalePrice:
@@ -355,7 +576,8 @@ export default function TB500Page() {
           ? effectiveUnitPrice
           : null,
 
-      databaseProductId,
+      databaseProductId:
+        databaseProductId,
     };
 
     const updatedCart =
@@ -383,7 +605,9 @@ export default function TB500Page() {
     );
 
     window.dispatchEvent(
-      new Event("cartUpdated")
+      new Event(
+        "cartUpdated"
+      )
     );
 
     setAdded(true);
@@ -485,7 +709,8 @@ export default function TB500Page() {
                     Flash Sale · $
                     {formatMoney(
                       effectiveUnitPrice
-                    )} / vial
+                    )}{" "}
+                    / vial
                   </span>
                 )}
 
@@ -516,118 +741,177 @@ export default function TB500Page() {
 
               <div className="h-px bg-white/10 mb-5" />
 
-{/* QUANTITY */}
-<div className="mb-5">
-  <div className="flex items-center justify-between gap-4 mb-3">
-    <p className="uppercase tracking-widest text-white/45 text-xs">
-      Quantity
-    </p>
+              {/* QUANTITY */}
+              <div className="mb-5">
 
-    {selectedQuantity > 1 && (
-      <p className="text-[#A5D8FF] text-xs font-semibold">
-        ${formatMoney(discountedUnitPrice)} / vial
-      </p>
-    )}
-  </div>
+                <div className="flex items-center justify-between gap-4 mb-3">
 
-  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <p className="uppercase tracking-widest text-white/45 text-xs">
+                    Quantity
+                  </p>
 
-    {/* 1 VIAL */}
-    <button
-      type="button"
-      disabled={isOutOfStock}
-      onClick={() => selectQuantity(1)}
-      className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-        selectedQuantity === 1
-          ? "border-blue-300 bg-blue-400/10"
-          : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-      } disabled:opacity-35 disabled:cursor-not-allowed`}
-    >
-      {selectedQuantity === 1 && (
-        <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-          <Check size={11} strokeWidth={3} />
-        </span>
-      )}
+                  {selectedQuantity >
+                    1 && (
+                    <p className="text-[#A5D8FF] text-xs font-semibold">
+                      $
+                      {formatMoney(
+                        discountedUnitPrice
+                      )}{" "}
+                      / vial
+                    </p>
+                  )}
 
-      <p className="font-black text-white text-sm">
-        1 Vial
-      </p>
+                </div>
 
-      <p className="text-xs text-white/45 mt-1">
-        ${formatMoney(effectiveUnitPrice)}
-      </p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
 
-      {isFlashSaleActive && (
-        <p className="text-[10px] text-white/25 line-through mt-0.5">
-          ${formatMoney(price)}
-        </p>
-      )}
-    </button>
+                  {/* 1 VIAL */}
+                  <button
+                    type="button"
+                    disabled={
+                      isOutOfStock
+                    }
+                    onClick={() =>
+                      selectQuantity(
+                        1
+                      )
+                    }
+                    className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+                      selectedQuantity ===
+                      1
+                        ? "border-blue-300 bg-blue-400/10"
+                        : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                    } disabled:opacity-35 disabled:cursor-not-allowed`}
+                  >
 
-    {/* ADMIN QUANTITY TIERS */}
-    {quantityDiscounts.map((tier) => {
-      const tierUnavailable =
-        inventory !== null &&
-        inventory < tier.quantity;
+                    {selectedQuantity ===
+                      1 && (
+                      <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                        <Check
+                          size={
+                            11
+                          }
+                          strokeWidth={
+                            3
+                          }
+                        />
+                      </span>
+                    )}
 
-      const tierTotal =
-        isFlashSaleActive
-          ? effectiveUnitPrice *
-            tier.quantity
-          : price *
-            tier.quantity *
-            (1 -
-              tier.discount_percent /
-                100);
+                    <p className="font-black text-white text-sm">
+                      1 Vial
+                    </p>
 
-      const selected =
-        selectedQuantity === tier.quantity;
+                    <p className="text-xs text-white/45 mt-1">
+                      $
+                      {formatMoney(
+                        effectiveUnitPrice
+                      )}
+                    </p>
 
-      return (
-        <button
-          key={tier.id}
-          type="button"
-          disabled={tierUnavailable}
-          onClick={() =>
-            selectQuantity(tier.quantity)
-          }
-          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-            selected
-              ? "border-blue-300 bg-blue-400/10"
-              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-          } disabled:opacity-30 disabled:cursor-not-allowed`}
-        >
-          {selected && (
-            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-              <Check
-                size={11}
-                strokeWidth={3}
-              />
-            </span>
-          )}
+                    {isFlashSaleActive && (
+                      <p className="text-[10px] text-white/25 line-through mt-0.5">
+                        $
+                        {formatMoney(
+                          price
+                        )}
+                      </p>
+                    )}
 
-          <p className="font-black text-white text-sm">
-            {tier.quantity} Vials
-          </p>
+                  </button>
 
-          <p className="text-xs text-white/45 mt-1">
-            ${formatMoney(tierTotal)}
-          </p>
+                  {/* ADMIN QUANTITY TIERS */}
+                  {quantityDiscounts.map(
+                    (tier) => {
+                      const tierUnavailable =
+                        inventory !==
+                          null &&
+                        inventory <
+                          tier.quantity;
 
-          {isFlashSaleActive ? (
-            <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
-              Flash Sale
-            </p>
-          ) : (
-            <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
-              Save {tier.discount_percent}%
-            </p>
-          )}
-        </button>
-      );
-    })}
-  </div>
-</div>
+                      const tierTotal =
+                        isFlashSaleActive
+                          ? effectiveUnitPrice *
+                            tier.quantity
+                          : price *
+                            tier.quantity *
+                            (1 -
+                              tier.discount_percent /
+                                100);
+
+                      const selected =
+                        selectedQuantity ===
+                        tier.quantity;
+
+                      return (
+                        <button
+                          key={
+                            tier.id
+                          }
+                          type="button"
+                          disabled={
+                            tierUnavailable
+                          }
+                          onClick={() =>
+                            selectQuantity(
+                              tier.quantity
+                            )
+                          }
+                          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+                            selected
+                              ? "border-blue-300 bg-blue-400/10"
+                              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                          } disabled:opacity-30 disabled:cursor-not-allowed`}
+                        >
+
+                          {selected && (
+                            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                              <Check
+                                size={
+                                  11
+                                }
+                                strokeWidth={
+                                  3
+                                }
+                              />
+                            </span>
+                          )}
+
+                          <p className="font-black text-white text-sm">
+                            {
+                              tier.quantity
+                            }{" "}
+                            Vials
+                          </p>
+
+                          <p className="text-xs text-white/45 mt-1">
+                            $
+                            {formatMoney(
+                              tierTotal
+                            )}
+                          </p>
+
+                          {isFlashSaleActive ? (
+                            <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
+                              Flash Sale
+                            </p>
+                          ) : (
+                            <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
+                              Save{" "}
+                              {
+                                tier.discount_percent
+                              }
+                              %
+                            </p>
+                          )}
+
+                        </button>
+                      );
+                    }
+                  )}
+
+                </div>
+              </div>
 
               {/* FREE GIFT */}
               <div className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-3 mb-5">
@@ -658,7 +942,9 @@ export default function TB500Page() {
                   >
 
                     <ShoppingCart
-                      size={18}
+                      size={
+                        18
+                      }
                     />
 
                     {added
@@ -690,13 +976,16 @@ export default function TB500Page() {
               </div>
 
               <a
-                href="/images/coas/tb500.pdf"
+                href={
+                  latestCoaPath
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
               >
-                View Latest Certificate
-                of Analysis →
+                View Latest
+                Certificate of
+                Analysis →
               </a>
 
             </div>
@@ -755,7 +1044,9 @@ export default function TB500Page() {
               </p>
 
               <a
-                href="/images/coas/tb500.pdf"
+                href={
+                  latestCoaPath
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
@@ -773,7 +1064,8 @@ export default function TB500Page() {
               type="button"
               onClick={() =>
                 setShowPreviousCoa(
-                  (prev) => !prev
+                  (prev) =>
+                    !prev
                 )
               }
               className="w-full rounded-full border border-white/10 bg-white/[0.03] py-3 text-xs uppercase tracking-widest text-white/70 hover:border-blue-400/40 hover:bg-white/[0.06] transition-all"
@@ -831,7 +1123,9 @@ export default function TB500Page() {
                     </p>
 
                     <a
-                      href="/images/coas/tb500-10mg-blue-cap-coa.pdf"
+                      href={
+                        previousCoaPath
+                      }
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
@@ -878,26 +1172,37 @@ export default function TB500Page() {
               "Latest laboratory analysis reported 99.95% purity.",
             ],
           ].map(
-            ([Icon, title, text]: any) => (
-
+            ([
+              Icon,
+              title,
+              text,
+            ]: any) => (
               <div
-                key={title}
+                key={
+                  title
+                }
                 className="flex gap-4"
               >
 
                 <Icon
                   className="text-[#A5D8FF]"
-                  size={28}
+                  size={
+                    28
+                  }
                 />
 
                 <div>
 
                   <h3 className="text-white uppercase tracking-widest font-bold text-xs">
-                    {title}
+                    {
+                      title
+                    }
                   </h3>
 
                   <p className="text-white/50 text-sm mt-1">
-                    {text}
+                    {
+                      text
+                    }
                   </p>
 
                 </div>
@@ -958,19 +1263,27 @@ export default function TB500Page() {
                 "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
               ],
             ].map(
-              ([title, text]) => (
-
+              ([
+                title,
+                text,
+              ]) => (
                 <div
-                  key={title}
+                  key={
+                    title
+                  }
                   className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
                 >
 
                   <h3 className="text-white font-bold mb-2">
-                    {title}
+                    {
+                      title
+                    }
                   </h3>
 
                   <p className="text-white/55 text-sm leading-relaxed">
-                    {text}
+                    {
+                      text
+                    }
                   </p>
 
                 </div>
@@ -1000,7 +1313,8 @@ export default function TB500Page() {
 
             {[
               {
-                name: "BPC-157",
+                name:
+                  "BPC-157",
 
                 image:
                   "/images/bpc157blue.png",
@@ -1013,7 +1327,8 @@ export default function TB500Page() {
               },
 
               {
-                name: "KPV",
+                name:
+                  "KPV",
 
                 image:
                   "/images/kpvblue.png",
@@ -1026,7 +1341,8 @@ export default function TB500Page() {
               },
 
               {
-                name: "ARA-290",
+                name:
+                  "ARA-290",
 
                 image:
                   "/images/ara290blue.png",
@@ -1039,29 +1355,40 @@ export default function TB500Page() {
               },
             ].map(
               (item) => (
-
                 <a
-                  key={item.name}
-                  href={item.path}
+                  key={
+                    item.name
+                  }
+                  href={
+                    item.path
+                  }
                   className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/40 transition-all"
                 >
 
                   <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
 
                     <img
-                      src={item.image}
-                      alt={item.name}
+                      src={
+                        item.image
+                      }
+                      alt={
+                        item.name
+                      }
                       className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
                     />
 
                   </div>
 
                   <h3 className="text-xl font-black text-white mb-2">
-                    {item.name}
+                    {
+                      item.name
+                    }
                   </h3>
 
                   <p className="text-white/55 text-sm leading-relaxed">
-                    {item.text}
+                    {
+                      item.text
+                    }
                   </p>
 
                   <span className="inline-block mt-3 text-[#A5D8FF] text-sm font-semibold">
@@ -1094,21 +1421,28 @@ export default function TB500Page() {
             "By purchasing this product, the customer acknowledges that this material is intended solely for lawful laboratory research purposes and will not be used for human consumption, veterinary use, medical use, diagnosis, treatment, cure, or prevention of disease. Apexx Biolabs does not provide dosing instructions, treatment recommendations, medical advice, or guidance regarding human use of any product.",
         },
       ].map(
-        (section) => (
-
+        (
+          section
+        ) => (
           <section
-            key={section.title}
+            key={
+              section.title
+            }
             className="px-6 md:px-10 pb-10"
           >
 
             <div className="max-w-7xl mx-auto rounded-[26px] border border-white/10 bg-white/[0.04] p-6">
 
               <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-xs mb-3">
-                {section.title}
+                {
+                  section.title
+                }
               </h3>
 
               <p className="text-white/55 text-sm leading-relaxed">
-                {section.text}
+                {
+                  section.text
+                }
               </p>
 
             </div>

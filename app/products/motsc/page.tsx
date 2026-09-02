@@ -19,6 +19,15 @@ type QuantityDiscountTier = {
   sort_order: number;
 };
 
+type FlashSale = {
+  id: string;
+  product_id: string;
+  sale_price: number;
+  starts_at: string;
+  ends_at: string;
+  active: boolean;
+};
+
 export default function MOTSCPage() {
   const [added, setAdded] = useState(false);
 
@@ -29,6 +38,12 @@ export default function MOTSCPage() {
     useState<number | null>(null);
 
   const [price, setPrice] = useState(45);
+
+  const [databaseProductId, setDatabaseProductId] =
+    useState<string | null>(null);
+
+  const [flashSale, setFlashSale] =
+    useState<FlashSale | null>(null);
 
   const [showPreviousCoa, setShowPreviousCoa] =
     useState(false);
@@ -57,10 +72,26 @@ export default function MOTSCPage() {
     inventory > 0 &&
     inventory <= 5;
 
+  const flashSalePrice =
+    flashSale !== null
+      ? Number(flashSale.sale_price)
+      : null;
+
+  const isFlashSaleActive =
+    flashSalePrice !== null &&
+    Number.isFinite(flashSalePrice) &&
+    flashSalePrice > 0 &&
+    flashSalePrice < price;
+
+  const effectiveUnitPrice =
+    isFlashSaleActive
+      ? flashSalePrice
+      : price;
+
   const favoriteProduct = {
     id: product.id,
     name: product.name,
-    price,
+    price: effectiveUnitPrice,
     image: product.image,
     path: product.path,
   };
@@ -68,19 +99,32 @@ export default function MOTSCPage() {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await fetch(
-          "/api/products",
-          {
-            cache: "no-store",
-          }
-        );
+        const [productResponse, saleResponse] =
+          await Promise.all([
+            fetch("/api/products", {
+              cache: "no-store",
+            }),
 
-        const data = await response.json();
+            fetch("/api/flash-sales", {
+              cache: "no-store",
+            }),
+          ]);
 
-        if (!data.success) return;
+        const productData =
+          await productResponse.json();
+
+        const saleData =
+          await saleResponse.json().catch(
+            () => ({
+              success: false,
+              sales: [],
+            })
+          );
+
+        if (!productData.success) return;
 
         const motsc =
-          data.products.find(
+          productData.products.find(
             (item: any) =>
               item.slug === "motsc" ||
               item.slug === "mots-c" ||
@@ -96,20 +140,76 @@ export default function MOTSCPage() {
           );
 
         if (motsc) {
+          const dbId =
+            String(motsc.id);
+
+          const regularPrice =
+            Number(
+              motsc.price ?? 45
+            );
+
+          setDatabaseProductId(dbId);
+
           setInventory(
             Number(
               motsc.inventory ?? 0
             )
           );
 
-          setPrice(
-            Number(
-              motsc.price ?? 45
-            )
+          setPrice(regularPrice);
+
+          const now = Date.now();
+
+          const matchingSale =
+            Array.isArray(saleData.sales)
+              ? saleData.sales.find(
+                  (sale: FlashSale) => {
+                    const starts =
+                      new Date(
+                        sale.starts_at
+                      ).getTime();
+
+                    const ends =
+                      new Date(
+                        sale.ends_at
+                      ).getTime();
+
+                    const salePrice =
+                      Number(
+                        sale.sale_price
+                      );
+
+                    return (
+                      sale.active === true &&
+                      String(
+                        sale.product_id
+                      ) === dbId &&
+                      Number.isFinite(
+                        starts
+                      ) &&
+                      Number.isFinite(
+                        ends
+                      ) &&
+                      starts <= now &&
+                      ends > now &&
+                      Number.isFinite(
+                        salePrice
+                      ) &&
+                      salePrice > 0 &&
+                      salePrice < regularPrice
+                    );
+                  }
+                )
+              : null;
+
+          setFlashSale(
+            matchingSale || null
           );
         } else {
+          setDatabaseProductId(null);
           setInventory(null);
           setPrice(45);
+          setFlashSale(null);
         }
       } catch (error) {
         console.error(
@@ -117,8 +217,10 @@ export default function MOTSCPage() {
           error
         );
 
+        setDatabaseProductId(null);
         setInventory(null);
         setPrice(45);
+        setFlashSale(null);
       }
     };
 
@@ -199,6 +301,18 @@ export default function MOTSCPage() {
 
     fetchProductData();
     fetchQuantityDiscounts();
+
+    const flashSaleRefresh =
+      window.setInterval(
+        fetchProductData,
+        30_000
+      );
+
+    return () => {
+      window.clearInterval(
+        flashSaleRefresh
+      );
+    };
   }, []);
 
   const getDiscountTier = (
@@ -223,11 +337,13 @@ export default function MOTSCPage() {
     );
 
   const selectedDiscountPercent =
-    selectedTier?.discount_percent ||
-    0;
+    isFlashSaleActive
+      ? 0
+      : selectedTier?.discount_percent ||
+        0;
 
   const discountedUnitPrice =
-    price *
+    effectiveUnitPrice *
     (1 -
       selectedDiscountPercent /
         100);
@@ -302,14 +418,20 @@ export default function MOTSCPage() {
     }
 
     const newTier =
-      getDiscountTier(newQuantity);
+      isFlashSaleActive
+        ? null
+        : getDiscountTier(
+            newQuantity
+          );
 
     const newDiscountPercent =
-      newTier?.discount_percent ||
-      0;
+      isFlashSaleActive
+        ? 0
+        : newTier?.discount_percent ||
+          0;
 
     const newDiscountedUnitPrice =
-      price *
+      effectiveUnitPrice *
       (1 -
         newDiscountPercent /
           100);
@@ -341,6 +463,22 @@ export default function MOTSCPage() {
 
       quantityDiscountTierQuantity:
         newTier?.quantity || null,
+
+      flashSaleApplied:
+        isFlashSaleActive,
+
+      flashSaleId:
+        isFlashSaleActive
+          ? flashSale?.id || null
+          : null,
+
+      flashSalePrice:
+        isFlashSaleActive
+          ? effectiveUnitPrice
+          : null,
+
+      databaseProductId:
+        databaseProductId,
     };
 
     const updatedCart =
@@ -421,8 +559,9 @@ export default function MOTSCPage() {
                     )}
                   </p>
 
-                  {selectedDiscountPercent >
-                    0 && (
+                  {(isFlashSaleActive ||
+                    selectedDiscountPercent >
+                      0) && (
                     <p className="text-white/35 text-sm line-through">
                       $
                       {formatMoney(
@@ -452,6 +591,16 @@ export default function MOTSCPage() {
                   10mg
                 </span>
 
+                {isFlashSaleActive && (
+                  <span className="rounded-full border border-blue-300/25 bg-blue-400/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#A5D8FF]">
+                    Flash Sale · $
+                    {formatMoney(
+                      effectiveUnitPrice
+                    )}{" "}
+                    / vial
+                  </span>
+                )}
+
                 {selectedDiscountPercent >
                   0 && (
                   <span className="rounded-full border border-green-400/20 bg-green-500/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-green-200">
@@ -478,101 +627,127 @@ export default function MOTSCPage() {
 
               <div className="h-px bg-white/10 mb-5" />
 
-{/* QUANTITY */}
-<div className="mb-5">
-  <div className="flex items-center justify-between gap-4 mb-3">
-    <p className="uppercase tracking-widest text-white/45 text-xs">
-      Quantity
-    </p>
+              {/* QUANTITY */}
+              <div className="mb-5">
+                <div className="flex items-center justify-between gap-4 mb-3">
+                  <p className="uppercase tracking-widest text-white/45 text-xs">
+                    Quantity
+                  </p>
 
-    {selectedQuantity > 1 && (
-      <p className="text-[#A5D8FF] text-xs font-semibold">
-        ${formatMoney(discountedUnitPrice)} / vial
-      </p>
-    )}
-  </div>
+                  {selectedQuantity > 1 && (
+                    <p className="text-[#A5D8FF] text-xs font-semibold">
+                      ${formatMoney(discountedUnitPrice)} / vial
+                    </p>
+                  )}
+                </div>
 
-  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
 
-    {/* 1 VIAL */}
-    <button
-      type="button"
-      disabled={isOutOfStock}
-      onClick={() => selectQuantity(1)}
-      className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-        selectedQuantity === 1
-          ? "border-blue-300 bg-blue-400/10"
-          : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-      } disabled:opacity-35 disabled:cursor-not-allowed`}
-    >
-      {selectedQuantity === 1 && (
-        <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-          <Check size={11} strokeWidth={3} />
-        </span>
-      )}
+                  {/* 1 VIAL */}
+                  <button
+                    type="button"
+                    disabled={isOutOfStock}
+                    onClick={() =>
+                      selectQuantity(1)
+                    }
+                    className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+                      selectedQuantity === 1
+                        ? "border-blue-300 bg-blue-400/10"
+                        : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                    } disabled:opacity-35 disabled:cursor-not-allowed`}
+                  >
+                    {selectedQuantity === 1 && (
+                      <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                        <Check
+                          size={11}
+                          strokeWidth={3}
+                        />
+                      </span>
+                    )}
 
-      <p className="font-black text-white text-sm">
-        1 Vial
-      </p>
+                    <p className="font-black text-white text-sm">
+                      1 Vial
+                    </p>
 
-      <p className="text-xs text-white/45 mt-1">
-        ${formatMoney(price)}
-      </p>
-    </button>
+                    <p className="text-xs text-white/45 mt-1">
+                      ${formatMoney(effectiveUnitPrice)}
+                    </p>
 
-    {/* ADMIN QUANTITY TIERS */}
-    {quantityDiscounts.map((tier) => {
-      const tierUnavailable =
-        inventory !== null &&
-        inventory < tier.quantity;
+                    {isFlashSaleActive && (
+                      <p className="text-[10px] text-white/25 line-through mt-0.5">
+                        ${formatMoney(price)}
+                      </p>
+                    )}
+                  </button>
 
-      const tierTotal =
-        price *
-        tier.quantity *
-        (1 - tier.discount_percent / 100);
+                  {/* ADMIN QUANTITY TIERS */}
+                  {quantityDiscounts.map((tier) => {
+                    const tierUnavailable =
+                      inventory !== null &&
+                      inventory <
+                        tier.quantity;
 
-      const selected =
-        selectedQuantity === tier.quantity;
+                    const tierTotal =
+                      isFlashSaleActive
+                        ? effectiveUnitPrice *
+                          tier.quantity
+                        : price *
+                          tier.quantity *
+                          (1 -
+                            tier.discount_percent /
+                              100);
 
-      return (
-        <button
-          key={tier.id}
-          type="button"
-          disabled={tierUnavailable}
-          onClick={() =>
-            selectQuantity(tier.quantity)
-          }
-          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-            selected
-              ? "border-blue-300 bg-blue-400/10"
-              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-          } disabled:opacity-30 disabled:cursor-not-allowed`}
-        >
-          {selected && (
-            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-              <Check
-                size={11}
-                strokeWidth={3}
-              />
-            </span>
-          )}
+                    const selected =
+                      selectedQuantity ===
+                      tier.quantity;
 
-          <p className="font-black text-white text-sm">
-            {tier.quantity} Vials
-          </p>
+                    return (
+                      <button
+                        key={tier.id}
+                        type="button"
+                        disabled={tierUnavailable}
+                        onClick={() =>
+                          selectQuantity(
+                            tier.quantity
+                          )
+                        }
+                        className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+                          selected
+                            ? "border-blue-300 bg-blue-400/10"
+                            : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                        } disabled:opacity-30 disabled:cursor-not-allowed`}
+                      >
+                        {selected && (
+                          <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                            <Check
+                              size={11}
+                              strokeWidth={3}
+                            />
+                          </span>
+                        )}
 
-          <p className="text-xs text-white/45 mt-1">
-            ${formatMoney(tierTotal)}
-          </p>
+                        <p className="font-black text-white text-sm">
+                          {tier.quantity} Vials
+                        </p>
 
-          <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
-            Save {tier.discount_percent}%
-          </p>
-        </button>
-      );
-    })}
-  </div>
-</div>
+                        <p className="text-xs text-white/45 mt-1">
+                          ${formatMoney(tierTotal)}
+                        </p>
+
+                        {isFlashSaleActive ? (
+                          <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
+                            Flash Sale
+                          </p>
+                        ) : (
+                          <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
+                            Save {tier.discount_percent}%
+                          </p>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
               {/* FREE GIFT */}
               <div className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-3 mb-5">
@@ -593,9 +768,7 @@ export default function MOTSCPage() {
                   </button>
                 ) : (
                   <button
-                    onClick={
-                      addToCart
-                    }
+                    onClick={addToCart}
                     className="col-span-2 bg-white text-[#081526] hover:bg-blue-100 rounded-full py-4 uppercase tracking-widest text-xs font-bold transition-all flex items-center justify-center gap-2"
                   >
                     <ShoppingCart

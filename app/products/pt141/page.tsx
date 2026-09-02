@@ -838,7 +838,7 @@ export default function PT141Page() {
                 name: "Tesamorelin",
 
                 image:
-                  "/images/tesa5.png",
+                  "/images/tesa5blue.png",
 
                 path:
                   "/products/tesamorelin",

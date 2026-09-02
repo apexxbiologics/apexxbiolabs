@@ -19,17 +19,24 @@ type QuantityDiscountTier = {
   sort_order: number;
 };
 
+type TesamorelinSize = "5mg" | "10mg";
+
+type CoaData = {
+  lab: string;
+  purity: string;
+  content: string;
+  lot: string;
+  href: string;
+};
+
 export default function TesamorelinPage() {
   const [added, setAdded] = useState(false);
 
   const [selectedMg, setSelectedMg] =
-    useState<"5mg" | "10mg">("5mg");
+    useState<TesamorelinSize>("5mg");
 
   const [selectedQuantity, setSelectedQuantity] =
     useState(1);
-
-  const [showPreviousCoa, setShowPreviousCoa] =
-    useState(false);
 
   const [quantityDiscounts, setQuantityDiscounts] =
     useState<QuantityDiscountTier[]>([]);
@@ -62,6 +69,30 @@ export default function TesamorelinPage() {
     },
   };
 
+  /*
+   * SIZE-SPECIFIC COA DATA
+   *
+   * 5mg only shows the 5mg Freedom Diagnostics COA.
+   * 10mg only shows the 10mg Accumark Labs COA.
+   */
+  const coaData: Record<TesamorelinSize, CoaData> = {
+    "5mg": {
+      lab: "Freedom Diagnostics",
+      purity: "99.89%",
+      content: "5.48mg",
+      lot: "Red Cap-1",
+      href: "/images/coas/tesamorelincoa7-10-26.pdf",
+    },
+
+    "10mg": {
+      lab: "Accumark Labs",
+      purity: "99.99%",
+      content: "9.968mg",
+      lot: "TESA2608-01",
+      href: "/images/coas/tesamorelin-10mg-8-26-26.pdf",
+    },
+  };
+
   const selectedProduct =
     productOptions[selectedMg];
 
@@ -70,6 +101,9 @@ export default function TesamorelinPage() {
 
   const selectedPrice =
     productData[selectedMg].price;
+
+  const selectedCoa =
+    coaData[selectedMg];
 
   const isOutOfStock =
     selectedInventory <= 0;
@@ -120,20 +154,13 @@ export default function TesamorelinPage() {
                   .trim();
 
               return (
-                slug ===
-                  "tesamorelin-5mg" ||
+                slug === "tesamorelin-5mg" ||
                 slug === "tesa-5mg" ||
-                item.id ===
-                  "tesamorelin-5mg" ||
-                item.id ===
-                  "TESAMORELIN-5mg" ||
-                (name?.includes(
-                  "tesamorelin"
-                ) &&
+                item.id === "tesamorelin-5mg" ||
+                item.id === "TESAMORELIN-5mg" ||
+                (name?.includes("tesamorelin") &&
                   size === "5mg") ||
-                name?.includes(
-                  "tesamorelin 5"
-                )
+                name?.includes("tesamorelin 5")
               );
             }
           );
@@ -157,20 +184,13 @@ export default function TesamorelinPage() {
                   .trim();
 
               return (
-                slug ===
-                  "tesamorelin-10mg" ||
+                slug === "tesamorelin-10mg" ||
                 slug === "tesa-10mg" ||
-                item.id ===
-                  "tesamorelin-10mg" ||
-                item.id ===
-                  "TESAMORELIN-10mg" ||
-                (name?.includes(
-                  "tesamorelin"
-                ) &&
+                item.id === "tesamorelin-10mg" ||
+                item.id === "TESAMORELIN-10mg" ||
+                (name?.includes("tesamorelin") &&
                   size === "10mg") ||
-                name?.includes(
-                  "tesamorelin 10"
-                )
+                name?.includes("tesamorelin 10")
               );
             }
           );
@@ -234,8 +254,7 @@ export default function TesamorelinPage() {
               ),
 
               discount_percent: Number(
-                tier.discount_percent ||
-                  0
+                tier.discount_percent || 0
               ),
 
               sort_order: Number(
@@ -247,8 +266,7 @@ export default function TesamorelinPage() {
                 tier: QuantityDiscountTier
               ) =>
                 tier.quantity > 1 &&
-                tier.discount_percent >=
-                  0
+                tier.discount_percent >= 0
             )
             .sort(
               (
@@ -294,13 +312,11 @@ export default function TesamorelinPage() {
       [...quantityDiscounts]
         .filter(
           (tier) =>
-            quantity >=
-            tier.quantity
+            quantity >= tier.quantity
         )
         .sort(
           (a, b) =>
-            b.quantity -
-            a.quantity
+            b.quantity - a.quantity
         )[0] || null
     );
   };
@@ -334,10 +350,12 @@ export default function TesamorelinPage() {
     Number(amount).toFixed(2);
 
   const selectSize = (
-    mg: "5mg" | "10mg"
+    mg: TesamorelinSize
   ) => {
     setSelectedMg(mg);
+
     setSelectedQuantity(1);
+
     setAdded(false);
   };
 
@@ -613,9 +631,7 @@ export default function TesamorelinPage() {
                           <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
                             <Check
                               size={12}
-                              strokeWidth={
-                                3
-                              }
+                              strokeWidth={3}
                             />
                           </span>
                         )}
@@ -762,9 +778,7 @@ export default function TesamorelinPage() {
 
                       return (
                         <button
-                          key={
-                            tier.id
-                          }
+                          key={tier.id}
                           type="button"
                           disabled={
                             tierUnavailable
@@ -784,12 +798,8 @@ export default function TesamorelinPage() {
                           {selected && (
                             <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
                               <Check
-                                size={
-                                  12
-                                }
-                                strokeWidth={
-                                  3
-                                }
+                                size={12}
+                                strokeWidth={3}
                               />
                             </span>
                           )}
@@ -884,14 +894,14 @@ export default function TesamorelinPage() {
 
               </div>
 
+              {/* SIZE-SPECIFIC COA LINK */}
               <a
-                href="/images/coas/tesamorelin-10mg-8-26-26.pdf"
+                href={selectedCoa.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
               >
-                View Latest Certificate
-                of Analysis →
+                View {selectedMg} Certificate of Analysis →
               </a>
 
             </div>
@@ -899,23 +909,21 @@ export default function TesamorelinPage() {
         </div>
       </section>
 
-      {/* COA */}
+      {/* SIZE-SPECIFIC COA */}
       <section className="px-6 md:px-10 pb-12">
 
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
 
-          {/* LATEST */}
           <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
 
             <div>
 
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                Accumark Labs
+                {selectedCoa.lab}
               </p>
 
               <h3 className="text-2xl font-black text-white mb-4">
-                Latest Certificate
-                of Analysis
+                Tesamorelin {selectedMg} Certificate of Analysis
               </h3>
 
               <div className="flex flex-wrap gap-2">
@@ -925,15 +933,15 @@ export default function TesamorelinPage() {
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  99.99% Purity
+                  {selectedCoa.purity} Purity
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  9.968mg Content
+                  {selectedCoa.content} Content
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                  Lot: TESA2608-01
+                  Lot: {selectedCoa.lot}
                 </span>
 
               </div>
@@ -942,7 +950,7 @@ export default function TesamorelinPage() {
             <div className="md:text-right">
 
               <p className="text-4xl font-black text-[#A5D8FF]">
-                99.99%
+                {selectedCoa.purity}
               </p>
 
               <p className="uppercase tracking-widest text-white/40 text-xs">
@@ -950,97 +958,17 @@ export default function TesamorelinPage() {
               </p>
 
               <a
-                href="/images/coas/tesamorelin-10mg-8-26-26.pdf"
+                href={selectedCoa.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
               >
-                View Latest COA
+                View {selectedMg} COA
               </a>
 
             </div>
           </div>
 
-          {/* PREVIOUS */}
-          <div className="mt-6 border-t border-white/10 pt-5">
-
-            <button
-              type="button"
-              onClick={() =>
-                setShowPreviousCoa(
-                  (prev) => !prev
-                )
-              }
-              className="w-full rounded-full border border-white/10 bg-white/[0.03] py-3 text-xs uppercase tracking-widest text-white/70 hover:border-blue-400/40 hover:bg-white/[0.06] transition-all"
-            >
-              {showPreviousCoa
-                ? "Hide Previous COA"
-                : "See Previous COA"}
-            </button>
-
-            {showPreviousCoa && (
-              <div className="mt-5 rounded-[24px] border border-white/10 bg-white/[0.025] p-5">
-
-                <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
-
-                  <div>
-
-                    <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                      Freedom Diagnostics
-                    </p>
-
-                    <h3 className="text-xl font-black text-white mb-4">
-                      Previous Certificate
-                      of Analysis
-                    </h3>
-
-                    <div className="flex flex-wrap gap-2">
-
-                      <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
-                        ✓ Identity Confirmed
-                      </span>
-
-                      <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                        99.89% Purity
-                      </span>
-
-                      <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                        5.48mg Content
-                      </span>
-
-                      <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                        Lot: Red Cap-1
-                      </span>
-
-                    </div>
-                  </div>
-
-                  <div className="md:text-right">
-
-                    <p className="text-4xl font-black text-[#A5D8FF]">
-                      99.89%
-                    </p>
-
-                    <p className="uppercase tracking-widest text-white/40 text-xs">
-                      Purity
-                    </p>
-
-                    <a
-                      href="/images/coas/tesamorelincoa7-10-26.pdf"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
-                    >
-                      View Previous COA
-                    </a>
-
-                  </div>
-                </div>
-
-              </div>
-            )}
-
-          </div>
         </div>
       </section>
 
@@ -1059,19 +987,19 @@ export default function TesamorelinPage() {
             [
               ShieldCheck,
               "Third-Party Tested",
-              "Independent analytical testing available for verified research batches.",
+              `${selectedMg} analytical testing is available from ${selectedCoa.lab}.`,
             ],
 
             [
               ClipboardCheck,
               "Batch Documented",
-              "Batch-specific analytical documentation is available.",
+              `${selectedMg} batch-specific analytical documentation is available.`,
             ],
 
             [
               ShieldCheck,
-              "99%+ Verified",
-              "Current analytical documentation reports greater than 99% purity.",
+              `${selectedCoa.purity} Purity`,
+              `${selectedMg} analytical documentation reports ${selectedCoa.purity} purity.`,
             ],
           ].map(
             ([Icon, title, text]: any) => (
@@ -1115,8 +1043,7 @@ export default function TesamorelinPage() {
           </p>
 
           <h2 className="text-3xl font-black text-white mb-4">
-            GH-Releasing Pathway
-            Overview
+            GH-Releasing Pathway Overview
           </h2>
 
           <p className="text-white/65 leading-relaxed max-w-4xl mb-7">
@@ -1177,6 +1104,7 @@ export default function TesamorelinPage() {
             )}
 
           </div>
+
         </div>
       </section>
 
@@ -1186,13 +1114,11 @@ export default function TesamorelinPage() {
         <div className="max-w-7xl mx-auto">
 
           <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-            Frequently Researched
-            Together
+            Frequently Researched Together
           </p>
 
           <h2 className="text-3xl font-black text-white mb-6">
-            Pair With Related
-            Research Compounds
+            Pair With Related Research Compounds
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -1247,12 +1173,8 @@ export default function TesamorelinPage() {
                 <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
 
                   <img
-                    src={
-                      item.image
-                    }
-                    alt={
-                      item.name
-                    }
+                    src={item.image}
+                    alt={item.name}
                     className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
                   />
 

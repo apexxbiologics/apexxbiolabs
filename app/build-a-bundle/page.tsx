@@ -730,7 +730,7 @@ export default function BuildABundlePage() {
                     setSearch(e.target.value)
                   }
                   placeholder="Search products"
-                  className="
+                  className={`
                     w-full rounded-full
                     border border-white/[0.08]
                     bg-white/[0.035]
@@ -741,7 +741,7 @@ export default function BuildABundlePage() {
                     transition
                     focus:border-[#93C5FD]/40
                     focus:bg-white/[0.05]
-                  "
+                  `}
                 />
 
                 {search && (
@@ -777,7 +777,7 @@ export default function BuildABundlePage() {
             ) : (
               <div className="relative">
                 <div
-                  className="
+                  className={`
                     product-scroll
                     max-h-[570px]
                     overflow-y-auto
@@ -785,7 +785,7 @@ export default function BuildABundlePage() {
                     pr-2
                     pb-8
                     scroll-smooth
-                  "
+                  `}
                 >
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {filteredProducts.map((product) => {
@@ -832,16 +832,16 @@ export default function BuildABundlePage() {
                         >
                           {selectedQty > 0 && (
                             <div
-                              className="
+                              className={`
                                 pointer-events-none
                                 absolute inset-0
                                 bg-[radial-gradient(circle_at_top_left,rgba(147,197,253,0.11),transparent_55%)]
-                              "
+                              `}
                             />
                           )}
 
                           <div
-                            className="
+                            className={`
                               relative z-10
                               w-[76px] h-[76px]
                               md:w-[84px] md:h-[84px]
@@ -853,20 +853,20 @@ export default function BuildABundlePage() {
                               transition-transform
                               duration-300
                               group-hover:scale-[1.025]
-                            "
+                            `}
                           >
                             {product.image ? (
                               <img
                                 src={product.image}
                                 alt={product.name}
-                                className="
+                                className={`
                                   w-full h-full
                                   object-contain
                                   p-1.5
                                   transition-transform
                                   duration-300
                                   group-hover:scale-[1.04]
-                                "
+                                `}
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-[#081526]/30">
@@ -876,7 +876,7 @@ export default function BuildABundlePage() {
 
                             {selectedQty > 0 && (
                               <div
-                                className="
+                                className={`
                                   absolute top-1.5 right-1.5
                                   min-w-[21px] h-[21px]
                                   px-1.5
@@ -886,7 +886,7 @@ export default function BuildABundlePage() {
                                   flex items-center justify-center
                                   text-[9px] font-black text-white
                                   shadow-lg
-                                "
+                                `}
                               >
                                 {selectedQty}
                               </div>
@@ -950,7 +950,7 @@ export default function BuildABundlePage() {
                                   addProduct(product)
                                 }
                                 disabled={outOfStock}
-                                className="
+                                className={`
                                   h-9 px-4 rounded-full
                                   bg-white text-[#081526]
                                   text-[10px] font-black uppercase tracking-[0.13em]
@@ -961,7 +961,7 @@ export default function BuildABundlePage() {
                                   active:scale-95
                                   disabled:opacity-30
                                   disabled:hover:scale-100
-                                "
+                                `}
                               >
                                 Add
                               </button>
@@ -974,7 +974,7 @@ export default function BuildABundlePage() {
                 </div>
 
                 <div
-                  className="
+                  className={`
                     pointer-events-none
                     absolute
                     bottom-0 left-0 right-2
@@ -984,12 +984,12 @@ export default function BuildABundlePage() {
                     from-[#081526]
                     via-[#081526]/75
                     to-transparent
-                  "
+                  `}
                 />
 
                 {filteredProducts.length > 6 && (
                   <div
-                    className="
+                    className={`
                       pointer-events-none
                       absolute
                       bottom-2
@@ -1006,7 +1006,7 @@ export default function BuildABundlePage() {
                       uppercase
                       tracking-[0.18em]
                       text-white/35
-                    "
+                    `}
                   >
                     Scroll for more
                   </div>
@@ -1231,7 +1231,7 @@ export default function BuildABundlePage() {
               <button
                 type="button"
                 onClick={addBundleToCart}
-                className="
+                className={`
                   mt-5 w-full rounded-full
                   bg-white py-4
                   text-[10px] font-black uppercase tracking-[0.17em]
@@ -1239,7 +1239,7 @@ export default function BuildABundlePage() {
                   transition
                   hover:bg-[#DCEEFF]
                   flex items-center justify-center gap-2
-                "
+                `}
               >
                 {addedToCart ? (
                   <>

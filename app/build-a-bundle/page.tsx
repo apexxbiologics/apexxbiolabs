@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Search,
   Plus,
@@ -249,6 +249,8 @@ export default function BuildABundlePage() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [canScrollMore, setCanScrollMore] = useState(false);
+  const productScrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -400,6 +402,50 @@ export default function BuildABundlePage() {
         product.slug?.toLowerCase().includes(query)
     );
   }, [products, search]);
+
+
+  const updateProductScrollState = () => {
+    const element = productScrollRef.current;
+
+    if (!element) {
+      setCanScrollMore(false);
+      return;
+    }
+
+    const hasOverflow = element.scrollHeight > element.clientHeight + 2;
+    const atBottom =
+      element.scrollTop + element.clientHeight >=
+      element.scrollHeight - 8;
+
+    setCanScrollMore(hasOverflow && !atBottom);
+  };
+
+  const handleProductScroll = () => {
+    updateProductScrollState();
+  };
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      const element = productScrollRef.current;
+
+      if (element) {
+        element.scrollTop = 0;
+      }
+
+      updateProductScrollState();
+    });
+
+    const handleResize = () => {
+      updateProductScrollState();
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [filteredProducts]);
 
 
   const getBundleQuantity = (productId: string) => {
@@ -777,6 +823,8 @@ export default function BuildABundlePage() {
             ) : (
               <div className="relative">
                 <div
+                  ref={productScrollRef}
+                  onScroll={handleProductScroll}
                   className={`
                     product-scroll
                     max-h-[570px]
@@ -973,21 +1021,23 @@ export default function BuildABundlePage() {
                   </div>
                 </div>
 
-                <div
-                  className={`
-                    pointer-events-none
-                    absolute
-                    bottom-0 left-0 right-2
-                    h-16
-                    z-20
-                    bg-gradient-to-t
-                    from-[#081526]
-                    via-[#081526]/75
-                    to-transparent
-                  `}
-                />
+                {canScrollMore && (
+                  <div
+                    className={`
+                      pointer-events-none
+                      absolute
+                      bottom-0 left-0 right-2
+                      h-16
+                      z-20
+                      bg-gradient-to-t
+                      from-[#081526]
+                      via-[#081526]/75
+                      to-transparent
+                    `}
+                  />
+                )}
 
-                {filteredProducts.length > 6 && (
+                {canScrollMore && (
                   <div
                     className={`
                       pointer-events-none

@@ -9,7 +9,6 @@ import {
   PackageOpen,
   ShoppingCart,
   Sparkles,
-  ChevronDown,
   X,
 } from "lucide-react";
 
@@ -85,7 +84,6 @@ const eligibleBundleKeywords = [
   "kpv",
 ];
 
-const PRODUCTS_PER_PAGE = 8;
 
 const bundleProductImages: Record<string, string> = {
   "apx3": "/images/apx310blue.png",
@@ -250,7 +248,6 @@ export default function BuildABundlePage() {
   const [bundle, setBundle] = useState<BundleItem[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-  const [visibleCount, setVisibleCount] = useState(PRODUCTS_PER_PAGE);
   const [addedToCart, setAddedToCart] = useState(false);
 
   useEffect(() => {
@@ -348,9 +345,6 @@ export default function BuildABundlePage() {
     fetchProducts();
   }, []);
 
-  useEffect(() => {
-    setVisibleCount(PRODUCTS_PER_PAGE);
-  }, [search]);
 
   const totalVials = useMemo(() => {
     return bundle.reduce(
@@ -407,13 +401,6 @@ export default function BuildABundlePage() {
     );
   }, [products, search]);
 
-  const visibleProducts = filteredProducts.slice(
-    0,
-    visibleCount
-  );
-
-  const hasMoreProducts =
-    visibleCount < filteredProducts.length;
 
   const getBundleQuantity = (productId: string) => {
     return (
@@ -771,14 +758,13 @@ export default function BuildABundlePage() {
 
             </div>
 
-            {/* PRODUCT GRID */}
+            {/* PRODUCT SCROLLER */}
             {loading ? (
               <div className="rounded-[24px] border border-white/[0.07] bg-white/[0.02] py-16 text-center text-sm text-white/35">
                 Loading research products...
               </div>
-            ) : visibleProducts.length === 0 ? (
+            ) : filteredProducts.length === 0 ? (
               <div className="rounded-[24px] border border-white/[0.07] bg-white/[0.02] py-16 text-center">
-
                 <PackageOpen
                   size={30}
                   className="mx-auto mb-3 text-white/20"
@@ -787,206 +773,245 @@ export default function BuildABundlePage() {
                 <p className="text-sm text-white/40">
                   No matching products found.
                 </p>
-
               </div>
             ) : (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="relative">
+                <div
+                  className="
+                    product-scroll
+                    max-h-[570px]
+                    overflow-y-auto
+                    overscroll-contain
+                    pr-2
+                    pb-8
+                    scroll-smooth
+                  "
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {filteredProducts.map((product) => {
+                      const selectedQty =
+                        getBundleQuantity(product.id);
 
-                  {visibleProducts.map((product) => {
-                    const selectedQty =
-                      getBundleQuantity(product.id);
+                      const outOfStock =
+                        product.inventory <= 0;
 
-                    const outOfStock =
-                      product.inventory <= 0;
+                      const atInventoryLimit =
+                        selectedQty >= product.inventory;
 
-                    const atInventoryLimit =
-                      selectedQty >= product.inventory;
-
-                    return (
-                      <div
-                        key={product.id}
-                        className={`
-                          group relative flex items-center gap-4
-                          rounded-[20px] border p-3
-                          transition-all duration-200
-                          ${
-                            selectedQty > 0
-                              ? "border-[#93C5FD]/35 bg-[#93C5FD]/[0.07]"
-                              : "border-white/[0.07] bg-white/[0.025] hover:border-white/[0.14] hover:bg-white/[0.04]"
-                          }
-                        `}
-                      >
-
-                        {/* IMAGE */}
-                        <div className="relative w-[74px] h-[74px] md:w-[82px] md:h-[82px] shrink-0 overflow-hidden rounded-[16px] bg-[#93C5FD]">
-
-                          {product.image ? (
-                            <img
-                              src={product.image}
-                              alt={product.name}
-                              className="w-full h-full object-contain p-1.5"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-[#081526]/30">
-                              <PackageOpen size={26} />
-                            </div>
-                          )}
-
+                      return (
+                        <div
+                          key={product.id}
+                          className={`
+                            group relative
+                            flex items-center gap-3.5
+                            min-h-[108px]
+                            rounded-[22px]
+                            border
+                            px-3.5 py-3
+                            overflow-hidden
+                            transition-all
+                            duration-300
+                            ease-out
+                            ${
+                              selectedQty > 0
+                                ? `
+                                  border-[#93C5FD]/40
+                                  bg-[#93C5FD]/[0.08]
+                                  shadow-[0_10px_35px_rgba(147,197,253,0.06)]
+                                `
+                                : `
+                                  border-white/[0.07]
+                                  bg-white/[0.025]
+                                  hover:-translate-y-[2px]
+                                  hover:border-[#93C5FD]/20
+                                  hover:bg-white/[0.045]
+                                  hover:shadow-[0_12px_35px_rgba(0,0,0,0.16)]
+                                `
+                            }
+                          `}
+                        >
                           {selectedQty > 0 && (
-                            <div className="absolute top-1.5 right-1.5 min-w-[20px] h-5 px-1 rounded-full bg-[#081526] flex items-center justify-center text-[9px] font-black">
-                              {selectedQty}
-                            </div>
+                            <div
+                              className="
+                                pointer-events-none
+                                absolute inset-0
+                                bg-[radial-gradient(circle_at_top_left,rgba(147,197,253,0.11),transparent_55%)]
+                              "
+                            />
                           )}
 
-                        </div>
+                          <div
+                            className="
+                              relative z-10
+                              w-[76px] h-[76px]
+                              md:w-[84px] md:h-[84px]
+                              shrink-0
+                              overflow-hidden
+                              rounded-[17px]
+                              bg-[#93C5FD]
+                              shadow-[0_6px_20px_rgba(0,0,0,0.12)]
+                              transition-transform
+                              duration-300
+                              group-hover:scale-[1.025]
+                            "
+                          >
+                            {product.image ? (
+                              <img
+                                src={product.image}
+                                alt={product.name}
+                                className="
+                                  w-full h-full
+                                  object-contain
+                                  p-1.5
+                                  transition-transform
+                                  duration-300
+                                  group-hover:scale-[1.04]
+                                "
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-[#081526]/30">
+                                <PackageOpen size={26} />
+                              </div>
+                            )}
 
-                        {/* DETAILS */}
-                        <div className="min-w-0 flex-1">
-
-                          <h3 className="text-sm md:text-[15px] font-bold leading-snug text-white">
-                            {product.name}
-                          </h3>
-
-                          {product.size && (
-                            <p className="mt-0.5 text-[11px] text-white/30">
-                              {product.size}
-                            </p>
-                          )}
-
-                          <p className="mt-1.5 text-sm font-semibold text-[#C9E2FF]">
-                            ${formatMoney(product.price)}
-                          </p>
-
-                          {outOfStock && (
-                            <p className="mt-1 text-[9px] uppercase tracking-[0.16em] text-red-300">
-                              Out of stock
-                            </p>
-                          )}
-
-                        </div>
-
-                        {/* ADD / QUANTITY */}
-                        <div className="shrink-0">
-
-                          {selectedQty > 0 ? (
-                            <div className="flex items-center rounded-full border border-white/[0.09] bg-[#071321] p-1">
-
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  removeProduct(product.id)
-                                }
-                                className="w-8 h-8 rounded-full flex items-center justify-center text-white/55 hover:bg-white/[0.07] hover:text-white"
+                            {selectedQty > 0 && (
+                              <div
+                                className="
+                                  absolute top-1.5 right-1.5
+                                  min-w-[21px] h-[21px]
+                                  px-1.5
+                                  rounded-full
+                                  bg-[#081526]
+                                  border border-white/10
+                                  flex items-center justify-center
+                                  text-[9px] font-black text-white
+                                  shadow-lg
+                                "
                               >
-                                <Minus size={14} />
-                              </button>
-
-                              <span className="w-7 text-center text-xs font-black">
                                 {selectedQty}
-                              </span>
+                              </div>
+                            )}
+                          </div>
 
+                          <div className="relative z-10 min-w-0 flex-1">
+                            <h3 className="text-sm md:text-[15px] font-bold leading-snug text-white truncate">
+                              {product.name}
+                            </h3>
+
+                            {product.size && (
+                              <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-white/30">
+                                {product.size}
+                              </p>
+                            )}
+
+                            <p className="mt-2 text-sm font-bold text-[#C9E2FF]">
+                              ${formatMoney(product.price)}
+                            </p>
+
+                            {outOfStock && (
+                              <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.16em] text-red-300">
+                                Out of stock
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="relative z-10 shrink-0">
+                            {selectedQty > 0 ? (
+                              <div className="flex items-center rounded-full border border-white/[0.09] bg-[#071321]/90 p-1 shadow-lg">
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    removeProduct(product.id)
+                                  }
+                                  className="w-8 h-8 rounded-full flex items-center justify-center text-white/55 transition-all hover:bg-white/[0.07] hover:text-white active:scale-90"
+                                >
+                                  <Minus size={14} />
+                                </button>
+
+                                <span className="w-7 text-center text-xs font-black">
+                                  {selectedQty}
+                                </span>
+
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    addProduct(product)
+                                  }
+                                  disabled={atInventoryLimit}
+                                  className="w-8 h-8 rounded-full flex items-center justify-center bg-white text-[#081526] transition-all hover:bg-[#DCEEFF] hover:scale-105 active:scale-90 disabled:opacity-30 disabled:hover:scale-100"
+                                >
+                                  <Plus size={14} />
+                                </button>
+                              </div>
+                            ) : (
                               <button
                                 type="button"
                                 onClick={() =>
                                   addProduct(product)
                                 }
-                                disabled={atInventoryLimit}
-                                className="w-8 h-8 rounded-full flex items-center justify-center bg-white text-[#081526] hover:bg-[#DCEEFF] disabled:opacity-30"
+                                disabled={outOfStock}
+                                className="
+                                  h-9 px-4 rounded-full
+                                  bg-white text-[#081526]
+                                  text-[10px] font-black uppercase tracking-[0.13em]
+                                  shadow-lg
+                                  transition-all duration-200
+                                  hover:bg-[#DCEEFF]
+                                  hover:scale-[1.04]
+                                  active:scale-95
+                                  disabled:opacity-30
+                                  disabled:hover:scale-100
+                                "
                               >
-                                <Plus size={14} />
+                                Add
                               </button>
-
-                            </div>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                addProduct(product)
-                              }
-                              disabled={outOfStock}
-                              className="
-                                h-9 px-4 rounded-full
-                                bg-white text-[#081526]
-                                text-[10px] font-black uppercase tracking-[0.13em]
-                                transition
-                                hover:bg-[#DCEEFF]
-                                disabled:opacity-30
-                              "
-                            >
-                              Add
-                            </button>
-                          )}
-
+                            )}
+                          </div>
                         </div>
-
-                      </div>
-                    );
-                  })}
-
+                      );
+                    })}
+                  </div>
                 </div>
 
-                {/* SHOW MORE */}
-                {hasMoreProducts && (
-                  <div className="flex justify-center mt-6">
+                <div
+                  className="
+                    pointer-events-none
+                    absolute
+                    bottom-0 left-0 right-2
+                    h-16
+                    z-20
+                    bg-gradient-to-t
+                    from-[#081526]
+                    via-[#081526]/75
+                    to-transparent
+                  "
+                />
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setVisibleCount(
-                          (current) =>
-                            current + PRODUCTS_PER_PAGE
-                        )
-                      }
-                      className="
-                        group inline-flex items-center gap-2
-                        rounded-full border border-white/[0.09]
-                        bg-white/[0.025]
-                        px-6 py-3
-                        text-[10px] font-bold uppercase tracking-[0.18em]
-                        text-white/60
-                        transition
-                        hover:border-white/[0.16]
-                        hover:bg-white/[0.05]
-                        hover:text-white
-                      "
-                    >
-                      Show More
-
-                      <ChevronDown
-                        size={14}
-                        className="transition-transform group-hover:translate-y-0.5"
-                      />
-
-                    </button>
-
+                {filteredProducts.length > 6 && (
+                  <div
+                    className="
+                      pointer-events-none
+                      absolute
+                      bottom-2
+                      left-1/2
+                      -translate-x-1/2
+                      z-30
+                      rounded-full
+                      border border-white/[0.08]
+                      bg-[#0C1B2E]/90
+                      backdrop-blur-md
+                      px-3 py-1.5
+                      text-[8px]
+                      font-bold
+                      uppercase
+                      tracking-[0.18em]
+                      text-white/35
+                    "
+                  >
+                    Scroll for more
                   </div>
                 )}
-
-                {!hasMoreProducts &&
-                  filteredProducts.length > PRODUCTS_PER_PAGE &&
-                  !search && (
-                    <div className="mt-6 text-center">
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setVisibleCount(PRODUCTS_PER_PAGE);
-
-                          window.scrollTo({
-                            top: 500,
-                            behavior: "smooth",
-                          });
-                        }}
-                        className="text-[10px] uppercase tracking-[0.18em] text-white/30 hover:text-white/60"
-                      >
-                        Show Less
-                      </button>
-
-                    </div>
-                  )}
-
-              </>
+              </div>
             )}
 
           </div>
@@ -1244,6 +1269,31 @@ export default function BuildABundlePage() {
         </div>
 
       </section>
+
+
+      <style jsx global>{`
+        .product-scroll {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(147, 197, 253, 0.35) transparent;
+        }
+
+        .product-scroll::-webkit-scrollbar {
+          width: 5px;
+        }
+
+        .product-scroll::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        .product-scroll::-webkit-scrollbar-thumb {
+          background: rgba(147, 197, 253, 0.28);
+          border-radius: 999px;
+        }
+
+        .product-scroll::-webkit-scrollbar-thumb:hover {
+          background: rgba(147, 197, 253, 0.5);
+        }
+      `}</style>
 
     </main>
   );

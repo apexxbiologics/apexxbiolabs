@@ -41,6 +41,8 @@ type CartItem = {
   quantity?: number;
   image?: string;
   path?: string;
+  size?: string | null;
+  databaseProductId?: string | null;
   bundleId?: string | null;
   bundleType?: string | null;
   bundleDiscountPercent?: number;
@@ -323,6 +325,12 @@ export async function POST(request: Request) {
         quantity: Number(item.quantity || 0),
         image: item.image,
         path: item.path,
+        size: item.size
+          ? String(item.size).trim()
+          : null,
+        databaseProductId: item.databaseProductId
+          ? String(item.databaseProductId).trim()
+          : null,
         bundleId: item.bundleId
           ? String(item.bundleId).trim()
           : null,
@@ -487,33 +495,185 @@ export async function POST(request: Request) {
       }
     }
 
+    const normalizeProductKey = (value: unknown) =>
+      String(value || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "");
+
     const findDatabaseProduct = (cartItem: CartItem) => {
+      const requestedDatabaseId = String(
+        cartItem.databaseProductId || ""
+      )
+        .trim()
+        .toLowerCase();
+
       const requestedId = String(
         cartItem.id || ""
       )
         .trim()
         .toLowerCase();
 
-      return (
-        databaseProducts.find((product) => {
-          const productId = String(
-            product.id || ""
-          )
-            .trim()
-            .toLowerCase();
+      const requestedName = String(
+        cartItem.name || ""
+      )
+        .trim()
+        .toLowerCase();
 
-          const productSlug = String(
-            product.slug || ""
-          )
-            .trim()
-            .toLowerCase();
+      const requestedSize = String(
+        cartItem.size || ""
+      )
+        .trim()
+        .toLowerCase();
 
-          return (
-            productId === requestedId ||
-            productSlug === requestedId
+      /*
+       * 1. Prefer the actual Supabase UUID supplied by newer product pages.
+       *    This is the strongest and least ambiguous match.
+       */
+      if (requestedDatabaseId) {
+        const exactDatabaseIdMatch =
+          databaseProducts.find(
+            (product) =>
+              String(product.id || "")
+                .trim()
+                .toLowerCase() ===
+              requestedDatabaseId
           );
-        }) || null
-      );
+
+        if (exactDatabaseIdMatch) {
+          return exactDatabaseIdMatch;
+        }
+      }
+
+      /*
+       * 2. Preserve legacy carts that already stored the Supabase UUID
+       *    directly in item.id.
+       */
+      if (requestedId) {
+        const exactIdMatch =
+          databaseProducts.find(
+            (product) =>
+              String(product.id || "")
+                .trim()
+                .toLowerCase() === requestedId
+          );
+
+        if (exactIdMatch) {
+          return exactIdMatch;
+        }
+      }
+
+      /*
+       * 3. Match a legacy frontend id directly to the Supabase slug.
+       */
+      if (requestedId) {
+        const exactSlugMatch =
+          databaseProducts.find(
+            (product) =>
+              String(product.slug || "")
+                .trim()
+                .toLowerCase() === requestedId
+          );
+
+        if (exactSlugMatch) {
+          return exactSlugMatch;
+        }
+      }
+
+      const normalizedRequestedId =
+        normalizeProductKey(requestedId);
+
+      const normalizedRequestedName =
+        normalizeProductKey(requestedName);
+
+      const normalizedRequestedSize =
+        normalizeProductKey(requestedSize);
+
+      /*
+       * 4. Normalize punctuation differences such as:
+       *    BPC-157 <-> bpc157
+       *    SS-31   <-> ss31
+       *    APX-3   <-> apx3
+       */
+      if (normalizedRequestedId) {
+        const normalizedSlugMatch =
+          databaseProducts.find(
+            (product) =>
+              normalizeProductKey(product.slug) ===
+              normalizedRequestedId
+          );
+
+        if (normalizedSlugMatch) {
+          return normalizedSlugMatch;
+        }
+      }
+
+      /*
+       * 5. Match the full product name. This fixes products whose cart id
+       *    is short (for example "wolverine") while Supabase uses a
+       *    size-specific slug such as "wolverine-20mg".
+       */
+      if (normalizedRequestedName) {
+        const exactNameMatch =
+          databaseProducts.find(
+            (product) =>
+              normalizeProductKey(product.name) ===
+              normalizedRequestedName
+          );
+
+        if (exactNameMatch) {
+          return exactNameMatch;
+        }
+      }
+
+      /*
+       * 6. Some Supabase rows store the strength in the separate size
+       *    column instead of inside name. Compare "name + size" so
+       *    variants such as APX-3 10mg and APX-3 20mg stay distinct.
+       */
+      if (normalizedRequestedName) {
+        const nameAndSizeMatch =
+          databaseProducts.find((product) => {
+            const combinedProductLabel =
+              normalizeProductKey(
+                `${product.name || ""} ${product.size || ""}`
+              );
+
+            return (
+              combinedProductLabel ===
+              normalizedRequestedName
+            );
+          });
+
+        if (nameAndSizeMatch) {
+          return nameAndSizeMatch;
+        }
+      }
+
+      /*
+       * 7. Final safe fallback when the cart sends name and size
+       *    separately. Both must match so we do not accidentally resolve
+       *    one strength to another.
+       */
+      if (
+        normalizedRequestedName &&
+        normalizedRequestedSize
+      ) {
+        const separateNameSizeMatch =
+          databaseProducts.find(
+            (product) =>
+              normalizeProductKey(product.name) ===
+                normalizedRequestedName &&
+              normalizeProductKey(product.size) ===
+                normalizedRequestedSize
+          );
+
+        if (separateNameSizeMatch) {
+          return separateNameSizeMatch;
+        }
+      }
+
+      return null;
     };
 
     /*

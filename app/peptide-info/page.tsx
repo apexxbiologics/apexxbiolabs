@@ -431,14 +431,14 @@ export default function PeptideInfoPage() {
       ],
     },
     {
-      id: "mitomax",
+      id: "mito-x",
       category: "Mitochondrial Research Blend",
-      name: "MitoMax",
+      name: "Mito-X",
       details: "Research Blend | Mitochondrial & Cellular Energy Research",
       description:
-        "MitoMax is a research blend intended for laboratory investigations involving mitochondrial signaling, cellular energy pathways, oxidative-stress responses, and metabolic research models.",
+        "Mito-X is a research blend intended for laboratory investigations involving mitochondrial signaling, cellular energy pathways, oxidative-stress responses, and metabolic research models.",
       mechanism:
-        "Laboratory research may evaluate MitoMax in relation to mitochondrial communication, cellular energy regulation, redox signaling, metabolic pathway activity, and cellular stress-response mechanisms.",
+        "Laboratory research may evaluate Mito-X in relation to mitochondrial communication, cellular energy regulation, redox signaling, metabolic pathway activity, and cellular stress-response mechanisms.",
       areas: [
         "Mitochondrial signaling research",
         "Cellular energy studies",

@@ -6,7 +6,6 @@ import {
   ShoppingCart,
   Trash2,
   ShieldCheck,
-  PackageCheck,
   PackageOpen,
   Minus,
   Plus,
@@ -2654,29 +2653,7 @@ export default function CartPage() {
                   </label>
 
                 </div>
-
-                <div className="flex items-center gap-3 rounded-[18px] border border-white/[0.08] bg-white/[0.03] p-4">
-
-                  <PackageCheck
-                    className="text-[#A5D8FF]"
-                    size={20}
-                  />
-
-                  <div>
-
-                    <p className="text-sm text-white font-bold">
-                      Quality Documentation
-                    </p>
-
-                    <p className="text-white/40 text-xs">
-                      COAs available for verified batches.
-                    </p>
-
-                  </div>
-
-                </div>
-
-                <Link
+<Link
                   href="/products"
                   className="block border border-white/[0.09] bg-white/[0.025] text-white rounded-full px-7 py-3.5 text-[10px] uppercase tracking-[0.16em] font-bold text-center hover:border-[#93C5FD]/40 hover:bg-white/[0.05] transition-all"
                 >

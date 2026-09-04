@@ -57,25 +57,21 @@ export default function Navbar() {
     },
   ];
 
-  const normalizedSearch =
-    search
-      .trim()
-      .toLowerCase()
-      .replace(/[-_\s/]/g, "");
+  const normalizedSearch = search
+    .trim()
+    .toLowerCase()
+    .replace(/[-_\s/]/g, "");
 
   const filteredProducts = products.filter((product) => {
-    const normalizedProduct =
-      product.name
-        .toLowerCase()
-        .replace(/[-_\s/]/g, "");
+    const normalizedProduct = product.name
+      .toLowerCase()
+      .replace(/[-_\s/]/g, "");
 
     return normalizedProduct.includes(normalizedSearch);
   });
 
   const updateCartCount = () => {
-    const cart = JSON.parse(
-      localStorage.getItem("cart") || "[]"
-    );
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
     const count = cart.reduce(
       (sum: number, item: any) =>
@@ -89,15 +85,8 @@ export default function Navbar() {
   useEffect(() => {
     updateCartCount();
 
-    window.addEventListener(
-      "cartUpdated",
-      updateCartCount
-    );
-
-    window.addEventListener(
-      "storage",
-      updateCartCount
-    );
+    window.addEventListener("cartUpdated", updateCartCount);
+    window.addEventListener("storage", updateCartCount);
 
     return () => {
       window.removeEventListener(
@@ -123,14 +112,14 @@ export default function Navbar() {
         }
 
         .apexx-scrollbar::-webkit-scrollbar {
-          width: 7px;
+          width: 6px;
         }
 
         .apexx-scrollbar::-webkit-scrollbar-track {
           background: rgba(255, 255, 255, 0.025);
           border-radius: 999px;
-          margin-top: 18px;
-          margin-bottom: 18px;
+          margin-top: 14px;
+          margin-bottom: 14px;
         }
 
         .apexx-scrollbar::-webkit-scrollbar-thumb {
@@ -152,9 +141,14 @@ export default function Navbar() {
         }
       `}</style>
 
+      {/* =========================
+          MAIN NAVBAR
+      ========================== */}
+
       <header className="sticky top-0 left-0 z-50 w-full border-b border-blue-900/50 bg-[#071323]/95 px-5 py-4 backdrop-blur-xl md:px-10">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
 
+          {/* Left */}
           <div className="flex items-center gap-6">
             <button
               onClick={() => setMenuOpen(true)}
@@ -173,6 +167,7 @@ export default function Navbar() {
             </a>
           </div>
 
+          {/* Desktop Navigation */}
           <nav className="hidden items-center gap-10 text-sm font-bold uppercase tracking-[0.22em] text-white md:flex">
             <a
               href="/"
@@ -210,7 +205,10 @@ export default function Navbar() {
             </a>
           </nav>
 
+          {/* Right */}
           <div className="flex items-center gap-4">
+
+            {/* Search */}
             <button
               onClick={() =>
                 setSearchOpen(!searchOpen)
@@ -221,6 +219,7 @@ export default function Navbar() {
               <Search size={25} />
             </button>
 
+            {/* Favorites */}
             <a
               href="/account/favorites"
               className="hidden rounded-full border border-white/10 bg-white/[0.04] p-3 text-white transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-300 sm:inline-flex"
@@ -229,6 +228,7 @@ export default function Navbar() {
               <Heart size={25} />
             </a>
 
+            {/* Account */}
             <a
               href="/account"
               className="hidden rounded-full border border-white/10 bg-white/[0.04] p-3 text-white transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-300 sm:inline-flex"
@@ -237,6 +237,7 @@ export default function Navbar() {
               <UserCircle size={26} />
             </a>
 
+            {/* Cart */}
             <a
               href="/cart"
               className="relative rounded-full border border-white/10 bg-white/[0.04] p-3 text-white transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-300"
@@ -253,11 +254,13 @@ export default function Navbar() {
           </div>
         </div>
 
+        {/* =========================
+            SEARCH BAR
+        ========================== */}
+
         {searchOpen && (
           <div className="mx-auto mt-5 max-w-4xl">
-
             <div className="relative rounded-[24px] border border-blue-400/25 bg-gradient-to-r from-[#06101f] via-[#09182b] to-[#06101f] p-[1px] shadow-[0_16px_50px_rgba(37,99,235,0.12)]">
-
               <div className="relative flex items-center rounded-[23px] bg-[#050d1a]/95 px-5">
 
                 <Search
@@ -288,9 +291,9 @@ export default function Navbar() {
                     <X size={15} />
                   </button>
                 )}
-
               </div>
 
+              {/* Search Results */}
               {search &&
                 filteredProducts.length > 0 && (
                   <div className="absolute left-0 right-0 top-[calc(100%+10px)] z-[999] overflow-hidden rounded-[24px] border border-blue-400/20 bg-[#081526]/98 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-xl">
@@ -322,10 +325,10 @@ export default function Navbar() {
                   </div>
                 )}
 
+              {/* No Results */}
               {search &&
                 filteredProducts.length === 0 && (
                   <div className="absolute left-0 right-0 top-[calc(100%+10px)] z-[999] rounded-[24px] border border-blue-400/20 bg-[#081526]/98 px-6 py-5 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-xl">
-
                     <p className="font-semibold text-white/70">
                       No products found
                     </p>
@@ -333,127 +336,110 @@ export default function Navbar() {
                     <p className="mt-1 text-sm text-white/35">
                       Try another product name.
                     </p>
-
                   </div>
                 )}
-
             </div>
-
           </div>
         )}
       </header>
 
+      {/* =========================
+          SIDE MENU
+      ========================== */}
+
       {menuOpen && (
         <div className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-md">
 
+          {/* Click outside to close */}
           <button
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 h-full w-full cursor-default"
             aria-label="Close menu overlay"
           />
 
-          <aside className="apexx-scrollbar relative h-full w-[90%] max-w-[520px] overflow-y-auto border-r border-blue-900/50 bg-[#071323] px-7 py-8 shadow-2xl md:px-10">
+          {/* Sidebar */}
+          <aside className="apexx-scrollbar relative h-full w-[88%] max-w-[430px] overflow-y-auto border-r border-blue-900/50 bg-[#071323] px-6 py-6 shadow-2xl sm:px-8">
 
-            <div className="mb-12 flex items-center justify-between">
+            {/* Sidebar Header */}
+            <div className="mb-7 flex items-center justify-between">
 
-              <img
-                src="/images/logo.png"
-                alt="Apexx Biolabs"
-                className="h-16 w-auto md:h-20"
-              />
+              <a href="/">
+                <img
+                  src="/images/logo.png"
+                  alt="Apexx Biolabs"
+                  className="h-14 w-auto md:h-16"
+                />
+              </a>
 
               <button
                 onClick={() =>
                   setMenuOpen(false)
                 }
-                className="rounded-full border border-white/10 bg-white/[0.04] p-3 text-white transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-300"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-300"
                 aria-label="Close menu"
               >
-                <X size={25} />
+                <X size={21} />
               </button>
-
             </div>
 
-            <div className="space-y-10 pb-10">
+            {/* Sidebar Sections */}
+            <div className="space-y-6 pb-8">
 
+              {/* ACCOUNT */}
               <MenuSection
                 title="Account"
                 links={[
                   ["Dashboard", "/account"],
                   ["Favorites", "/account/favorites"],
-                  ["Security Settings", "/account/settings"],
-                  ["Order Status", "/order-status"],
+                  ["Orders", "/order-status"],
+                  ["Security", "/account/settings"],
                 ]}
               />
 
+              {/* SHOP */}
               <MenuSection
-                title="Navigation"
+                title="Shop"
                 links={[
-                  ["Home", "/"],
                   ["All Products", "/products"],
                   ["Build a Bundle", "/build-a-bundle"],
-                  ["Certificates of Analysis", "/coas"],
-                  ["Contact", "/contact"],
+                  ["COAs", "/coas"],
                 ]}
               />
 
+              {/* RESEARCH */}
               <MenuSection
                 title="Research"
                 links={[
-                  ["Research Library", "/peptide-info"],
-                  ["FAQ", "/faq"],
-                ]}
-              />
-
-              <MenuSection
-                title="Research Referral"
-                links={[
                   [
-                    "Program Overview",
+                    "Research Library",
+                    "/peptide-info",
+                  ],
+                  ["FAQ", "/faq"],
+                  [
+                    "Referral Program",
                     "/research-referral",
                   ],
-                  [
-                    "Apply to Partner",
-                    "/research-referral#apply",
-                  ],
-                  [
-                    "Program Terms",
-                    "/research-referral/terms",
-                  ],
                 ]}
               />
 
-              <MenuSection
-                title="Products"
-                links={[
-                  ["Metabolic Research", "/products"],
-                  ["Tissue Repair Research", "/products"],
-                  ["Neuro Research", "/products"],
-                  ["Research Solutions", "/products"],
-                ]}
-              />
-
+              {/* SUPPORT */}
               <MenuSection
                 title="Support"
                 links={[
                   ["Shipping", "/shipping"],
-                  ["Returns & Refunds", "/refunds"],
-                  ["Contact Support", "/contact"],
+                  ["Returns", "/refunds"],
+                  ["Contact", "/contact"],
                 ]}
               />
 
+              {/* LEGAL */}
               <MenuSection
                 title="Legal"
                 links={[
-                  ["Privacy Policy", "/privacy"],
-                  ["Terms of Service", "/terms"],
-                  [
-                    "Research Referral Terms",
-                    "/research-referral/terms",
-                  ],
+                  ["Privacy", "/privacy"],
+                  ["Terms", "/terms"],
                 ]}
               />
-
             </div>
           </aside>
         </div>
@@ -461,6 +447,10 @@ export default function Navbar() {
     </>
   );
 }
+
+/* =========================
+   SIDEBAR SECTION
+========================== */
 
 function MenuSection({
   title,
@@ -472,31 +462,37 @@ function MenuSection({
   return (
     <div>
 
-      <p className="mb-4 text-xs uppercase tracking-[0.38em] text-blue-300">
+      {/* Section Heading */}
+      <p className="mb-2 px-1 text-[10px] font-bold uppercase tracking-[0.28em] text-blue-300/70">
         {title}
       </p>
 
-      <div className="space-y-3">
+      {/* Section Links */}
+      <div className="overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.025]">
 
-        {links.map(([label, href]) => (
-          <a
-            key={label}
-            href={href}
-            className="group flex items-center justify-between rounded-[1.4rem] border border-white/10 bg-white/[0.045] px-6 py-5 text-white/75 transition hover:border-blue-400/60 hover:bg-blue-500/10 hover:text-white"
-          >
-            <span className="text-sm font-bold uppercase tracking-[0.18em]">
-              {label}
-            </span>
+        {links.map(
+          ([label, href], index) => (
+            <a
+              key={label}
+              href={href}
+              className={`group flex items-center justify-between px-4 py-3.5 text-white/70 transition duration-200 hover:bg-blue-500/10 hover:text-white ${
+                index !== links.length - 1
+                  ? "border-b border-white/[0.06]"
+                  : ""
+              }`}
+            >
+              <span className="text-[13px] font-semibold tracking-[0.04em]">
+                {label}
+              </span>
 
-            <ChevronRight
-              size={18}
-              className="text-white/25 transition group-hover:translate-x-1 group-hover:text-blue-300"
-            />
-          </a>
-        ))}
-
+              <ChevronRight
+                size={15}
+                className="text-white/20 transition duration-200 group-hover:translate-x-0.5 group-hover:text-blue-300"
+              />
+            </a>
+          )
+        )}
       </div>
-
     </div>
   );
 }

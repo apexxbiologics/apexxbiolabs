@@ -743,187 +743,129 @@ Receive a Complimentary Gift With Any 8 Vials
 </section>
 
 {/* QUALITY VERIFICATION */}
+<Reveal>
+  <section className="relative overflow-hidden border-y border-white/[0.06] bg-[#081526] px-4 py-14 sm:px-6 md:py-16">
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_right,rgba(96,165,250,0.07),transparent_55%)]" />
 
-<section className="relative py-24 px-6 bg-[#081526] border-b border-white/10 overflow-hidden">
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
+    <div className="relative z-10 mx-auto max-w-6xl">
 
-  <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-
-    <div>
-      <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
-        Quality Verification
-      </p>
-
-      <h2 className="text-5xl md:text-7xl font-black tracking-tight text-white leading-[0.95] mb-8">
-        Quality You Can Verify.
-      </h2>
-
-      <p className="text-white/70 text-lg md:text-xl leading-relaxed mb-10 max-w-2xl">
-        Every batch is supported by documentation and analytical review for
-        research-focused consistency, purity, and transparency.
-      </p>
-
-      <div className="mb-10 grid min-w-0 grid-cols-3 gap-3 border-y border-white/10 py-8 sm:gap-6">
-
+      {/* HEADER */}
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-[1fr_0.8fr] md:items-end">
         <div>
-          <p className="text-2xl font-black text-white sm:text-4xl">99%+</p>
-          <p className="text-white/50 text-sm mt-2">Purity Target</p>
+          <p className="mb-3 text-[10px] font-black uppercase tracking-[0.28em] text-blue-300">
+            Quality Verification
+          </p>
+
+          <h2 className="text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl md:text-5xl">
+            Quality you can verify.
+          </h2>
         </div>
 
-        <div>
-          <p className="text-2xl font-black text-white sm:text-4xl">HPLC</p>
-          <p className="text-white/50 text-sm mt-2">Analysis</p>
+        <p className="max-w-xl text-sm leading-6 text-white/45 md:justify-self-end">
+          Available batch documentation and analytical review provide
+          transparent information for verified research products.
+        </p>
+      </div>
+
+      {/* METRICS */}
+      <div className="mt-8 grid grid-cols-3 border-y border-white/[0.08]">
+        <div className="py-5 pr-4">
+          <p className="text-xl font-black text-white sm:text-2xl">
+            99%+
+          </p>
+          <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white/35">
+            Purity Target
+          </p>
         </div>
 
-        <div>
-          <p className="text-2xl font-black text-white sm:text-4xl">COA</p>
-          <p className="text-white/50 text-sm mt-2">Batch Records</p>
+        <div className="border-x border-white/[0.08] px-4 py-5 sm:px-6">
+          <p className="text-xl font-black text-white sm:text-2xl">
+            HPLC
+          </p>
+          <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white/35">
+            Analysis
+          </p>
+        </div>
+
+        <div className="py-5 pl-4 sm:pl-6">
+          <p className="text-xl font-black text-white sm:text-2xl">
+            COA
+          </p>
+          <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white/35">
+            Batch Records
+          </p>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-3 mb-8">
-        {[
-          { id: "potency", label: "Potency" },
-          { id: "purity", label: "Purity" },
-          { id: "stability", label: "Stability" },
-          { id: "safety", label: "Safety" },
-          { id: "consistency", label: "Consistency" },
-        ].map((item) => (
-          <button
-            key={item.id}
-            onClick={() => setActiveQuality(item.id)}
-            className={`rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-widest transition-all ${
-              activeQuality === item.id
-                ? "bg-blue-500 text-white shadow-[0_0_25px_rgba(96,165,250,0.35)]"
-                : "bg-white/[0.04] border border-white/10 text-white/60 hover:border-blue-400/50 hover:text-white"
-            }`}
+      {/* CONTENT */}
+      <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-12">
+
+        {/* LEFT */}
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-300">
+            Analytical Documentation
+          </p>
+
+          <h3 className="mt-3 text-2xl font-black tracking-tight text-white sm:text-3xl">
+            Clear batch information.
+          </h3>
+
+          <p className="mt-3 max-w-lg text-sm leading-6 text-white/45">
+            Review available Certificates of Analysis and supporting
+            documentation for verified batches before or after your purchase.
+          </p>
+
+          {/* SIMPLE FEATURES */}
+          <div className="mt-6 space-y-3">
+            {[
+              "Batch-specific documentation",
+              "Analytical purity information",
+              "Accessible COA records",
+            ].map((item) => (
+              <div
+                key={item}
+                className="flex items-center gap-3 text-sm text-white/60"
+              >
+                <Check
+                  size={14}
+                  strokeWidth={3}
+                  className="shrink-0 text-blue-300"
+                />
+                {item}
+              </div>
+            ))}
+          </div>
+
+          <Link
+            href="/coas"
+            className="mt-7 inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-blue-300 transition hover:text-blue-200"
           >
-            {item.label}
-          </button>
-        ))}
-      </div>
-
-      <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
-        {activeQuality === "potency" && (
-          <div>
-            <h3 className="text-2xl font-black mb-4 text-white">
-              Verified Potency
-            </h3>
-
-            <p className="text-white/70 leading-relaxed mb-6">
-              Analytical testing helps confirm that each batch aligns with the
-              stated research concentration and identity specifications.
-            </p>
-
-            <div className="border-l-4 border-blue-400 bg-[#102A4A] rounded-xl p-5 text-white/70">
-              <strong className="text-white">Why it matters:</strong> Supports
-              consistent research preparation and batch-to-batch confidence.
-            </div>
-          </div>
-        )}
-
-        {activeQuality === "purity" && (
-          <div>
-            <h3 className="text-2xl font-black mb-4 text-white">
-              Purity Documentation
-            </h3>
-
-            <p className="text-white/70 leading-relaxed mb-6">
-              COAs provide batch-level information so researchers can review
-              purity data before use in laboratory settings.
-            </p>
-
-            <div className="border-l-4 border-blue-400 bg-[#102A4A] rounded-xl p-5 text-white/70">
-              <strong className="text-white">Why it matters:</strong> Clear
-              documentation helps support transparency and trust.
-            </div>
-          </div>
-        )}
-
-        {activeQuality === "stability" && (
-          <div>
-            <h3 className="text-2xl font-black mb-4 text-white">
-              Stability-Focused Handling
-            </h3>
-
-            <p className="text-white/70 leading-relaxed mb-6">
-              Products are packaged with research storage and handling standards
-              in mind to help preserve batch integrity.
-            </p>
-
-            <div className="border-l-4 border-blue-400 bg-[#102A4A] rounded-xl p-5 text-white/70">
-              <strong className="text-white">Why it matters:</strong> Proper
-              handling supports reliable research workflows.
-            </div>
-          </div>
-        )}
-
-        {activeQuality === "safety" && (
-          <div>
-            <h3 className="text-2xl font-black mb-4 text-white">
-              Research-Use Standards
-            </h3>
-
-            <p className="text-white/70 leading-relaxed mb-6">
-              Apexx Biolabs products are intended strictly for lawful laboratory
-              research use only and are not for human or veterinary use.
-            </p>
-
-            <div className="border-l-4 border-blue-400 bg-[#102A4A] rounded-xl p-5 text-white/70">
-              <strong className="text-white">Why it matters:</strong> Clear
-              use limitations keep the catalog research-focused.
-            </div>
-          </div>
-        )}
-
-        {activeQuality === "consistency" && (
-          <div>
-            <h3 className="text-2xl font-black mb-4 text-white">
-              Batch Consistency
-            </h3>
-
-            <p className="text-white/70 leading-relaxed mb-6">
-              Batch records and testing documentation help support consistency
-              across research materials.
-            </p>
-
-            <div className="border-l-4 border-blue-400 bg-[#102A4A] rounded-xl p-5 text-white/70">
-              <strong className="text-white">Why it matters:</strong> Consistent
-              records help researchers compare and track batches.
-            </div>
-          </div>
-          
-        )}
-        
-      </div>
-    </div>
-
-    <div className="relative min-h-[520px] w-full min-w-0 max-w-full overflow-hidden rounded-[40px] sm:min-h-[650px]">
-      <img
-        src="/images/tb500hex.png"
-        alt="TB-500"
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-
-      <div className="absolute top-8 right-8 z-20 text-right">
-        <p className="text-white text-3xl font-black">99%+ Purity</p>
-        <p className="text-white/80 text-lg">Verified by HPLC</p>
-      </div>
-
-      <a
-        href="/coas"
-className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justify-between gap-4 rounded-[28px] bg-[#04111f]/90 px-5 py-5 sm:left-8 sm:right-8 sm:px-8 sm:py-6"      >
-        <div>
-          <p className="text-white text-2xl font-bold">See the Proof</p>
-          <p className="text-white/70">View batch documentation</p>
+            View Batch Documentation
+            <span>→</span>
+          </Link>
         </div>
 
-        <span className="text-blue-300 text-4xl">›</span>
-      </a>
-    </div>
+        {/* RIGHT / VISUAL */}
+        <div className="relative mx-auto w-full max-w-[500px] lg:ml-auto">
+          <div className="relative aspect-[16/10] overflow-hidden rounded-[20px] border border-white/[0.07] bg-white/[0.025]">
+            <img
+              src="/images/tb500hex.png"
+              alt="Apexx Biolabs quality verification"
+              className="h-full w-full object-contain p-6 sm:p-8"
+            />
 
-  </div>
-</section>
+            <div className="absolute bottom-4 left-4 rounded-full border border-white/[0.08] bg-[#081526]/85 px-4 py-2 backdrop-blur-md">
+              <p className="text-[9px] font-black uppercase tracking-[0.18em] text-white/55">
+                Batch Documentation Available
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</Reveal>
 
 {/* ABOUT APEXX */}
 <Reveal>

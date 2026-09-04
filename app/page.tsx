@@ -1491,26 +1491,58 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
 </Reveal>
 
 {/* HOMEPAGE FAQ */}
-<section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
+<section className="relative overflow-hidden bg-[#9EC3F8] px-4 py-16 sm:px-6 md:py-20">
 
-  <div className="relative z-10 max-w-5xl mx-auto">
-    <div className="text-center mb-14">
-      <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
-        Frequently Asked Questions
-      </p>
+  {/* BACKGROUND DETAILS */}
+  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(255,255,255,0.38),transparent_34%),radial-gradient(circle_at_85%_80%,rgba(255,255,255,0.20),transparent_32%)]" />
 
-      <h2 className="text-5xl md:text-7xl font-black text-white leading-[0.95] mb-6">
-        Common Questions
-      </h2>
+  {/* Subtle decorative circles */}
+  <div className="pointer-events-none absolute -left-28 top-10 h-72 w-72 rounded-full border border-white/20" />
+  <div className="pointer-events-none absolute -left-16 top-24 h-48 w-48 rounded-full border border-white/15" />
 
-      <p className="text-white/70 text-lg max-w-3xl mx-auto leading-relaxed">
-        Quick answers about our products, shipping, COAs, and laboratory
-        research standards.
-      </p>
+  <div className="pointer-events-none absolute -right-28 bottom-0 h-80 w-80 rounded-full border border-white/20" />
+  <div className="pointer-events-none absolute -right-10 bottom-16 h-52 w-52 rounded-full border border-white/15" />
+
+  <div className="relative z-10 mx-auto max-w-6xl">
+
+    {/* HEADER */}
+    <div className="grid grid-cols-1 gap-6 border-b border-[#081526]/10 pb-8 md:grid-cols-[1fr_0.75fr] md:items-end">
+
+      {/* LEFT */}
+      <div>
+        <div className="mb-4 inline-flex items-center rounded-full border border-[#081526]/10 bg-white/30 px-4 py-2 backdrop-blur-md">
+          <span className="text-[9px] font-black uppercase tracking-[0.22em] text-[#081526]/65">
+            Frequently Asked Questions
+          </span>
+        </div>
+
+        <h2 className="text-4xl font-black leading-[0.95] tracking-tight text-[#081526] sm:text-5xl md:text-6xl">
+          Common
+          <span className="block text-white drop-shadow-[0_2px_10px_rgba(8,21,38,0.08)]">
+            Questions.
+          </span>
+        </h2>
+      </div>
+
+      {/* RIGHT */}
+      <div className="md:pb-1 md:text-right">
+        <p className="max-w-md text-sm font-medium leading-6 text-[#081526]/55 md:ml-auto">
+          Quick answers about our products, shipping, COAs, and laboratory
+          research standards.
+        </p>
+
+        <a
+          href="/faq"
+          className="mt-4 inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.18em] text-[#081526]/55 transition hover:text-[#081526]"
+        >
+          View Full FAQ
+          <span>→</span>
+        </a>
+      </div>
     </div>
 
-    <div className="space-y-5">
+    {/* FAQ LIST */}
+    <div className="mt-3">
       {[
         {
           question: "What are your products?",
@@ -1537,43 +1569,88 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
           answer:
             "No. All Apexx Biolabs products are sold strictly for laboratory research use only and are not intended for human consumption, medical use, veterinary use, diagnosis, treatment, cure, or prevention of disease.",
         },
-      ].map((faq, index) => (
-        <div
-          key={faq.question}
-          className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm overflow-hidden hover:bg-white/[0.07] hover:border-blue-400/50 transition-all duration-300"
-        >
-          <button
-            onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
-            className="w-full flex justify-between items-center text-left p-7 gap-6"
+      ].map((faq, index) => {
+        const isOpen = openFAQ === index;
+
+        return (
+          <div
+            key={faq.question}
+            className="border-b border-[#081526]/10"
           >
-            <span className="text-xl md:text-2xl font-black text-white">
-              {faq.question}
-            </span>
+            {/* QUESTION */}
+            <button
+              type="button"
+              onClick={() => setOpenFAQ(isOpen ? null : index)}
+              className="group flex w-full items-center gap-4 py-5 text-left sm:gap-6 sm:py-6"
+            >
 
-            <span className="text-3xl text-blue-300 shrink-0">
-              {openFAQ === index ? "−" : "+"}
-            </span>
-          </button>
+              {/* NUMBER */}
+              <span className="hidden w-8 shrink-0 text-[9px] font-black tracking-[0.16em] text-[#081526]/25 sm:block">
+                {String(index + 1).padStart(2, "0")}
+              </span>
 
-          {openFAQ === index && (
-            <div className="px-7 pb-7 pt-5 border-t border-white/10">
-              <p className="text-white/60 leading-relaxed">
-                {faq.answer}
-              </p>
+              {/* QUESTION TEXT */}
+              <span className="flex-1 text-sm font-black text-[#081526]/75 transition-colors group-hover:text-[#081526] sm:text-base md:text-lg">
+                {faq.question}
+              </span>
+
+              {/* PLUS BUTTON */}
+              <span
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 sm:h-10 sm:w-10 ${
+                  isOpen
+                    ? "rotate-45 border-[#081526] bg-[#081526] text-white"
+                    : "border-[#081526]/15 bg-white/25 text-[#081526]/55 group-hover:border-[#081526]/30 group-hover:bg-white/40"
+                }`}
+              >
+                <span className="text-xl font-light leading-none">
+                  +
+                </span>
+              </span>
+            </button>
+
+            {/* ANSWER */}
+            <div
+              className={`grid transition-all duration-300 ease-out ${
+                isOpen
+                  ? "grid-rows-[1fr] opacity-100"
+                  : "grid-rows-[0fr] opacity-0"
+              }`}
+            >
+              <div className="overflow-hidden">
+                <div className="pb-6 sm:pl-14">
+                  <p className="max-w-3xl pr-10 text-sm font-medium leading-7 text-[#081526]/50">
+                    {faq.answer}
+                  </p>
+                </div>
+              </div>
             </div>
-          )}
-        </div>
-      ))}
+          </div>
+        );
+      })}
     </div>
 
-    <div className="text-center mt-12">
+    {/* BOTTOM SUPPORT AREA */}
+    <div className="mt-8 flex flex-col gap-4 border-t border-[#081526]/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+
+      <div>
+        <p className="text-sm font-black text-[#081526]/70">
+          Still have a question?
+        </p>
+
+        <p className="mt-1 text-xs font-medium text-[#081526]/40">
+          Our support team is available to help with orders, products, and documentation.
+        </p>
+      </div>
+
       <a
-        href="/faq"
-        className="inline-flex rounded-full bg-white text-[#081526] px-8 py-4 font-bold uppercase tracking-widest hover:bg-blue-100 transition-all"
+        href="/contact"
+        className="inline-flex w-fit items-center justify-center rounded-full bg-[#081526] px-6 py-3 text-[9px] font-black uppercase tracking-[0.17em] text-white shadow-[0_8px_25px_rgba(8,21,38,0.15)] transition-all hover:-translate-y-0.5 hover:bg-[#102743]"
       >
-        View Full FAQ
+        Contact Support
       </a>
+
     </div>
+
   </div>
 </section>
 

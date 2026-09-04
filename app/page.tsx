@@ -743,129 +743,187 @@ Receive a Complimentary Gift With Any 8 Vials
 </section>
 
 {/* QUALITY VERIFICATION */}
-<Reveal>
-  <section className="relative overflow-hidden border-y border-white/[0.06] bg-[#081526] px-4 py-14 sm:px-6 md:py-16">
-    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_right,rgba(96,165,250,0.07),transparent_55%)]" />
 
-    <div className="relative z-10 mx-auto max-w-6xl">
+<section className="relative py-24 px-6 bg-[#081526] border-b border-white/10 overflow-hidden">
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]"></div>
 
-      {/* HEADER */}
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-[1fr_0.8fr] md:items-end">
+  <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+    <div>
+      <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
+        Quality Verification
+      </p>
+
+      <h2 className="text-5xl md:text-7xl font-black tracking-tight text-white leading-[0.95] mb-8">
+        Quality You Can Verify.
+      </h2>
+
+      <p className="text-white/70 text-lg md:text-xl leading-relaxed mb-10 max-w-2xl">
+        Every batch is supported by documentation and analytical review for
+        research-focused consistency, purity, and transparency.
+      </p>
+
+      <div className="mb-10 grid min-w-0 grid-cols-3 gap-3 border-y border-white/10 py-8 sm:gap-6">
+
         <div>
-          <p className="mb-3 text-[10px] font-black uppercase tracking-[0.28em] text-blue-300">
-            Quality Verification
-          </p>
-
-          <h2 className="text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl md:text-5xl">
-            Quality you can verify.
-          </h2>
+          <p className="text-2xl font-black text-white sm:text-4xl">99%+</p>
+          <p className="text-white/50 text-sm mt-2">Purity Target</p>
         </div>
 
-        <p className="max-w-xl text-sm leading-6 text-white/45 md:justify-self-end">
-          Available batch documentation and analytical review provide
-          transparent information for verified research products.
-        </p>
-      </div>
-
-      {/* METRICS */}
-      <div className="mt-8 grid grid-cols-3 border-y border-white/[0.08]">
-        <div className="py-5 pr-4">
-          <p className="text-xl font-black text-white sm:text-2xl">
-            99%+
-          </p>
-          <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white/35">
-            Purity Target
-          </p>
+        <div>
+          <p className="text-2xl font-black text-white sm:text-4xl">HPLC</p>
+          <p className="text-white/50 text-sm mt-2">Analysis</p>
         </div>
 
-        <div className="border-x border-white/[0.08] px-4 py-5 sm:px-6">
-          <p className="text-xl font-black text-white sm:text-2xl">
-            HPLC
-          </p>
-          <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white/35">
-            Analysis
-          </p>
-        </div>
-
-        <div className="py-5 pl-4 sm:pl-6">
-          <p className="text-xl font-black text-white sm:text-2xl">
-            COA
-          </p>
-          <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white/35">
-            Batch Records
-          </p>
+        <div>
+          <p className="text-2xl font-black text-white sm:text-4xl">COA</p>
+          <p className="text-white/50 text-sm mt-2">Batch Records</p>
         </div>
       </div>
 
-      {/* CONTENT */}
-      <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-12">
-
-        {/* LEFT */}
-        <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-300">
-            Analytical Documentation
-          </p>
-
-          <h3 className="mt-3 text-2xl font-black tracking-tight text-white sm:text-3xl">
-            Clear batch information.
-          </h3>
-
-          <p className="mt-3 max-w-lg text-sm leading-6 text-white/45">
-            Review available Certificates of Analysis and supporting
-            documentation for verified batches before or after your purchase.
-          </p>
-
-          {/* SIMPLE FEATURES */}
-          <div className="mt-6 space-y-3">
-            {[
-              "Batch-specific documentation",
-              "Analytical purity information",
-              "Accessible COA records",
-            ].map((item) => (
-              <div
-                key={item}
-                className="flex items-center gap-3 text-sm text-white/60"
-              >
-                <Check
-                  size={14}
-                  strokeWidth={3}
-                  className="shrink-0 text-blue-300"
-                />
-                {item}
-              </div>
-            ))}
-          </div>
-
-          <Link
-            href="/coas"
-            className="mt-7 inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-blue-300 transition hover:text-blue-200"
+      <div className="flex flex-wrap gap-3 mb-8">
+        {[
+          { id: "potency", label: "Potency" },
+          { id: "purity", label: "Purity" },
+          { id: "stability", label: "Stability" },
+          { id: "safety", label: "Safety" },
+          { id: "consistency", label: "Consistency" },
+        ].map((item) => (
+          <button
+            key={item.id}
+            onClick={() => setActiveQuality(item.id)}
+            className={`rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-widest transition-all ${
+              activeQuality === item.id
+                ? "bg-blue-500 text-white shadow-[0_0_25px_rgba(96,165,250,0.35)]"
+                : "bg-white/[0.04] border border-white/10 text-white/60 hover:border-blue-400/50 hover:text-white"
+            }`}
           >
-            View Batch Documentation
-            <span>→</span>
-          </Link>
-        </div>
+            {item.label}
+          </button>
+        ))}
+      </div>
 
-        {/* RIGHT / VISUAL */}
-        <div className="relative mx-auto w-full max-w-[500px] lg:ml-auto">
-          <div className="relative aspect-[16/10] overflow-hidden rounded-[20px] border border-white/[0.07] bg-white/[0.025]">
-            <img
-              src="/images/tb500hex.png"
-              alt="Apexx Biolabs quality verification"
-              className="h-full w-full object-contain p-6 sm:p-8"
-            />
+      <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-8">
+        {activeQuality === "potency" && (
+          <div>
+            <h3 className="text-2xl font-black mb-4 text-white">
+              Verified Potency
+            </h3>
 
-            <div className="absolute bottom-4 left-4 rounded-full border border-white/[0.08] bg-[#081526]/85 px-4 py-2 backdrop-blur-md">
-              <p className="text-[9px] font-black uppercase tracking-[0.18em] text-white/55">
-                Batch Documentation Available
-              </p>
+            <p className="text-white/70 leading-relaxed mb-6">
+              Analytical testing helps confirm that each batch aligns with the
+              stated research concentration and identity specifications.
+            </p>
+
+            <div className="border-l-4 border-blue-400 bg-[#102A4A] rounded-xl p-5 text-white/70">
+              <strong className="text-white">Why it matters:</strong> Supports
+              consistent research preparation and batch-to-batch confidence.
             </div>
           </div>
-        </div>
+        )}
 
+        {activeQuality === "purity" && (
+          <div>
+            <h3 className="text-2xl font-black mb-4 text-white">
+              Purity Documentation
+            </h3>
+
+            <p className="text-white/70 leading-relaxed mb-6">
+              COAs provide batch-level information so researchers can review
+              purity data before use in laboratory settings.
+            </p>
+
+            <div className="border-l-4 border-blue-400 bg-[#102A4A] rounded-xl p-5 text-white/70">
+              <strong className="text-white">Why it matters:</strong> Clear
+              documentation helps support transparency and trust.
+            </div>
+          </div>
+        )}
+
+        {activeQuality === "stability" && (
+          <div>
+            <h3 className="text-2xl font-black mb-4 text-white">
+              Stability-Focused Handling
+            </h3>
+
+            <p className="text-white/70 leading-relaxed mb-6">
+              Products are packaged with research storage and handling standards
+              in mind to help preserve batch integrity.
+            </p>
+
+            <div className="border-l-4 border-blue-400 bg-[#102A4A] rounded-xl p-5 text-white/70">
+              <strong className="text-white">Why it matters:</strong> Proper
+              handling supports reliable research workflows.
+            </div>
+          </div>
+        )}
+
+        {activeQuality === "safety" && (
+          <div>
+            <h3 className="text-2xl font-black mb-4 text-white">
+              Research-Use Standards
+            </h3>
+
+            <p className="text-white/70 leading-relaxed mb-6">
+              Apexx Biolabs products are intended strictly for lawful laboratory
+              research use only and are not for human or veterinary use.
+            </p>
+
+            <div className="border-l-4 border-blue-400 bg-[#102A4A] rounded-xl p-5 text-white/70">
+              <strong className="text-white">Why it matters:</strong> Clear
+              use limitations keep the catalog research-focused.
+            </div>
+          </div>
+        )}
+
+        {activeQuality === "consistency" && (
+          <div>
+            <h3 className="text-2xl font-black mb-4 text-white">
+              Batch Consistency
+            </h3>
+
+            <p className="text-white/70 leading-relaxed mb-6">
+              Batch records and testing documentation help support consistency
+              across research materials.
+            </p>
+
+            <div className="border-l-4 border-blue-400 bg-[#102A4A] rounded-xl p-5 text-white/70">
+              <strong className="text-white">Why it matters:</strong> Consistent
+              records help researchers compare and track batches.
+            </div>
+          </div>
+          
+        )}
+        
       </div>
     </div>
-  </section>
-</Reveal>
+
+    <div className="relative min-h-[520px] w-full min-w-0 max-w-full overflow-hidden rounded-[40px] sm:min-h-[650px]">
+      <img
+        src="/images/tb500hex.png"
+        alt="TB-500"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+
+      <div className="absolute top-8 right-8 z-20 text-right">
+        <p className="text-white text-3xl font-black">99%+ Purity</p>
+        <p className="text-white/80 text-lg">Verified by HPLC</p>
+      </div>
+
+      <a
+        href="/coas"
+className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justify-between gap-4 rounded-[28px] bg-[#04111f]/90 px-5 py-5 sm:left-8 sm:right-8 sm:px-8 sm:py-6"      >
+        <div>
+          <p className="text-white text-2xl font-bold">See the Proof</p>
+          <p className="text-white/70">View batch documentation</p>
+        </div>
+
+        <span className="text-blue-300 text-4xl">›</span>
+      </a>
+    </div>
+
+  </div>
+</section>
 
 {/* ABOUT APEXX */}
 <Reveal>
@@ -1242,136 +1300,137 @@ Receive a Complimentary Gift With Any 8 Vials
 
 {/* CREATE ACCOUNT + REWARDS */}
 <Reveal>
-  <section className="relative overflow-hidden border-y border-white/[0.06] bg-[#0A192B]">
-    
-    <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 md:py-20 lg:px-10">
+  <section className="relative overflow-hidden bg-[#081526] px-4 py-14 sm:px-6 md:py-16">
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_60%)]" />
 
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-20">
+    <div className="relative z-10 mx-auto max-w-6xl">
 
-        {/* LEFT */}
-        <div>
-          <p className="mb-4 text-[10px] font-black uppercase tracking-[0.3em] text-blue-300">
-            Apexx Rewards
-          </p>
+      <div className="overflow-hidden rounded-[26px] border border-white/[0.08] bg-white/[0.025]">
 
-          <h2 className="max-w-xl text-4xl font-black leading-[1.02] tracking-tight text-white sm:text-5xl md:text-6xl">
-            Your research.
-            <span className="block text-blue-300">
-              More rewarding.
-            </span>
-          </h2>
+        {/* MAIN REWARDS AREA */}
+        <div className="grid grid-cols-1 gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center lg:p-10">
 
-          <p className="mt-5 max-w-xl text-sm leading-7 text-white/50 sm:text-base">
-            Create a free Apexx account to earn points on eligible purchases,
-            track orders, save favorites, and manage your account in one place.
-          </p>
+          {/* LEFT */}
+          <div className="max-w-3xl">
+            <div className="mb-5 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-[13px] border border-blue-300/20 bg-blue-400/[0.08] text-blue-300">
+                <Gift size={20} />
+              </div>
 
-          <div className="mt-8 flex flex-wrap items-center gap-5">
+              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-300">
+                Apexx Rewards
+              </p>
+            </div>
+
+            <h2 className="text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl md:text-5xl">
+              Create an account.
+              <span className="ml-2 text-blue-300">
+                Earn rewards.
+              </span>
+            </h2>
+
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55 sm:text-base">
+              Earn points on eligible purchases, track your orders, save
+              favorites, and manage everything from your Apexx account.
+            </p>
+          </div>
+
+          {/* BUTTONS */}
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row lg:flex-col">
             <Link
               href="/account/signup"
-              className="inline-flex items-center justify-center rounded-full bg-white px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.17em] text-[#081526] transition-all hover:bg-blue-100"
+              className="inline-flex min-w-[190px] items-center justify-center rounded-full bg-white px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.16em] text-[#081526] transition-all hover:bg-blue-100"
             >
-              Create Account
+              Create Free Account
             </Link>
 
             <Link
               href="/account/login"
-              className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.17em] text-white/50 transition hover:text-white"
+              className="inline-flex min-w-[190px] items-center justify-center rounded-full border border-white/10 bg-white/[0.03] px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.16em] text-white transition-all hover:border-blue-400/30 hover:bg-white/[0.06]"
             >
-              Already a member?
-              <span className="text-blue-300">Sign In →</span>
+              Sign In
             </Link>
           </div>
         </div>
 
-        {/* RIGHT */}
-        <div className="lg:border-l lg:border-white/[0.08] lg:pl-16">
+        {/* BENEFITS */}
+        <div className="border-t border-white/[0.07] px-6 py-5 sm:px-8 lg:px-10">
+          <div className="grid grid-cols-2 gap-x-5 gap-y-4 md:grid-cols-4">
 
-          {/* REWARD STAT 1 */}
-          <div className="border-b border-white/[0.08] pb-7">
-            <div className="flex items-end gap-3">
-              <span className="text-5xl font-black tracking-tight text-white sm:text-6xl">
-                1
-              </span>
+            {[
+              {
+                title: "1 Point / $1",
+                text: "Earn on eligible purchases",
+              },
+              {
+                title: "$10 Rewards",
+                text: "Redeem every 100 points",
+              },
+              {
+                title: "Order Tracking",
+                text: "Manage orders in one place",
+              },
+              {
+                title: "Saved Favorites",
+                text: "Keep products easy to find",
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="min-w-0"
+              >
+                <div className="mb-2 flex items-center gap-2">
+                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-400/10 text-blue-300">
+                    <Check size={12} strokeWidth={3} />
+                  </div>
 
-              <span className="pb-2 text-xs font-black uppercase tracking-[0.2em] text-blue-300">
-                Point
-              </span>
-            </div>
+                  <p className="text-xs font-black text-white sm:text-sm">
+                    {item.title}
+                  </p>
+                </div>
 
-            <p className="mt-2 text-sm text-white/40">
-              Earned for every eligible $1 spent.
-            </p>
-          </div>
-
-          {/* REWARD STAT 2 */}
-          <div className="border-b border-white/[0.08] py-7">
-            <div className="flex items-end gap-3">
-              <span className="text-5xl font-black tracking-tight text-white sm:text-6xl">
-                $10
-              </span>
-
-              <span className="pb-2 text-xs font-black uppercase tracking-[0.2em] text-blue-300">
-                Reward
-              </span>
-            </div>
-
-            <p className="mt-2 text-sm text-white/40">
-              Redeem every 100 available points on eligible purchases.
-            </p>
-          </div>
-
-          {/* ACCOUNT BENEFITS */}
-          <div className="grid grid-cols-2 gap-x-8 gap-y-5 pt-7">
-
-            <div>
-              <p className="text-sm font-bold text-white">
-                Order History
-              </p>
-              <p className="mt-1 text-xs leading-5 text-white/35">
-                Keep purchases organized.
-              </p>
-            </div>
-
-            <div>
-              <p className="text-sm font-bold text-white">
-                Order Tracking
-              </p>
-              <p className="mt-1 text-xs leading-5 text-white/35">
-                Follow order progress.
-              </p>
-            </div>
-
-            <div>
-              <p className="text-sm font-bold text-white">
-                Favorites
-              </p>
-              <p className="mt-1 text-xs leading-5 text-white/35">
-                Save products for later.
-              </p>
-            </div>
-
-            <div>
-              <p className="text-sm font-bold text-white">
-                Rewards
-              </p>
-              <p className="mt-1 text-xs leading-5 text-white/35">
-                View your available points.
-              </p>
-            </div>
+                <p className="pl-7 text-[11px] leading-5 text-white/40">
+                  {item.text}
+                </p>
+              </div>
+            ))}
 
           </div>
         </div>
-      </div>
 
-      {/* SMALL TERMS */}
-      <div className="mt-12 border-t border-white/[0.06] pt-5">
-        <p className="max-w-4xl text-[10px] leading-5 text-white/25">
-          Points are awarded on eligible purchases and credited after
-          fulfillment. Rewards have no cash value and may be adjusted for
-          canceled, refunded, duplicate, fraudulent, or otherwise ineligible
-          transactions. Additional rewards terms may apply.
-        </p>
+        {/* HOW REWARDS WORK */}
+        <div className="border-t border-white/[0.07] bg-[#081526]/35 px-6 py-5 sm:px-8 lg:px-10">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-blue-300/70">
+                How Rewards Work
+              </p>
+
+              <p className="mt-2 text-xs leading-6 text-white/45 sm:text-sm">
+                Create an account, place eligible orders using the same
+                account email, earn points after fulfillment, and redeem
+                available points on future eligible purchases.
+              </p>
+            </div>
+
+            <div className="flex shrink-0 items-center gap-3 text-[10px] font-bold uppercase tracking-[0.14em] text-white/35">
+              <span>1</span>
+              <span className="h-px w-5 bg-white/15" />
+              <span>Earn</span>
+              <span className="h-px w-5 bg-white/15" />
+              <span>Redeem</span>
+            </div>
+
+          </div>
+
+          <p className="mt-4 text-[10px] leading-5 text-white/25">
+            Rewards have no cash value and may be adjusted for canceled,
+            refunded, duplicate, fraudulent, or otherwise ineligible
+            transactions. Additional rewards terms may apply.
+          </p>
+        </div>
+
       </div>
 
     </div>
@@ -1379,40 +1438,26 @@ Receive a Complimentary Gift With Any 8 Vials
 </Reveal>
 
 {/* HOMEPAGE FAQ */}
-<section className="relative overflow-hidden border-y border-white/[0.06] bg-[#081526] px-4 py-14 sm:px-6 md:py-16">
-  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.07),transparent_62%)]" />
+<section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
-  <div className="relative z-10 mx-auto max-w-5xl">
-
-    {/* HEADER */}
-    <div className="mb-8">
-      <p className="mb-3 text-[10px] font-black uppercase tracking-[0.28em] text-blue-300">
+  <div className="relative z-10 max-w-5xl mx-auto">
+    <div className="text-center mb-14">
+      <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
         Frequently Asked Questions
       </p>
 
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
-            Common Questions
-          </h2>
+      <h2 className="text-5xl md:text-7xl font-black text-white leading-[0.95] mb-6">
+        Common Questions
+      </h2>
 
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-white/45">
-            Helpful information about products, orders, shipping, COAs,
-            and research-use policies.
-          </p>
-        </div>
-
-        <Link
-          href="/faq"
-          className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-300/70 transition hover:text-blue-300"
-        >
-          View All FAQs →
-        </Link>
-      </div>
+      <p className="text-white/70 text-lg max-w-3xl mx-auto leading-relaxed">
+        Quick answers about our products, shipping, COAs, and laboratory
+        research standards.
+      </p>
     </div>
 
-    {/* FAQ LIST */}
-    <div className="border-t border-white/[0.08]">
+    <div className="space-y-5">
       {[
         {
           question: "What are your products?",
@@ -1420,71 +1465,62 @@ Receive a Complimentary Gift With Any 8 Vials
             "We provide premium research compounds intended strictly for laboratory and analytical research purposes only.",
         },
         {
-          question: "Are COAs available?",
+          question: "Are your products tested?",
           answer:
-            "Yes. Available Certificates of Analysis and batch documentation can be reviewed on our COA page.",
+            "Yes. Products are batch tested and COA verified when available to support consistency, quality, and transparency.",
         },
         {
-          question: "How quickly are orders processed?",
+          question: "How long does shipping take?",
           answer:
-            "Orders are processed as quickly as possible during normal business days. Processing times may vary during periods of high order volume, weekends, or holidays.",
+            "Orders typically ship within 1–2 business days. Delivery time depends on your location and carrier.",
         },
         {
-          question: "How can I track my order?",
+          question: "Do you provide COAs?",
           answer:
-            "Once tracking information is available, you can follow your shipment using the tracking details associated with your order.",
+            "Yes. Certificates of Analysis are available when batch testing has been completed and uploaded.",
         },
         {
-          question: "How can I contact support?",
+          question: "Are these products for human use?",
           answer:
-            "Visit our Contact page for assistance with orders, shipping, product information, COAs, and general support questions.",
+            "No. All Apexx Biolabs products are sold strictly for laboratory research use only and are not intended for human consumption, medical use, veterinary use, diagnosis, treatment, cure, or prevention of disease.",
         },
-      ].map((item, index) => {
-        const isOpen = openFAQ === index;
-
-        return (
-          <div
-            key={item.question}
-            className="border-b border-white/[0.08]"
+      ].map((faq, index) => (
+        <div
+          key={faq.question}
+          className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm overflow-hidden hover:bg-white/[0.07] hover:border-blue-400/50 transition-all duration-300"
+        >
+          <button
+            onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
+            className="w-full flex justify-between items-center text-left p-7 gap-6"
           >
-            <button
-              type="button"
-              onClick={() => setOpenFAQ(isOpen ? null : index)}
-              className="group flex w-full items-center justify-between gap-6 py-5 text-left"
-            >
-              <span className="text-sm font-semibold text-white/75 transition group-hover:text-white sm:text-base">
-                {item.question}
-              </span>
+            <span className="text-xl md:text-2xl font-black text-white">
+              {faq.question}
+            </span>
 
-              <span
-                className={`shrink-0 text-xl font-light transition-all duration-300 ${
-                  isOpen
-                    ? "rotate-45 text-blue-300"
-                    : "text-white/35"
-                }`}
-              >
-                +
-              </span>
-            </button>
+            <span className="text-3xl text-blue-300 shrink-0">
+              {openFAQ === index ? "−" : "+"}
+            </span>
+          </button>
 
-            <div
-              className={`grid transition-all duration-300 ${
-                isOpen
-                  ? "grid-rows-[1fr]"
-                  : "grid-rows-[0fr]"
-              }`}
-            >
-              <div className="overflow-hidden">
-                <p className="max-w-3xl pb-5 pr-10 text-sm leading-6 text-white/45">
-                  {item.answer}
-                </p>
-              </div>
+          {openFAQ === index && (
+            <div className="px-7 pb-7 pt-5 border-t border-white/10">
+              <p className="text-white/60 leading-relaxed">
+                {faq.answer}
+              </p>
             </div>
-          </div>
-        );
-      })}
+          )}
+        </div>
+      ))}
     </div>
 
+    <div className="text-center mt-12">
+      <a
+        href="/faq"
+        className="inline-flex rounded-full bg-white text-[#081526] px-8 py-4 font-bold uppercase tracking-widest hover:bg-blue-100 transition-all"
+      >
+        View Full FAQ
+      </a>
+    </div>
   </div>
 </section>
 

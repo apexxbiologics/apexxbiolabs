@@ -2581,16 +2581,25 @@ export default function CartPage() {
 
                   </div>
 
-                  <Link
-                    href="/checkout"
-                    className={`block w-full py-3.5 rounded-full uppercase tracking-[0.16em] text-[10px] font-black text-center transition-all ${
-                      agreed
-                        ? "bg-white text-[#081526] hover:bg-[#DCEEFF]"
-                        : "bg-white/[0.06] text-white/25 pointer-events-none"
-                    }`}
-                  >
-                    Proceed To Checkout
-                  </Link>
+                  <div className="space-y-3">
+                    <Link
+                      href="/checkout"
+                      className={`block w-full py-3.5 rounded-full uppercase tracking-[0.16em] text-[10px] font-black text-center transition-all ${
+                        agreed
+                          ? "bg-white text-[#081526] hover:bg-[#DCEEFF]"
+                          : "bg-white/[0.06] text-white/25 pointer-events-none"
+                      }`}
+                    >
+                      Proceed To Checkout
+                    </Link>
+
+                    <Link
+                      href="/products"
+                      className="block w-full rounded-full border border-[#93C5FD]/25 bg-[#93C5FD]/[0.05] px-7 py-3.5 text-center text-[10px] font-black uppercase tracking-[0.16em] text-[#A5D8FF] transition-all hover:border-[#93C5FD]/45 hover:bg-[#93C5FD]/[0.10] hover:text-white"
+                    >
+                      Continue Shopping
+                    </Link>
+                  </div>
 
                   {!agreed && (
 
@@ -2653,12 +2662,7 @@ export default function CartPage() {
                   </label>
 
                 </div>
-<Link
-                  href="/products"
-                  className="block border border-white/[0.09] bg-white/[0.025] text-white rounded-full px-7 py-3.5 text-[10px] uppercase tracking-[0.16em] font-bold text-center hover:border-[#93C5FD]/40 hover:bg-white/[0.05] transition-all"
-                >
-                  Continue Shopping
-                </Link>
+
 
               </aside>
 

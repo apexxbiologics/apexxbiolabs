@@ -1300,135 +1300,174 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
 
 {/* CREATE ACCOUNT + REWARDS */}
 <Reveal>
-  <section className="relative overflow-hidden bg-[#081526] px-4 py-16 sm:px-6 md:py-20">
-    {/* background effects */}
-    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_25%,rgba(96,165,250,0.16),transparent_34%),radial-gradient(circle_at_82%_72%,rgba(59,130,246,0.10),transparent_30%)]" />
+  <section
+    className="relative overflow-hidden bg-[#9EC3F8] bg-cover bg-center bg-no-repeat px-4 py-16 sm:px-6 md:py-20"
+    style={{
+      backgroundImage: "url('/images/rewards-background.png')",
+    }}
+  >
+    {/* Soft overlay */}
+    <div className="pointer-events-none absolute inset-0 bg-white/[0.04]" />
+
+    {/* Soft center glow */}
+    <div className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/20 blur-[120px]" />
 
     <div className="relative z-10 mx-auto max-w-6xl">
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16">
 
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-14">
-
-        {/* LEFT */}
+        {/* LEFT SIDE */}
         <div>
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-300/15 bg-blue-400/[0.06] px-3.5 py-2">
-            <Gift size={15} className="text-blue-300" />
-            <span className="text-[9px] font-black uppercase tracking-[0.22em] text-blue-300">
+          {/* Rewards label */}
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#081526]/10 bg-white/35 px-4 py-2 backdrop-blur-md">
+            <Gift
+              size={15}
+              className="text-[#081526]"
+            />
+
+            <span className="text-[9px] font-black uppercase tracking-[0.22em] text-[#081526]/70">
               Apexx Rewards
             </span>
           </div>
 
-          <h2 className="max-w-2xl text-4xl font-black leading-[0.98] tracking-tight text-white sm:text-5xl md:text-6xl">
+          {/* Heading */}
+          <h2 className="max-w-2xl text-4xl font-black leading-[0.98] tracking-tight text-[#081526] sm:text-5xl md:text-6xl">
             Your account should
-            <span className="block bg-gradient-to-r from-blue-300 to-blue-100 bg-clip-text text-transparent">
+            <span className="mt-1 block text-white drop-shadow-[0_2px_10px_rgba(8,21,38,0.08)]">
               work harder for you.
             </span>
           </h2>
 
-          <p className="mt-5 max-w-xl text-sm leading-7 text-white/50 sm:text-base">
+          {/* Description */}
+          <p className="mt-5 max-w-xl text-sm font-medium leading-7 text-[#081526]/60 sm:text-base">
             Earn rewards on eligible purchases, keep track of your orders,
-            and save products you want to come back to later.
+            and save products you want to come back to later — all from one
+            account.
           </p>
 
-          <div className="mt-7 flex flex-wrap items-center gap-4">
+          {/* Buttons */}
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
               href="/account/signup"
-              className="inline-flex items-center justify-center rounded-full bg-white px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.17em] text-[#081526] shadow-[0_8px_30px_rgba(255,255,255,0.08)] transition-all hover:-translate-y-0.5 hover:bg-blue-100"
+              className="inline-flex items-center justify-center rounded-full bg-[#081526] px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.17em] text-white shadow-[0_10px_30px_rgba(8,21,38,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#102743]"
             >
               Create Free Account
             </Link>
 
             <Link
               href="/account/login"
-              className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.17em] text-white/45 transition hover:text-white"
+              className="inline-flex items-center justify-center gap-2 px-3 py-3 text-[10px] font-black uppercase tracking-[0.17em] text-[#081526]/55 transition hover:text-[#081526]"
             >
               Already have an account
-              <span className="text-blue-300">→</span>
+              <span className="text-[#081526]">→</span>
             </Link>
           </div>
         </div>
 
-        {/* RIGHT */}
+        {/* RIGHT SIDE */}
         <div className="relative">
 
-          {/* glow behind cards */}
-          <div className="pointer-events-none absolute inset-0 scale-90 rounded-full bg-blue-400/10 blur-3xl" />
+          {/* subtle glow behind cards */}
+          <div className="pointer-events-none absolute inset-8 rounded-full bg-white/40 blur-3xl" />
 
-          <div className="relative grid grid-cols-2 gap-4">
+          <div className="relative grid grid-cols-2 gap-3 sm:gap-4">
 
-            {/* points */}
-            <div className="rounded-[24px] border border-white/[0.09] bg-white/[0.045] p-6 backdrop-blur-xl">
-              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-blue-300/70">
-                Earn
-              </p>
+            {/* EARN CARD */}
+            <div className="rounded-[24px] border border-white/60 bg-white/40 p-5 shadow-[0_18px_50px_rgba(8,21,38,0.08)] backdrop-blur-xl sm:p-6">
+              <div className="mb-8 flex items-center justify-between">
+                <p className="text-[9px] font-black uppercase tracking-[0.22em] text-[#081526]/45">
+                  Earn
+                </p>
 
-              <div className="mt-4 flex items-end gap-2">
-                <span className="text-5xl font-black tracking-tight text-white">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#081526]/[0.06]">
+                  <Star
+                    size={14}
+                    className="text-[#081526]/60"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-end gap-2">
+                <span className="text-5xl font-black tracking-tight text-[#081526] sm:text-6xl">
                   1
                 </span>
-                <span className="pb-1.5 text-xs font-black uppercase tracking-[0.16em] text-white/45">
-                  pt
+
+                <span className="pb-1.5 text-[10px] font-black uppercase tracking-[0.15em] text-[#081526]/45">
+                  Point
                 </span>
               </div>
 
-              <p className="mt-3 text-xs leading-5 text-white/35">
+              <p className="mt-3 text-xs font-medium leading-5 text-[#081526]/45">
                 For every eligible $1 spent.
               </p>
             </div>
 
-            {/* reward */}
-            <div className="mt-6 rounded-[24px] border border-blue-300/15 bg-gradient-to-br from-blue-400/[0.10] to-white/[0.03] p-6 backdrop-blur-xl">
-              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-blue-300/70">
-                Redeem
-              </p>
+            {/* REDEEM CARD */}
+            <div className="mt-6 rounded-[24px] border border-white/70 bg-white/55 p-5 shadow-[0_18px_50px_rgba(8,21,38,0.09)] backdrop-blur-xl sm:p-6">
+              <div className="mb-8 flex items-center justify-between">
+                <p className="text-[9px] font-black uppercase tracking-[0.22em] text-[#081526]/45">
+                  Redeem
+                </p>
 
-              <div className="mt-4">
-                <span className="text-5xl font-black tracking-tight text-white">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#081526]/[0.06]">
+                  <Gift
+                    size={14}
+                    className="text-[#081526]/60"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <span className="text-5xl font-black tracking-tight text-[#081526] sm:text-6xl">
                   $10
                 </span>
               </div>
 
-              <p className="mt-3 text-xs leading-5 text-white/35">
+              <p className="mt-3 text-xs font-medium leading-5 text-[#081526]/45">
                 Every 100 available points.
               </p>
             </div>
 
-            {/* account benefits */}
-            <div className="col-span-2 rounded-[24px] border border-white/[0.08] bg-[#0D2036]/80 p-5 backdrop-blur-xl">
-              <div className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
+            {/* ACCOUNT BENEFITS */}
+            <div className="col-span-2 mt-1 overflow-hidden rounded-[22px] border border-white/55 bg-white/35 shadow-[0_15px_45px_rgba(8,21,38,0.06)] backdrop-blur-xl">
+              <div className="grid grid-cols-2 sm:grid-cols-4">
 
-                <div>
-                  <p className="text-sm font-bold text-white">
+                <div className="border-b border-[#081526]/[0.07] p-4 sm:border-b-0 sm:border-r sm:p-5">
+                  <p className="text-sm font-black text-[#081526]">
                     Orders
                   </p>
-                  <p className="mt-1 text-[11px] text-white/30">
-                    Track purchases
+
+                  <p className="mt-1 text-[10px] font-medium text-[#081526]/40">
+                    View purchases
                   </p>
                 </div>
 
-                <div>
-                  <p className="text-sm font-bold text-white">
+                <div className="border-b border-l border-[#081526]/[0.07] p-4 sm:border-b-0 sm:border-l-0 sm:border-r sm:p-5">
+                  <p className="text-sm font-black text-[#081526]">
+                    Tracking
+                  </p>
+
+                  <p className="mt-1 text-[10px] font-medium text-[#081526]/40">
+                    Follow orders
+                  </p>
+                </div>
+
+                <div className="p-4 sm:border-r sm:border-[#081526]/[0.07] sm:p-5">
+                  <p className="text-sm font-black text-[#081526]">
                     Favorites
                   </p>
-                  <p className="mt-1 text-[11px] text-white/30">
+
+                  <p className="mt-1 text-[10px] font-medium text-[#081526]/40">
                     Save products
                   </p>
                 </div>
 
-                <div>
-                  <p className="text-sm font-bold text-white">
+                <div className="border-l border-[#081526]/[0.07] p-4 sm:border-l-0 sm:p-5">
+                  <p className="text-sm font-black text-[#081526]">
                     Rewards
                   </p>
-                  <p className="mt-1 text-[11px] text-white/30">
-                    View points
-                  </p>
-                </div>
 
-                <div>
-                  <p className="text-sm font-bold text-white">
-                    Dashboard
-                  </p>
-                  <p className="mt-1 text-[11px] text-white/30">
-                    Manage account
+                  <p className="mt-1 text-[10px] font-medium text-[#081526]/40">
+                    Manage points
                   </p>
                 </div>
 
@@ -1437,18 +1476,16 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
 
           </div>
         </div>
-
       </div>
 
-      {/* bottom terms */}
-      <div className="mt-10 border-t border-white/[0.06] pt-4">
-        <p className="max-w-4xl text-[10px] leading-5 text-white/20">
+      {/* REWARDS TERMS */}
+      <div className="mt-10 border-t border-[#081526]/10 pt-4">
+        <p className="max-w-4xl text-[10px] font-medium leading-5 text-[#081526]/35">
           Points are awarded on eligible purchases after fulfillment and may
           be adjusted for canceled, refunded, duplicate, fraudulent, or
           otherwise ineligible transactions. Rewards have no cash value.
         </p>
       </div>
-
     </div>
   </section>
 </Reveal>

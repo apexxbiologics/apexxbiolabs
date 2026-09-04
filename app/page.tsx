@@ -1437,28 +1437,31 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
   </section>
 </Reveal>
 
-
 {/* HOMEPAGE FAQ */}
-<section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
+<section className="relative overflow-hidden border-y border-white/[0.07] bg-[#081526] px-4 py-14 sm:px-6 md:py-16">
+  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.08),transparent_60%)]" />
 
-  <div className="relative z-10 max-w-5xl mx-auto">
-    <div className="text-center mb-14">
-      <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
-        Frequently Asked Questions
+  <div className="relative z-10 mx-auto max-w-4xl">
+
+    {/* HEADER */}
+    <div className="mb-8 text-center">
+      <p className="mb-3 text-[10px] font-black uppercase tracking-[0.28em] text-blue-300">
+        FAQ
       </p>
 
-      <h2 className="text-5xl md:text-7xl font-black text-white leading-[0.95] mb-6">
+      <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
         Common Questions
       </h2>
 
-      <p className="text-white/70 text-lg max-w-3xl mx-auto leading-relaxed">
-        Quick answers about our products, shipping, COAs, and laboratory
-        research standards.
+      <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-white/45">
+        Quick answers about products, orders, shipping, COAs, and
+        research-use policies.
       </p>
     </div>
 
-    <div className="space-y-5">
+    {/* QUESTIONS */}
+    <div className="overflow-hidden rounded-[24px] border border-white/[0.08] bg-white/[0.025]">
+
       {[
         {
           question: "What are your products?",
@@ -1466,62 +1469,89 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
             "We provide premium research compounds intended strictly for laboratory and analytical research purposes only.",
         },
         {
-          question: "Are your products tested?",
+          question: "Are COAs available?",
           answer:
-            "Yes. Products are batch tested and COA verified when available to support consistency, quality, and transparency.",
+            "Yes. Available Certificates of Analysis and batch documentation can be reviewed on our COA page.",
         },
         {
-          question: "How long does shipping take?",
+          question: "How quickly are orders processed?",
           answer:
-            "Orders typically ship within 1–2 business days. Delivery time depends on your location and carrier.",
+            "Orders are processed as quickly as possible during normal business days. Processing times may vary during periods of high order volume, weekends, or holidays.",
         },
         {
-          question: "Do you provide COAs?",
+          question: "How can I track my order?",
           answer:
-            "Yes. Certificates of Analysis are available when batch testing has been completed and uploaded.",
+            "Once tracking information is available, you can follow your shipment using the tracking details associated with your order.",
         },
         {
-          question: "Are these products for human use?",
+          question: "How can I contact support?",
           answer:
-            "No. All Apexx Biolabs products are sold strictly for laboratory research use only and are not intended for human consumption, medical use, veterinary use, diagnosis, treatment, cure, or prevention of disease.",
+            "Visit our Contact page for assistance with orders, shipping, product information, COAs, and general support questions.",
         },
-      ].map((faq, index) => (
-        <div
-          key={faq.question}
-          className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm overflow-hidden hover:bg-white/[0.07] hover:border-blue-400/50 transition-all duration-300"
-        >
-          <button
-            onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
-            className="w-full flex justify-between items-center text-left p-7 gap-6"
+      ].map((item, index) => {
+        const isOpen = openFAQ === index;
+
+        return (
+          <div
+            key={item.question}
+            className={
+              index !== 0
+                ? "border-t border-white/[0.07]"
+                : ""
+            }
           >
-            <span className="text-xl md:text-2xl font-black text-white">
-              {faq.question}
-            </span>
+            <button
+              type="button"
+              onClick={() =>
+                setOpenFAQ(isOpen ? null : index)
+              }
+              className="group flex w-full items-center justify-between gap-5 px-5 py-5 text-left transition-colors hover:bg-white/[0.025] sm:px-6"
+            >
+              <span className="text-sm font-bold text-white/80 transition-colors group-hover:text-white sm:text-[15px]">
+                {item.question}
+              </span>
 
-            <span className="text-3xl text-blue-300 shrink-0">
-              {openFAQ === index ? "−" : "+"}
-            </span>
-          </button>
+              <span
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-lg leading-none transition-all duration-300 ${
+                  isOpen
+                    ? "rotate-45 border-blue-300/30 bg-blue-400/10 text-blue-300"
+                    : "border-white/10 bg-white/[0.03] text-white/40"
+                }`}
+              >
+                +
+              </span>
+            </button>
 
-          {openFAQ === index && (
-            <div className="px-7 pb-7 pt-5 border-t border-white/10">
-              <p className="text-white/60 leading-relaxed">
-                {faq.answer}
-              </p>
+            <div
+              className={`grid transition-all duration-300 ${
+                isOpen
+                  ? "grid-rows-[1fr]"
+                  : "grid-rows-[0fr]"
+              }`}
+            >
+              <div className="overflow-hidden">
+                <p className="max-w-3xl px-5 pb-5 pr-14 text-sm leading-6 text-white/45 sm:px-6 sm:pr-16">
+                  {item.answer}
+                </p>
+              </div>
             </div>
-          )}
-        </div>
-      ))}
+          </div>
+        );
+      })}
+
     </div>
 
-    <div className="text-center mt-12">
-      <a
+    {/* BOTTOM LINK */}
+    <div className="mt-6 text-center">
+      <Link
         href="/faq"
-        className="inline-flex rounded-full bg-white text-[#081526] px-8 py-4 font-bold uppercase tracking-widest hover:bg-blue-100 transition-all"
+        className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-blue-300/70 transition-colors hover:text-blue-300"
       >
-        View Full FAQ
-      </a>
+        View All FAQs
+        <span>→</span>
+      </Link>
     </div>
+
   </div>
 </section>
 

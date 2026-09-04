@@ -7,6 +7,7 @@ import {
   Search,
   ShoppingCart,
   ChevronRight,
+  ChevronDown,
   UserCircle,
   Heart,
 } from "lucide-react";
@@ -141,14 +142,11 @@ export default function Navbar() {
         }
       `}</style>
 
-      {/* =========================
-          MAIN NAVBAR
-      ========================== */}
-
+      {/* MAIN NAVBAR */}
       <header className="sticky top-0 left-0 z-50 w-full border-b border-blue-900/50 bg-[#071323]/95 px-5 py-4 backdrop-blur-xl md:px-10">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
 
-          {/* Left */}
+          {/* LEFT */}
           <div className="flex items-center gap-6">
             <button
               onClick={() => setMenuOpen(true)}
@@ -167,7 +165,7 @@ export default function Navbar() {
             </a>
           </div>
 
-          {/* Desktop Navigation */}
+          {/* DESKTOP NAVIGATION */}
           <nav className="hidden items-center gap-10 text-sm font-bold uppercase tracking-[0.22em] text-white md:flex">
             <a
               href="/"
@@ -205,10 +203,10 @@ export default function Navbar() {
             </a>
           </nav>
 
-          {/* Right */}
+          {/* RIGHT */}
           <div className="flex items-center gap-4">
 
-            {/* Search */}
+            {/* SEARCH */}
             <button
               onClick={() =>
                 setSearchOpen(!searchOpen)
@@ -219,7 +217,7 @@ export default function Navbar() {
               <Search size={25} />
             </button>
 
-            {/* Favorites */}
+            {/* FAVORITES */}
             <a
               href="/account/favorites"
               className="hidden rounded-full border border-white/10 bg-white/[0.04] p-3 text-white transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-300 sm:inline-flex"
@@ -228,7 +226,7 @@ export default function Navbar() {
               <Heart size={25} />
             </a>
 
-            {/* Account */}
+            {/* ACCOUNT */}
             <a
               href="/account"
               className="hidden rounded-full border border-white/10 bg-white/[0.04] p-3 text-white transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-300 sm:inline-flex"
@@ -237,7 +235,7 @@ export default function Navbar() {
               <UserCircle size={26} />
             </a>
 
-            {/* Cart */}
+            {/* CART */}
             <a
               href="/cart"
               className="relative rounded-full border border-white/10 bg-white/[0.04] p-3 text-white transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-300"
@@ -254,15 +252,12 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* =========================
-            SEARCH BAR
-        ========================== */}
-
+        {/* SEARCH BAR */}
         {searchOpen && (
           <div className="mx-auto mt-5 max-w-4xl">
             <div className="relative rounded-[24px] border border-blue-400/25 bg-gradient-to-r from-[#06101f] via-[#09182b] to-[#06101f] p-[1px] shadow-[0_16px_50px_rgba(37,99,235,0.12)]">
-              <div className="relative flex items-center rounded-[23px] bg-[#050d1a]/95 px-5">
 
+              <div className="relative flex items-center rounded-[23px] bg-[#050d1a]/95 px-5">
                 <Search
                   size={21}
                   className="mr-3 shrink-0 text-blue-300/70"
@@ -293,7 +288,7 @@ export default function Navbar() {
                 )}
               </div>
 
-              {/* Search Results */}
+              {/* SEARCH RESULTS */}
               {search &&
                 filteredProducts.length > 0 && (
                   <div className="absolute left-0 right-0 top-[calc(100%+10px)] z-[999] overflow-hidden rounded-[24px] border border-blue-400/20 bg-[#081526]/98 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-xl">
@@ -325,7 +320,7 @@ export default function Navbar() {
                   </div>
                 )}
 
-              {/* No Results */}
+              {/* NO RESULTS */}
               {search &&
                 filteredProducts.length === 0 && (
                   <div className="absolute left-0 right-0 top-[calc(100%+10px)] z-[999] rounded-[24px] border border-blue-400/20 bg-[#081526]/98 px-6 py-5 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-xl">
@@ -343,24 +338,21 @@ export default function Navbar() {
         )}
       </header>
 
-      {/* =========================
-          SIDE MENU
-      ========================== */}
-
+      {/* COLLAPSIBLE SIDE MENU */}
       {menuOpen && (
         <div className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-md">
 
-          {/* Click outside to close */}
+          {/* CLICK OUTSIDE TO CLOSE */}
           <button
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 h-full w-full cursor-default"
             aria-label="Close menu overlay"
           />
 
-          {/* Sidebar */}
+          {/* SIDEBAR */}
           <aside className="apexx-scrollbar relative h-full w-[88%] max-w-[430px] overflow-y-auto border-r border-blue-900/50 bg-[#071323] px-6 py-6 shadow-2xl sm:px-8">
 
-            {/* Sidebar Header */}
+            {/* SIDEBAR HEADER */}
             <div className="mb-7 flex items-center justify-between">
 
               <a href="/">
@@ -382,10 +374,9 @@ export default function Navbar() {
               </button>
             </div>
 
-            {/* Sidebar Sections */}
-            <div className="space-y-6 pb-8">
+            {/* MENU SECTIONS */}
+            <div className="space-y-3 pb-8">
 
-              {/* ACCOUNT */}
               <MenuSection
                 title="Account"
                 links={[
@@ -396,7 +387,6 @@ export default function Navbar() {
                 ]}
               />
 
-              {/* SHOP */}
               <MenuSection
                 title="Shop"
                 links={[
@@ -406,23 +396,15 @@ export default function Navbar() {
                 ]}
               />
 
-              {/* RESEARCH */}
               <MenuSection
                 title="Research"
                 links={[
-                  [
-                    "Research Library",
-                    "/peptide-info",
-                  ],
+                  ["Research Library", "/peptide-info"],
                   ["FAQ", "/faq"],
-                  [
-                    "Referral Program",
-                    "/research-referral",
-                  ],
+                  ["Referral Program", "/research-referral"],
                 ]}
               />
 
-              {/* SUPPORT */}
               <MenuSection
                 title="Support"
                 links={[
@@ -432,7 +414,6 @@ export default function Navbar() {
                 ]}
               />
 
-              {/* LEGAL */}
               <MenuSection
                 title="Legal"
                 links={[
@@ -448,9 +429,7 @@ export default function Navbar() {
   );
 }
 
-/* =========================
-   SIDEBAR SECTION
-========================== */
+/* COLLAPSIBLE MENU SECTION */
 
 function MenuSection({
   title,
@@ -459,39 +438,67 @@ function MenuSection({
   title: string;
   links: [string, string][];
 }) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div>
+    <div className="overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.025]">
 
-      {/* Section Heading */}
-      <p className="mb-2 px-1 text-[10px] font-bold uppercase tracking-[0.28em] text-blue-300/70">
-        {title}
-      </p>
+      {/* SECTION HEADER */}
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between px-5 py-4 text-left transition duration-200 hover:bg-blue-500/10"
+      >
+        <span className="text-[11px] font-bold uppercase tracking-[0.28em] text-blue-300/80">
+          {title}
+        </span>
 
-      {/* Section Links */}
-      <div className="overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.025]">
+        <ChevronDown
+          size={17}
+          className={`text-white/35 transition-transform duration-300 ${
+            open
+              ? "rotate-180 text-blue-300"
+              : ""
+          }`}
+        />
+      </button>
 
-        {links.map(
-          ([label, href], index) => (
-            <a
-              key={label}
-              href={href}
-              className={`group flex items-center justify-between px-4 py-3.5 text-white/70 transition duration-200 hover:bg-blue-500/10 hover:text-white ${
-                index !== links.length - 1
-                  ? "border-b border-white/[0.06]"
-                  : ""
-              }`}
-            >
-              <span className="text-[13px] font-semibold tracking-[0.04em]">
-                {label}
-              </span>
+      {/* COLLAPSIBLE LINKS */}
+      <div
+        className={`grid transition-all duration-300 ease-in-out ${
+          open
+            ? "grid-rows-[1fr] opacity-100"
+            : "grid-rows-[0fr] opacity-0"
+        }`}
+      >
+        <div className="overflow-hidden">
 
-              <ChevronRight
-                size={15}
-                className="text-white/20 transition duration-200 group-hover:translate-x-0.5 group-hover:text-blue-300"
-              />
-            </a>
-          )
-        )}
+          <div className="border-t border-white/[0.06]">
+            {links.map(
+              ([label, href], index) => (
+                <a
+                  key={label}
+                  href={href}
+                  className={`group flex items-center justify-between px-5 py-3.5 text-white/65 transition duration-200 hover:bg-blue-500/10 hover:text-white ${
+                    index !== links.length - 1
+                      ? "border-b border-white/[0.05]"
+                      : ""
+                  }`}
+                >
+                  <span className="text-[13px] font-semibold tracking-[0.03em]">
+                    {label}
+                  </span>
+
+                  <ChevronRight
+                    size={14}
+                    className="text-white/20 transition duration-200 group-hover:translate-x-0.5 group-hover:text-blue-300"
+                  />
+                </a>
+              )
+            )}
+          </div>
+
+        </div>
       </div>
     </div>
   );

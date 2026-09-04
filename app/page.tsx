@@ -1491,156 +1491,89 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
 </Reveal>
 
 {/* HOMEPAGE FAQ */}
-<section className="relative overflow-hidden bg-[#9EC3F8] px-4 py-16 sm:px-6 md:py-20">
+<section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
-  {/* Soft background lighting */}
-  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.35),transparent_35%),radial-gradient(circle_at_85%_80%,rgba(255,255,255,0.22),transparent_32%)]" />
+  <div className="relative z-10 max-w-5xl mx-auto">
+    <div className="text-center mb-14">
+      <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
+        Frequently Asked Questions
+      </p>
 
-  {/* Decorative background shapes */}
-  <div className="pointer-events-none absolute -left-20 top-12 h-64 w-64 rounded-full border border-white/20" />
-  <div className="pointer-events-none absolute -left-10 top-24 h-44 w-44 rounded-full border border-white/15" />
+      <h2 className="text-5xl md:text-7xl font-black text-white leading-[0.95] mb-6">
+        Common Questions
+      </h2>
 
-  <div className="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full border border-white/20" />
-  <div className="pointer-events-none absolute -right-8 bottom-12 h-48 w-48 rounded-full border border-white/15" />
-
-  <div className="relative z-10 mx-auto max-w-6xl">
-
-    {/* HEADER */}
-    <div className="grid grid-cols-1 gap-5 border-b border-[#081526]/10 pb-8 md:grid-cols-[1fr_0.75fr] md:items-end">
-
-      <div>
-        <div className="mb-4 inline-flex items-center rounded-full border border-[#081526]/10 bg-white/30 px-4 py-2 backdrop-blur-sm">
-          <span className="text-[9px] font-black uppercase tracking-[0.22em] text-[#081526]/65">
-            Frequently Asked Questions
-          </span>
-        </div>
-
-        <h2 className="text-4xl font-black leading-none tracking-tight text-[#081526] sm:text-5xl">
-          Common
-          <span className="ml-2 text-white drop-shadow-[0_2px_10px_rgba(8,21,38,0.08)]">
-            Questions.
-          </span>
-        </h2>
-      </div>
-
-      <div className="md:text-right">
-        <p className="text-sm font-medium leading-6 text-[#081526]/55">
-          Quick answers about products, orders, shipping, COAs,
-          and research-use policies.
-        </p>
-
-        <Link
-          href="/faq"
-          className="mt-3 inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.18em] text-[#081526]/55 transition hover:text-[#081526]"
-        >
-          View All FAQs
-          <span>→</span>
-        </Link>
-      </div>
-
+      <p className="text-white/70 text-lg max-w-3xl mx-auto leading-relaxed">
+        Quick answers about our products, shipping, COAs, and laboratory
+        research standards.
+      </p>
     </div>
 
-    {/* QUESTIONS */}
-    <div className="mt-3">
+    <div className="space-y-5">
       {[
         {
           question: "What are your products?",
           answer:
-            "We provide research compounds intended strictly for laboratory and analytical research purposes only.",
+            "We provide premium research compounds intended strictly for laboratory and analytical research purposes only.",
         },
         {
-          question: "Are COAs available?",
+          question: "Are your products tested?",
           answer:
-            "Yes. Available Certificates of Analysis and batch documentation can be reviewed on our COA page.",
+            "Yes. Products are batch tested and COA verified when available to support consistency, quality, and transparency.",
         },
         {
-          question: "How quickly are orders processed?",
+          question: "How long does shipping take?",
           answer:
-            "Orders are processed as quickly as possible during normal business days. Processing times may vary during periods of high order volume, weekends, or holidays.",
+            "Orders typically ship within 1–2 business days. Delivery time depends on your location and carrier.",
         },
         {
-          question: "How can I track my order?",
+          question: "Do you provide COAs?",
           answer:
-            "Once tracking information is available, you can follow your shipment using the tracking details associated with your order.",
+            "Yes. Certificates of Analysis are available when batch testing has been completed and uploaded.",
         },
         {
-          question: "How can I contact support?",
+          question: "Are these products for human use?",
           answer:
-            "Visit our Contact page for assistance with orders, shipping, product information, COAs, and general support questions.",
+            "No. All Apexx Biolabs products are sold strictly for laboratory research use only and are not intended for human consumption, medical use, veterinary use, diagnosis, treatment, cure, or prevention of disease.",
         },
-      ].map((item, index) => {
-        const isOpen = openFAQ === index;
-
-        return (
-          <div
-            key={item.question}
-            className="border-b border-[#081526]/10"
+      ].map((faq, index) => (
+        <div
+          key={faq.question}
+          className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm overflow-hidden hover:bg-white/[0.07] hover:border-blue-400/50 transition-all duration-300"
+        >
+          <button
+            onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
+            className="w-full flex justify-between items-center text-left p-7 gap-6"
           >
-            <button
-              type="button"
-              onClick={() => setOpenFAQ(isOpen ? null : index)}
-              className="group flex w-full items-center gap-5 py-5 text-left sm:py-6"
-            >
-              {/* NUMBER */}
-              <span className="hidden w-8 shrink-0 text-[9px] font-black tracking-[0.16em] text-[#081526]/25 sm:block">
-                {String(index + 1).padStart(2, "0")}
-              </span>
+            <span className="text-xl md:text-2xl font-black text-white">
+              {faq.question}
+            </span>
 
-              {/* QUESTION */}
-              <span className="flex-1 text-sm font-black text-[#081526]/75 transition-colors group-hover:text-[#081526] sm:text-base">
-                {item.question}
-              </span>
+            <span className="text-3xl text-blue-300 shrink-0">
+              {openFAQ === index ? "−" : "+"}
+            </span>
+          </button>
 
-              {/* PLUS */}
-              <span
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${
-                  isOpen
-                    ? "rotate-45 border-[#081526] bg-[#081526] text-white"
-                    : "border-[#081526]/15 bg-white/20 text-[#081526]/55 group-hover:border-[#081526]/30 group-hover:bg-white/35"
-                }`}
-              >
-                <span className="text-xl font-light leading-none">
-                  +
-                </span>
-              </span>
-            </button>
-
-            {/* ANSWER */}
-            <div
-              className={`grid transition-all duration-300 ease-out ${
-                isOpen
-                  ? "grid-rows-[1fr] opacity-100"
-                  : "grid-rows-[0fr] opacity-0"
-              }`}
-            >
-              <div className="overflow-hidden">
-                <div className="pb-6 sm:pl-13">
-                  <p className="max-w-3xl pr-12 text-sm font-medium leading-6 text-[#081526]/50">
-                    {item.answer}
-                  </p>
-                </div>
-              </div>
+          {openFAQ === index && (
+            <div className="px-7 pb-7 pt-5 border-t border-white/10">
+              <p className="text-white/60 leading-relaxed">
+                {faq.answer}
+              </p>
             </div>
-          </div>
-        );
-      })}
+          )}
+        </div>
+      ))}
     </div>
 
-    {/* BOTTOM */}
-    <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-[10px] font-semibold text-[#081526]/35">
-        Still have a question? Our support team is available to help.
-      </p>
-
-      <Link
-        href="/contact"
-        className="inline-flex w-fit items-center gap-2 text-[9px] font-black uppercase tracking-[0.18em] text-[#081526]/60 transition hover:text-[#081526]"
+    <div className="text-center mt-12">
+      <a
+        href="/faq"
+        className="inline-flex rounded-full bg-white text-[#081526] px-8 py-4 font-bold uppercase tracking-widest hover:bg-blue-100 transition-all"
       >
-        Contact Support
-        <span>→</span>
-      </Link>
+        View Full FAQ
+      </a>
     </div>
-
   </div>
 </section>
 

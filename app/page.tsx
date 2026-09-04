@@ -1300,138 +1300,96 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
 
 {/* CREATE ACCOUNT + REWARDS */}
 <Reveal>
-  <section className="relative overflow-hidden bg-[#081526] px-4 py-14 sm:px-6 md:py-16">
-    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_60%)]" />
+  <section className="relative overflow-hidden border-y border-white/[0.06] bg-[#081526] px-5 py-12 sm:px-6 md:py-14">
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(96,165,250,0.07),transparent_42%)]" />
 
     <div className="relative z-10 mx-auto max-w-6xl">
 
-      <div className="overflow-hidden rounded-[26px] border border-white/[0.08] bg-white/[0.025]">
+      {/* MAIN CONTENT */}
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
 
-        {/* MAIN REWARDS AREA */}
-        <div className="grid grid-cols-1 gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center lg:p-10">
+        {/* LEFT */}
+        <div className="max-w-2xl">
+          <p className="mb-3 text-[10px] font-black uppercase tracking-[0.28em] text-blue-300">
+            Apexx Rewards
+          </p>
 
-          {/* LEFT */}
-          <div className="max-w-3xl">
-            <div className="mb-5 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[13px] border border-blue-300/20 bg-blue-400/[0.08] text-blue-300">
-                <Gift size={20} />
-              </div>
+          <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+            Create an account. Get rewarded.
+          </h2>
 
-              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-300">
-                Apexx Rewards
-              </p>
-            </div>
-
-            <h2 className="text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl md:text-5xl">
-              Create an account.
-              <span className="ml-2 text-blue-300">
-                Earn rewards.
-              </span>
-            </h2>
-
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55 sm:text-base">
-              Earn points on eligible purchases, track your orders, save
-              favorites, and manage everything from your Apexx account.
-            </p>
-          </div>
-
-          {/* BUTTONS */}
-          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row lg:flex-col">
-            <Link
-              href="/account/signup"
-              className="inline-flex min-w-[190px] items-center justify-center rounded-full bg-white px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.16em] text-[#081526] transition-all hover:bg-blue-100"
-            >
-              Create Free Account
-            </Link>
-
-            <Link
-              href="/account/login"
-              className="inline-flex min-w-[190px] items-center justify-center rounded-full border border-white/10 bg-white/[0.03] px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.16em] text-white transition-all hover:border-blue-400/30 hover:bg-white/[0.06]"
-            >
-              Sign In
-            </Link>
-          </div>
+          <p className="mt-3 max-w-xl text-sm leading-6 text-white/45">
+            Earn points on eligible purchases, track orders, save favorites,
+            and manage everything from one account.
+          </p>
         </div>
 
-        {/* BENEFITS */}
-        <div className="border-t border-white/[0.07] px-6 py-5 sm:px-8 lg:px-10">
-          <div className="grid grid-cols-2 gap-x-5 gap-y-4 md:grid-cols-4">
+        {/* CTA */}
+        <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+          <Link
+            href="/account/signup"
+            className="inline-flex items-center justify-center rounded-full bg-white px-7 py-3 text-[10px] font-black uppercase tracking-[0.16em] text-[#081526] transition hover:bg-blue-100"
+          >
+            Create Account
+          </Link>
 
-            {[
-              {
-                title: "1 Point / $1",
-                text: "Earn on eligible purchases",
-              },
-              {
-                title: "$10 Rewards",
-                text: "Redeem every 100 points",
-              },
-              {
-                title: "Order Tracking",
-                text: "Manage orders in one place",
-              },
-              {
-                title: "Saved Favorites",
-                text: "Keep products easy to find",
-              },
-            ].map((item) => (
-              <div
-                key={item.title}
-                className="min-w-0"
-              >
-                <div className="mb-2 flex items-center gap-2">
-                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-400/10 text-blue-300">
-                    <Check size={12} strokeWidth={3} />
-                  </div>
-
-                  <p className="text-xs font-black text-white sm:text-sm">
-                    {item.title}
-                  </p>
-                </div>
-
-                <p className="pl-7 text-[11px] leading-5 text-white/40">
-                  {item.text}
-                </p>
-              </div>
-            ))}
-
-          </div>
+          <Link
+            href="/account/login"
+            className="inline-flex items-center justify-center px-4 py-3 text-[10px] font-black uppercase tracking-[0.16em] text-white/50 transition hover:text-white"
+          >
+            Sign In →
+          </Link>
         </div>
 
-        {/* HOW REWARDS WORK */}
-        <div className="border-t border-white/[0.07] bg-[#081526]/35 px-6 py-5 sm:px-8 lg:px-10">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+      </div>
 
-            <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-blue-300/70">
-                How Rewards Work
-              </p>
+      {/* BENEFITS */}
+      <div className="mt-8 grid grid-cols-2 border-t border-white/[0.08] pt-6 md:grid-cols-4">
 
-              <p className="mt-2 text-xs leading-6 text-white/45 sm:text-sm">
-                Create an account, place eligible orders using the same
-                account email, earn points after fulfillment, and redeem
-                available points on future eligible purchases.
-              </p>
-            </div>
+        <div className="pr-5">
+          <p className="text-sm font-bold text-white">
+            Earn Points
+          </p>
+          <p className="mt-1 text-xs text-white/35">
+            1 point per eligible $1
+          </p>
+        </div>
 
-            <div className="flex shrink-0 items-center gap-3 text-[10px] font-bold uppercase tracking-[0.14em] text-white/35">
-              <span>1</span>
-              <span className="h-px w-5 bg-white/15" />
-              <span>Earn</span>
-              <span className="h-px w-5 bg-white/15" />
-              <span>Redeem</span>
-            </div>
+        <div className="border-l border-white/[0.08] pl-5 md:px-6">
+          <p className="text-sm font-bold text-white">
+            Redeem Rewards
+          </p>
+          <p className="mt-1 text-xs text-white/35">
+            $10 for every 100 points
+          </p>
+        </div>
 
-          </div>
+        <div className="mt-5 pr-5 md:mt-0 md:border-l md:border-white/[0.08] md:px-6">
+          <p className="text-sm font-bold text-white">
+            Track Orders
+          </p>
+          <p className="mt-1 text-xs text-white/35">
+            View order progress
+          </p>
+        </div>
 
-          <p className="mt-4 text-[10px] leading-5 text-white/25">
-            Rewards have no cash value and may be adjusted for canceled,
-            refunded, duplicate, fraudulent, or otherwise ineligible
-            transactions. Additional rewards terms may apply.
+        <div className="mt-5 border-l border-white/[0.08] pl-5 md:mt-0 md:pl-6">
+          <p className="text-sm font-bold text-white">
+            Save Favorites
+          </p>
+          <p className="mt-1 text-xs text-white/35">
+            Keep products organized
           </p>
         </div>
 
       </div>
+
+      {/* SMALL TERMS */}
+      <p className="mt-6 max-w-4xl border-t border-white/[0.06] pt-4 text-[10px] leading-5 text-white/20">
+        Points are awarded on eligible purchases after fulfillment and may
+        be adjusted for canceled, refunded, duplicate, fraudulent, or
+        otherwise ineligible transactions. Rewards have no cash value.
+      </p>
 
     </div>
   </section>

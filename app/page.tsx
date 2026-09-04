@@ -1300,174 +1300,135 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
 
 {/* CREATE ACCOUNT + REWARDS */}
 <Reveal>
-  <section
-    className="relative overflow-hidden bg-[#9EC3F8] bg-cover bg-center bg-no-repeat px-4 py-16 sm:px-6 md:py-20"
-    style={{
-      backgroundImage: "url('/images/rewards-background.png')",
-    }}
-  >
-    {/* Soft overlay */}
-    <div className="pointer-events-none absolute inset-0 bg-white/[0.04]" />
-
-    {/* Soft center glow */}
-    <div className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/20 blur-[120px]" />
+  <section className="relative overflow-hidden bg-[#081526] px-4 py-16 sm:px-6 md:py-20">
+    {/* background effects */}
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_25%,rgba(96,165,250,0.16),transparent_34%),radial-gradient(circle_at_82%_72%,rgba(59,130,246,0.10),transparent_30%)]" />
 
     <div className="relative z-10 mx-auto max-w-6xl">
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16">
 
-        {/* LEFT SIDE */}
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-14">
+
+        {/* LEFT */}
         <div>
-          {/* Rewards label */}
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#081526]/10 bg-white/35 px-4 py-2 backdrop-blur-md">
-            <Gift
-              size={15}
-              className="text-[#081526]"
-            />
-
-            <span className="text-[9px] font-black uppercase tracking-[0.22em] text-[#081526]/70">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-300/15 bg-blue-400/[0.06] px-3.5 py-2">
+            <Gift size={15} className="text-blue-300" />
+            <span className="text-[9px] font-black uppercase tracking-[0.22em] text-blue-300">
               Apexx Rewards
             </span>
           </div>
 
-          {/* Heading */}
-          <h2 className="max-w-2xl text-4xl font-black leading-[0.98] tracking-tight text-[#081526] sm:text-5xl md:text-6xl">
+          <h2 className="max-w-2xl text-4xl font-black leading-[0.98] tracking-tight text-white sm:text-5xl md:text-6xl">
             Your account should
-            <span className="mt-1 block text-white drop-shadow-[0_2px_10px_rgba(8,21,38,0.08)]">
+            <span className="block bg-gradient-to-r from-blue-300 to-blue-100 bg-clip-text text-transparent">
               work harder for you.
             </span>
           </h2>
 
-          {/* Description */}
-          <p className="mt-5 max-w-xl text-sm font-medium leading-7 text-[#081526]/60 sm:text-base">
+          <p className="mt-5 max-w-xl text-sm leading-7 text-white/50 sm:text-base">
             Earn rewards on eligible purchases, keep track of your orders,
-            and save products you want to come back to later — all from one
-            account.
+            and save products you want to come back to later.
           </p>
 
-          {/* Buttons */}
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="mt-7 flex flex-wrap items-center gap-4">
             <Link
               href="/account/signup"
-              className="inline-flex items-center justify-center rounded-full bg-[#081526] px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.17em] text-white shadow-[0_10px_30px_rgba(8,21,38,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#102743]"
+              className="inline-flex items-center justify-center rounded-full bg-white px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.17em] text-[#081526] shadow-[0_8px_30px_rgba(255,255,255,0.08)] transition-all hover:-translate-y-0.5 hover:bg-blue-100"
             >
               Create Free Account
             </Link>
 
             <Link
               href="/account/login"
-              className="inline-flex items-center justify-center gap-2 px-3 py-3 text-[10px] font-black uppercase tracking-[0.17em] text-[#081526]/55 transition hover:text-[#081526]"
+              className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.17em] text-white/45 transition hover:text-white"
             >
               Already have an account
-              <span className="text-[#081526]">→</span>
+              <span className="text-blue-300">→</span>
             </Link>
           </div>
         </div>
 
-        {/* RIGHT SIDE */}
+        {/* RIGHT */}
         <div className="relative">
 
-          {/* subtle glow behind cards */}
-          <div className="pointer-events-none absolute inset-8 rounded-full bg-white/40 blur-3xl" />
+          {/* glow behind cards */}
+          <div className="pointer-events-none absolute inset-0 scale-90 rounded-full bg-blue-400/10 blur-3xl" />
 
-          <div className="relative grid grid-cols-2 gap-3 sm:gap-4">
+          <div className="relative grid grid-cols-2 gap-4">
 
-            {/* EARN CARD */}
-            <div className="rounded-[24px] border border-white/60 bg-white/40 p-5 shadow-[0_18px_50px_rgba(8,21,38,0.08)] backdrop-blur-xl sm:p-6">
-              <div className="mb-8 flex items-center justify-between">
-                <p className="text-[9px] font-black uppercase tracking-[0.22em] text-[#081526]/45">
-                  Earn
-                </p>
+            {/* points */}
+            <div className="rounded-[24px] border border-white/[0.09] bg-white/[0.045] p-6 backdrop-blur-xl">
+              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-blue-300/70">
+                Earn
+              </p>
 
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#081526]/[0.06]">
-                  <Star
-                    size={14}
-                    className="text-[#081526]/60"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-end gap-2">
-                <span className="text-5xl font-black tracking-tight text-[#081526] sm:text-6xl">
+              <div className="mt-4 flex items-end gap-2">
+                <span className="text-5xl font-black tracking-tight text-white">
                   1
                 </span>
-
-                <span className="pb-1.5 text-[10px] font-black uppercase tracking-[0.15em] text-[#081526]/45">
-                  Point
+                <span className="pb-1.5 text-xs font-black uppercase tracking-[0.16em] text-white/45">
+                  pt
                 </span>
               </div>
 
-              <p className="mt-3 text-xs font-medium leading-5 text-[#081526]/45">
+              <p className="mt-3 text-xs leading-5 text-white/35">
                 For every eligible $1 spent.
               </p>
             </div>
 
-            {/* REDEEM CARD */}
-            <div className="mt-6 rounded-[24px] border border-white/70 bg-white/55 p-5 shadow-[0_18px_50px_rgba(8,21,38,0.09)] backdrop-blur-xl sm:p-6">
-              <div className="mb-8 flex items-center justify-between">
-                <p className="text-[9px] font-black uppercase tracking-[0.22em] text-[#081526]/45">
-                  Redeem
-                </p>
+            {/* reward */}
+            <div className="mt-6 rounded-[24px] border border-blue-300/15 bg-gradient-to-br from-blue-400/[0.10] to-white/[0.03] p-6 backdrop-blur-xl">
+              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-blue-300/70">
+                Redeem
+              </p>
 
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#081526]/[0.06]">
-                  <Gift
-                    size={14}
-                    className="text-[#081526]/60"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <span className="text-5xl font-black tracking-tight text-[#081526] sm:text-6xl">
+              <div className="mt-4">
+                <span className="text-5xl font-black tracking-tight text-white">
                   $10
                 </span>
               </div>
 
-              <p className="mt-3 text-xs font-medium leading-5 text-[#081526]/45">
+              <p className="mt-3 text-xs leading-5 text-white/35">
                 Every 100 available points.
               </p>
             </div>
 
-            {/* ACCOUNT BENEFITS */}
-            <div className="col-span-2 mt-1 overflow-hidden rounded-[22px] border border-white/55 bg-white/35 shadow-[0_15px_45px_rgba(8,21,38,0.06)] backdrop-blur-xl">
-              <div className="grid grid-cols-2 sm:grid-cols-4">
+            {/* account benefits */}
+            <div className="col-span-2 rounded-[24px] border border-white/[0.08] bg-[#0D2036]/80 p-5 backdrop-blur-xl">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
 
-                <div className="border-b border-[#081526]/[0.07] p-4 sm:border-b-0 sm:border-r sm:p-5">
-                  <p className="text-sm font-black text-[#081526]">
+                <div>
+                  <p className="text-sm font-bold text-white">
                     Orders
                   </p>
-
-                  <p className="mt-1 text-[10px] font-medium text-[#081526]/40">
-                    View purchases
+                  <p className="mt-1 text-[11px] text-white/30">
+                    Track purchases
                   </p>
                 </div>
 
-                <div className="border-b border-l border-[#081526]/[0.07] p-4 sm:border-b-0 sm:border-l-0 sm:border-r sm:p-5">
-                  <p className="text-sm font-black text-[#081526]">
-                    Tracking
-                  </p>
-
-                  <p className="mt-1 text-[10px] font-medium text-[#081526]/40">
-                    Follow orders
-                  </p>
-                </div>
-
-                <div className="p-4 sm:border-r sm:border-[#081526]/[0.07] sm:p-5">
-                  <p className="text-sm font-black text-[#081526]">
+                <div>
+                  <p className="text-sm font-bold text-white">
                     Favorites
                   </p>
-
-                  <p className="mt-1 text-[10px] font-medium text-[#081526]/40">
+                  <p className="mt-1 text-[11px] text-white/30">
                     Save products
                   </p>
                 </div>
 
-                <div className="border-l border-[#081526]/[0.07] p-4 sm:border-l-0 sm:p-5">
-                  <p className="text-sm font-black text-[#081526]">
+                <div>
+                  <p className="text-sm font-bold text-white">
                     Rewards
                   </p>
+                  <p className="mt-1 text-[11px] text-white/30">
+                    View points
+                  </p>
+                </div>
 
-                  <p className="mt-1 text-[10px] font-medium text-[#081526]/40">
-                    Manage points
+                <div>
+                  <p className="text-sm font-bold text-white">
+                    Dashboard
+                  </p>
+                  <p className="mt-1 text-[11px] text-white/30">
+                    Manage account
                   </p>
                 </div>
 
@@ -1476,73 +1437,43 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
 
           </div>
         </div>
+
       </div>
 
-      {/* REWARDS TERMS */}
-      <div className="mt-10 border-t border-[#081526]/10 pt-4">
-        <p className="max-w-4xl text-[10px] font-medium leading-5 text-[#081526]/35">
+      {/* bottom terms */}
+      <div className="mt-10 border-t border-white/[0.06] pt-4">
+        <p className="max-w-4xl text-[10px] leading-5 text-white/20">
           Points are awarded on eligible purchases after fulfillment and may
           be adjusted for canceled, refunded, duplicate, fraudulent, or
           otherwise ineligible transactions. Rewards have no cash value.
         </p>
       </div>
+
     </div>
   </section>
 </Reveal>
 
 {/* HOMEPAGE FAQ */}
-<section className="relative overflow-hidden bg-[#9EC3F8] px-4 py-16 sm:px-6 md:py-20">
+<section className="relative py-24 px-6 bg-[#081526] border-y border-white/10 overflow-hidden">
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
-  {/* BACKGROUND DETAILS */}
-  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(255,255,255,0.38),transparent_34%),radial-gradient(circle_at_85%_80%,rgba(255,255,255,0.20),transparent_32%)]" />
+  <div className="relative z-10 max-w-5xl mx-auto">
+    <div className="text-center mb-14">
+      <p className="uppercase tracking-[0.35em] text-blue-300 text-sm mb-6">
+        Frequently Asked Questions
+      </p>
 
-  {/* Subtle decorative circles */}
-  <div className="pointer-events-none absolute -left-28 top-10 h-72 w-72 rounded-full border border-white/20" />
-  <div className="pointer-events-none absolute -left-16 top-24 h-48 w-48 rounded-full border border-white/15" />
+      <h2 className="text-5xl md:text-7xl font-black text-white leading-[0.95] mb-6">
+        Common Questions
+      </h2>
 
-  <div className="pointer-events-none absolute -right-28 bottom-0 h-80 w-80 rounded-full border border-white/20" />
-  <div className="pointer-events-none absolute -right-10 bottom-16 h-52 w-52 rounded-full border border-white/15" />
-
-  <div className="relative z-10 mx-auto max-w-6xl">
-
-    {/* HEADER */}
-    <div className="grid grid-cols-1 gap-6 border-b border-[#081526]/10 pb-8 md:grid-cols-[1fr_0.75fr] md:items-end">
-
-      {/* LEFT */}
-      <div>
-        <div className="mb-4 inline-flex items-center rounded-full border border-[#081526]/10 bg-white/30 px-4 py-2 backdrop-blur-md">
-          <span className="text-[9px] font-black uppercase tracking-[0.22em] text-[#081526]/65">
-            Frequently Asked Questions
-          </span>
-        </div>
-
-        <h2 className="text-4xl font-black leading-[0.95] tracking-tight text-[#081526] sm:text-5xl md:text-6xl">
-          Common
-          <span className="block text-white drop-shadow-[0_2px_10px_rgba(8,21,38,0.08)]">
-            Questions.
-          </span>
-        </h2>
-      </div>
-
-      {/* RIGHT */}
-      <div className="md:pb-1 md:text-right">
-        <p className="max-w-md text-sm font-medium leading-6 text-[#081526]/55 md:ml-auto">
-          Quick answers about our products, shipping, COAs, and laboratory
-          research standards.
-        </p>
-
-        <a
-          href="/faq"
-          className="mt-4 inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.18em] text-[#081526]/55 transition hover:text-[#081526]"
-        >
-          View Full FAQ
-          <span>→</span>
-        </a>
-      </div>
+      <p className="text-white/70 text-lg max-w-3xl mx-auto leading-relaxed">
+        Quick answers about our products, shipping, COAs, and laboratory
+        research standards.
+      </p>
     </div>
 
-    {/* FAQ LIST */}
-    <div className="mt-3">
+    <div className="space-y-5">
       {[
         {
           question: "What are your products?",
@@ -1569,88 +1500,43 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
           answer:
             "No. All Apexx Biolabs products are sold strictly for laboratory research use only and are not intended for human consumption, medical use, veterinary use, diagnosis, treatment, cure, or prevention of disease.",
         },
-      ].map((faq, index) => {
-        const isOpen = openFAQ === index;
-
-        return (
-          <div
-            key={faq.question}
-            className="border-b border-[#081526]/10"
+      ].map((faq, index) => (
+        <div
+          key={faq.question}
+          className="rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm overflow-hidden hover:bg-white/[0.07] hover:border-blue-400/50 transition-all duration-300"
+        >
+          <button
+            onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
+            className="w-full flex justify-between items-center text-left p-7 gap-6"
           >
-            {/* QUESTION */}
-            <button
-              type="button"
-              onClick={() => setOpenFAQ(isOpen ? null : index)}
-              className="group flex w-full items-center gap-4 py-5 text-left sm:gap-6 sm:py-6"
-            >
+            <span className="text-xl md:text-2xl font-black text-white">
+              {faq.question}
+            </span>
 
-              {/* NUMBER */}
-              <span className="hidden w-8 shrink-0 text-[9px] font-black tracking-[0.16em] text-[#081526]/25 sm:block">
-                {String(index + 1).padStart(2, "0")}
-              </span>
+            <span className="text-3xl text-blue-300 shrink-0">
+              {openFAQ === index ? "−" : "+"}
+            </span>
+          </button>
 
-              {/* QUESTION TEXT */}
-              <span className="flex-1 text-sm font-black text-[#081526]/75 transition-colors group-hover:text-[#081526] sm:text-base md:text-lg">
-                {faq.question}
-              </span>
-
-              {/* PLUS BUTTON */}
-              <span
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 sm:h-10 sm:w-10 ${
-                  isOpen
-                    ? "rotate-45 border-[#081526] bg-[#081526] text-white"
-                    : "border-[#081526]/15 bg-white/25 text-[#081526]/55 group-hover:border-[#081526]/30 group-hover:bg-white/40"
-                }`}
-              >
-                <span className="text-xl font-light leading-none">
-                  +
-                </span>
-              </span>
-            </button>
-
-            {/* ANSWER */}
-            <div
-              className={`grid transition-all duration-300 ease-out ${
-                isOpen
-                  ? "grid-rows-[1fr] opacity-100"
-                  : "grid-rows-[0fr] opacity-0"
-              }`}
-            >
-              <div className="overflow-hidden">
-                <div className="pb-6 sm:pl-14">
-                  <p className="max-w-3xl pr-10 text-sm font-medium leading-7 text-[#081526]/50">
-                    {faq.answer}
-                  </p>
-                </div>
-              </div>
+          {openFAQ === index && (
+            <div className="px-7 pb-7 pt-5 border-t border-white/10">
+              <p className="text-white/60 leading-relaxed">
+                {faq.answer}
+              </p>
             </div>
-          </div>
-        );
-      })}
+          )}
+        </div>
+      ))}
     </div>
 
-    {/* BOTTOM SUPPORT AREA */}
-    <div className="mt-8 flex flex-col gap-4 border-t border-[#081526]/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-
-      <div>
-        <p className="text-sm font-black text-[#081526]/70">
-          Still have a question?
-        </p>
-
-        <p className="mt-1 text-xs font-medium text-[#081526]/40">
-          Our support team is available to help with orders, products, and documentation.
-        </p>
-      </div>
-
+    <div className="text-center mt-12">
       <a
-        href="/contact"
-        className="inline-flex w-fit items-center justify-center rounded-full bg-[#081526] px-6 py-3 text-[9px] font-black uppercase tracking-[0.17em] text-white shadow-[0_8px_25px_rgba(8,21,38,0.15)] transition-all hover:-translate-y-0.5 hover:bg-[#102743]"
+        href="/faq"
+        className="inline-flex rounded-full bg-white text-[#081526] px-8 py-4 font-bold uppercase tracking-widest hover:bg-blue-100 transition-all"
       >
-        Contact Support
+        View Full FAQ
       </a>
-
     </div>
-
   </div>
 </section>
 

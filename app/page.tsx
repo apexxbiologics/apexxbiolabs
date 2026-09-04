@@ -1300,140 +1300,139 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
 
 {/* CREATE ACCOUNT + REWARDS */}
 <Reveal>
-  <section className="relative overflow-hidden bg-[#081526] px-4 py-20 sm:px-6 md:py-24">
-    {/* Background glow */}
-    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.14),transparent_58%)]" />
+  <section className="relative overflow-hidden bg-[#081526] px-4 py-14 sm:px-6 md:py-16">
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_60%)]" />
 
-    <div className="relative z-10 mx-auto w-full max-w-6xl">
-      <div className="overflow-hidden rounded-[2rem] border border-blue-300/20 bg-gradient-to-br from-[#102743] via-[#12345A] to-[#0B1B30] shadow-[0_0_70px_rgba(96,165,250,0.14)] sm:rounded-[2.75rem]">
-        <div className="grid min-w-0 grid-cols-1 lg:grid-cols-[1.15fr_0.85fr]">
-          {/* LEFT SIDE */}
-          <div className="min-w-0 p-6 sm:p-8 md:p-12 lg:p-14">
-            <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-blue-300/20 bg-blue-400/10 text-blue-200">
-                <Gift size={24} />
+    <div className="relative z-10 mx-auto max-w-6xl">
+
+      <div className="overflow-hidden rounded-[26px] border border-white/[0.08] bg-white/[0.025]">
+
+        {/* MAIN REWARDS AREA */}
+        <div className="grid grid-cols-1 gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center lg:p-10">
+
+          {/* LEFT */}
+          <div className="max-w-3xl">
+            <div className="mb-5 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-[13px] border border-blue-300/20 bg-blue-400/[0.08] text-blue-300">
+                <Gift size={20} />
               </div>
 
-              <p className="break-words text-xs font-black uppercase tracking-[0.25em] text-blue-300 sm:tracking-[0.35em]">
+              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-300">
                 Apexx Rewards
               </p>
             </div>
 
-            <h2 className="max-w-3xl break-words text-4xl font-black leading-[1] tracking-tight text-white sm:text-5xl md:text-6xl">
+            <h2 className="text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl md:text-5xl">
               Create an account.
-              <span className="mt-2 block text-blue-300">
-                Get rewarded.
+              <span className="ml-2 text-blue-300">
+                Earn rewards.
               </span>
             </h2>
 
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-blue-100/70 md:text-lg">
-              Create your free Apexx account to earn points on eligible
-              purchases, track orders, save favorite products, and manage
-              everything from your customer dashboard.
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55 sm:text-base">
+              Earn points on eligible purchases, track your orders, save
+              favorites, and manage everything from your Apexx account.
             </p>
-
-            <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {[
-                "Earn 1 point for every $1 spent",
-                "Redeem 100 points for $10 off",
-                "Track orders and shipments",
-                "Save your favorite products",
-              ].map((benefit) => (
-                <div
-                  key={benefit}
-                  className="flex min-w-0 items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-4"
-                >
-                  <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-400/15 text-blue-300">
-                    <Check size={15} strokeWidth={3} />
-                  </div>
-
-                  <p className="break-words text-sm font-semibold leading-relaxed text-white/75">
-                    {benefit}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/account/signup"
-                className="inline-flex w-full items-center justify-center rounded-full bg-white px-8 py-4 text-center text-sm font-black uppercase tracking-[0.2em] text-[#081526] transition hover:bg-blue-100 sm:w-fit"
-              >
-                Create Free Account
-              </Link>
-
-              <Link
-                href="/account/login"
-                className="inline-flex w-full items-center justify-center rounded-full border border-white/15 bg-white/[0.05] px-8 py-4 text-center text-sm font-black uppercase tracking-[0.2em] text-white transition hover:border-blue-300/40 hover:bg-white/[0.09] sm:w-fit"
-              >
-                Sign In
-              </Link>
-            </div>
           </div>
 
-          {/* RIGHT SIDE — CONDITIONS */}
-          <div className="min-w-0 border-t border-white/10 bg-[#081526]/55 p-6 sm:p-8 md:p-10 lg:border-l lg:border-t-0 lg:p-12">
-            <p className="mb-3 text-xs font-black uppercase tracking-[0.25em] text-blue-300">
-              Rewards Conditions
-            </p>
+          {/* BUTTONS */}
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row lg:flex-col">
+            <Link
+              href="/account/signup"
+              className="inline-flex min-w-[190px] items-center justify-center rounded-full bg-white px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.16em] text-[#081526] transition-all hover:bg-blue-100"
+            >
+              Create Free Account
+            </Link>
 
-            <h3 className="break-words text-2xl font-black text-white md:text-3xl">
-              How rewards work
-            </h3>
-
-            <div className="mt-7 space-y-4">
-              {[
-                {
-                  number: "01",
-                  title: "Create an account",
-                  text: "Customers must have an Apexx account and use the same account email when placing an order.",
-                },
-                {
-                  number: "02",
-                  title: "Earn eligible points",
-                  text: "One point is awarded for every eligible dollar spent. Shipping, taxes, discounts, and canceled or refunded amounts may not earn points.",
-                },
-                {
-                  number: "03",
-                  title: "Points are added after fulfillment",
-                  text: "Reward points are credited after an eligible order has been completed or shipped.",
-                },
-                {
-                  number: "04",
-                  title: "Redeem future rewards",
-                  text: "Every 100 available points may be redeemed for $10 off an eligible future order.",
-                },
-              ].map((condition) => (
-                <div
-                  key={condition.number}
-                  className="flex min-w-0 items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4"
-                >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-300/20 bg-blue-400/10 text-xs font-black text-blue-300">
-                    {condition.number}
-                  </div>
-
-                  <div className="min-w-0">
-                    <p className="break-words font-black text-white">
-                      {condition.title}
-                    </p>
-
-                    <p className="mt-1 break-words text-sm leading-relaxed text-white/55">
-                      {condition.text}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <p className="mt-6 break-words text-xs leading-relaxed text-white/35">
-              Rewards have no cash value and cannot be transferred. Apexx
-              Biolabs may correct balances resulting from canceled, refunded,
-              duplicate, fraudulent, or otherwise ineligible transactions.
-              Additional account and rewards terms may apply.
-            </p>
+            <Link
+              href="/account/login"
+              className="inline-flex min-w-[190px] items-center justify-center rounded-full border border-white/10 bg-white/[0.03] px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.16em] text-white transition-all hover:border-blue-400/30 hover:bg-white/[0.06]"
+            >
+              Sign In
+            </Link>
           </div>
         </div>
+
+        {/* BENEFITS */}
+        <div className="border-t border-white/[0.07] px-6 py-5 sm:px-8 lg:px-10">
+          <div className="grid grid-cols-2 gap-x-5 gap-y-4 md:grid-cols-4">
+
+            {[
+              {
+                title: "1 Point / $1",
+                text: "Earn on eligible purchases",
+              },
+              {
+                title: "$10 Rewards",
+                text: "Redeem every 100 points",
+              },
+              {
+                title: "Order Tracking",
+                text: "Manage orders in one place",
+              },
+              {
+                title: "Saved Favorites",
+                text: "Keep products easy to find",
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="min-w-0"
+              >
+                <div className="mb-2 flex items-center gap-2">
+                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-400/10 text-blue-300">
+                    <Check size={12} strokeWidth={3} />
+                  </div>
+
+                  <p className="text-xs font-black text-white sm:text-sm">
+                    {item.title}
+                  </p>
+                </div>
+
+                <p className="pl-7 text-[11px] leading-5 text-white/40">
+                  {item.text}
+                </p>
+              </div>
+            ))}
+
+          </div>
+        </div>
+
+        {/* HOW REWARDS WORK */}
+        <div className="border-t border-white/[0.07] bg-[#081526]/35 px-6 py-5 sm:px-8 lg:px-10">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-blue-300/70">
+                How Rewards Work
+              </p>
+
+              <p className="mt-2 text-xs leading-6 text-white/45 sm:text-sm">
+                Create an account, place eligible orders using the same
+                account email, earn points after fulfillment, and redeem
+                available points on future eligible purchases.
+              </p>
+            </div>
+
+            <div className="flex shrink-0 items-center gap-3 text-[10px] font-bold uppercase tracking-[0.14em] text-white/35">
+              <span>1</span>
+              <span className="h-px w-5 bg-white/15" />
+              <span>Earn</span>
+              <span className="h-px w-5 bg-white/15" />
+              <span>Redeem</span>
+            </div>
+
+          </div>
+
+          <p className="mt-4 text-[10px] leading-5 text-white/25">
+            Rewards have no cash value and may be adjusted for canceled,
+            refunded, duplicate, fraudulent, or otherwise ineligible
+            transactions. Additional rewards terms may apply.
+          </p>
+        </div>
+
       </div>
+
     </div>
   </section>
 </Reveal>

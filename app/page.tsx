@@ -1438,30 +1438,40 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
 </Reveal>
 
 {/* HOMEPAGE FAQ */}
-<section className="relative overflow-hidden border-y border-white/[0.07] bg-[#081526] px-4 py-14 sm:px-6 md:py-16">
-  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.08),transparent_60%)]" />
+<section className="relative overflow-hidden border-y border-white/[0.06] bg-[#081526] px-4 py-14 sm:px-6 md:py-16">
+  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.07),transparent_62%)]" />
 
-  <div className="relative z-10 mx-auto max-w-4xl">
+  <div className="relative z-10 mx-auto max-w-5xl">
 
     {/* HEADER */}
-    <div className="mb-8 text-center">
+    <div className="mb-8">
       <p className="mb-3 text-[10px] font-black uppercase tracking-[0.28em] text-blue-300">
-        FAQ
+        Frequently Asked Questions
       </p>
 
-      <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
-        Common Questions
-      </h2>
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+            Common Questions
+          </h2>
 
-      <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-white/45">
-        Quick answers about products, orders, shipping, COAs, and
-        research-use policies.
-      </p>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-white/45">
+            Helpful information about products, orders, shipping, COAs,
+            and research-use policies.
+          </p>
+        </div>
+
+        <Link
+          href="/faq"
+          className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-300/70 transition hover:text-blue-300"
+        >
+          View All FAQs →
+        </Link>
+      </div>
     </div>
 
-    {/* QUESTIONS */}
-    <div className="overflow-hidden rounded-[24px] border border-white/[0.08] bg-white/[0.025]">
-
+    {/* FAQ LIST */}
+    <div className="border-t border-white/[0.08]">
       {[
         {
           question: "What are your products?",
@@ -1494,28 +1504,22 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
         return (
           <div
             key={item.question}
-            className={
-              index !== 0
-                ? "border-t border-white/[0.07]"
-                : ""
-            }
+            className="border-b border-white/[0.08]"
           >
             <button
               type="button"
-              onClick={() =>
-                setOpenFAQ(isOpen ? null : index)
-              }
-              className="group flex w-full items-center justify-between gap-5 px-5 py-5 text-left transition-colors hover:bg-white/[0.025] sm:px-6"
+              onClick={() => setOpenFAQ(isOpen ? null : index)}
+              className="group flex w-full items-center justify-between gap-6 py-5 text-left"
             >
-              <span className="text-sm font-bold text-white/80 transition-colors group-hover:text-white sm:text-[15px]">
+              <span className="text-sm font-semibold text-white/75 transition group-hover:text-white sm:text-base">
                 {item.question}
               </span>
 
               <span
-                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-lg leading-none transition-all duration-300 ${
+                className={`shrink-0 text-xl font-light transition-all duration-300 ${
                   isOpen
-                    ? "rotate-45 border-blue-300/30 bg-blue-400/10 text-blue-300"
-                    : "border-white/10 bg-white/[0.03] text-white/40"
+                    ? "rotate-45 text-blue-300"
+                    : "text-white/35"
                 }`}
               >
                 +
@@ -1530,7 +1534,7 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
               }`}
             >
               <div className="overflow-hidden">
-                <p className="max-w-3xl px-5 pb-5 pr-14 text-sm leading-6 text-white/45 sm:px-6 sm:pr-16">
+                <p className="max-w-3xl pb-5 pr-10 text-sm leading-6 text-white/45">
                   {item.answer}
                 </p>
               </div>
@@ -1538,18 +1542,6 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
           </div>
         );
       })}
-
-    </div>
-
-    {/* BOTTOM LINK */}
-    <div className="mt-6 text-center">
-      <Link
-        href="/faq"
-        className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-blue-300/70 transition-colors hover:text-blue-300"
-      >
-        View All FAQs
-        <span>→</span>
-      </Link>
     </div>
 
   </div>

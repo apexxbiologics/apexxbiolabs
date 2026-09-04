@@ -925,261 +925,159 @@ className="absolute bottom-2 left-3 right-3 z-20 flex min-w-0 items-center justi
   </div>
 </section>
 
-{/* ABOUT + WHY CHOOSE APEXX */}
+{/* ABOUT APEXX */}
 <Reveal>
   <section className="relative overflow-hidden border-y border-white/10 bg-[#081526] px-4 py-20 sm:px-6 md:py-24">
-    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.12),transparent_58%)]" />
+    {/* Background glow */}
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_58%)]" />
 
-    <div className="relative z-10 mx-auto w-full min-w-0 max-w-7xl">
-      {/* ABOUT HEADER */}
-      <div className="mb-10 grid min-w-0 grid-cols-1 items-center gap-7 lg:grid-cols-2 lg:gap-14">
-        <div className="min-w-0">
-          <p className="mb-5 text-xs font-black uppercase tracking-[0.25em] text-blue-300 sm:text-sm sm:tracking-[0.35em]">
+    <div className="relative z-10 mx-auto max-w-7xl">
+
+      {/* HEADER */}
+      <div className="grid grid-cols-1 items-end gap-8 lg:grid-cols-2 lg:gap-16">
+        <div>
+          <p className="mb-5 text-xs font-black uppercase tracking-[0.32em] text-blue-300">
             About Apexx
           </p>
 
-          <h2 className="break-words text-4xl font-black leading-[0.95] tracking-tight text-white sm:text-5xl md:text-7xl">
-            Scientific Precision.
+          <h2 className="text-4xl font-black leading-[0.95] tracking-tight text-white sm:text-5xl md:text-7xl">
+            Research Built
             <span className="block text-blue-300">
-              Trusted Quality.
+              Around Confidence.
             </span>
           </h2>
         </div>
 
-        <div className="min-w-0">
-          <p className="max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg md:text-xl">
-            Apexx Biolabs specializes in high-purity research compounds
-            supported by analytical review, batch documentation, and
-            research-focused quality standards.
+        <div className="max-w-2xl lg:pb-1">
+          <p className="text-base leading-8 text-white/65 sm:text-lg">
+            Apexx Biolabs provides research compounds with a focus on
+            transparent documentation, dependable fulfillment, careful
+            packaging, and straightforward customer support.
           </p>
 
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/55">
-            Our goal is to provide a clear, dependable ordering experience
-            with accessible documentation, responsive support, and transparent
-            product information.
-          </p>
-        </div>
-      </div>
-
-      {/* CORE QUALITY CARDS */}
-      <div className="mb-14 grid min-w-0 grid-cols-1 gap-5 md:grid-cols-3">
-        <div className="group min-w-0 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 transition-all hover:border-blue-400/50 hover:bg-white/[0.07] sm:p-8">
-          <div className="mb-7 flex h-12 w-12 items-center justify-center rounded-full border border-blue-300/30 bg-blue-400/10">
-            <Check
-              size={24}
-              strokeWidth={3}
-              className="text-blue-300"
-            />
-          </div>
-
-          <h3 className="mb-4 break-words text-2xl font-bold text-white">
-            Third-Party Testing
-          </h3>
-
-          <p className="break-words leading-relaxed text-white/60">
-            Independent analytical verification supports transparency,
-            consistency, and confidence in available product documentation.
-          </p>
-        </div>
-
-        <div className="group min-w-0 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 transition-all hover:border-blue-400/50 hover:bg-white/[0.07] sm:p-8">
-          <div className="mb-7 flex h-12 w-12 items-center justify-center rounded-full border border-blue-300/30 bg-blue-400/10">
-            <FlaskConical
-              size={24}
-              strokeWidth={2.25}
-              className="text-blue-300"
-            />
-          </div>
-
-          <h3 className="mb-4 break-words text-2xl font-bold text-white">
-            Research Standards
-          </h3>
-
-          <p className="break-words leading-relaxed text-white/60">
-            Products are handled and documented with laboratory research,
-            consistency, and responsible research-use standards in mind.
-          </p>
-        </div>
-
-        <div className="group min-w-0 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 transition-all hover:border-blue-400/50 hover:bg-white/[0.07] sm:p-8">
-          <div className="mb-7 flex h-12 w-12 items-center justify-center rounded-full border border-blue-300/30 bg-blue-400/10">
-            <Microscope
-              size={24}
-              strokeWidth={2.25}
-              className="text-blue-300"
-            />
-          </div>
-
-          <h3 className="mb-4 break-words text-2xl font-bold text-white">
-            Batch Transparency
-          </h3>
-
-          <p className="break-words leading-relaxed text-white/60">
-            COAs and supporting documentation are made available for verified
-            batches whenever testing documentation has been completed.
+          <p className="mt-4 text-sm leading-7 text-white/45 sm:text-base">
+            From reviewing available batch documentation to receiving your
+            order, our goal is to make every part of the research purchasing
+            experience clear, efficient, and dependable.
           </p>
         </div>
       </div>
 
-      {/* WHY CHOOSE APEXX */}
-      <div className="mb-10 text-center">
-        <p className="mb-4 text-xs font-black uppercase tracking-[0.25em] text-blue-300 sm:tracking-[0.35em]">
-          Why Researchers Choose Apexx Biolabs
+      {/* DIVIDER */}
+      <div className="my-12 h-px w-full bg-gradient-to-r from-transparent via-blue-300/20 to-transparent" />
+
+      {/* FOUR BENEFITS */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+        {/* FAST FULFILLMENT */}
+        <div className="group rounded-[24px] border border-white/[0.08] bg-white/[0.03] p-6 transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/30 hover:bg-white/[0.055]">
+
+          <div className="mb-6 flex h-11 w-11 items-center justify-center rounded-[14px] border border-blue-300/20 bg-blue-400/[0.08] text-blue-300">
+            <Truck size={22} strokeWidth={2.2} />
+          </div>
+
+          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] text-blue-300/70">
+            Efficient
+          </p>
+
+          <h3 className="text-xl font-black text-white">
+            Fast Fulfillment
+          </h3>
+
+          <p className="mt-3 text-sm leading-6 text-white/50">
+            Orders placed before our daily cutoff are typically processed
+            the same business day for fast, efficient fulfillment.
+          </p>
+        </div>
+
+        {/* BATCH DOCUMENTATION */}
+        <div className="group rounded-[24px] border border-white/[0.08] bg-white/[0.03] p-6 transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/30 hover:bg-white/[0.055]">
+
+          <div className="mb-6 flex h-11 w-11 items-center justify-center rounded-[14px] border border-blue-300/20 bg-blue-400/[0.08] text-blue-300">
+            <ShieldCheck size={22} strokeWidth={2.2} />
+          </div>
+
+          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] text-blue-300/70">
+            Transparent
+          </p>
+
+          <h3 className="text-xl font-black text-white">
+            Batch Documentation
+          </h3>
+
+          <p className="mt-3 text-sm leading-6 text-white/50">
+            Available COAs and analytical documentation provide clear,
+            batch-specific information for verified products.
+          </p>
+        </div>
+
+        {/* SECURE PACKAGING */}
+        <div className="group rounded-[24px] border border-white/[0.08] bg-white/[0.03] p-6 transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/30 hover:bg-white/[0.055]">
+
+          <div className="mb-6 flex h-11 w-11 items-center justify-center rounded-[14px] border border-blue-300/20 bg-blue-400/[0.08] text-blue-300">
+            <FlaskConical size={22} strokeWidth={2.2} />
+          </div>
+
+          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] text-blue-300/70">
+            Carefully Prepared
+          </p>
+
+          <h3 className="text-xl font-black text-white">
+            Secure Packaging
+          </h3>
+
+          <p className="mt-3 text-sm leading-6 text-white/50">
+            Every order is prepared and packaged carefully to help protect
+            products throughout the fulfillment and shipping process.
+          </p>
+        </div>
+
+        {/* RESPONSIVE SUPPORT */}
+        <div className="group rounded-[24px] border border-white/[0.08] bg-white/[0.03] p-6 transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/30 hover:bg-white/[0.055]">
+
+          <div className="mb-6 flex h-11 w-11 items-center justify-center rounded-[14px] border border-blue-300/20 bg-blue-400/[0.08] text-blue-300">
+            <Headphones size={22} strokeWidth={2.2} />
+          </div>
+
+          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] text-blue-300/70">
+            Here to Help
+          </p>
+
+          <h3 className="text-xl font-black text-white">
+            Responsive Support
+          </h3>
+
+          <p className="mt-3 text-sm leading-6 text-white/50">
+            Get assistance with orders, shipping, product information,
+            and available documentation from our support team.
+          </p>
+        </div>
+      </div>
+
+      {/* BOTTOM LINKS */}
+      <div className="mt-10 flex flex-col items-center justify-between gap-5 rounded-[22px] border border-white/[0.07] bg-white/[0.025] px-6 py-5 sm:flex-row sm:px-7">
+
+        <p className="text-center text-sm leading-6 text-white/45 sm:text-left">
+          Research-focused products. Clear documentation. Dependable support.
         </p>
 
-        <h3 className="mx-auto max-w-3xl break-words text-3xl font-black leading-tight text-white sm:text-4xl md:text-5xl">
-          More than a product catalog.
-        </h3>
-
-        <p className="mx-auto mt-5 max-w-3xl text-base leading-relaxed text-white/60 sm:text-lg">
-          Clear documentation, responsive support, accessible research
-          information, and straightforward ordering from one place.
-        </p>
-      </div>
-
-      <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* RESEARCH CUSTOMERS */}
-        <div className="min-w-0 rounded-[2rem] border border-blue-400/25 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:bg-white/[0.07] sm:p-8 md:p-10">
-          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-8">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-300">
-              <Users size={30} strokeWidth={2.2} />
-            </div>
-
-            <div className="min-w-0 flex-1">
-              <h3 className="mb-4 break-words text-2xl font-black text-white md:text-3xl">
-                Built for Research Customers
-              </h3>
-
-              <p className="mb-6 break-words leading-relaxed text-white/70">
-                Apexx Biolabs provides research-use products with clear
-                documentation, transparent product pages, and a straightforward
-                ordering experience.
-              </p>
-
-              <a
-                href="/products"
-                className="inline-flex w-full items-center justify-center rounded-full border border-blue-400/30 bg-white/[0.04] px-6 py-3 text-center text-sm font-semibold uppercase tracking-[0.16em] text-white transition-all hover:bg-white/[0.08] sm:w-fit sm:tracking-widest"
-              >
-                Shop Products
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* QUALITY REVIEW */}
-        <div className="min-w-0 rounded-[2rem] border border-blue-400/25 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:bg-white/[0.07] sm:p-8 md:p-10">
-          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-8">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-300">
-              <ShieldCheck size={30} strokeWidth={2.2} />
-            </div>
-
-            <div className="min-w-0 flex-1">
-              <h3 className="mb-4 break-words text-2xl font-black text-white md:text-3xl">
-                Batch Documentation & Quality Review
-              </h3>
-
-              <p className="mb-6 break-words leading-relaxed text-white/70">
-                Available analytical documentation helps researchers review
-                product identity, purity, and relevant batch information before
-                use.
-              </p>
-
-              <a
-                href="/coas"
-                className="inline-flex w-full items-center justify-center rounded-full border border-blue-400/30 bg-white/[0.04] px-6 py-3 text-center text-sm font-semibold uppercase tracking-[0.16em] text-white transition-all hover:bg-white/[0.08] sm:w-fit sm:tracking-widest"
-              >
-                View COAs
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* SUPPORT */}
-        <div className="min-w-0 rounded-[2rem] border border-blue-400/25 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:bg-white/[0.07] sm:p-8 md:p-10">
-          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-8">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-300">
-              <Headphones size={30} strokeWidth={2.2} />
-            </div>
-
-            <div className="min-w-0 flex-1">
-              <h3 className="mb-4 break-words text-2xl font-black text-white md:text-3xl">
-                Support When You Need It
-              </h3>
-
-              <p className="mb-6 break-words leading-relaxed text-white/70">
-                Questions about an order, shipment, product page, or available
-                COA? Our support team typically responds within 24–48 business
-                hours.
-              </p>
-
-              <a
-                href="/contact"
-                className="inline-flex w-full items-center justify-center rounded-full border border-blue-400/30 bg-white/[0.04] px-6 py-3 text-center text-sm font-semibold uppercase tracking-[0.16em] text-white transition-all hover:bg-white/[0.08] sm:w-fit sm:tracking-widest"
-              >
-                Contact Support
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* RESEARCH INFORMATION */}
-        <div className="min-w-0 rounded-[2rem] border border-blue-400/25 bg-white/[0.04] p-6 backdrop-blur-sm transition-all hover:bg-white/[0.07] sm:p-8 md:p-10">
-          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-8">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-300">
-              <BookOpen size={30} strokeWidth={2.2} />
-            </div>
-
-            <div className="min-w-0 flex-1">
-              <h3 className="mb-4 break-words text-2xl font-black text-white md:text-3xl">
-                Research Information Available
-              </h3>
-
-              <p className="mb-6 break-words leading-relaxed text-white/70">
-                Review product information, research-use disclaimers, policies,
-                FAQs, and educational resources before placing an order.
-              </p>
-
-              <a
-                href="/peptide-info"
-                className="inline-flex w-full items-center justify-center rounded-full border border-blue-400/30 bg-white/[0.04] px-6 py-3 text-center text-sm font-semibold uppercase tracking-[0.16em] text-white transition-all hover:bg-white/[0.08] sm:w-fit sm:tracking-widest"
-              >
-                Peptide Info
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ORDER PROTECTION */}
-      <div className="mt-6 min-w-0 rounded-[2rem] border border-blue-400/25 bg-gradient-to-r from-white/[0.04] to-blue-500/[0.08] p-6 backdrop-blur-sm sm:p-8 md:p-10">
-        <div className="grid min-w-0 grid-cols-1 items-center gap-8 lg:grid-cols-[minmax(0,1fr)_auto]">
-          <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:gap-8">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 text-blue-300">
-              <Truck size={30} strokeWidth={2.2} />
-            </div>
-
-            <div className="min-w-0">
-              <h3 className="mb-4 break-words text-2xl font-black text-white md:text-3xl">
-                Order Protection on Every Shipment
-              </h3>
-
-              <p className="max-w-3xl break-words leading-relaxed text-white/70">
-                If your order arrives damaged, incorrect, or incomplete,
-                contact us within 48 hours. We will review the issue and work
-                toward a fair resolution when the claim falls within our
-                policy.
-              </p>
-            </div>
-          </div>
-
-          <a
-            href="/refunds"
-            className="inline-flex w-full items-center justify-center rounded-full bg-white px-8 py-4 text-center text-sm font-bold uppercase tracking-[0.16em] text-[#081526] transition-all hover:bg-blue-100 sm:tracking-widest lg:w-fit"
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+          <Link
+            href="/coas"
+            className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-[10px] font-black uppercase tracking-[0.16em] text-white transition-all hover:border-blue-400/40 hover:bg-white/[0.07]"
           >
-            Shop With Confidence
-          </a>
+            View COAs
+          </Link>
+
+          <Link
+            href="/contact"
+            className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-[10px] font-black uppercase tracking-[0.16em] text-[#081526] transition-all hover:bg-blue-100"
+          >
+            Contact Support
+          </Link>
         </div>
       </div>
+
     </div>
   </section>
 </Reveal>

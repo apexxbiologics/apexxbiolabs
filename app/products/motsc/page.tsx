@@ -1,4 +1,4 @@
-"use client";
+
 
 import { useEffect, useState } from "react";
 import {
@@ -59,10 +59,10 @@ export default function MOTSCPage() {
   };
 
   const latestCoaPath =
-    "/images/coas/motsccoa.pdf";
+    "/images/coas/mots-c-10mg-msc102609-red-09-04-2026.pdf";
 
   const previousCoaPath =
-    "/images/coas/6-26-motsc-coa.pdf";
+    "/images/coas/motsccoa.pdf";
 
   const isOutOfStock =
     inventory !== null && inventory <= 0;
@@ -827,8 +827,7 @@ export default function MOTSCPage() {
               </p>
 
               <h3 className="text-2xl font-black text-white mb-4">
-                Latest Certificate
-                of Analysis
+                Latest Certificate of Analysis
               </h3>
 
               <div className="flex flex-wrap gap-2">
@@ -837,22 +836,26 @@ export default function MOTSCPage() {
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  99.75% Purity
+                  99.62% Purity
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  12.42mg Content
+                  13.04mg Content
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-300 text-sm font-semibold">
+                  ✓ No Fentanyl Detected
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                  Lot: Blue Cap-2
+                  Lot: MSC102609-RED
                 </span>
               </div>
             </div>
 
             <div className="md:text-right">
               <p className="text-4xl font-black text-[#A5D8FF]">
-                99.75%
+                99.62%
               </p>
 
               <p className="uppercase tracking-widest text-white/40 text-xs">
@@ -863,7 +866,7 @@ export default function MOTSCPage() {
                 href={latestCoaPath}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20"
+                className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
               >
                 View Latest COA
               </a>
@@ -891,40 +894,35 @@ export default function MOTSCPage() {
                 <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
                   <div>
                     <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                      Previous
-                      Certificate of
-                      Analysis
+                      Previous Certificate of Analysis
                     </p>
 
                     <h3 className="text-xl font-black text-white mb-4">
-                      Light Purple
-                      Cap-1
+                      Blue Cap-2
                     </h3>
 
                     <div className="flex flex-wrap gap-2">
                       <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
-                        ✓ Identity
-                        Confirmed
+                        ✓ Identity Confirmed
                       </span>
 
                       <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                        99.48% Purity
+                        99.75% Purity
                       </span>
 
                       <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                        13.94mg Content
+                        12.42mg Content
                       </span>
 
                       <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                        Lot: Light
-                        Purple Cap-1
+                        Lot: Blue Cap-2
                       </span>
                     </div>
                   </div>
 
                   <div className="md:text-right">
                     <p className="text-3xl font-black text-[#A5D8FF]">
-                      99.48%
+                      99.75%
                     </p>
 
                     <p className="uppercase tracking-widest text-white/40 text-xs">
@@ -932,15 +930,12 @@ export default function MOTSCPage() {
                     </p>
 
                     <a
-                      href={
-                        previousCoaPath
-                      }
+                      href={previousCoaPath}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20"
+                      className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
                     >
-                      View Previous
-                      COA
+                      View Previous COA
                     </a>
                   </div>
                 </div>

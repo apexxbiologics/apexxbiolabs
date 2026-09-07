@@ -50,6 +50,10 @@ export default function SS31Page() {
     path: "/products/ss31",
   };
 
+  /* NEW SS-31 COA */
+  const latestCoaPath =
+    "/images/coas/ss31-10mg-ss102609-wht-09-04-2026.pdf";
+
   const isOutOfStock =
     inventory !== null && inventory <= 0;
 
@@ -879,9 +883,17 @@ export default function SS31Page() {
 
               </div>
 
-              <div className="block text-center mt-4 text-xs uppercase tracking-widest text-white/35">
-                COA Coming Soon
-              </div>
+              {/* NEW COA LINK */}
+              <a
+                href={
+                  latestCoaPath
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
+              >
+                View Certificate of Analysis →
+              </a>
 
             </div>
           </div>
@@ -898,25 +910,33 @@ export default function SS31Page() {
             <div>
 
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                Quality Verification
+                Freedom Diagnostics
               </p>
 
               <h3 className="text-2xl font-black text-white mb-4">
-                Certificate of Analysis
+                Latest Certificate of Analysis
               </h3>
 
               <div className="flex flex-wrap gap-2">
 
-                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm font-semibold">
-                  Testing Pending
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+                  ✓ Identity Confirmed
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                  99.39% Purity
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                  13.57mg Content
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-300 text-sm font-semibold">
+                  ✓ No Fentanyl Detected
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                  10mg
-                </span>
-
-                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                  SS-31
+                  Lot: SS102609-WHT
                 </span>
 
               </div>
@@ -924,21 +944,29 @@ export default function SS31Page() {
 
             <div className="md:text-right">
 
-              <p className="uppercase tracking-widest text-white/40 text-xs">
-                Laboratory Verification
+              <p className="text-4xl font-black text-[#A5D8FF]">
+                99.39%
               </p>
 
-              <button
-                type="button"
-                disabled
-                className="inline-flex mt-3 cursor-not-allowed rounded-full border border-white/10 bg-white/[0.03] px-5 py-2.5 text-white/40 text-sm font-semibold"
+              <p className="uppercase tracking-widest text-white/40 text-xs">
+                Purity
+              </p>
+
+              <a
+                href={
+                  latestCoaPath
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
               >
-                COA Coming Soon
-              </button>
+                View Latest COA
+              </a>
 
             </div>
 
           </div>
+
         </div>
       </section>
 
@@ -956,14 +984,14 @@ export default function SS31Page() {
 
             [
               ShieldCheck,
-              "Testing Pending",
-              "Independent analytical testing has not yet been completed.",
+              "Third-Party Tested",
+              "Independent laboratory testing completed by Freedom Diagnostics.",
             ],
 
             [
               ClipboardCheck,
-              "Batch Documentation",
-              "Batch-specific analytical documentation will be added when available.",
+              "Batch Documented",
+              "Batch-specific analytical documentation is available for this verified lot.",
             ],
 
             [

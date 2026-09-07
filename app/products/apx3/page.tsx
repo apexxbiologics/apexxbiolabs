@@ -112,13 +112,13 @@ export default function APX3Page() {
 
     "20mg": {
       path:
-        "/images/coas/apx3-20mg-blue-cap-coa.pdf",
+        "/images/coas/apx3-20mg-apx202608-blk-08-29-2026.pdf",
 
-      purity: "99.92%",
+      purity: "99.85%",
 
-      content: "23.89mg",
+      content: "22.90mg",
 
-      lot: "Blue Cap-1",
+      lot: "APX202608-BLK",
     },
   };
 
@@ -127,6 +127,17 @@ export default function APX3Page() {
 
   const selectedCoa =
     coaOptions[selectedMg];
+
+  const previous20mgCoa = {
+    path:
+      "/images/coas/apx3-20mg-blue-cap-coa.pdf",
+
+    purity: "99.92%",
+
+    content: "23.89mg",
+
+    lot: "Blue Cap-1",
+  };
 
   const selectedVariantData =
     productData[selectedMg];
@@ -1361,6 +1372,12 @@ export default function APX3Page() {
                   Content
                 </span>
 
+                {selectedMg === "20mg" && (
+                  <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-300 text-sm font-semibold">
+                    ✓ No Fentanyl Detected
+                  </span>
+                )}
+
                 <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
                   Lot:{" "}
                   {
@@ -1396,6 +1413,67 @@ export default function APX3Page() {
 
             </div>
           </div>
+
+          {selectedMg === "20mg" && (
+            <div className="mt-6 border-t border-white/10 pt-5">
+
+              <p className="uppercase tracking-[0.25em] text-white/35 text-[10px] mb-3">
+                Previous 20mg Certificate of Analysis
+              </p>
+
+              <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center rounded-[22px] border border-white/10 bg-white/[0.03] p-5">
+
+                <div>
+                  <h4 className="text-lg font-black text-white mb-3">
+                    Blue Cap-1
+                  </h4>
+
+                  <div className="flex flex-wrap gap-2">
+
+                    <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+                      ✓ Identity Confirmed
+                    </span>
+
+                    <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                      {previous20mgCoa.purity} Purity
+                    </span>
+
+                    <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                      {previous20mgCoa.content} Content
+                    </span>
+
+                    <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                      Lot: {previous20mgCoa.lot}
+                    </span>
+
+                  </div>
+                </div>
+
+                <div className="md:text-right">
+
+                  <p className="text-3xl font-black text-[#A5D8FF]">
+                    {previous20mgCoa.purity}
+                  </p>
+
+                  <p className="uppercase tracking-widest text-white/40 text-xs">
+                    Purity
+                  </p>
+
+                  <a
+                    href={previous20mgCoa.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20"
+                  >
+                    View Previous COA
+                  </a>
+
+                </div>
+
+              </div>
+            </div>
+          )}
+
         </div>
       </section>
 

@@ -58,11 +58,14 @@ export default function COAsPage() {
       batch: "Pending",
       status: "Awaiting Testing",
     },
-    {
-      name: "SS-31 10mg",
-      batch: "Pending",
-      status: "Awaiting Testing",
-    },
+{
+  name: "SS-31 10mg",
+  batch: "SS102609-WHT",
+  status: "Verified",
+  purity: "99.39%",
+  content: "13.57 mg",
+  coa: "/images/coas/ss31-10mg-ss102609-wht-09-04-2026.pdf",
+},
     {
       name: "APX-3 10mg",
       batch: "Blue Cap-1",
@@ -71,14 +74,22 @@ export default function COAsPage() {
       content: "13.24 mg",
       coa: "/images/coas/apx3-10mg-blue-cap-1-coa.pdf",
     },
+{
+  name: "APX-3 20mg",
+  batch: "APX202608-BLK",
+  status: "Verified",
+  purity: "99.85%",
+  content: "22.90 mg",
+  coa: "/images/coas/apx3-20mg-apx202608-blk-08-29-2026.pdf",
+  previousCoas: [
     {
-      name: "APX-3 20mg",
       batch: "Blue Cap-1",
-      status: "Verified",
       purity: "99.92%",
       content: "23.89 mg",
       coa: "/images/coas/apx3-20mg-blue-cap-coa.pdf",
     },
+  ],
+},
     {
       name: "BPC-157 10mg",
       batch: "Blue Cap-2",
@@ -148,22 +159,28 @@ export default function COAsPage() {
       content: "11.71 mg",
       coa: "/images/coas/semax-10mg-coa.pdf",
     },
+{
+  name: "MOTS-c 10mg",
+  batch: "MSC102609-RED",
+  status: "Verified",
+  purity: "99.62%",
+  content: "13.04 mg",
+  coa: "/images/coas/mots-c-10mg-msc102609-red-09-04-2026.pdf",
+  previousCoas: [
     {
-      name: "MOTS-c 10mg",
       batch: "Blue Cap-2",
-      status: "Verified",
       purity: "99.75%",
       content: "12.42 mg",
       coa: "/images/coas/motsccoa.pdf",
-      previousCoas: [
-        {
-          batch: "Light Purple Cap-1",
-          purity: "99.48%",
-          content: "13.94 mg",
-          coa: "/images/coas/6-26-motsc-coa.pdf",
-        },
-      ],
     },
+    {
+      batch: "Light Purple Cap-1",
+      purity: "99.48%",
+      content: "13.94 mg",
+      coa: "/images/coas/6-26-motsc-coa.pdf",
+    },
+  ],
+},
     {
       name: "ARA-290 10mg",
       batch: "Pending",

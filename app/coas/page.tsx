@@ -90,22 +90,28 @@ export default function COAsPage() {
     },
   ],
 },
+{
+  name: "BPC-157 10mg",
+  batch: "BPC102608-CBLU",
+  status: "Verified",
+  purity: "99.80%",
+  content: "10.18 mg",
+  coa: "/images/coas/bpc157-10mg-bpc102608-cblu-09-07-20261.pdf",
+  previousCoas: [
     {
-      name: "BPC-157 10mg",
       batch: "Blue Cap-2",
-      status: "Verified",
       purity: "99.72%",
       content: "11.78 mg",
       coa: "/images/coas/bpc157coa7-10-26.pdf",
-      previousCoas: [
-        {
-          batch: "Black Cap-1",
-          purity: "99.33%",
-          content: "11.58 mg",
-          coa: "/images/coas/bpc-157-10mg-black-cap-coa.pdf",
-        },
-      ],
     },
+    {
+      batch: "Black Cap-1",
+      purity: "99.33%",
+      content: "11.58 mg",
+      coa: "/images/coas/bpc-157-10mg-black-cap-coa.pdf",
+    },
+  ],
+},
     {
       name: "TB-500 10mg",
       batch: "Yellow Cap-2",

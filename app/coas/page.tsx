@@ -96,7 +96,7 @@ export default function COAsPage() {
   status: "Verified",
   purity: "99.80%",
   content: "10.18 mg",
-  coa: "/images/coas/bpc157-10mg-bpc102608-cblu-09-07-20261.pdf",
+  coa: "/images/coas/bpc157-10mg-bpc102608-cblu-09-07-2026.pdf",
   previousCoas: [
     {
       batch: "Blue Cap-2",

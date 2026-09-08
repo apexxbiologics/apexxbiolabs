@@ -361,7 +361,7 @@ export default function COAsPage() {
           </p>
 
           <p className="mt-6 text-xs uppercase tracking-[0.22em] text-white/35">
-            Last Updated September 7, 2026
+            Last Updated September 8, 2026
           </p>
 
           {/* SUMMARY */}

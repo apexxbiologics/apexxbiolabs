@@ -59,9 +59,12 @@ export default function BPC157Page() {
   };
 
   const latestCoaPath =
-    "/images/coas/bpc157coa7-10-26.pdf";
+    "/images/coas/bpc157-10mg-bpc102608-cblu-09-07-2026.pdf";
 
   const previousCoaPath =
+    "/images/coas/bpc157coa7-10-26.pdf";
+
+  const oldestCoaPath =
     "/images/coas/bpc-157-10mg-black-cap-coa.pdf";
 
   const isOutOfStock =
@@ -810,10 +813,13 @@ export default function BPC157Page() {
       {/* COA SUMMARY */}
       <section className="px-6 md:px-10 pb-12">
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+
+          {/* LATEST COA */}
           <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+
             <div>
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                Freedom Diagnostics
+                SteriGenix
               </p>
 
               <h3 className="text-2xl font-black text-white mb-4">
@@ -822,27 +828,38 @@ export default function BPC157Page() {
               </h3>
 
               <div className="flex flex-wrap gap-2">
+
                 <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
                   ✓ Identity Confirmed
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  99.72% Purity
+                  99.80% Purity
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  11.78mg Content
+                  10.18mg Content
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-300 text-sm font-semibold">
+                  ✓ Sterility: No Growth
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-300 text-sm font-semibold">
+                  ✓ Endotoxin: Pass
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                  Lot: Blue Cap-2
+                  Batch: BPC102608-CBLU
                 </span>
+
               </div>
             </div>
 
             <div className="md:text-right">
+
               <p className="text-4xl font-black text-[#A5D8FF]">
-                99.72%
+                99.80%
               </p>
 
               <p className="uppercase tracking-widest text-white/40 text-xs">
@@ -857,11 +874,13 @@ export default function BPC157Page() {
               >
                 View Latest COA
               </a>
+
             </div>
           </div>
 
-          {/* PREVIOUS COA */}
+          {/* PREVIOUS COAS */}
           <div className="mt-6 border-t border-white/10 pt-5">
+
             <button
               type="button"
               onClick={() =>
@@ -872,69 +891,134 @@ export default function BPC157Page() {
               className="w-full rounded-full border border-white/10 bg-white/[0.04] py-3 text-xs uppercase tracking-widest text-white/80 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
             >
               {showPreviousCoa
-                ? "Hide Previous COA"
-                : "See Previous COA"}
+                ? "Hide Previous COAs"
+                : "See Previous COAs"}
             </button>
 
             {showPreviousCoa && (
-              <div className="mt-5 rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-                <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
-                  <div>
-                    <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                      Previous
-                      Certificate of
-                      Analysis
-                    </p>
+              <div className="mt-5 space-y-4">
 
-                    <h3 className="text-xl font-black text-white mb-4">
-                      Black Cap-1
-                    </h3>
+                {/* PREVIOUS COA — BLUE CAP-2 */}
+                <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
 
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
-                        ✓ Identity
-                        Confirmed
-                      </span>
+                  <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
 
-                      <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                        99.33% Purity
-                      </span>
+                    <div>
+                      <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+                        Previous Certificate of Analysis
+                      </p>
 
-                      <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                        11.58mg Content
-                      </span>
+                      <h3 className="text-xl font-black text-white mb-4">
+                        Blue Cap-2
+                      </h3>
 
-                      <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                        Lot: Black
-                        Cap-1
-                      </span>
+                      <div className="flex flex-wrap gap-2">
+
+                        <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+                          ✓ Identity Confirmed
+                        </span>
+
+                        <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                          99.72% Purity
+                        </span>
+
+                        <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                          11.78mg Content
+                        </span>
+
+                        <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                          Lot: Blue Cap-2
+                        </span>
+
+                      </div>
+                    </div>
+
+                    <div className="md:text-right">
+
+                      <p className="text-3xl font-black text-[#A5D8FF]">
+                        99.72%
+                      </p>
+
+                      <p className="uppercase tracking-widest text-white/40 text-xs">
+                        Purity
+                      </p>
+
+                      <a
+                        href={previousCoaPath}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20"
+                      >
+                        View COA
+                      </a>
+
                     </div>
                   </div>
+                </div>
 
-                  <div className="md:text-right">
-                    <p className="text-3xl font-black text-[#A5D8FF]">
-                      99.33%
-                    </p>
+                {/* ORIGINAL COA — BLACK CAP-1 */}
+                <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
 
-                    <p className="uppercase tracking-widest text-white/40 text-xs">
-                      Purity
-                    </p>
+                  <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
 
-                    <a
-                      href={
-                        previousCoaPath
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20"
-                    >
-                      View Previous COA
-                    </a>
+                    <div>
+                      <p className="uppercase tracking-[0.3em] text-white/40 text-xs mb-2">
+                        Original Certificate of Analysis
+                      </p>
+
+                      <h3 className="text-xl font-black text-white mb-4">
+                        Black Cap-1
+                      </h3>
+
+                      <div className="flex flex-wrap gap-2">
+
+                        <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+                          ✓ Identity Confirmed
+                        </span>
+
+                        <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                          99.33% Purity
+                        </span>
+
+                        <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                          11.58mg Content
+                        </span>
+
+                        <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                          Lot: Black Cap-1
+                        </span>
+
+                      </div>
+                    </div>
+
+                    <div className="md:text-right">
+
+                      <p className="text-3xl font-black text-[#A5D8FF]">
+                        99.33%
+                      </p>
+
+                      <p className="uppercase tracking-widest text-white/40 text-xs">
+                        Purity
+                      </p>
+
+                      <a
+                        href={oldestCoaPath}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20"
+                      >
+                        View COA
+                      </a>
+
+                    </div>
                   </div>
                 </div>
+
               </div>
             )}
+
           </div>
+
         </div>
       </section>
 

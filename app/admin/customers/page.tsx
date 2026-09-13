@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import DeletedCustomers from "./DeletedCustomers";
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -35,6 +36,10 @@ export default async function CustomersPage({
     params.status || "all"
   ).toLowerCase();
 
+  // ------------------------------------
+  // ACTIVE CUSTOMERS
+  // ------------------------------------
+
   const {
     data: { users },
     error,
@@ -69,6 +74,46 @@ export default async function CustomersPage({
 
   const customers = users || [];
 
+  // ------------------------------------
+  // DELETED CUSTOMERS
+  // ------------------------------------
+
+  const {
+    data: deletedCustomers,
+    error: deletedCustomersError,
+  } = await supabaseAdmin
+    .from("deleted_customers")
+    .select(
+      `
+      id,
+      auth_user_id,
+      email,
+      first_name,
+      last_name,
+      account_created_at,
+      deleted_at,
+      deleted_by,
+      reason
+      `
+    )
+    .order("deleted_at", {
+      ascending: false,
+    });
+
+  if (deletedCustomersError) {
+    console.error(
+      "Unable to load deleted customers:",
+      deletedCustomersError
+    );
+  }
+
+  const safeDeletedCustomers =
+    deletedCustomers || [];
+
+  // ------------------------------------
+  // ACTIVE CUSTOMER STATS
+  // ------------------------------------
+
   const verifiedCustomers =
     customers.filter(
       (user) => !!user.email_confirmed_at
@@ -76,6 +121,10 @@ export default async function CustomersPage({
 
   const unverifiedCustomers =
     customers.length - verifiedCustomers;
+
+  // ------------------------------------
+  // SEARCH + FILTER
+  // ------------------------------------
 
   const filteredCustomers =
     customers.filter((user) => {
@@ -267,7 +316,7 @@ export default async function CustomersPage({
 
         </div>
 
-        {/* CUSTOMER TABLE */}
+        {/* ACTIVE CUSTOMER TABLE */}
 
         <div className="overflow-hidden rounded-[30px] border border-white/10 bg-white/[0.04]">
 
@@ -442,6 +491,12 @@ export default async function CustomersPage({
           </div>
 
         </div>
+
+        {/* DELETED CUSTOMERS */}
+
+        <DeletedCustomers
+          customers={safeDeletedCustomers}
+        />
 
       </div>
     </main>

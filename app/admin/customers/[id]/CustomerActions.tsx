@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type CustomerActionsProps = {
   customerId: string;
@@ -13,6 +14,8 @@ export default function CustomerActions({
   email,
   verified,
 }: CustomerActionsProps) {
+  const router = useRouter();
+
   const [
     sendingVerification,
     setSendingVerification,
@@ -26,6 +29,11 @@ export default function CustomerActions({
   const [
     sendingEmail,
     setSendingEmail,
+  ] = useState(false);
+
+  const [
+    deletingAccount,
+    setDeletingAccount,
   ] = useState(false);
 
   const [
@@ -206,6 +214,71 @@ export default function CustomerActions({
     }
   }
 
+  async function deleteCustomerAccount() {
+    if (deletingAccount) return;
+
+    clearAlerts();
+
+    const confirmed = window.confirm(
+      `Are you sure you want to permanently delete ${email}'s APX account?\n\nThis will remove their login and account access.\n\nTheir previous order history will remain in the admin system.\n\nThis action cannot be undone.`
+    );
+
+    if (!confirmed) return;
+
+    /*
+     * Second confirmation because deleting a Supabase
+     * Auth account is permanent.
+     */
+    const finalConfirmation = window.confirm(
+      `FINAL CONFIRMATION\n\nPermanently delete the account for:\n${email}\n\nContinue?`
+    );
+
+    if (!finalConfirmation) return;
+
+    setDeletingAccount(true);
+
+    try {
+      const response = await fetch(
+        "/api/admin/customers/delete",
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            userId: customerId,
+          }),
+        }
+      );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+            "Unable to delete customer account."
+        );
+      }
+
+      /*
+       * Account no longer exists, so return
+       * to the customer list.
+       */
+      router.push("/admin/customers");
+      router.refresh();
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to delete customer account."
+      );
+
+      setDeletingAccount(false);
+    }
+  }
+
   return (
     <div>
 
@@ -339,6 +412,55 @@ export default function CustomerActions({
           {error}
         </div>
       )}
+
+      {/* DANGER ZONE */}
+
+      <div className="mt-8 border-t border-white/10 pt-8">
+
+        <div className="rounded-[24px] border border-red-400/20 bg-red-500/[0.05] p-6">
+
+          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+
+            <div className="max-w-2xl">
+
+              <p className="text-sm font-black uppercase tracking-widest text-red-300">
+                Danger Zone
+              </p>
+
+              <h3 className="mt-2 text-xl font-black text-white">
+                Delete Customer Account
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-white/45">
+                Permanently remove this
+                customer&apos;s APX login and
+                account access. Their previous
+                order history will remain
+                available in the admin system.
+              </p>
+
+            </div>
+
+            <button
+              type="button"
+              onClick={
+                deleteCustomerAccount
+              }
+              disabled={
+                deletingAccount
+              }
+              className="shrink-0 rounded-xl border border-red-400/30 bg-red-500/10 px-5 py-3 text-sm font-bold text-red-200 transition hover:border-red-400/50 hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {deletingAccount
+                ? "Deleting Account..."
+                : "Delete Account"}
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
 
     </div>
   );

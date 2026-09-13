@@ -55,6 +55,9 @@ export default function APX2Page() {
     path: "/products/apx2",
   };
 
+  const coaPath =
+    "/images/coas/apx2-30mg-coa.pdf";
+
   const isOutOfStock =
     inventory !== null && inventory <= 0;
 
@@ -90,66 +93,75 @@ export default function APX2Page() {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const [productResponse, saleResponse] =
-          await Promise.all([
-            fetch("/api/products", {
-              cache: "no-store",
-            }),
+        const [
+          productResponse,
+          saleResponse,
+        ] = await Promise.all([
+          fetch("/api/products", {
+            cache: "no-store",
+          }),
 
-            fetch("/api/flash-sales", {
-              cache: "no-store",
-            }),
-          ]);
+          fetch("/api/flash-sales", {
+            cache: "no-store",
+          }),
+        ]);
 
         const productData =
           await productResponse.json();
 
         const saleData =
-          await saleResponse.json().catch(
-            () => ({
+          await saleResponse
+            .json()
+            .catch(() => ({
               success: false,
               sales: [],
-            })
+            }));
+
+        if (!productData.success) {
+          return;
+        }
+
+        const apx2 =
+          productData.products.find(
+            (item: any) => {
+              const slug =
+                String(item.slug || "")
+                  .toLowerCase()
+                  .trim();
+
+              const id =
+                String(item.id || "")
+                  .toLowerCase()
+                  .trim();
+
+              const name =
+                String(item.name || "")
+                  .toLowerCase()
+                  .trim();
+
+              const size =
+                String(item.size || "")
+                  .toLowerCase()
+                  .trim();
+
+              return (
+                slug === "apx2-30mg" ||
+                slug === "apx-2-30mg" ||
+                slug === "apx2" ||
+                slug === "apx-2" ||
+                id === "apx2-30mg" ||
+                id === "apx-2-30mg" ||
+                id === "apx2" ||
+                id === "apx-2" ||
+                (name.includes("apx-2") &&
+                  size === "30mg") ||
+                (name.includes("apx2") &&
+                  size === "30mg") ||
+                name.includes("apx-2 30") ||
+                name.includes("apx2 30")
+              );
+            }
           );
-
-        if (!productData.success) return;
-
-        const apx2 = productData.products.find(
-          (item: any) => {
-            const slug = item.slug
-              ?.toLowerCase()
-              .trim();
-
-            const id = String(item.id || "")
-              .toLowerCase()
-              .trim();
-
-            const name = item.name
-              ?.toLowerCase()
-              .trim();
-
-            const size = item.size
-              ?.toLowerCase()
-              .trim();
-
-            return (
-              slug === "apx2-30mg" ||
-              slug === "apx-2-30mg" ||
-              slug === "apx2" ||
-              slug === "apx-2" ||
-              id === "apx2-30mg" ||
-              id === "apx-2-30mg" ||
-              id === "apx2" ||
-              id === "apx-2" ||
-              (name?.includes("apx-2") &&
-                size === "30mg") ||
-              (name?.includes("apx2") &&
-                size === "30mg") ||
-              name?.includes("apx-2 30") ||
-              name?.includes("apx2 30")
-            );
-          }
-        );
 
         if (apx2) {
           const dbId =
@@ -160,7 +172,9 @@ export default function APX2Page() {
               apx2.price ?? 70
             );
 
-          setDatabaseProductId(dbId);
+          setDatabaseProductId(
+            dbId
+          );
 
           setInventory(
             Number(
@@ -168,14 +182,21 @@ export default function APX2Page() {
             )
           );
 
-          setPrice(regularPrice);
+          setPrice(
+            regularPrice
+          );
 
-          const now = Date.now();
+          const now =
+            Date.now();
 
           const matchingSale =
-            Array.isArray(saleData.sales)
+            Array.isArray(
+              saleData.sales
+            )
               ? saleData.sales.find(
-                  (sale: FlashSale) => {
+                  (
+                    sale: FlashSale
+                  ) => {
                     const starts =
                       new Date(
                         sale.starts_at
@@ -220,7 +241,10 @@ export default function APX2Page() {
             matchingSale || null
           );
         } else {
-          setDatabaseProductId(null);
+          setDatabaseProductId(
+            null
+          );
+
           setInventory(null);
           setPrice(70);
           setFlashSale(null);
@@ -231,7 +255,10 @@ export default function APX2Page() {
           error
         );
 
-        setDatabaseProductId(null);
+        setDatabaseProductId(
+          null
+        );
+
         setInventory(null);
         setPrice(70);
         setFlashSale(null);
@@ -241,46 +268,60 @@ export default function APX2Page() {
     const fetchQuantityDiscounts =
       async () => {
         try {
-          const response = await fetch(
-            "/api/quantity-discounts",
-            {
-              cache: "no-store",
-            }
-          );
+          const response =
+            await fetch(
+              "/api/quantity-discounts",
+              {
+                cache:
+                  "no-store",
+              }
+            );
 
           const data =
             await response.json();
 
-          if (!data.success) return;
+          if (!data.success) {
+            return;
+          }
 
           const tiers = (
             data.tiers || []
           )
-            .map((tier: any) => ({
-              id: String(tier.id),
+            .map(
+              (tier: any) => ({
+                id: String(
+                  tier.id
+                ),
 
-              name: String(
-                tier.name || ""
-              ),
+                name: String(
+                  tier.name || ""
+                ),
 
-              quantity: Number(
-                tier.quantity || 0
-              ),
+                quantity: Number(
+                  tier.quantity ||
+                    0
+                ),
 
-              discount_percent: Number(
-                tier.discount_percent || 0
-              ),
+                discount_percent:
+                  Number(
+                    tier.discount_percent ||
+                      0
+                  ),
 
-              sort_order: Number(
-                tier.sort_order || 0
-              ),
-            }))
+                sort_order: Number(
+                  tier.sort_order ||
+                    0
+                ),
+              })
+            )
             .filter(
               (
                 tier: QuantityDiscountTier
               ) =>
-                tier.quantity > 1 &&
-                tier.discount_percent >= 0
+                tier.quantity >
+                  1 &&
+                tier.discount_percent >=
+                  0
             )
             .sort(
               (
@@ -304,7 +345,9 @@ export default function APX2Page() {
               }
             );
 
-          setQuantityDiscounts(tiers);
+          setQuantityDiscounts(
+            tiers
+          );
         } catch (error) {
           console.error(
             "Failed to fetch quantity discounts:",
@@ -336,11 +379,13 @@ export default function APX2Page() {
       [...quantityDiscounts]
         .filter(
           (tier) =>
-            quantity >= tier.quantity
+            quantity >=
+            tier.quantity
         )
         .sort(
           (a, b) =>
-            b.quantity - a.quantity
+            b.quantity -
+            a.quantity
         )[0] || null
     );
   };
@@ -353,7 +398,8 @@ export default function APX2Page() {
   const selectedDiscountPercent =
     isFlashSaleActive
       ? 0
-      : selectedTier?.discount_percent ||
+      : selectedTier
+          ?.discount_percent ||
         0;
 
   const discountedUnitPrice =
@@ -367,12 +413,15 @@ export default function APX2Page() {
     selectedQuantity;
 
   const regularTotal =
-    price * selectedQuantity;
+    price *
+    selectedQuantity;
 
   const formatMoney = (
     amount: number
   ) =>
-    Number(amount).toFixed(2);
+    Number(
+      amount
+    ).toFixed(2);
 
   const selectQuantity = (
     quantity: number
@@ -384,22 +433,30 @@ export default function APX2Page() {
       return;
     }
 
-    setSelectedQuantity(quantity);
+    setSelectedQuantity(
+      quantity
+    );
+
     setAdded(false);
   };
 
   const addToCart = () => {
-    if (isOutOfStock) return;
+    if (isOutOfStock) {
+      return;
+    }
 
-    const existingCart = JSON.parse(
-      localStorage.getItem("cart") ||
-        "[]"
-    );
+    const existingCart =
+      JSON.parse(
+        localStorage.getItem(
+          "cart"
+        ) || "[]"
+      );
 
     const existingProduct =
       existingCart.find(
         (item: any) =>
-          item.id === product.id
+          item.id ===
+          product.id
       );
 
     const existingQuantity =
@@ -416,7 +473,8 @@ export default function APX2Page() {
 
     if (
       inventory !== null &&
-      newQuantity > inventory
+      newQuantity >
+        inventory
     ) {
       alert(
         `Only ${inventory} vial${
@@ -434,12 +492,15 @@ export default function APX2Page() {
     const newTier =
       isFlashSaleActive
         ? null
-        : getDiscountTier(newQuantity);
+        : getDiscountTier(
+            newQuantity
+          );
 
     const newDiscountPercent =
       isFlashSaleActive
         ? 0
-        : newTier?.discount_percent ||
+        : newTier
+            ?.discount_percent ||
           0;
 
     const newDiscountedUnitPrice =
@@ -449,36 +510,45 @@ export default function APX2Page() {
           100);
 
     const cartProduct = {
-      id: product.id,
+      id:
+        product.id,
 
-      name: product.name,
+      name:
+        product.name,
 
       price:
         newDiscountedUnitPrice,
 
-      basePrice: price,
+      basePrice:
+        price,
 
-      quantity: newQuantity,
+      quantity:
+        newQuantity,
 
-      image: product.image,
+      image:
+        product.image,
 
-      path: product.path,
+      path:
+        product.path,
 
       quantityDiscountPercent:
         newDiscountPercent,
 
       quantityDiscountTierId:
-        newTier?.id || null,
+        newTier?.id ||
+        null,
 
       quantityDiscountTierQuantity:
-        newTier?.quantity || null,
+        newTier?.quantity ||
+        null,
 
       flashSaleApplied:
         isFlashSaleActive,
 
       flashSaleId:
         isFlashSaleActive
-          ? flashSale?.id || null
+          ? flashSale?.id ||
+            null
           : null,
 
       flashSalePrice:
@@ -509,11 +579,15 @@ export default function APX2Page() {
 
     localStorage.setItem(
       "cart",
-      JSON.stringify(updatedCart)
+      JSON.stringify(
+        updatedCart
+      )
     );
 
     window.dispatchEvent(
-      new Event("cartUpdated")
+      new Event(
+        "cartUpdated"
+      )
     );
 
     setAdded(true);
@@ -527,9 +601,11 @@ export default function APX2Page() {
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-start">
+
             {/* IMAGE */}
             <div className="flex items-center justify-center">
               <div className="relative w-full max-w-[520px] aspect-square rounded-[42px] overflow-hidden border border-blue-400/10 bg-white/[0.03] shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+
                 <FavoriteButton
                   product={
                     favoriteProduct
@@ -545,21 +621,25 @@ export default function APX2Page() {
                   }
                   className="w-full h-full object-cover"
                 />
+
               </div>
             </div>
 
             {/* PRODUCT CARD */}
             <div className="rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 md:p-8">
+
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">
                 Research Peptide
               </p>
 
               <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-3">
+
                 <h1 className="text-4xl md:text-5xl font-black text-white">
                   {product.name}
                 </h1>
 
                 <div className="sm:text-right">
+
                   <p className="text-3xl md:text-4xl font-black text-white">
                     $
                     {formatMoney(
@@ -577,6 +657,7 @@ export default function APX2Page() {
                       )}
                     </p>
                   )}
+
                 </div>
               </div>
 
@@ -593,6 +674,7 @@ export default function APX2Page() {
               </p>
 
               <div className="flex flex-wrap items-center gap-3 mb-5">
+
                 <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold uppercase tracking-widest">
                   30mg
                 </span>
@@ -629,18 +711,22 @@ export default function APX2Page() {
                     Out of Stock
                   </span>
                 )}
+
               </div>
 
               <div className="h-px bg-white/10 mb-5" />
 
               {/* QUANTITY */}
               <div className="mb-5">
+
                 <div className="flex items-center justify-between gap-4 mb-3">
+
                   <p className="uppercase tracking-widest text-white/45 text-xs">
                     Quantity
                   </p>
 
-                  {selectedQuantity > 1 && (
+                  {selectedQuantity >
+                    1 && (
                     <p className="text-[#A5D8FF] text-xs font-semibold">
                       $
                       {formatMoney(
@@ -649,27 +735,40 @@ export default function APX2Page() {
                       / vial
                     </p>
                   )}
+
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+
                   {/* 1 VIAL */}
                   <button
                     type="button"
-                    disabled={isOutOfStock}
+                    disabled={
+                      isOutOfStock
+                    }
                     onClick={() =>
-                      selectQuantity(1)
+                      selectQuantity(
+                        1
+                      )
                     }
                     className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-                      selectedQuantity === 1
+                      selectedQuantity ===
+                      1
                         ? "border-blue-300 bg-blue-400/10"
                         : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
                     } disabled:opacity-35 disabled:cursor-not-allowed`}
                   >
-                    {selectedQuantity === 1 && (
+
+                    {selectedQuantity ===
+                      1 && (
                       <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
                         <Check
-                          size={11}
-                          strokeWidth={3}
+                          size={
+                            11
+                          }
+                          strokeWidth={
+                            3
+                          }
                         />
                       </span>
                     )}
@@ -693,93 +792,115 @@ export default function APX2Page() {
                         )}
                       </p>
                     )}
+
                   </button>
 
                   {/* ADMIN QUANTITY TIERS */}
-                  {quantityDiscounts.map((tier) => {
-                    const tierUnavailable =
-                      inventory !== null &&
-                      inventory < tier.quantity;
+                  {quantityDiscounts.map(
+                    (tier) => {
+                      const tierUnavailable =
+                        inventory !==
+                          null &&
+                        inventory <
+                          tier.quantity;
 
-                    const tierTotal =
-                      isFlashSaleActive
-                        ? effectiveUnitPrice *
-                          tier.quantity
-                        : price *
-                          tier.quantity *
-                          (1 -
-                            tier.discount_percent /
-                              100);
-
-                    const selected =
-                      selectedQuantity ===
-                      tier.quantity;
-
-                    return (
-                      <button
-                        key={tier.id}
-                        type="button"
-                        disabled={tierUnavailable}
-                        onClick={() =>
-                          selectQuantity(
+                      const tierTotal =
+                        isFlashSaleActive
+                          ? effectiveUnitPrice *
                             tier.quantity
-                          )
-                        }
-                        className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-                          selected
-                            ? "border-blue-300 bg-blue-400/10"
-                            : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-                        } disabled:opacity-30 disabled:cursor-not-allowed`}
-                      >
-                        {selected && (
-                          <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-                            <Check
-                              size={11}
-                              strokeWidth={3}
-                            />
-                          </span>
-                        )}
+                          : price *
+                            tier.quantity *
+                            (1 -
+                              tier.discount_percent /
+                                100);
 
-                        <p className="font-black text-white text-sm">
-                          {tier.quantity} Vials
-                        </p>
+                      const selected =
+                        selectedQuantity ===
+                        tier.quantity;
 
-                        <p className="text-xs text-white/45 mt-1">
-                          $
-                          {formatMoney(
-                            tierTotal
+                      return (
+                        <button
+                          key={
+                            tier.id
+                          }
+                          type="button"
+                          disabled={
+                            tierUnavailable
+                          }
+                          onClick={() =>
+                            selectQuantity(
+                              tier.quantity
+                            )
+                          }
+                          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+                            selected
+                              ? "border-blue-300 bg-blue-400/10"
+                              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                          } disabled:opacity-30 disabled:cursor-not-allowed`}
+                        >
+
+                          {selected && (
+                            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                              <Check
+                                size={
+                                  11
+                                }
+                                strokeWidth={
+                                  3
+                                }
+                              />
+                            </span>
                           )}
-                        </p>
 
-                        {isFlashSaleActive ? (
-                          <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
-                            Flash Sale
-                          </p>
-                        ) : (
-                          <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
-                            Save{" "}
+                          <p className="font-black text-white text-sm">
                             {
-                              tier.discount_percent
-                            }
-                            %
+                              tier.quantity
+                            }{" "}
+                            Vials
                           </p>
-                        )}
-                      </button>
-                    );
-                  })}
+
+                          <p className="text-xs text-white/45 mt-1">
+                            $
+                            {formatMoney(
+                              tierTotal
+                            )}
+                          </p>
+
+                          {isFlashSaleActive ? (
+                            <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
+                              Flash Sale
+                            </p>
+                          ) : (
+                            <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
+                              Save{" "}
+                              {
+                                tier.discount_percent
+                              }
+                              %
+                            </p>
+                          )}
+
+                        </button>
+                      );
+                    }
+                  )}
+
                 </div>
               </div>
 
               {/* FREE GIFT */}
               <div className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-3 mb-5">
+
                 <p className="text-center text-blue-100 text-xs font-semibold uppercase tracking-wider">
                   Complimentary gift
                   with any 8 vials
                 </p>
+
               </div>
 
               {/* ACTION BUTTONS */}
               <div className="grid grid-cols-2 gap-3">
+
                 {isOutOfStock ? (
                   <button
                     disabled
@@ -794,8 +915,11 @@ export default function APX2Page() {
                     }
                     className="col-span-2 bg-white text-[#081526] hover:bg-blue-100 rounded-full py-4 uppercase tracking-widest text-xs font-bold transition-all flex items-center justify-center gap-2"
                   >
+
                     <ShoppingCart
-                      size={18}
+                      size={
+                        18
+                      }
                     />
 
                     {added
@@ -806,6 +930,7 @@ export default function APX2Page() {
                             ? "Vial"
                             : "Vials"
                         } To Cart`}
+
                   </button>
                 )}
 
@@ -822,62 +947,103 @@ export default function APX2Page() {
                 >
                   Keep Shopping
                 </a>
+
               </div>
 
-              <div className="block text-center mt-4 text-xs uppercase tracking-widest text-white/35">
-                COA Coming Soon
-              </div>
+              <a
+                href={
+                  coaPath
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
+              >
+                View Certificate of Analysis →
+              </a>
+
             </div>
           </div>
         </div>
       </section>
 
-      {/* COA SUMMARY */}
+      {/* COA */}
       <section className="px-6 md:px-10 pb-12">
+
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+
           <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+
             <div>
+
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                Quality Verification
+                Freedom Diagnostics
               </p>
 
               <h3 className="text-2xl font-black text-white mb-4">
-                Certificate of
-                Analysis
+                Latest Certificate of Analysis
               </h3>
 
               <div className="flex flex-wrap gap-2">
-                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm font-semibold">
-                  Testing Pending
+
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+                  ✓ Identity Confirmed
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                  99.78% Purity
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                  38.46mg Net Content
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                  30mg
+                  Lot: APX22609-WHT
                 </span>
+
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+                  No Fentanyl Detected
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+                  Endotoxin: Pass
+                </span>
+
               </div>
             </div>
 
             <div className="md:text-right">
-              <p className="uppercase tracking-widest text-white/40 text-xs">
-                Laboratory
-                Verification
+
+              <p className="text-4xl font-black text-[#A5D8FF]">
+                99.78%
               </p>
 
-              <button
-                type="button"
-                disabled
-                className="inline-flex mt-3 rounded-full border border-white/10 bg-white/[0.03] px-5 py-2.5 text-white/40 text-sm font-semibold cursor-not-allowed"
+              <p className="uppercase tracking-widest text-white/40 text-xs">
+                Purity
+              </p>
+
+              <a
+                href={
+                  coaPath
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
               >
-                COA Coming Soon
-              </button>
+                View Full COA
+              </a>
+
             </div>
+
           </div>
         </div>
       </section>
 
       {/* QUALITY */}
       <section className="px-6 md:px-10 pb-10">
+
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-7 grid grid-cols-1 md:grid-cols-4 gap-6">
+
           {[
             [
               FlaskConical,
@@ -888,56 +1054,77 @@ export default function APX2Page() {
             [
               ShieldCheck,
               "Third-Party Tested",
-              "Independent lab verified when available.",
+              "Independent analytical testing is available for this research batch.",
             ],
 
             [
               ClipboardCheck,
               "Batch Documented",
-              "Documentation available for verified lots.",
+              "Batch-specific analytical documentation is available.",
             ],
 
             [
               ShieldCheck,
-              "Quality Target",
-              "99%+ purity target.",
+              "99.78% Purity",
+              "Current analytical documentation reports 99.78% purity.",
             ],
           ].map(
-            ([Icon, title, text]: any) => (
+            (
+              [
+                Icon,
+                title,
+                text,
+              ]: any
+            ) => (
+
               <div
-                key={title}
+                key={
+                  title
+                }
                 className="flex gap-4"
               >
+
                 <Icon
                   className="text-[#A5D8FF]"
-                  size={28}
+                  size={
+                    28
+                  }
                 />
 
                 <div>
+
                   <h3 className="text-white uppercase tracking-widest font-bold text-xs">
-                    {title}
+                    {
+                      title
+                    }
                   </h3>
 
                   <p className="text-white/50 text-sm mt-1">
-                    {text}
+                    {
+                      text
+                    }
                   </p>
+
                 </div>
+
               </div>
             )
           )}
+
         </div>
       </section>
 
       {/* RESEARCH PROFILE */}
       <section className="px-6 md:px-10 pb-14">
+
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] p-8">
+
           <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">
             Research Profile
           </p>
 
           <h2 className="text-3xl font-black text-white mb-4">
-            Dual-Receptor Pathway
-            Overview
+            Dual-Receptor Pathway Overview
           </h2>
 
           <p className="text-white/65 leading-relaxed max-w-4xl mb-7">
@@ -952,6 +1139,7 @@ export default function APX2Page() {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+
             {[
               [
                 "GIP Pathway",
@@ -973,39 +1161,55 @@ export default function APX2Page() {
                 "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
               ],
             ].map(
-              ([title, text]) => (
+              (
+                [
+                  title,
+                  text,
+                ]
+              ) => (
+
                 <div
-                  key={title}
+                  key={
+                    title
+                  }
                   className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
                 >
+
                   <h3 className="text-white font-bold mb-2">
-                    {title}
+                    {
+                      title
+                    }
                   </h3>
 
                   <p className="text-white/55 text-sm leading-relaxed">
-                    {text}
+                    {
+                      text
+                    }
                   </p>
+
                 </div>
               )
             )}
+
           </div>
         </div>
       </section>
 
       {/* RELATED */}
       <section className="px-6 md:px-10 pb-14">
+
         <div className="max-w-7xl mx-auto">
+
           <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-            Frequently Researched
-            Together
+            Frequently Researched Together
           </p>
 
           <h2 className="text-3xl font-black text-white mb-6">
-            Pair With Related
-            Research Compounds
+            Pair With Related Research Compounds
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+
             {[
               {
                 name: "APX-3",
@@ -1047,12 +1251,19 @@ export default function APX2Page() {
               },
             ].map(
               (item) => (
+
                 <a
-                  key={item.name}
-                  href={item.path}
+                  key={
+                    item.name
+                  }
+                  href={
+                    item.path
+                  }
                   className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/40 transition-all"
                 >
+
                   <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
+
                     <img
                       src={
                         item.image
@@ -1062,6 +1273,7 @@ export default function APX2Page() {
                       }
                       className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
                     />
+
                   </div>
 
                   <h3 className="text-xl font-black text-white mb-2">
@@ -1079,9 +1291,11 @@ export default function APX2Page() {
                   <span className="inline-block mt-3 text-[#A5D8FF] text-sm font-semibold">
                     View Product →
                   </span>
+
                 </a>
               )
             )}
+
           </div>
         </div>
       </section>
@@ -1105,13 +1319,16 @@ export default function APX2Page() {
         },
       ].map(
         (section) => (
+
           <section
             key={
               section.title
             }
             className="px-6 md:px-10 pb-10"
           >
+
             <div className="max-w-7xl mx-auto rounded-[26px] border border-white/10 bg-white/[0.04] p-6">
+
               <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-xs mb-3">
                 {
                   section.title
@@ -1123,10 +1340,12 @@ export default function APX2Page() {
                   section.text
                 }
               </p>
+
             </div>
           </section>
         )
       )}
+
     </main>
   );
 }

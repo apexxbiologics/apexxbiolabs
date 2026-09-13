@@ -38,11 +38,14 @@ export default function COAsPage() {
   );
 
   const products: ProductCOA[] = [
-    {
-      name: "APX-2 30mg",
-      batch: "Pending",
-      status: "Awaiting Testing",
-    },
+{
+  name: "APX-2 30mg",
+  batch: "APX22609-WHT",
+  status: "Verified",
+  purity: "99.78%",
+  content: "38.46 mg",
+  coa: "/images/coas/apx2-30mg-coa.pdf",
+},
     {
       name: "MITO-X 120mg",
       batch: "Pending",

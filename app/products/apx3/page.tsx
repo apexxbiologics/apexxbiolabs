@@ -1378,6 +1378,13 @@ export default function APX3Page() {
                     : "Content"}
                 </span>
 
+                                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                  Lot:{" "}
+                  {
+                    selectedCoa.lot
+                  }
+                </span>
+
                 {selectedMg === "20mg" && (
                   <>
                     <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
@@ -1389,13 +1396,6 @@ export default function APX3Page() {
                     </span>
                   </>
                 )}
-
-                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                  Lot:{" "}
-                  {
-                    selectedCoa.lot
-                  }
-                </span>
 
               </div>
             </div>

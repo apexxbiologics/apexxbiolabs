@@ -900,75 +900,67 @@ export default function SS31Page() {
         </div>
       </section>
 
-      {/* COA SUMMARY */}
-      <section className="px-6 md:px-10 pb-12">
+{/* COA SUMMARY */}
+<section className="px-6 md:px-10 pb-12">
+  <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+    <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+      <div>
+        <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+          Freedom Diagnostics
+        </p>
 
-        <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+        <h3 className="text-2xl font-black text-white mb-4">
+          Latest Certificate of Analysis
+        </h3>
 
-          <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+        <div className="flex flex-wrap gap-2">
+          <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+            ✓ Identity Confirmed
+          </span>
 
-            <div>
+          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+            99.39% Purity
+          </span>
 
-              <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                Freedom Diagnostics
-              </p>
+          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+            13.57mg Net Content
+          </span>
 
-              <h3 className="text-2xl font-black text-white mb-4">
-                Latest Certificate of Analysis
-              </h3>
+          <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+            Lot: SS102609-WHT
+          </span>
 
-              <div className="flex flex-wrap gap-2">
+          <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+            No Fentanyl Detected
+          </span>
 
-                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
-                  ✓ Identity Confirmed
-                </span>
-
-                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  99.39% Purity
-                </span>
-
-                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  13.57mg Content
-                </span>
-
-                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-300 text-sm font-semibold">
-                  ✓ No Fentanyl Detected
-                </span>
-
-                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                  Lot: SS102609-WHT
-                </span>
-
-              </div>
-            </div>
-
-            <div className="md:text-right">
-
-              <p className="text-4xl font-black text-[#A5D8FF]">
-                99.39%
-              </p>
-
-              <p className="uppercase tracking-widest text-white/40 text-xs">
-                Purity
-              </p>
-
-              <a
-                href={
-                  latestCoaPath
-                }
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
-              >
-                View Latest COA
-              </a>
-
-            </div>
-
-          </div>
-
+          <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+            Endotoxin: Pass
+          </span>
         </div>
-      </section>
+      </div>
+
+      <div className="md:text-right">
+        <p className="text-4xl font-black text-[#A5D8FF]">
+          99.39%
+        </p>
+
+        <p className="uppercase tracking-widest text-white/40 text-xs">
+          Purity
+        </p>
+
+        <a
+          href={latestCoaPath}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
+        >
+          View Full COA
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* QUALITY */}
       <section className="px-6 md:px-10 pb-10">

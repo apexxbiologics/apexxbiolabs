@@ -1119,6 +1119,164 @@ export async function POST(request: Request) {
     let affiliateCommissionRate = 0;
 
     /*
+     * WELCOME10 is limited to ONE use per signed-in
+     * Apexx account.
+     *
+     * We authenticate the customer before applying the
+     * code and then check previous non-cancelled orders
+     * for the same authenticated account email.
+     */
+    let authenticatedUserId:
+      | string
+      | null = null;
+
+    let authenticatedUserEmail = "";
+
+    const requiresAuthenticatedAccount =
+      normalizedPromoCode === "WELCOME10" ||
+      requestedRedeemedPoints > 0;
+
+    if (requiresAuthenticatedAccount) {
+      const authorizationHeader =
+        request.headers.get(
+          "authorization"
+        );
+
+      const accessToken =
+        authorizationHeader?.startsWith(
+          "Bearer "
+        )
+          ? authorizationHeader.slice(7)
+          : null;
+
+      if (!accessToken) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              normalizedPromoCode === "WELCOME10"
+                ? "You must be signed in to use WELCOME10."
+                : "You must be signed in to redeem Apexx Rewards.",
+          },
+          { status: 401 }
+        );
+      }
+
+      const {
+        data: { user },
+        error: userError,
+      } =
+        await supabaseAdmin.auth.getUser(
+          accessToken
+        );
+
+      if (
+        userError ||
+        !user?.email
+      ) {
+        console.error(
+          "Checkout authentication error:",
+          userError
+        );
+
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "Your account session could not be verified. Please log in again.",
+          },
+          { status: 401 }
+        );
+      }
+
+      authenticatedUserEmail =
+        user.email
+          .trim()
+          .toLowerCase();
+
+      if (
+        authenticatedUserEmail !==
+        normalizedCustomerEmail
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "The checkout email must match your signed-in Apexx account.",
+          },
+          { status: 403 }
+        );
+      }
+
+      authenticatedUserId =
+        user.id;
+    }
+
+    if (
+      normalizedPromoCode === "WELCOME10"
+    ) {
+      const {
+        data: previousWelcomeOrders,
+        error: welcomeLookupError,
+      } = await supabaseAdmin
+        .from("orders")
+        .select("id, status")
+        .eq(
+          "customer_email",
+          authenticatedUserEmail
+        )
+        .eq(
+          "promo_code",
+          "WELCOME10"
+        );
+
+      if (welcomeLookupError) {
+        console.error(
+          "WELCOME10 usage lookup error:",
+          welcomeLookupError
+        );
+
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "WELCOME10 eligibility could not be verified. Please try again.",
+          },
+          { status: 500 }
+        );
+      }
+
+      const cancelledStatuses =
+        new Set([
+          "cancelled",
+          "canceled",
+        ]);
+
+      const hasUsedWelcome10 =
+        (previousWelcomeOrders || []).some(
+          (previousOrder) =>
+            !cancelledStatuses.has(
+              String(
+                previousOrder.status || ""
+              )
+                .trim()
+                .toLowerCase()
+            )
+        );
+
+      if (hasUsedWelcome10) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "WELCOME10 has already been used on this account.",
+          },
+          { status: 400 }
+        );
+      }
+    }
+
+    /*
      * Check regular Apexx promo
      * codes first.
      */
@@ -1271,10 +1429,6 @@ export async function POST(request: Request) {
     /*
      * Rewards values.
      */
-    let authenticatedUserId:
-      | string
-      | null = null;
-
     let recordedPointBalance = 0;
     let availablePoints = 0;
 
@@ -1284,54 +1438,15 @@ export async function POST(request: Request) {
     let rewardDiscount = 0;
 
     /*
-     * Authenticate and validate
-     * customer when rewards are used.
+     * Validate rewards when points are used.
+     *
+     * Authentication was already performed above whenever
+     * rewards are requested or WELCOME10 is entered.
      */
     if (
       requestedRedeemedPoints > 0
     ) {
-      const authorizationHeader =
-        request.headers.get(
-          "authorization"
-        );
-
-      const accessToken =
-        authorizationHeader?.startsWith(
-          "Bearer "
-        )
-          ? authorizationHeader.slice(
-              7
-            )
-          : null;
-
-      if (!accessToken) {
-        return NextResponse.json(
-          {
-            success: false,
-            error:
-              "You must be signed in to redeem Apexx Rewards.",
-          },
-          { status: 401 }
-        );
-      }
-
-      const {
-        data: { user },
-        error: userError,
-      } =
-        await supabaseAdmin.auth.getUser(
-          accessToken
-        );
-
-      if (
-        userError ||
-        !user?.email
-      ) {
-        console.error(
-          "Reward authentication error:",
-          userError
-        );
-
+      if (!authenticatedUserId) {
         return NextResponse.json(
           {
             success: false,
@@ -1341,28 +1456,6 @@ export async function POST(request: Request) {
           { status: 401 }
         );
       }
-
-      const authenticatedEmail =
-        user.email
-          .trim()
-          .toLowerCase();
-
-      if (
-        authenticatedEmail !==
-        normalizedCustomerEmail
-      ) {
-        return NextResponse.json(
-          {
-            success: false,
-            error:
-              "The checkout email must match your signed-in Apexx account.",
-          },
-          { status: 403 }
-        );
-      }
-
-      authenticatedUserId =
-        user.id;
 
       /*
        * Calculate current points.
@@ -1375,7 +1468,7 @@ export async function POST(request: Request) {
         .select("points")
         .eq(
           "user_id",
-          user.id
+          authenticatedUserId
         );
 
       if (pointsError) {

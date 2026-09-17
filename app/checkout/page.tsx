@@ -318,8 +318,12 @@ setAccessToken(
             {
               method: "POST",
               headers: {
-                "Content-Type":
-                  "application/json",
+                "Content-Type": "application/json",
+                ...(accessToken
+                  ? {
+                      Authorization: `Bearer ${accessToken}`,
+                    }
+                  : {}),
               },
               body: JSON.stringify({
                 code,
@@ -379,7 +383,7 @@ setAccessToken(
       window.clearTimeout(timeout);
       controller.abort();
     };
-  }, [promoCode]);
+  }, [promoCode, accessToken]);
 
   const availablePoints = Math.max(
     0,
@@ -544,8 +548,8 @@ setAccessToken(
 
       /*
        * Send the signed-in customer's Supabase token whenever
-       * a session exists. This is required for account-only
-       * promo rules such as WELCOME10, as well as rewards.
+       * a session exists. This is required for WELCOME10
+       * account validation as well as rewards.
        */
       if (accessToken) {
         headers.Authorization = `Bearer ${accessToken}`;

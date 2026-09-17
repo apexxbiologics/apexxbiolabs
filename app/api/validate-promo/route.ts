@@ -10,6 +10,11 @@ const REGULAR_PROMO_CODES: Record<string, number> = {
   WELCOME10: 0.1,
 };
 
+const CANCELLED_STATUSES = new Set([
+  "cancelled",
+  "canceled",
+]);
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -22,12 +27,16 @@ export async function POST(request: Request) {
       return NextResponse.json({
         valid: false,
         discountRate: 0,
+        error: "Enter a promo code.",
       });
     }
 
     /*
      * WELCOME10
-     * One use per signed-in account.
+     *
+     * - Requires a signed-in Apexx account.
+     * - Can only be used once per account.
+     * - Cancelled/canceled orders do not count as a use.
      */
     if (code === "WELCOME10") {
       const authorizationHeader =
@@ -43,7 +52,8 @@ export async function POST(request: Request) {
           {
             valid: false,
             discountRate: 0,
-            error: "Sign in to use WELCOME10.",
+            error:
+              "Sign in or create an account to use WELCOME10.",
           },
           { status: 401 }
         );
@@ -56,7 +66,7 @@ export async function POST(request: Request) {
         accessToken
       );
 
-      if (userError || !user?.email) {
+      if (userError || !user?.id || !user?.email) {
         console.error(
           "WELCOME10 authentication error:",
           userError
@@ -73,13 +83,16 @@ export async function POST(request: Request) {
         );
       }
 
-      const customerEmail = user.email
+      const authenticatedEmail = user.email
         .trim()
         .toLowerCase();
 
       /*
-       * Look for previous orders from this account
-       * where WELCOME10 was used.
+       * Check previous orders belonging to the signed-in
+       * customer's email for prior WELCOME10 usage.
+       *
+       * ilike makes the email/code comparison
+       * case-insensitive.
        */
       const {
         data: previousOrders,
@@ -87,7 +100,10 @@ export async function POST(request: Request) {
       } = await supabaseAdmin
         .from("orders")
         .select("id, status, promo_code")
-        .ilike("customer_email", customerEmail)
+        .ilike(
+          "customer_email",
+          authenticatedEmail
+        )
         .ilike("promo_code", "WELCOME10");
 
       if (orderError) {
@@ -101,16 +117,12 @@ export async function POST(request: Request) {
             valid: false,
             discountRate: 0,
             error:
-              "WELCOME10 eligibility could not be verified.",
+              "WELCOME10 eligibility could not be verified. Please try again.",
           },
           { status: 500 }
         );
       }
 
-      /*
-       * Cancelled orders do not count as using
-       * WELCOME10.
-       */
       const hasUsedWelcome10 = (
         previousOrders || []
       ).some((order) => {
@@ -120,10 +132,7 @@ export async function POST(request: Request) {
           .trim()
           .toLowerCase();
 
-        return (
-          status !== "cancelled" &&
-          status !== "canceled"
-        );
+        return !CANCELLED_STATUSES.has(status);
       });
 
       if (hasUsedWelcome10) {
@@ -141,12 +150,16 @@ export async function POST(request: Request) {
       return NextResponse.json({
         valid: true,
         code: "WELCOME10",
-        discountRate: 0.1,
+        discountRate:
+          REGULAR_PROMO_CODES.WELCOME10,
       });
     }
 
     /*
-     * Other regular promo codes.
+     * Other regular Apexx promo codes.
+     *
+     * WELCOME10 is handled above because it has
+     * account-specific eligibility rules.
      */
     const regularRate =
       REGULAR_PROMO_CODES[code];
@@ -160,26 +173,30 @@ export async function POST(request: Request) {
     }
 
     /*
-     * Affiliate codes.
+     * Affiliate promo codes.
      */
-    const { data: affiliate, error } =
-      await supabaseAdmin
-        .from("affiliates")
-        .select("code, discount_rate")
-        .eq("code", code)
-        .eq("status", "active")
-        .maybeSingle();
+    const {
+      data: affiliate,
+      error: affiliateError,
+    } = await supabaseAdmin
+      .from("affiliates")
+      .select("code, discount_rate")
+      .eq("code", code)
+      .eq("status", "active")
+      .maybeSingle();
 
-    if (error) {
+    if (affiliateError) {
       console.error(
-        "Promo validation error:",
-        error
+        "Affiliate promo validation error:",
+        affiliateError
       );
 
       return NextResponse.json(
         {
           valid: false,
           discountRate: 0,
+          error:
+            "Promo code could not be validated. Please try again.",
         },
         { status: 500 }
       );
@@ -189,15 +206,31 @@ export async function POST(request: Request) {
       return NextResponse.json({
         valid: false,
         discountRate: 0,
+        error: "Invalid promo code",
+      });
+    }
+
+    const affiliateDiscountRate = Number(
+      affiliate.discount_rate || 0
+    );
+
+    if (
+      !Number.isFinite(affiliateDiscountRate) ||
+      affiliateDiscountRate <= 0
+    ) {
+      return NextResponse.json({
+        valid: false,
+        discountRate: 0,
+        error: "Invalid promo code",
       });
     }
 
     return NextResponse.json({
       valid: true,
-      code: affiliate.code,
-      discountRate: Number(
-        affiliate.discount_rate || 0
-      ),
+      code: String(
+        affiliate.code || code
+      ).toUpperCase(),
+      discountRate: affiliateDiscountRate,
     });
   } catch (error) {
     console.error(
@@ -209,6 +242,8 @@ export async function POST(request: Request) {
       {
         valid: false,
         discountRate: 0,
+        error:
+          "Promo code could not be validated. Please try again.",
       },
       { status: 500 }
     );

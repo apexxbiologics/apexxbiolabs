@@ -542,10 +542,12 @@ setAccessToken(
         "Content-Type": "application/json",
       };
 
-      if (
-        redeemedPoints > 0 &&
-        accessToken
-      ) {
+      /*
+       * Send the signed-in customer's Supabase token whenever
+       * a session exists. This is required for account-only
+       * promo rules such as WELCOME10, as well as rewards.
+       */
+      if (accessToken) {
         headers.Authorization = `Bearer ${accessToken}`;
       }
 

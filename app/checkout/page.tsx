@@ -56,6 +56,8 @@ export default function CheckoutPage() {
     useState(false);
   const [promoIsValid, setPromoIsValid] =
     useState(false);
+  const [promoError, setPromoError] =
+    useState("");
 
   const [loggedInEmail, setLoggedInEmail] =
     useState("");
@@ -302,6 +304,7 @@ setAccessToken(
     if (!code) {
       setValidatedPromoRate(0);
       setPromoIsValid(false);
+      setPromoError("");
       setPromoValidating(false);
       return;
     }
@@ -348,9 +351,13 @@ setAccessToken(
               )
             );
             setPromoIsValid(true);
+            setPromoError("");
           } else {
             setValidatedPromoRate(0);
             setPromoIsValid(false);
+            setPromoError(
+              data.error || "Invalid promo code"
+            );
           }
         } catch (error) {
           if (
@@ -368,6 +375,9 @@ setAccessToken(
 
           setValidatedPromoRate(0);
           setPromoIsValid(false);
+          setPromoError(
+            "Unable to validate promo code. Please try again."
+          );
         } finally {
           if (
             !controller.signal.aborted
@@ -1380,7 +1390,8 @@ setAccessToken(
                       promoCode.trim() !== "" &&
                       !promoIsValid && (
                         <p className="mt-2 text-sm text-red-300">
-                          Invalid promo code
+                          {promoError ||
+                            "Invalid promo code"}
                         </p>
                       )}
                   </div>

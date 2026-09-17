@@ -8,7 +8,6 @@ const supabaseAdmin = createClient(
 
 const REGULAR_PROMO_CODES: Record<string, number> = {
   WELCOME10: 0.1,
-  PEPTIDEALS: 0.15,
 };
 
 export async function POST(request: Request) {

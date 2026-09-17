@@ -30,7 +30,6 @@ const REGULAR_PROMO_CODES: Record<
 > = {
   WELCOME10: 0.1,
   FREEDOM10: 0.1,
-  PEPTIDEALS: 0.15,
 };
 
 type CartItem = {

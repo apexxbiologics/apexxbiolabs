@@ -183,6 +183,7 @@ export async function POST(request: Request) {
       firstName,
       lastName,
       address,
+      apartment,
       city,
       state,
       zipCode,
@@ -231,6 +232,9 @@ export async function POST(request: Request) {
 
     const normalizedAddress =
       String(address).trim();
+
+    const normalizedApartment =
+      String(apartment || "").trim();
 
     const normalizedCity =
       String(city).trim();
@@ -1605,6 +1609,9 @@ export async function POST(request: Request) {
           address:
             normalizedAddress,
 
+          apartment:
+            normalizedApartment || null,
+
           city:
             normalizedCity,
 
@@ -2398,6 +2405,25 @@ export async function POST(request: Request) {
                 <div style="background:#ffffff; border:1px solid #dbeafe; border-radius:20px; padding:22px; margin-bottom:30px;">
 
                   <h3 style="margin:0 0 12px; color:#06111f; font-size:18px;">
+                    Shipping Address
+                  </h3>
+
+                  <p style="margin:0; color:#475569; line-height:1.7;">
+                    ${normalizedFirstName} ${normalizedLastName}<br/>
+                    ${normalizedAddress}<br/>
+                    ${
+                      normalizedApartment
+                        ? `${normalizedApartment}<br/>`
+                        : ""
+                    }
+                    ${normalizedCity}, ${normalizedState} ${normalizedZipCode}
+                  </p>
+
+                </div>
+
+                <div style="background:#ffffff; border:1px solid #dbeafe; border-radius:20px; padding:22px; margin-bottom:30px;">
+
+                  <h3 style="margin:0 0 12px; color:#06111f; font-size:18px;">
                     What Happens Next?
                   </h3>
 
@@ -2486,6 +2512,11 @@ export async function POST(request: Request) {
 
         <p>
           ${normalizedAddress}<br/>
+          ${
+            normalizedApartment
+              ? `${normalizedApartment}<br/>`
+              : ""
+          }
           ${normalizedCity},
           ${normalizedState}
           ${normalizedZipCode}

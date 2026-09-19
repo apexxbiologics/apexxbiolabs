@@ -1268,6 +1268,12 @@ export default async function AdminOrderDetailPage({
                 </p>
               )}
 
+              {order.apartment && (
+                <p>
+                  {order.apartment}
+                </p>
+              )}
+
               {(order.city ||
                 order.state ||
                 order.zip_code) && (
@@ -1287,6 +1293,7 @@ export default async function AdminOrderDetailPage({
               )}
 
               {!order.address &&
+                !order.apartment &&
                 !order.city &&
                 !order.state &&
                 !order.zip_code && (

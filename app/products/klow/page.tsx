@@ -56,7 +56,7 @@ export default function KlowPage() {
   };
 
   const coaPath =
-    "/images/coas/7-31-klow-coa.pdf";
+    "/images/coas/9-19-klow-coa.pdf";
 
   const isOutOfStock =
     inventory !== null && inventory <= 0;
@@ -923,15 +923,23 @@ export default function KlowPage() {
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  99.82% Purity
+                  99.80% Purity
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  94.48mg Total Content
+                  90.16mg Total Content
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                  Lot: Dark Blue Cap
+                  Lot: KLOW802609-BLK
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+                  ✓ No Fentanyl Detected
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+                  ✓ Endotoxin Pass
                 </span>
 
               </div>
@@ -940,7 +948,7 @@ export default function KlowPage() {
             <div className="md:text-right">
 
               <p className="text-4xl font-black text-[#A5D8FF]">
-                99.82%
+                99.80%
               </p>
 
               <p className="uppercase tracking-widest text-white/40 text-xs">

@@ -45,9 +45,6 @@ export default function CJCIPAPage() {
   const [flashSale, setFlashSale] =
     useState<FlashSale | null>(null);
 
-  const [showPreviousCoa, setShowPreviousCoa] =
-    useState(false);
-
   const [quantityDiscounts, setQuantityDiscounts] =
     useState<QuantityDiscountTier[]>([]);
 
@@ -860,29 +857,6 @@ const latestCoaPath =
             </div>
           </div>
 
-          <div className="mt-6 border-t border-white/10 pt-5">
-            <button
-              type="button"
-              onClick={() => setShowPreviousCoa((prev) => !prev)}
-              className="w-full rounded-full border border-white/10 bg-white/[0.04] py-3 text-xs uppercase tracking-widest text-white/80 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
-            >
-              {showPreviousCoa ? "Hide Previous COAs" : "View Previous COAs"}
-            </button>
-
-            {showPreviousCoa && (
-              <div className="mt-5 rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-                <p className="uppercase tracking-[0.3em] text-white/40 text-xs mb-2">
-                  Previous Certificates of Analysis
-                </p>
-                <h3 className="text-xl font-black text-white mb-2">
-                  Previous CJC/IPA Batches
-                </h3>
-                <p className="text-white/50 text-sm leading-relaxed">
-                  Previous CJC/IPA certificates can be added here while keeping the latest batch above.
-                </p>
-              </div>
-            )}
-          </div>
         </div>
       </section>
 

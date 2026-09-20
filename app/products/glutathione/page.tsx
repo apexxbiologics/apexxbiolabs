@@ -55,6 +55,9 @@ export default function GlutathionePage() {
     path: "/products/glutathione",
   };
 
+  const latestCoaPath =
+    "/images/coas/9-18-glutathione-coa.pdf";
+
   const isOutOfStock =
     inventory !== null && inventory <= 0;
 
@@ -931,9 +934,14 @@ export default function GlutathionePage() {
 
               </div>
 
-              <div className="block text-center mt-4 text-xs uppercase tracking-widest text-white/35">
-                COA Coming Soon
-              </div>
+              <a
+                href={latestCoaPath}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
+              >
+                View Certificate of Analysis →
+              </a>
 
             </div>
           </div>
@@ -942,50 +950,65 @@ export default function GlutathionePage() {
 
       {/* COA SUMMARY */}
       <section className="px-6 md:px-10 pb-12">
-
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
-
           <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
-
             <div>
-
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                Quality Verification
+                Precision Mass Spec
               </p>
 
               <h3 className="text-2xl font-black text-white mb-4">
-                Certificate of
-                Analysis
+                Latest Certificate of Analysis
               </h3>
 
               <div className="flex flex-wrap gap-2">
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+                  ✓ Identity Confirmed
+                </span>
 
-                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm font-semibold">
-                  Testing Pending
+                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                  99.91% Purity
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                  1657.83mg Net Content
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                  1500mg
+                  Lot: GLTE15002609-PRPL-AB-GLUP-0916
                 </span>
 
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+                  Heavy Metals: Not Detected
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+                  Endotoxins: Not Detected
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/50 text-sm">
+                  Sterility: Not Tested
+                </span>
               </div>
             </div>
 
             <div className="md:text-right">
-
-              <p className="uppercase tracking-widest text-white/40 text-xs">
-                Laboratory
-                Verification
+              <p className="text-4xl font-black text-[#A5D8FF]">
+                99.91%
               </p>
 
-              <button
-                type="button"
-                disabled
-                className="inline-flex mt-3 rounded-full border border-white/10 bg-white/[0.03] px-5 py-2.5 text-white/40 text-sm font-semibold cursor-not-allowed"
-              >
-                COA Coming Soon
-              </button>
+              <p className="uppercase tracking-widest text-white/40 text-xs">
+                Purity
+              </p>
 
+              <a
+                href={latestCoaPath}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
+              >
+                View Full COA
+              </a>
             </div>
           </div>
         </div>

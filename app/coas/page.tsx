@@ -219,15 +219,22 @@ export default function COAsPage() {
       content: "13.71 mg",
       coa: "/images/coas/adamaxcoa7-20-26.pdf",
     },
+{
+  name: "CJC/IPA 10mg",
+  batch: "CJC/IPA102609-PRPL-AB-CJIP-0916",
+  status: "Verified",
+  purity: "99.74%",
+  content: "10.58 mg",
+  coa: "/images/coas/9-18-cjcipa-coa.pdf",
+  previousCoas: [
     {
-      name: "CJC/IPA without DAC 10mg",
-      batch: "CJCIPA504292026-09",
-      status: "Verified",
-      purity: "99.42%",
-      content: "5 mg CJC / 5 mg IPA",
-      totalContent: "10 mg",
+      batch: "Previous Batch",
+      purity: "",
+      content: "",
       coa: "/images/coas/cjc-ipa-no-dac-coa.pdf",
     },
+  ],
+},
     {
       name: "Tesamorelin 10mg",
       batch: "TESA2608-01",

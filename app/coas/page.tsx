@@ -224,13 +224,13 @@ export default function COAsPage() {
   batch: "CJC/IPA102609-PRPL-AB-CJIP-0916",
   status: "Verified",
   purity: "99.74%",
-  content: "10.58 mg",
+  content: "5.31 mg CJC-1295 / 5.27 mg Ipamorelin — 10.58 mg Total",
   coa: "/images/coas/9-18-cjcipa-coa.pdf",
   previousCoas: [
     {
-      batch: "Previous Batch",
+      batch: "CJCIPA504292026-09",
       purity: "",
-      content: "",
+      content: "5.23 mg CJC-1295 / 5.25 mg Ipamorelin — 10.48 mg Total",
       coa: "/images/coas/cjc-ipa-no-dac-coa.pdf",
     },
   ],

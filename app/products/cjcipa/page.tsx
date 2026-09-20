@@ -45,6 +45,9 @@ export default function CJCIPAPage() {
   const [flashSale, setFlashSale] =
     useState<FlashSale | null>(null);
 
+  const [showPreviousCoa, setShowPreviousCoa] =
+    useState(false);
+
   const [quantityDiscounts, setQuantityDiscounts] =
     useState<QuantityDiscountTier[]>([]);
 
@@ -55,8 +58,11 @@ export default function CJCIPAPage() {
     path: "/products/cjcipa",
   };
 
-const latestCoaPath =
-  "/images/coas/9-18-cjcipa-coa.pdf";
+  const latestCoaPath =
+    "/images/coas/9-18-cjcipa-coa.pdf";
+
+  const previousCoaPath =
+    "/images/coas/cjc-ipa-no-dac-coa.pdf";
 
   const isOutOfStock =
     inventory !== null && inventory <= 0;
@@ -855,6 +861,57 @@ const latestCoaPath =
                 View Full COA
               </a>
             </div>
+          </div>
+
+          {/* COA HISTORY */}
+          <div className="mt-6 border-t border-white/10 pt-5">
+            <button
+              type="button"
+              onClick={() =>
+                setShowPreviousCoa((prev) => !prev)
+              }
+              className="w-full rounded-full border border-white/10 bg-white/[0.04] py-3 text-xs uppercase tracking-widest text-white/80 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+            >
+              {showPreviousCoa
+                ? "Hide Previous COAs"
+                : "View Previous COAs"}
+            </button>
+
+            {showPreviousCoa && (
+              <div className="mt-5 space-y-4">
+                {/* PREVIOUS CJC/IPA COA */}
+                <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+                  <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+                    <div>
+                      <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+                        Previous Certificate of Analysis
+                      </p>
+
+                      <h3 className="text-xl font-black text-white mb-4">
+                        CJC/IPA No DAC
+                      </h3>
+
+                      <div className="flex flex-wrap gap-2">
+                        <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+                          ✓ Previous Batch COA
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="md:text-right">
+                      <a
+                        href={previousCoaPath}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
+                      >
+                        View COA
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
         </div>

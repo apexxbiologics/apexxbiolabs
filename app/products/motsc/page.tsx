@@ -65,7 +65,7 @@ const previousCoaPath =
   "/images/coas/motsccoa.pdf";
 
 const oldestCoaPath =
-  "/images/coas/6-26-mots-c-coa.pdf";
+  "/images/coas/6-26-motsc-coa.pdf";
 
   const isOutOfStock =
     inventory !== null && inventory <= 0;

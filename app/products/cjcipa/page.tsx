@@ -45,6 +45,9 @@ export default function CJCIPAPage() {
   const [flashSale, setFlashSale] =
     useState<FlashSale | null>(null);
 
+  const [showPreviousCoa, setShowPreviousCoa] =
+    useState(false);
+
   const [quantityDiscounts, setQuantityDiscounts] =
     useState<QuantityDiscountTier[]>([]);
 
@@ -54,6 +57,9 @@ export default function CJCIPAPage() {
     image: "/images/cjcipablue.png",
     path: "/products/cjcipa",
   };
+
+const latestCoaPath =
+  "/images/coas/9-18-cjcipa-coa.pdf";
 
   const isOutOfStock =
     inventory !== null && inventory <= 0;
@@ -119,22 +125,14 @@ export default function CJCIPAPage() {
             (item: any) =>
               item.slug === "cjcipa" ||
               item.slug === "cjc-ipa" ||
-              item.slug ===
-                "cjcipa-10mg" ||
-              item.slug ===
-                "cjc-ipa-10mg" ||
+              item.slug === "cjcipa-10mg" ||
+              item.slug === "cjc-ipa-10mg" ||
               item.id === "cjcipa" ||
               item.id === "cjc-ipa" ||
-              item.id ===
-                "cjcipa-10mg" ||
-              item.id ===
-                "CJC-IPA-10mg" ||
-              item.name
-                ?.toLowerCase()
-                .includes("cjc") ||
-              item.name
-                ?.toLowerCase()
-                .includes("ipa")
+              item.id === "cjcipa-10mg" ||
+              item.id === "CJC-IPA-10mg" ||
+              item.name?.toLowerCase().includes("cjc") ||
+              item.name?.toLowerCase().includes("ipa")
           );
 
         if (cjcipa) {
@@ -146,9 +144,7 @@ export default function CJCIPAPage() {
               cjcipa.price ?? 55
             );
 
-          setDatabaseProductId(
-            dbId
-          );
+          setDatabaseProductId(dbId);
 
           setInventory(
             Number(
@@ -156,21 +152,14 @@ export default function CJCIPAPage() {
             )
           );
 
-          setPrice(
-            regularPrice
-          );
+          setPrice(regularPrice);
 
-          const now =
-            Date.now();
+          const now = Date.now();
 
           const matchingSale =
-            Array.isArray(
-              saleData.sales
-            )
+            Array.isArray(saleData.sales)
               ? saleData.sales.find(
-                  (
-                    sale: FlashSale
-                  ) => {
+                  (sale: FlashSale) => {
                     const starts =
                       new Date(
                         sale.starts_at
@@ -187,8 +176,7 @@ export default function CJCIPAPage() {
                       );
 
                     return (
-                      sale.active ===
-                        true &&
+                      sale.active === true &&
                       String(
                         sale.product_id
                       ) === dbId &&
@@ -204,8 +192,7 @@ export default function CJCIPAPage() {
                         salePrice
                       ) &&
                       salePrice > 0 &&
-                      salePrice <
-                        regularPrice
+                      salePrice < regularPrice
                     );
                   }
                 )
@@ -215,10 +202,7 @@ export default function CJCIPAPage() {
             matchingSale || null
           );
         } else {
-          setDatabaseProductId(
-            null
-          );
-
+          setDatabaseProductId(null);
           setInventory(null);
           setPrice(55);
           setFlashSale(null);
@@ -229,10 +213,7 @@ export default function CJCIPAPage() {
           error
         );
 
-        setDatabaseProductId(
-          null
-        );
-
+        setDatabaseProductId(null);
         setInventory(null);
         setPrice(55);
         setFlashSale(null);
@@ -242,14 +223,12 @@ export default function CJCIPAPage() {
     const fetchQuantityDiscounts =
       async () => {
         try {
-          const response =
-            await fetch(
-              "/api/quantity-discounts",
-              {
-                cache:
-                  "no-store",
-              }
-            );
+          const response = await fetch(
+            "/api/quantity-discounts",
+            {
+              cache: "no-store",
+            }
+          );
 
           const data =
             await response.json();
@@ -259,42 +238,31 @@ export default function CJCIPAPage() {
           const tiers = (
             data.tiers || []
           )
-            .map(
-              (tier: any) => ({
-                id: String(
-                  tier.id
-                ),
+            .map((tier: any) => ({
+              id: String(tier.id),
 
-                name: String(
-                  tier.name || ""
-                ),
+              name: String(
+                tier.name || ""
+              ),
 
-                quantity: Number(
-                  tier.quantity ||
-                    0
-                ),
+              quantity: Number(
+                tier.quantity || 0
+              ),
 
-                discount_percent:
-                  Number(
-                    tier.discount_percent ||
-                      0
-                  ),
+              discount_percent: Number(
+                tier.discount_percent || 0
+              ),
 
-                sort_order:
-                  Number(
-                    tier.sort_order ||
-                      0
-                  ),
-              })
-            )
+              sort_order: Number(
+                tier.sort_order || 0
+              ),
+            }))
             .filter(
               (
                 tier: QuantityDiscountTier
               ) =>
-                tier.quantity >
-                  1 &&
-                tier.discount_percent >=
-                  0
+                tier.quantity > 1 &&
+                tier.discount_percent >= 0
             )
             .sort(
               (
@@ -318,9 +286,7 @@ export default function CJCIPAPage() {
               }
             );
 
-          setQuantityDiscounts(
-            tiers
-          );
+          setQuantityDiscounts(tiers);
         } catch (error) {
           console.error(
             "Failed to fetch quantity discounts:",
@@ -352,13 +318,11 @@ export default function CJCIPAPage() {
       [...quantityDiscounts]
         .filter(
           (tier) =>
-            quantity >=
-            tier.quantity
+            quantity >= tier.quantity
         )
         .sort(
           (a, b) =>
-            b.quantity -
-            a.quantity
+            b.quantity - a.quantity
         )[0] || null
     );
   };
@@ -402,28 +366,22 @@ export default function CJCIPAPage() {
       return;
     }
 
-    setSelectedQuantity(
-      quantity
-    );
-
+    setSelectedQuantity(quantity);
     setAdded(false);
   };
 
   const addToCart = () => {
     if (isOutOfStock) return;
 
-    const existingCart =
-      JSON.parse(
-        localStorage.getItem(
-          "cart"
-        ) || "[]"
-      );
+    const existingCart = JSON.parse(
+      localStorage.getItem("cart") ||
+        "[]"
+    );
 
     const existingProduct =
       existingCart.find(
         (item: any) =>
-          item.id ===
-          product.id
+          item.id === product.id
       );
 
     const existingQuantity =
@@ -475,17 +433,14 @@ export default function CJCIPAPage() {
           100);
 
     const cartProduct = {
-      id:
-        product.id,
+      id: product.id,
 
-      name:
-        product.name,
+      name: product.name,
 
       price:
         newDiscountedUnitPrice,
 
-      basePrice:
-        price,
+      basePrice: price,
 
       quantity:
         newQuantity,
@@ -500,20 +455,17 @@ export default function CJCIPAPage() {
         newDiscountPercent,
 
       quantityDiscountTierId:
-        newTier?.id ||
-        null,
+        newTier?.id || null,
 
       quantityDiscountTierQuantity:
-        newTier?.quantity ||
-        null,
+        newTier?.quantity || null,
 
       flashSaleApplied:
         isFlashSaleActive,
 
       flashSaleId:
         isFlashSaleActive
-          ? flashSale?.id ||
-            null
+          ? flashSale?.id || null
           : null,
 
       flashSalePrice:
@@ -544,15 +496,11 @@ export default function CJCIPAPage() {
 
     localStorage.setItem(
       "cart",
-      JSON.stringify(
-        updatedCart
-      )
+      JSON.stringify(updatedCart)
     );
 
     window.dispatchEvent(
-      new Event(
-        "cartUpdated"
-      )
+      new Event("cartUpdated")
     );
 
     setAdded(true);
@@ -570,7 +518,6 @@ export default function CJCIPAPage() {
             {/* IMAGE */}
             <div className="flex items-center justify-center">
               <div className="relative w-full max-w-[520px] aspect-square rounded-[42px] overflow-hidden border border-blue-400/10 bg-white/[0.03] shadow-[0_0_30px_rgba(96,165,250,0.15)]">
-
                 <FavoriteButton
                   product={
                     favoriteProduct
@@ -586,26 +533,21 @@ export default function CJCIPAPage() {
                   }
                   className="w-full h-full object-cover"
                 />
-
               </div>
             </div>
 
             {/* PRODUCT CARD */}
             <div className="rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 md:p-8">
-
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">
-                Research Peptide
-                Blend
+                Research Peptide Blend
               </p>
 
               <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-3">
-
                 <h1 className="text-4xl md:text-5xl font-black text-white">
                   {product.name}
                 </h1>
 
                 <div className="sm:text-right">
-
                   <p className="text-3xl md:text-4xl font-black text-white">
                     $
                     {formatMoney(
@@ -623,27 +565,18 @@ export default function CJCIPAPage() {
                       )}
                     </p>
                   )}
-
                 </div>
               </div>
 
               <p className="text-white/60 leading-relaxed mb-5">
-                High-purity CJC/IPA
-                research peptide
-                blend studied in
-                laboratory models
-                involving growth
-                hormone secretagogue
-                pathways, peptide
-                signaling,
-                pituitary-response
-                models, and metabolic
-                research
+                High-purity CJC/IPA research peptide blend
+                studied in laboratory models involving growth
+                hormone secretagogue pathways, peptide signaling,
+                pituitary-response models, and metabolic research
                 applications.
               </p>
 
               <div className="flex flex-wrap items-center gap-3 mb-5">
-
                 <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold uppercase tracking-widest">
                   10mg
                 </span>
@@ -680,31 +613,22 @@ export default function CJCIPAPage() {
                     Out of Stock
                   </span>
                 )}
-
               </div>
 
               <div className="h-px bg-white/10 mb-5" />
 
               {/* QUANTITY */}
               <div className="mb-5">
-
                 <div className="flex items-center justify-between gap-4 mb-3">
-
                   <p className="uppercase tracking-widest text-white/45 text-xs">
                     Quantity
                   </p>
 
-                  {selectedQuantity >
-                    1 && (
+                  {selectedQuantity > 1 && (
                     <p className="text-[#A5D8FF] text-xs font-semibold">
-                      $
-                      {formatMoney(
-                        discountedUnitPrice
-                      )}{" "}
-                      / vial
+                      ${formatMoney(discountedUnitPrice)} / vial
                     </p>
                   )}
-
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -712,30 +636,21 @@ export default function CJCIPAPage() {
                   {/* 1 VIAL */}
                   <button
                     type="button"
-                    disabled={
-                      isOutOfStock
-                    }
+                    disabled={isOutOfStock}
                     onClick={() =>
-                      selectQuantity(
-                        1
-                      )
+                      selectQuantity(1)
                     }
                     className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-                      selectedQuantity ===
-                      1
+                      selectedQuantity === 1
                         ? "border-blue-300 bg-blue-400/10"
                         : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
                     } disabled:opacity-35 disabled:cursor-not-allowed`}
                   >
-
-                    {selectedQuantity ===
-                      1 && (
+                    {selectedQuantity === 1 && (
                       <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
                         <Check
                           size={11}
-                          strokeWidth={
-                            3
-                          }
+                          strokeWidth={3}
                         />
                       </span>
                     )}
@@ -745,113 +660,82 @@ export default function CJCIPAPage() {
                     </p>
 
                     <p className="text-xs text-white/45 mt-1">
-                      $
-                      {formatMoney(
-                        effectiveUnitPrice
-                      )}
+                      ${formatMoney(effectiveUnitPrice)}
                     </p>
 
                     {isFlashSaleActive && (
                       <p className="text-[10px] text-white/25 line-through mt-0.5">
-                        $
-                        {formatMoney(
-                          price
-                        )}
+                        ${formatMoney(price)}
                       </p>
                     )}
-
                   </button>
 
                   {/* ADMIN QUANTITY TIERS */}
-                  {quantityDiscounts.map(
-                    (tier) => {
-                      const tierUnavailable =
-                        inventory !==
-                          null &&
-                        inventory <
-                          tier.quantity;
-
-                      const tierTotal =
-                        isFlashSaleActive
-                          ? effectiveUnitPrice *
-                            tier.quantity
-                          : price *
-                            tier.quantity *
-                            (1 -
-                              tier.discount_percent /
-                                100);
-
-                      const selected =
-                        selectedQuantity ===
+                  {quantityDiscounts.map((tier) => {
+                    const tierUnavailable =
+                      inventory !== null &&
+                      inventory <
                         tier.quantity;
 
-                      return (
-                        <button
-                          key={
-                            tier.id
-                          }
-                          type="button"
-                          disabled={
-                            tierUnavailable
-                          }
-                          onClick={() =>
-                            selectQuantity(
-                              tier.quantity
-                            )
-                          }
-                          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-                            selected
-                              ? "border-blue-300 bg-blue-400/10"
-                              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-                          } disabled:opacity-30 disabled:cursor-not-allowed`}
-                        >
+                    const tierTotal =
+                      isFlashSaleActive
+                        ? effectiveUnitPrice *
+                          tier.quantity
+                        : price *
+                          tier.quantity *
+                          (1 -
+                            tier.discount_percent /
+                              100);
 
-                          {selected && (
-                            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-                              <Check
-                                size={
-                                  11
-                                }
-                                strokeWidth={
-                                  3
-                                }
-                              />
-                            </span>
-                          )}
+                    const selected =
+                      selectedQuantity ===
+                      tier.quantity;
 
-                          <p className="font-black text-white text-sm">
-                            {
-                              tier.quantity
-                            }{" "}
-                            Vials
+                    return (
+                      <button
+                        key={tier.id}
+                        type="button"
+                        disabled={tierUnavailable}
+                        onClick={() =>
+                          selectQuantity(
+                            tier.quantity
+                          )
+                        }
+                        className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
+                          selected
+                            ? "border-blue-300 bg-blue-400/10"
+                            : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                        } disabled:opacity-30 disabled:cursor-not-allowed`}
+                      >
+                        {selected && (
+                          <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
+                            <Check
+                              size={11}
+                              strokeWidth={3}
+                            />
+                          </span>
+                        )}
+
+                        <p className="font-black text-white text-sm">
+                          {tier.quantity} Vials
+                        </p>
+
+                        <p className="text-xs text-white/45 mt-1">
+                          ${formatMoney(tierTotal)}
+                        </p>
+
+                        {isFlashSaleActive ? (
+                          <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
+                            Flash Sale
                           </p>
-
-                          <p className="text-xs text-white/45 mt-1">
-                            $
-                            {formatMoney(
-                              tierTotal
-                            )}
+                        ) : (
+                          <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
+                            Save {tier.discount_percent}%
                           </p>
-
-                          {isFlashSaleActive ? (
-                            <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
-                              Flash Sale
-                            </p>
-                          ) : (
-                            <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
-                              Save{" "}
-                              {
-                                tier.discount_percent
-                              }
-                              %
-                            </p>
-                          )}
-
-                        </button>
-                      );
-                    }
-                  )}
-
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -865,7 +749,6 @@ export default function CJCIPAPage() {
 
               {/* ACTION BUTTONS */}
               <div className="grid grid-cols-2 gap-3">
-
                 {isOutOfStock ? (
                   <button
                     disabled
@@ -875,12 +758,9 @@ export default function CJCIPAPage() {
                   </button>
                 ) : (
                   <button
-                    onClick={
-                      addToCart
-                    }
+                    onClick={addToCart}
                     className="col-span-2 bg-white text-[#081526] hover:bg-blue-100 rounded-full py-4 uppercase tracking-widest text-xs font-bold transition-all flex items-center justify-center gap-2"
                   >
-
                     <ShoppingCart
                       size={18}
                     />
@@ -893,7 +773,6 @@ export default function CJCIPAPage() {
                             ? "Vial"
                             : "Vials"
                         } To Cart`}
-
                   </button>
                 )}
 
@@ -910,18 +789,106 @@ export default function CJCIPAPage() {
                 >
                   Keep Shopping
                 </a>
+              </div>
 
+              <a
+                href={latestCoaPath}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
+              >
+                View Certificate of
+                Analysis →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+{/* COA SUMMARY */}
+      <section className="px-6 md:px-10 pb-12">
+        <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+          <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+            <div>
+              <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+                Precision Mass Spec
+              </p>
+              <h3 className="text-2xl font-black text-white mb-4">
+                Latest Certificate of Analysis
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+                  ✓ Identity Confirmed
+                </span>
+                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                  99.74% Purity
+                </span>
+                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                  10.58mg Net Peptide Content
+                </span>
+                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                  Lot: CJC/IPA102609-PRPL-AB-CJIP-0916
+                </span>
+                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                  CJC-1295: 5.31mg
+                </span>
+                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                  Ipamorelin: 5.27mg
+                </span>
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+                  Heavy Metals: Not Detected
+                </span>
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+                  Endotoxins: Not Detected
+                </span>
+                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/50 text-sm">
+                  Sterility: Not Tested
+                </span>
               </div>
             </div>
+            <div className="md:text-right">
+              <p className="text-4xl font-black text-[#A5D8FF]">99.74%</p>
+              <p className="uppercase tracking-widest text-white/40 text-xs">Purity</p>
+              <a
+                href={latestCoaPath}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
+              >
+                View Full COA
+              </a>
+            </div>
+          </div>
+
+          <div className="mt-6 border-t border-white/10 pt-5">
+            <button
+              type="button"
+              onClick={() => setShowPreviousCoa((prev) => !prev)}
+              className="w-full rounded-full border border-white/10 bg-white/[0.04] py-3 text-xs uppercase tracking-widest text-white/80 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+            >
+              {showPreviousCoa ? "Hide Previous COAs" : "View Previous COAs"}
+            </button>
+
+            {showPreviousCoa && (
+              <div className="mt-5 rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+                <p className="uppercase tracking-[0.3em] text-white/40 text-xs mb-2">
+                  Previous Certificates of Analysis
+                </p>
+                <h3 className="text-xl font-black text-white mb-2">
+                  Previous CJC/IPA Batches
+                </h3>
+                <p className="text-white/50 text-sm leading-relaxed">
+                  Previous CJC/IPA certificates can be added here while keeping the latest batch above.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
       {/* QUALITY */}
       <section className="px-6 md:px-10 pb-10">
-
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-7 grid grid-cols-1 md:grid-cols-4 gap-6">
-
           {[
             [
               FlaskConical,
@@ -952,14 +919,12 @@ export default function CJCIPAPage() {
                 key={title}
                 className="flex gap-4"
               >
-
                 <Icon
                   className="text-[#A5D8FF]"
                   size={28}
                 />
 
                 <div>
-
                   <h3 className="text-white uppercase tracking-widest font-bold text-xs">
                     {title}
                   </h3>
@@ -967,92 +932,43 @@ export default function CJCIPAPage() {
                   <p className="text-white/50 text-sm mt-1">
                     {text}
                   </p>
-
                 </div>
               </div>
             )
           )}
-
         </div>
       </section>
 
       {/* RESEARCH PROFILE */}
       <section className="px-6 md:px-10 pb-14">
-
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] p-8">
-
-          <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">
-            Research Profile
-          </p>
-
+          <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">Research Profile</p>
           <h2 className="text-3xl font-black text-white mb-4">
-            Growth Hormone
-            Secretagogue Research
-            Overview
+            Growth Hormone Secretagogue Research Overview
           </h2>
-
           <p className="text-white/65 leading-relaxed max-w-4xl mb-7">
-            CJC/IPA is studied in
-            laboratory research
-            models involving growth
-            hormone secretagogue
-            pathways, peptide
-            signaling,
-            pituitary-response
-            models, and metabolic
-            research applications.
+            CJC/IPA is studied in laboratory research models involving growth hormone secretagogue
+            pathways, peptide signaling, pituitary-response models, and metabolic research applications.
           </p>
-
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-
             {[
-              [
-                "GHRH Pathway",
-                "Studied for growth-hormone-releasing hormone pathway signaling.",
-              ],
-
-              [
-                "Secretagogue Research",
-                "Evaluated in models involving peptide-stimulated signaling responses.",
-              ],
-
-              [
-                "Metabolic Models",
-                "Researched in laboratory models involving energy regulation pathways.",
-              ],
-
-              [
-                "Storage",
-                "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
-              ],
-            ].map(
-              ([title, text]) => (
-                <div
-                  key={title}
-                  className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
-                >
-
-                  <h3 className="text-white font-bold mb-2">
-                    {title}
-                  </h3>
-
-                  <p className="text-white/55 text-sm leading-relaxed">
-                    {text}
-                  </p>
-
-                </div>
-              )
-            )}
-
+              ["GHRH Pathway", "Studied for growth-hormone-releasing hormone pathway signaling."],
+              ["Secretagogue Research", "Evaluated in models involving peptide-stimulated signaling responses."],
+              ["Metabolic Models", "Researched in laboratory models involving energy regulation pathways."],
+              ["Storage", "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use."],
+            ].map(([title, text]) => (
+              <div key={title} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+                <h3 className="text-white font-bold mb-2">{title}</h3>
+                <p className="text-white/55 text-sm leading-relaxed">{text}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* RELATED */}
       <section className="px-6 md:px-10 pb-14">
-
         <div className="max-w-7xl mx-auto">
-
           <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
             Frequently Researched
             Together
@@ -1064,7 +980,6 @@ export default function CJCIPAPage() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-
             {[
               {
                 name: "APX-3",
@@ -1080,19 +995,6 @@ export default function CJCIPAPage() {
               },
 
               {
-                name: "MOTS-C",
-
-                image:
-                  "/images/motscblue.png",
-
-                path:
-                  "/products/motsc",
-
-                text:
-                  "Studied in laboratory models involving mitochondrial signaling and metabolic research.",
-              },
-
-              {
                 name: "Adamax",
 
                 image:
@@ -1104,6 +1006,19 @@ export default function CJCIPAPage() {
                 text:
                   "Research involving metabolic regulation and performance-focused laboratory models.",
               },
+
+              {
+                name: "CJC/IPA",
+
+                image:
+                  "/images/cjcipablue.png",
+
+                path:
+                  "/products/cjcipa",
+
+                text:
+                  "Research involving growth hormone signaling pathways and endocrine response models.",
+              },
             ].map(
               (item) => (
                 <a
@@ -1111,19 +1026,12 @@ export default function CJCIPAPage() {
                   href={item.path}
                   className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/40 transition-all"
                 >
-
                   <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
-
                     <img
-                      src={
-                        item.image
-                      }
-                      alt={
-                        item.name
-                      }
+                      src={item.image}
+                      alt={item.name}
                       className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
                     />
-
                   </div>
 
                   <h3 className="text-xl font-black text-white mb-2">
@@ -1137,11 +1045,9 @@ export default function CJCIPAPage() {
                   <span className="inline-block mt-3 text-[#A5D8FF] text-sm font-semibold">
                     View Product →
                   </span>
-
                 </a>
               )
             )}
-
           </div>
         </div>
       </section>
@@ -1169,9 +1075,7 @@ export default function CJCIPAPage() {
             key={section.title}
             className="px-6 md:px-10 pb-10"
           >
-
             <div className="max-w-7xl mx-auto rounded-[26px] border border-white/10 bg-white/[0.04] p-6">
-
               <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-xs mb-3">
                 {section.title}
               </h3>
@@ -1179,12 +1083,10 @@ export default function CJCIPAPage() {
               <p className="text-white/55 text-sm leading-relaxed">
                 {section.text}
               </p>
-
             </div>
           </section>
         )
       )}
-
     </main>
   );
 }

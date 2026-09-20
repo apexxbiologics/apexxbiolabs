@@ -55,7 +55,10 @@ export default function KPVPage() {
     path: "/products/kpv",
   };
 
-  const coaPath =
+  const latestCoaPath =
+    "/images/coas/9-18-kpv-coa.pdf";
+
+  const previousCoaPath =
     "/images/coas/6-26-kpv-coa.pdf";
 
   const isOutOfStock =
@@ -788,7 +791,7 @@ export default function KPVPage() {
               </div>
 
               <a
-                href={coaPath}
+                href={latestCoaPath}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
@@ -807,12 +810,11 @@ export default function KPVPage() {
           <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
             <div>
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                Freedom Diagnostics
+                Precision Mass Spec
               </p>
 
               <h3 className="text-2xl font-black text-white mb-4">
-                Latest Certificate
-                of Analysis
+                Latest Certificate of Analysis
               </h3>
 
               <div className="flex flex-wrap gap-2">
@@ -821,22 +823,34 @@ export default function KPVPage() {
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  99.60% Purity
+                  99.79% Purity
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  10.41mg Content
+                  11.09mg Net Content
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                  Lot: Purple Cap-1
+                  Lot: KPV102609-BLU-AB-KPVB-0916
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+                  Heavy Metals: Not Detected
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+                  Endotoxins: Not Detected
+                </span>
+
+                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/50 text-sm">
+                  Sterility: Not Tested
                 </span>
               </div>
             </div>
 
             <div className="md:text-right">
               <p className="text-4xl font-black text-[#A5D8FF]">
-                99.60%
+                99.79%
               </p>
 
               <p className="uppercase tracking-widest text-white/40 text-xs">
@@ -844,14 +858,30 @@ export default function KPVPage() {
               </p>
 
               <a
-                href={coaPath}
+                href={latestCoaPath}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20"
+                className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
               >
                 View Full COA
               </a>
             </div>
+          </div>
+
+          {/* PREVIOUS COAS */}
+          <div className="mt-6 pt-6 border-t border-white/10">
+            <p className="uppercase tracking-[0.25em] text-white/35 text-[10px] mb-3">
+              Previous Certificates
+            </p>
+
+            <a
+              href={previousCoaPath}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-white/60 text-xs font-semibold hover:bg-white/[0.07] hover:text-white transition-all"
+            >
+              View Previous KPV COA · 06/26
+            </a>
           </div>
         </div>
       </section>

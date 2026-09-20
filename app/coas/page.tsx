@@ -56,14 +56,14 @@ export default function COAsPage() {
       batch: "Pending",
       status: "Awaiting Testing",
     },
-    {
-      name: "Glutathione 1500mg",
-      batch: "GLTE15002609-PRPL-AB-GLUP-0916",
-      status: "Verified",
-      purity: "99.91%",
-      content: "1657.83 mg",
-      coa: "/images/coas/glutathione-1500mg-coa.pdf",
-    },
+{
+  name: "Glutathione 1500mg",
+  batch: "GLTE15002609-PRPL-AB-GLUP-0916",
+  status: "Verified",
+  purity: "99.91%",
+  content: "1657.83 mg",
+  coa: "/images/coas/9-18-glutathione-coa.pdf",
+},
 {
   name: "SS-31 10mg",
   batch: "SS102609-WHT",
@@ -140,7 +140,7 @@ export default function COAsPage() {
       status: "Verified",
       purity: "99.79%",
       content: "11.09 mg",
-      coa: "/images/coas/kpv-10mg-09-18-2026.pdf",
+      coa: "/images/coas/9-18-kpv-coa.pdf",
       previousCoas: [
         {
           batch: "Purple Cap-1",
@@ -278,16 +278,22 @@ export default function COAsPage() {
       batch: "Pending",
       status: "Awaiting Testing",
     },
+{
+  name: "KLOW 80mg",
+  batch: "KLOW802609-BLK",
+  status: "Verified",
+  purity: "99.80%",
+  content: "90.16 mg",
+  coa: "/images/coas/9-19-klow-coa.pdf",
+  previousCoas: [
     {
-      name: "KLOW 80mg",
       batch: "Dark Blue Cap",
-      status: "Verified",
       purity: "99.82%",
-      content:
-        "57.66 mg GHK-Cu / 11.53 mg KPV / 12.36 mg BPC-157 / 12.93 mg TB-4",
-      totalContent: "94.48 mg",
+      content: "94.48 mg",
       coa: "/images/coas/7-31-klow-coa.pdf",
     },
+  ],
+},
     {
       name: "Wolverine 20mg",
       batch: "WOLV202609-BLU-AB-WOLB-0911",

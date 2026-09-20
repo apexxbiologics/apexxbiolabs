@@ -45,6 +45,9 @@ export default function KPVPage() {
   const [flashSale, setFlashSale] =
     useState<FlashSale | null>(null);
 
+  const [showPreviousCoa, setShowPreviousCoa] =
+    useState(false);
+
   const [quantityDiscounts, setQuantityDiscounts] =
     useState<QuantityDiscountTier[]>([]);
 
@@ -807,6 +810,8 @@ export default function KPVPage() {
       {/* COA SUMMARY */}
       <section className="px-6 md:px-10 pb-12">
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+
+          {/* LATEST COA */}
           <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
             <div>
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
@@ -868,42 +873,57 @@ export default function KPVPage() {
             </div>
           </div>
 
-          {/* PREVIOUS COAS */}
-          <div className="mt-6 pt-6 border-t border-white/10">
-            <div className="mb-4">
-              <p className="uppercase tracking-[0.25em] text-white/35 text-[10px] mb-1">
-                Previous Certificates
-              </p>
+          {/* COA HISTORY */}
+          <div className="mt-6 border-t border-white/10 pt-5">
+            <button
+              type="button"
+              onClick={() =>
+                setShowPreviousCoa((prev) => !prev)
+              }
+              className="w-full rounded-full border border-white/10 bg-white/[0.04] py-3 text-xs uppercase tracking-widest text-white/80 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+            >
+              {showPreviousCoa
+                ? "Hide Previous COAs"
+                : "View Previous COAs"}
+            </button>
 
-              <p className="text-white/45 text-sm">
-                Earlier third-party testing documentation for KPV.
-              </p>
-            </div>
+            {showPreviousCoa && (
+              <div className="mt-5 space-y-4">
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              <a
-                href={previousCoaPath}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4 hover:bg-white/[0.07] hover:border-blue-400/20 transition-all"
-              >
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-white font-semibold text-sm">
-                      KPV 10mg
-                    </p>
+                {/* PREVIOUS KPV COA */}
+                <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+                  <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+                    <div>
+                      <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+                        Previous Certificate of Analysis
+                      </p>
 
-                    <p className="text-white/40 text-xs mt-1">
-                      Certificate of Analysis · 06/26
-                    </p>
+                      <h3 className="text-xl font-black text-white mb-4">
+                        KPV 10mg · 06/26
+                      </h3>
+
+                      <div className="flex flex-wrap gap-2">
+                        <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                          Previous Batch
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="md:text-right">
+                      <a
+                        href={previousCoaPath}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
+                      >
+                        View COA
+                      </a>
+                    </div>
                   </div>
-
-                  <span className="text-[#A5D8FF] text-sm group-hover:translate-x-0.5 transition-transform">
-                    →
-                  </span>
                 </div>
-              </a>
-            </div>
+
+              </div>
+            )}
           </div>
         </div>
       </section>

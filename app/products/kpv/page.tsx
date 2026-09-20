@@ -899,22 +899,42 @@ export default function KPVPage() {
                       </p>
 
                       <h3 className="text-xl font-black text-white mb-4">
-                        KPV 10mg · 06/26
+                        Purple Cap-1
                       </h3>
 
                       <div className="flex flex-wrap gap-2">
+                        <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+                          ✓ Verified
+                        </span>
+
+                        <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                          99.60% Purity
+                        </span>
+
+                        <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                          10.41mg Content
+                        </span>
+
                         <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                          Previous Batch
+                          Batch: Purple Cap-1
                         </span>
                       </div>
                     </div>
 
                     <div className="md:text-right">
+                      <p className="text-3xl font-black text-[#A5D8FF]">
+                        99.60%
+                      </p>
+
+                      <p className="uppercase tracking-widest text-white/40 text-xs">
+                        Purity
+                      </p>
+
                       <a
                         href={previousCoaPath}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
+                        className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
                       >
                         View COA
                       </a>

@@ -888,12 +888,40 @@ export default function CJCIPAPage() {
                       </p>
 
                       <h3 className="text-xl font-black text-white mb-4">
-                        CJC/IPA No DAC
+                        CJC-1295 No DAC / Ipamorelin 5mg/5mg
                       </h3>
 
                       <div className="flex flex-wrap gap-2">
                         <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
-                          ✓ Previous Batch COA
+                          ✓ Identity Confirmed
+                        </span>
+
+                        <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                          10.48mg Total Content
+                        </span>
+
+                        <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                          CJC-1295: 5.23mg
+                        </span>
+
+                        <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                          Ipamorelin: 5.25mg
+                        </span>
+
+                        <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                          Batch: CJCIPA504292026-09
+                        </span>
+
+                        <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                          Analysis Date: May 15, 2026
+                        </span>
+
+                        <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                          Testing Laboratory: Janoshik
+                        </span>
+
+                        <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                          Test Type: Identity &amp; Content
                         </span>
                       </div>
                     </div>

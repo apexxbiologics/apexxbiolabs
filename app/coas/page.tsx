@@ -58,8 +58,11 @@ export default function COAsPage() {
     },
     {
       name: "Glutathione 1500mg",
-      batch: "Pending",
-      status: "Awaiting Testing",
+      batch: "GLTE15002609-PRPL-AB-GLUP-0916",
+      status: "Verified",
+      purity: "99.91%",
+      content: "1657.83 mg",
+      coa: "/images/coas/glutathione-1500mg-coa.pdf",
     },
 {
   name: "SS-31 10mg",
@@ -133,11 +136,19 @@ export default function COAsPage() {
     },
     {
       name: "KPV 10mg",
-      batch: "Purple Cap-1",
+      batch: "KPV102609-BLU-AB-KPVB-0916",
       status: "Verified",
-      purity: "99.60%",
-      content: "10.41 mg",
-      coa: "/images/coas/6-26-kpv-coa.pdf",
+      purity: "99.79%",
+      content: "11.09 mg",
+      coa: "/images/coas/kpv-10mg-09-18-2026.pdf",
+      previousCoas: [
+        {
+          batch: "Purple Cap-1",
+          purity: "99.60%",
+          content: "10.41 mg",
+          coa: "/images/coas/6-26-kpv-coa.pdf",
+        },
+      ],
     },
     {
       name: "GHK-Cu 100mg",
@@ -279,12 +290,20 @@ export default function COAsPage() {
     },
     {
       name: "Wolverine 20mg",
-      batch: "Clear Cap / Blue Crimp",
+      batch: "WOLV202609-BLU-AB-WOLB-0911",
       status: "Verified",
-      purity: "99.34%",
-      content: "11.84 mg BPC-157 / 12.93 mg Thymosin Beta-4",
-      totalContent: "24.77 mg",
-      coa: "/images/coas/7-31-wolverine-coa.pdf",
+      purity: "99.38%",
+      content: "11.10 mg BPC-157 / 10.14 mg TB-500",
+      totalContent: "21.24 mg",
+      coa: "/images/coas/9-14-wolverine-coa.pdf",
+      previousCoas: [
+        {
+          batch: "Clear Cap / Blue Crimp",
+          purity: "99.34%",
+          content: "24.77 mg",
+          coa: "/images/coas/7-31-wolverine-coa.pdf",
+        },
+      ],
     },
   ];
 
@@ -364,7 +383,7 @@ export default function COAsPage() {
           </p>
 
           <p className="mt-6 text-xs uppercase tracking-[0.22em] text-white/35">
-            Last Updated September 8, 2026
+            Last Updated September 20, 2026
           </p>
 
           {/* SUMMARY */}

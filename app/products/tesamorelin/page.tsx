@@ -43,6 +43,16 @@ type CoaData = {
   content: string;
   lot: string;
   href: string;
+  heavyMetals?: string;
+  endotoxins?: string;
+  sterility?: string;
+  previousCoas?: {
+    lab: string;
+    purity: string;
+    content: string;
+    lot: string;
+    href: string;
+  }[];
 };
 
 export default function TesamorelinPage() {
@@ -107,11 +117,23 @@ export default function TesamorelinPage() {
     },
 
     "10mg": {
-      lab: "Accumark Labs",
-      purity: "99.99%",
-      content: "9.968mg",
-      lot: "TESA2608-01",
-      href: "/images/coas/tesamorelin-10mg-8-26-26.pdf",
+      lab: "Precision Mass Spec",
+      purity: "99.86%",
+      content: "10.94mg",
+      lot: "TSM102609-BL-AB-TESB-0921",
+      href: "/images/coas/9-22-tesamorelin-coa.pdf",
+      heavyMetals: "Not Detected",
+      endotoxins: "Not Detected",
+      sterility: "Not Tested",
+      previousCoas: [
+        {
+          lab: "Accumark Labs",
+          purity: "99.99%",
+          content: "9.968mg",
+          lot: "TESA2608-01",
+          href: "/images/coas/tesamorelin-10mg-8-26-26.pdf",
+        },
+      ],
     },
   };
 
@@ -1249,6 +1271,24 @@ export default function TesamorelinPage() {
                   Lot: {selectedCoa.lot}
                 </span>
 
+                {selectedCoa.heavyMetals && (
+                  <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+                    Heavy Metals: {selectedCoa.heavyMetals}
+                  </span>
+                )}
+
+                {selectedCoa.endotoxins && (
+                  <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+                    Endotoxins: {selectedCoa.endotoxins}
+                  </span>
+                )}
+
+                {selectedCoa.sterility && (
+                  <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/50 text-sm">
+                    Sterility: {selectedCoa.sterility}
+                  </span>
+                )}
+
               </div>
             </div>
 
@@ -1277,6 +1317,45 @@ export default function TesamorelinPage() {
           </div>
 
         </div>
+
+        {selectedCoa.previousCoas && selectedCoa.previousCoas.length > 0 && (
+          <div className="max-w-7xl mx-auto mt-4">
+            <details className="rounded-[24px] border border-white/10 bg-white/[0.025] overflow-hidden">
+              <summary className="cursor-pointer list-none px-6 py-4 flex items-center justify-between gap-4 text-white/70 hover:text-white transition-colors">
+                <span className="text-xs font-bold uppercase tracking-[0.22em]">
+                  Previous {selectedMg} Certificates of Analysis
+                </span>
+                <span className="text-[#A5D8FF] text-lg">+</span>
+              </summary>
+
+              <div className="border-t border-white/10 p-4 grid gap-3">
+                {selectedCoa.previousCoas.map((coa) => (
+                  <a
+                    key={`${coa.lot}-${coa.href}`}
+                    href={coa.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 hover:bg-white/[0.06] transition-all"
+                  >
+                    <div>
+                      <p className="text-white font-bold">{coa.lab}</p>
+                      <p className="text-white/45 text-sm mt-1">
+                        Lot: {coa.lot} · {coa.content} content
+                      </p>
+                    </div>
+
+                    <div className="sm:text-right">
+                      <p className="text-[#A5D8FF] font-black">{coa.purity}</p>
+                      <p className="text-white/40 text-[10px] uppercase tracking-widest">
+                        View Previous COA →
+                      </p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </details>
+          </div>
+        )}
       </section>
 
       {/* QUALITY */}

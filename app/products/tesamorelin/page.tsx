@@ -43,10 +43,15 @@ type CoaData = {
   content: string;
   lot: string;
   href: string;
+  heavyMetals?: string;
+  endotoxins?: string;
+  sterility?: string;
 };
 
 export default function TesamorelinPage() {
   const [added, setAdded] = useState(false);
+  const [showPreviousCoas, setShowPreviousCoas] =
+    useState(false);
 
   const [selectedMg, setSelectedMg] =
     useState<TesamorelinSize>("5mg");
@@ -94,8 +99,9 @@ export default function TesamorelinPage() {
   /*
    * SIZE-SPECIFIC COA DATA
    *
-   * 5mg only shows the 5mg Freedom Diagnostics COA.
-   * 10mg only shows the 10mg Accumark Labs COA.
+   * 5mg keeps the existing Freedom Diagnostics COA.
+   * 10mg shows the newest Precision Mass Spec COA as the current COA,
+   * while retaining the older Accumark Labs COA below as a previous COA.
    */
   const coaData: Record<TesamorelinSize, CoaData> = {
     "5mg": {
@@ -107,12 +113,29 @@ export default function TesamorelinPage() {
     },
 
     "10mg": {
-      lab: "Accumark Labs",
-      purity: "99.99%",
-      content: "9.968mg",
-      lot: "TESA2608-01",
-      href: "/images/coas/tesamorelin-10mg-8-26-26.pdf",
+      lab: "Precision Mass Spec",
+      purity: "99.86%",
+      content: "10.94mg",
+      lot: "TSM102609-BL-AB-TESB-0921",
+      href: "/images/coas/9-22-tesamorelin-coa.pdf",
+      heavyMetals: "Not Detected",
+      endotoxins: "Not Detected",
+      sterility: "Not Tested",
     },
+  };
+
+  const previousCoas: Partial<
+    Record<TesamorelinSize, CoaData[]>
+  > = {
+    "10mg": [
+      {
+        lab: "Accumark Labs",
+        purity: "99.99%",
+        content: "9.968mg",
+        lot: "TESA2608-01",
+        href: "/images/coas/tesamorelin-10mg-8-26-26.pdf",
+      },
+    ],
   };
 
   const selectedProduct =
@@ -575,6 +598,7 @@ export default function TesamorelinPage() {
     setSelectedMg(mg);
     setSelectedQuantity(1);
     setAdded(false);
+    setShowPreviousCoas(false);
   };
 
   const selectQuantity = (
@@ -1249,6 +1273,24 @@ export default function TesamorelinPage() {
                   Lot: {selectedCoa.lot}
                 </span>
 
+                {selectedCoa.heavyMetals && (
+                  <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+                    Heavy Metals: {selectedCoa.heavyMetals}
+                  </span>
+                )}
+
+                {selectedCoa.endotoxins && (
+                  <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+                    Endotoxins: {selectedCoa.endotoxins}
+                  </span>
+                )}
+
+                {selectedCoa.sterility && (
+                  <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/50 text-sm">
+                    Sterility: {selectedCoa.sterility}
+                  </span>
+                )}
+
               </div>
             </div>
 
@@ -1275,6 +1317,78 @@ export default function TesamorelinPage() {
 
             </div>
           </div>
+
+          {previousCoas[selectedMg] &&
+            previousCoas[selectedMg]!.length > 0 && (
+              <div className="mt-6 pt-6 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowPreviousCoas(
+                      !showPreviousCoas
+                    )
+                  }
+                  className="w-full flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-left hover:bg-white/[0.06] transition-all"
+                >
+                  <div>
+                    <p className="text-white font-bold">
+                      Previous {selectedMg} Certificates of Analysis
+                    </p>
+                    <p className="text-white/40 text-xs mt-1">
+                      View earlier third-party analytical documentation.
+                    </p>
+                  </div>
+
+                  <span className="text-[#A5D8FF] text-xl font-semibold">
+                    {showPreviousCoas ? "−" : "+"}
+                  </span>
+                </button>
+
+                {showPreviousCoas && (
+                  <div className="mt-3 space-y-3">
+                    {previousCoas[selectedMg]!.map(
+                      (coa, index) => (
+                        <div
+                          key={`${coa.lot}-${index}`}
+                          className="rounded-2xl border border-white/10 bg-white/[0.025] p-5"
+                        >
+                          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div>
+                              <p className="uppercase tracking-[0.25em] text-[#A5D8FF] text-[10px] mb-2">
+                                {coa.lab}
+                              </p>
+
+                              <div className="flex flex-wrap gap-2">
+                                <span className="px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-xs font-semibold">
+                                  {coa.purity} Purity
+                                </span>
+
+                                <span className="px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-xs font-semibold">
+                                  {coa.content} Content
+                                </span>
+
+                                <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/55 text-xs">
+                                  Lot: {coa.lot}
+                                </span>
+                              </div>
+                            </div>
+
+                            <a
+                              href={coa.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex shrink-0 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
+                            >
+                              View Previous COA
+                            </a>
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
         </div>
       </section>

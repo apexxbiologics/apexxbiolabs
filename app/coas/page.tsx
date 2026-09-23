@@ -236,18 +236,26 @@ export default function COAsPage() {
   ],
 },
     {
-      name: "Tesamorelin 10mg",
-      batch: "TESA2608-01",
+      name: "Tesamorelin 5mg",
+      batch: "Red Cap-1",
       status: "Verified",
-      purity: "99.99%",
-      content: "9.968 mg",
-      coa: "/images/coas/tesamorelin-10mg-8-26-26.pdf",
+      purity: "99.89%",
+      content: "5.48 mg",
+      coa: "/images/coas/tesamorelincoa7-10-26.pdf",
+    },
+    {
+      name: "Tesamorelin 10mg",
+      batch: "TSM102609-BL-AB-TESB-0921",
+      status: "Verified",
+      purity: "99.86%",
+      content: "10.94 mg",
+      coa: "/images/coas/9-22-tesamorelin-coa.pdf",
       previousCoas: [
         {
-          batch: "Red Cap-1",
-          purity: "99.89%",
-          content: "5.48 mg",
-          coa: "/images/coas/tesamorelincoa7-10-26.pdf",
+          batch: "TESA2608-01",
+          purity: "99.99%",
+          content: "9.968 mg",
+          coa: "/images/coas/tesamorelin-10mg-8-26-26.pdf",
         },
       ],
     },
@@ -396,7 +404,7 @@ export default function COAsPage() {
           </p>
 
           <p className="mt-6 text-xs uppercase tracking-[0.22em] text-white/35">
-            Last Updated September 20, 2026
+            Last Updated September 22, 2026
           </p>
 
           {/* SUMMARY */}

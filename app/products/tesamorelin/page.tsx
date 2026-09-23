@@ -1,1656 +1,836 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import {
-  ShoppingCart,
-  FlaskConical,
+  ChevronDown,
+  Clock3,
+  FileText,
+  Search,
   ShieldCheck,
-  ClipboardCheck,
-  Check,
 } from "lucide-react";
 
-import FavoriteButton from "@/components/FavoriteButton";
-
-type QuantityDiscountTier = {
-  id: string;
-  name: string;
-  quantity: number;
-  discount_percent: number;
-  sort_order: number;
-};
-
-type FlashSale = {
-  id: string;
-  product_id: string;
-  sale_price: number;
-  starts_at: string;
-  ends_at: string;
-  active: boolean;
-};
-
-type TesamorelinSize = "5mg" | "10mg";
-
-type ProductVariantData = {
-  inventory: number;
-  price: number;
-  databaseProductId: string | null;
-  flashSale: FlashSale | null;
-};
-
-type CoaData = {
-  lab: string;
+type PreviousCOA = {
+  batch: string;
   purity: string;
   content: string;
-  lot: string;
-  href: string;
-  heavyMetals?: string;
-  endotoxins?: string;
-  sterility?: string;
+  coa: string;
 };
 
-export default function TesamorelinPage() {
-  const [added, setAdded] = useState(false);
+type ProductCOA = {
+  name: string;
+  batch: string;
+  status: "Verified" | "Awaiting Testing";
+  purity?: string;
+  content?: string;
+  totalContent?: string;
+  coa?: string;
+  previousCoas?: PreviousCOA[];
+};
 
-  const [showPreviousCoa, setShowPreviousCoa] =
-    useState(false);
+type StatusFilter = "All" | "Verified" | "Pending";
 
-  const [selectedMg, setSelectedMg] =
-    useState<TesamorelinSize>("5mg");
+export default function COAsPage() {
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
+  const [openProduct, setOpenProduct] = useState<string | null>(null);
+  const [openPreviousCoas, setOpenPreviousCoas] = useState<string | null>(
+    null,
+  );
 
-  const [selectedQuantity, setSelectedQuantity] =
-    useState(1);
-
-  const [quantityDiscounts, setQuantityDiscounts] =
-    useState<QuantityDiscountTier[]>([]);
-
-  const [productData, setProductData] = useState<
-    Record<TesamorelinSize, ProductVariantData>
-  >({
-    "5mg": {
-      inventory: 0,
-      price: 45,
-      databaseProductId: null,
-      flashSale: null,
+  const products: ProductCOA[] = [
+{
+  name: "APX-2 30mg",
+  batch: "APX22609-WHT",
+  status: "Verified",
+  purity: "99.78%",
+  content: "38.46 mg",
+  coa: "/images/coas/apx2-30mg-coa.pdf",
+},
+    {
+      name: "MITO-X 120mg",
+      batch: "Pending",
+      status: "Awaiting Testing",
     },
-
-    "10mg": {
-      inventory: 0,
-      price: 85,
-      databaseProductId: null,
-      flashSale: null,
+    {
+      name: "NEURO-X 48mg",
+      batch: "Pending",
+      status: "Awaiting Testing",
     },
-  });
-
-  const productOptions = {
-    "5mg": {
-      id: "tesamorelin-5mg",
-      name: "Tesamorelin 5mg",
-      image: "/images/tesa5blue.png",
-      path: "/products/tesamorelin",
-    },
-
-    "10mg": {
-      id: "tesamorelin-10mg",
-      name: "Tesamorelin 10mg",
-      image: "/images/tesa10blue.png",
-      path: "/products/tesamorelin",
-    },
-  };
-
-  /*
-   * SIZE-SPECIFIC COA DATA
-   *
-   * 5mg keeps the existing Freedom Diagnostics COA.
-   * 10mg uses the newest Precision Mass Spec COA as the latest COA.
-   * The previous 10mg Accumark Labs COA is retained below, following
-   * the same latest + previous COA structure used on the MOTS-C page.
-   */
-  const coaData: Record<TesamorelinSize, CoaData> = {
-    "5mg": {
-      lab: "Freedom Diagnostics",
+{
+  name: "Glutathione 1500mg",
+  batch: "GLTE15002609-PRPL-AB-GLUP-0916",
+  status: "Verified",
+  purity: "99.91%",
+  content: "1657.83 mg",
+  coa: "/images/coas/9-18-glutathione-coa.pdf",
+},
+{
+  name: "SS-31 10mg",
+  batch: "SS102609-WHT",
+  status: "Verified",
+  purity: "99.39%",
+  content: "13.57 mg",
+  coa: "/images/coas/ss31-10mg-ss102609-wht-09-04-2026.pdf",
+},
+    {
+      name: "APX-3 10mg",
+      batch: "Blue Cap-1",
+      status: "Verified",
       purity: "99.89%",
-      content: "5.48mg",
-      lot: "Red Cap-1",
-      href: "/images/coas/tesamorelincoa7-10-26.pdf",
+      content: "13.24 mg",
+      coa: "/images/coas/apx3-10mg-blue-cap-1-coa.pdf",
     },
-
-    "10mg": {
-      lab: "Precision Mass Spec",
+{
+  name: "APX-3 20mg",
+  batch: "APX202608-BLK",
+  status: "Verified",
+  purity: "99.85%",
+  content: "22.90 mg",
+  coa: "/images/coas/apx3-20mg-apx202608-blk-08-29-2026.pdf",
+  previousCoas: [
+    {
+      batch: "Blue Cap-1",
+      purity: "99.92%",
+      content: "23.89 mg",
+      coa: "/images/coas/apx3-20mg-blue-cap-coa.pdf",
+    },
+  ],
+},
+{
+  name: "BPC-157 10mg",
+  batch: "BPC102608-CBLU",
+  status: "Verified",
+  purity: "99.80%",
+  content: "10.18 mg",
+  coa: "/images/coas/bpc157-10mg-bpc102608-cblu-09-07-2026.pdf",
+  previousCoas: [
+    {
+      batch: "Blue Cap-2",
+      purity: "99.72%",
+      content: "11.78 mg",
+      coa: "/images/coas/bpc157coa7-10-26.pdf",
+    },
+    {
+      batch: "Black Cap-1",
+      purity: "99.33%",
+      content: "11.58 mg",
+      coa: "/images/coas/bpc-157-10mg-black-cap-coa.pdf",
+    },
+  ],
+},
+    {
+      name: "TB-500 10mg",
+      batch: "Yellow Cap-2",
+      status: "Verified",
+      purity: "99.95%",
+      content: "13.47 mg",
+      coa: "/images/coas/tb500.pdf",
+      previousCoas: [
+        {
+          batch: "Blue Cap-1",
+          purity: "99.47%",
+          content: "11.83 mg",
+          coa: "/images/coas/tb500-10mg-blue-cap-coa.pdf",
+        },
+      ],
+    },
+    {
+      name: "KPV 10mg",
+      batch: "KPV102609-BLU-AB-KPVB-0916",
+      status: "Verified",
+      purity: "99.79%",
+      content: "11.09 mg",
+      coa: "/images/coas/9-18-kpv-coa.pdf",
+      previousCoas: [
+        {
+          batch: "Purple Cap-1",
+          purity: "99.60%",
+          content: "10.41 mg",
+          coa: "/images/coas/6-26-kpv-coa.pdf",
+        },
+      ],
+    },
+    {
+      name: "GHK-Cu 100mg",
+      batch: "Red Cap-1",
+      status: "Verified",
+      purity: "99.74%",
+      content: "114.96 mg",
+      coa: "/images/coas/ghkcucoa7-10-26.pdf",
+    },
+    {
+      name: "Pinealon 10mg",
+      batch: "Pending",
+      status: "Awaiting Testing",
+    },
+    {
+      name: "Selank 10mg",
+      batch: "SEL1005192026-08",
+      status: "Verified",
+      purity: "99.62%",
+      content: "11.36 mg",
+      coa: "/images/coas/selank-10mg-brown-green-coa.pdf",
+    },
+    {
+      name: "Semax 10mg",
+      batch: "SEMX1005182026-10",
+      status: "Verified",
+      purity: "99.33%",
+      content: "11.71 mg",
+      coa: "/images/coas/semax-10mg-coa.pdf",
+    },
+{
+  name: "MOTS-c 10mg",
+  batch: "MSC102609-RED",
+  status: "Verified",
+  purity: "99.62%",
+  content: "13.04 mg",
+  coa: "/images/coas/mots-c-10mg-msc102609-red-09-04-2026.pdf",
+  previousCoas: [
+    {
+      batch: "Blue Cap-2",
+      purity: "99.75%",
+      content: "12.42 mg",
+      coa: "/images/coas/motsccoa.pdf",
+    },
+    {
+      batch: "Light Purple Cap-1",
+      purity: "99.48%",
+      content: "13.94 mg",
+      coa: "/images/coas/6-26-motsc-coa.pdf",
+    },
+  ],
+},
+    {
+      name: "ARA-290 10mg",
+      batch: "Pending",
+      status: "Awaiting Testing",
+    },
+    {
+      name: "PE-22-28 10mg",
+      batch: "Pending",
+      status: "Awaiting Testing",
+    },
+    {
+      name: "Adamax 10mg",
+      batch: "Black Cap-1",
+      status: "Verified",
+      purity: "99.21%",
+      content: "13.71 mg",
+      coa: "/images/coas/adamaxcoa7-20-26.pdf",
+    },
+{
+  name: "CJC/IPA 10mg",
+  batch: "CJC/IPA102609-PRPL-AB-CJIP-0916",
+  status: "Verified",
+  purity: "99.74%",
+  content: "5.31 mg CJC-1295 / 5.27 mg Ipamorelin — 10.58 mg Total",
+  coa: "/images/coas/9-18-cjcipa-coa.pdf",
+  previousCoas: [
+    {
+      batch: "CJCIPA504292026-09",
+      purity: "",
+      content: "5.23 mg CJC-1295 / 5.25 mg Ipamorelin — 10.48 mg Total",
+      coa: "/images/coas/cjc-ipa-no-dac-coa.pdf",
+    },
+  ],
+},
+    {
+      name: "Tesamorelin 5mg",
+      batch: "Red Cap-1",
+      status: "Verified",
+      purity: "99.89%",
+      content: "5.48 mg",
+      coa: "/images/coas/tesamorelincoa7-10-26.pdf",
+    },
+    {
+      name: "Tesamorelin 10mg",
+      batch: "TSM102609-BL-AB-TESB-0921",
+      status: "Verified",
       purity: "99.86%",
-      content: "10.94mg",
-      lot: "TSM102609-BL-AB-TESB-0921",
-      href: "/images/coas/9-22-tesamorelin-coa.pdf",
-      heavyMetals: "Not Detected",
-      endotoxins: "Not Detected",
-      sterility: "Not Tested",
+      content: "10.94 mg",
+      coa: "/images/coas/9-22-tesamorelin-coa.pdf",
+      previousCoas: [
+        {
+          batch: "TESA2608-01",
+          purity: "99.99%",
+          content: "9.968 mg",
+          coa: "/images/coas/tesamorelin-10mg-8-26-26.pdf",
+        },
+      ],
     },
-  };
+    {
+      name: "NAD+ 1000mg",
+      batch: "Black Cap-1",
+      status: "Verified",
+      purity: "99.95%",
+      content: "1119.71 mg",
+      coa: "/images/coas/nadcoa7-20-26.pdf",
+    },
+    {
+      name: "AOD-9604 10mg",
+      batch: "RED CAP -1",
+      status: "Verified",
+      purity: "99.27%",
+      content: "15.32 mg",
+      coa: "/images/coas/8-16-aod9604-coa.pdf",
+    },
+    {
+      name: "PT-141 10mg",
+      batch: "Pending",
+      status: "Awaiting Testing",
+    },
+    {
+      name: "5-Amino-1MQ 50mg",
+      batch: "Orange Cap",
+      status: "Verified",
+      purity: "99.90%",
+      content: "59.02 mg",
+      coa: "/images/coas/7-31-5-amino-1mq-coa.pdf",
+    },
+    {
+      name: "Kisspeptin-10 10mg",
+      batch: "Pending",
+      status: "Awaiting Testing",
+    },
+{
+  name: "KLOW 80mg",
+  batch: "KLOW802609-BLK",
+  status: "Verified",
+  purity: "99.80%",
+  content: "90.16 mg",
+  coa: "/images/coas/9-19-klow-coa.pdf",
+  previousCoas: [
+    {
+      batch: "Dark Blue Cap",
+      purity: "99.82%",
+      content: "94.48 mg",
+      coa: "/images/coas/7-31-klow-coa.pdf",
+    },
+  ],
+},
+    {
+      name: "Wolverine 20mg",
+      batch: "WOLV202609-BLU-AB-WOLB-0911",
+      status: "Verified",
+      purity: "99.38%",
+      content: "11.10 mg BPC-157 / 10.14 mg TB-500",
+      totalContent: "21.24 mg",
+      coa: "/images/coas/9-14-wolverine-coa.pdf",
+      previousCoas: [
+        {
+          batch: "Clear Cap / Blue Crimp",
+          purity: "99.34%",
+          content: "24.77 mg",
+          coa: "/images/coas/7-31-wolverine-coa.pdf",
+        },
+      ],
+    },
+  ];
 
-  const previous10mgCoa: CoaData = {
-    lab: "Accumark Labs",
-    purity: "99.99%",
-    content: "9.968mg",
-    lot: "TESA2608-01",
-    href: "/images/coas/tesamorelin-10mg-8-26-26.pdf",
-  };
+  const verifiedCount = products.filter(
+    (product) => product.status === "Verified",
+  ).length;
 
-  const selectedProduct =
-    productOptions[selectedMg];
+  const pendingCount = products.filter(
+    (product) => product.status === "Awaiting Testing",
+  ).length;
 
-  const selectedVariant =
-    productData[selectedMg];
+  const filteredProducts = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase();
 
-  const selectedInventory =
-    selectedVariant.inventory;
+    return products
+      .filter((product) => {
+        const matchesSearch =
+          !normalizedSearch ||
+          product.name.toLowerCase().includes(normalizedSearch) ||
+          product.batch.toLowerCase().includes(normalizedSearch);
 
-  const selectedPrice =
-    selectedVariant.price;
+        const matchesStatus =
+          statusFilter === "All" ||
+          (statusFilter === "Verified" && product.status === "Verified") ||
+          (statusFilter === "Pending" &&
+            product.status === "Awaiting Testing");
 
-  const databaseProductId =
-    selectedVariant.databaseProductId;
-
-  const flashSale =
-    selectedVariant.flashSale;
-
-  const selectedCoa =
-    coaData[selectedMg];
-
-  const flashSalePrice =
-    flashSale !== null
-      ? Number(flashSale.sale_price)
-      : null;
-
-  const isFlashSaleActive =
-    flashSalePrice !== null &&
-    Number.isFinite(flashSalePrice) &&
-    flashSalePrice > 0 &&
-    flashSalePrice < selectedPrice;
-
-  const effectiveUnitPrice =
-    isFlashSaleActive
-      ? flashSalePrice
-      : selectedPrice;
-
-  const isOutOfStock =
-    selectedInventory <= 0;
-
-  const isLimitedStock =
-    selectedInventory > 0 &&
-    selectedInventory <= 5;
-
-  const favoriteProduct = {
-    id: selectedProduct.id,
-    name: selectedProduct.name,
-    price: effectiveUnitPrice,
-    image: selectedProduct.image,
-    path: selectedProduct.path,
-  };
-
-  useEffect(() => {
-    const fetchProductData = async () => {
-      try {
-        const [
-          productResponse,
-          saleResponse,
-        ] = await Promise.all([
-          fetch("/api/products", {
-            cache: "no-store",
-          }),
-
-          fetch("/api/flash-sales", {
-            cache: "no-store",
-          }),
-        ]);
-
-        const productResponseData =
-          await productResponse.json();
-
-        const saleResponseData =
-          await saleResponse
-            .json()
-            .catch(() => ({
-              success: false,
-              sales: [],
-            }));
-
-        if (!productResponseData.success) {
-          return;
+        return matchesSearch && matchesStatus;
+      })
+      .sort((a, b) => {
+        if (a.status !== b.status) {
+          return a.status === "Verified" ? -1 : 1;
         }
 
-        const products =
-          productResponseData.products || [];
+        return a.name.localeCompare(b.name);
+      });
+  }, [search, statusFilter]);
 
-        const sales =
-          Array.isArray(saleResponseData.sales)
-            ? saleResponseData.sales
-            : [];
-
-        const now = Date.now();
-
-        const tesa5 =
-          products.find((item: any) => {
-            const slug = String(
-              item.slug || ""
-            )
-              .toLowerCase()
-              .trim();
-
-            const id = String(
-              item.id || ""
-            )
-              .toLowerCase()
-              .trim();
-
-            const name = String(
-              item.name || ""
-            )
-              .toLowerCase()
-              .trim();
-
-            const size = String(
-              item.size || ""
-            )
-              .toLowerCase()
-              .trim();
-
-            return (
-              slug === "tesamorelin-5mg" ||
-              slug === "tesa-5mg" ||
-              id === "tesamorelin-5mg" ||
-              id === "tesa-5mg" ||
-              (name.includes("tesamorelin") &&
-                size === "5mg") ||
-              name.includes("tesamorelin 5")
-            );
-          });
-
-        const tesa10 =
-          products.find((item: any) => {
-            const slug = String(
-              item.slug || ""
-            )
-              .toLowerCase()
-              .trim();
-
-            const id = String(
-              item.id || ""
-            )
-              .toLowerCase()
-              .trim();
-
-            const name = String(
-              item.name || ""
-            )
-              .toLowerCase()
-              .trim();
-
-            const size = String(
-              item.size || ""
-            )
-              .toLowerCase()
-              .trim();
-
-            return (
-              slug === "tesamorelin-10mg" ||
-              slug === "tesa-10mg" ||
-              id === "tesamorelin-10mg" ||
-              id === "tesa-10mg" ||
-              (name.includes("tesamorelin") &&
-                size === "10mg") ||
-              name.includes("tesamorelin 10")
-            );
-          });
-
-        const buildVariant = (
-          databaseProduct: any,
-          fallbackPrice: number
-        ): ProductVariantData => {
-          if (!databaseProduct) {
-            return {
-              inventory: 0,
-              price: fallbackPrice,
-              databaseProductId: null,
-              flashSale: null,
-            };
-          }
-
-          const dbId =
-            String(databaseProduct.id);
-
-          const regularPrice =
-            Number(
-              databaseProduct.price ??
-                fallbackPrice
-            );
-
-          const matchingSale =
-            sales.find(
-              (sale: FlashSale) => {
-                const starts =
-                  new Date(
-                    sale.starts_at
-                  ).getTime();
-
-                const ends =
-                  new Date(
-                    sale.ends_at
-                  ).getTime();
-
-                const salePrice =
-                  Number(
-                    sale.sale_price
-                  );
-
-                return (
-                  sale.active === true &&
-                  String(
-                    sale.product_id
-                  ) === dbId &&
-                  Number.isFinite(
-                    starts
-                  ) &&
-                  Number.isFinite(
-                    ends
-                  ) &&
-                  starts <= now &&
-                  ends > now &&
-                  Number.isFinite(
-                    salePrice
-                  ) &&
-                  salePrice > 0 &&
-                  salePrice <
-                    regularPrice
-                );
-              }
-            ) || null;
-
-          return {
-            inventory: Number(
-              databaseProduct.inventory ??
-                0
-            ),
-
-            price: regularPrice,
-
-            databaseProductId:
-              dbId,
-
-            flashSale:
-              matchingSale,
-          };
-        };
-
-        setProductData({
-          "5mg": buildVariant(
-            tesa5,
-            45
-          ),
-
-          "10mg": buildVariant(
-            tesa10,
-            85
-          ),
-        });
-      } catch (error) {
-        console.error(
-          "Failed to fetch Tesamorelin data:",
-          error
-        );
-      }
-    };
-
-    const fetchQuantityDiscounts =
-      async () => {
-        try {
-          const response =
-            await fetch(
-              "/api/quantity-discounts",
-              {
-                cache: "no-store",
-              }
-            );
-
-          const data =
-            await response.json();
-
-          if (!data.success) {
-            return;
-          }
-
-          const tiers = (
-            data.tiers || []
-          )
-            .map(
-              (tier: any) => ({
-                id: String(
-                  tier.id
-                ),
-
-                name: String(
-                  tier.name || ""
-                ),
-
-                quantity: Number(
-                  tier.quantity || 0
-                ),
-
-                discount_percent:
-                  Number(
-                    tier.discount_percent ||
-                      0
-                  ),
-
-                sort_order: Number(
-                  tier.sort_order || 0
-                ),
-              })
-            )
-            .filter(
-              (
-                tier: QuantityDiscountTier
-              ) =>
-                tier.quantity > 1 &&
-                tier.discount_percent >=
-                  0
-            )
-            .sort(
-              (
-                a: QuantityDiscountTier,
-                b: QuantityDiscountTier
-              ) => {
-                if (
-                  a.sort_order !==
-                  b.sort_order
-                ) {
-                  return (
-                    a.sort_order -
-                    b.sort_order
-                  );
-                }
-
-                return (
-                  a.quantity -
-                  b.quantity
-                );
-              }
-            );
-
-          setQuantityDiscounts(
-            tiers
-          );
-        } catch (error) {
-          console.error(
-            "Failed to fetch quantity discounts:",
-            error
-          );
-        }
-      };
-
-    fetchProductData();
-    fetchQuantityDiscounts();
-
-    const flashSaleRefresh =
-      window.setInterval(
-        fetchProductData,
-        30_000
-      );
-
-    return () => {
-      window.clearInterval(
-        flashSaleRefresh
-      );
-    };
-  }, []);
-
-  const getDiscountTier = (
-    quantity: number
-  ) => {
-    return (
-      [...quantityDiscounts]
-        .filter(
-          (tier) =>
-            quantity >=
-            tier.quantity
-        )
-        .sort(
-          (a, b) =>
-            b.quantity -
-            a.quantity
-        )[0] || null
-    );
-  };
-
-  const selectedTier =
-    getDiscountTier(
-      selectedQuantity
+  function toggleProduct(productName: string) {
+    setOpenProduct((current) =>
+      current === productName ? null : productName,
     );
 
-  /*
-   * FLASH SALE RULE:
-   * Flash Sale replaces the quantity discount.
-   * The two discounts do not stack.
-   */
-  const selectedDiscountPercent =
-    isFlashSaleActive
-      ? 0
-      : selectedTier
-          ?.discount_percent || 0;
-
-  const discountedUnitPrice =
-    effectiveUnitPrice *
-    (1 -
-      selectedDiscountPercent /
-        100);
-
-  const selectedTotal =
-    discountedUnitPrice *
-    selectedQuantity;
-
-  const regularTotal =
-    selectedPrice *
-    selectedQuantity;
-
-  const formatMoney = (
-    amount: number
-  ) =>
-    Number(amount).toFixed(2);
-
-  const getVariantFlashSaleInfo = (
-    mg: TesamorelinSize
-  ) => {
-    const variant =
-      productData[mg];
-
-    const sale =
-      variant.flashSale;
-
-    const salePrice =
-      sale !== null
-        ? Number(
-            sale.sale_price
-          )
-        : null;
-
-    const active =
-      salePrice !== null &&
-      Number.isFinite(
-        salePrice
-      ) &&
-      salePrice > 0 &&
-      salePrice <
-        variant.price;
-
-    return {
-      isActive: active,
-      effectivePrice: active
-        ? salePrice
-        : variant.price,
-    };
-  };
-
-  const selectSize = (
-    mg: TesamorelinSize
-  ) => {
-    setSelectedMg(mg);
-    setSelectedQuantity(1);
-    setAdded(false);
-    setShowPreviousCoa(false);
-  };
-
-  const selectQuantity = (
-    quantity: number
-  ) => {
-    if (
-      quantity >
-      selectedInventory
-    ) {
-      return;
+    if (openProduct === productName) {
+      setOpenPreviousCoas(null);
     }
+  }
 
-    setSelectedQuantity(
-      quantity
+  function togglePreviousCoas(productName: string) {
+    setOpenPreviousCoas((current) =>
+      current === productName ? null : productName,
     );
-
-    setAdded(false);
-  };
-
-  const addToCart = () => {
-    if (isOutOfStock) {
-      return;
-    }
-
-    const existingCart =
-      JSON.parse(
-        localStorage.getItem(
-          "cart"
-        ) || "[]"
-      );
-
-    const existingProduct =
-      existingCart.find(
-        (item: any) =>
-          item.id ===
-          selectedProduct.id
-      );
-
-    const existingQuantity =
-      existingProduct
-        ? Number(
-            existingProduct.quantity ||
-              0
-          )
-        : 0;
-
-    const newQuantity =
-      existingQuantity +
-      selectedQuantity;
-
-    if (
-      newQuantity >
-      selectedInventory
-    ) {
-      alert(
-        `Only ${selectedInventory} vial${
-          selectedInventory === 1
-            ? ""
-            : "s"
-        } of ${
-          selectedProduct.name
-        } are currently available.`
-      );
-
-      return;
-    }
-
-    const newTier =
-      isFlashSaleActive
-        ? null
-        : getDiscountTier(
-            newQuantity
-          );
-
-    const newDiscountPercent =
-      isFlashSaleActive
-        ? 0
-        : newTier
-            ?.discount_percent || 0;
-
-    const newDiscountedUnitPrice =
-      effectiveUnitPrice *
-      (1 -
-        newDiscountPercent /
-          100);
-
-    const cartProduct = {
-      id:
-        selectedProduct.id,
-
-      name:
-        selectedProduct.name,
-
-      price:
-        newDiscountedUnitPrice,
-
-      basePrice:
-        selectedPrice,
-
-      quantity:
-        newQuantity,
-
-      image:
-        selectedProduct.image,
-
-      path:
-        selectedProduct.path,
-
-      size:
-        selectedMg,
-
-      quantityDiscountPercent:
-        newDiscountPercent,
-
-      quantityDiscountTierId:
-        newTier?.id || null,
-
-      quantityDiscountTierQuantity:
-        newTier?.quantity ||
-        null,
-
-      flashSaleApplied:
-        isFlashSaleActive,
-
-      flashSaleId:
-        isFlashSaleActive
-          ? flashSale?.id ||
-            null
-          : null,
-
-      flashSalePrice:
-        isFlashSaleActive
-          ? effectiveUnitPrice
-          : null,
-
-      databaseProductId,
-    };
-
-    const updatedCart =
-      existingProduct
-        ? existingCart.map(
-            (item: any) =>
-              item.id ===
-              selectedProduct.id
-                ? {
-                    ...item,
-                    ...cartProduct,
-                  }
-                : item
-          )
-        : [
-            ...existingCart,
-            cartProduct,
-          ];
-
-    localStorage.setItem(
-      "cart",
-      JSON.stringify(
-        updatedCart
-      )
-    );
-
-    window.dispatchEvent(
-      new Event(
-        "cartUpdated"
-      )
-    );
-
-    setAdded(true);
-  };
+  }
 
   return (
-    <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
+    <main className="min-h-screen overflow-hidden bg-[#081526] text-white">
+      {/* HERO */}
+      <section className="relative overflow-hidden border-b border-white/10 px-6 pb-16 pt-24">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(96,165,250,0.15),transparent_52%)]" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-300/50 to-transparent" />
 
-      {/* PRODUCT HERO */}
-      <section className="relative px-5 md:px-10 py-10 md:py-14 overflow-hidden">
+        <div className="relative z-10 mx-auto max-w-6xl text-center">
+          <div className="mb-7 inline-flex items-center gap-3 rounded-full border border-blue-400/20 bg-blue-500/10 px-5 py-3">
+            <ShieldCheck size={16} className="text-blue-300" />
+            <span className="text-xs font-bold uppercase tracking-[0.28em] text-blue-200">
+              Quality Assurance
+            </span>
+          </div>
 
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
+          <h1 className="mb-7 text-5xl font-black tracking-tight text-white md:text-7xl">
+            Certificates of Analysis
+          </h1>
 
-        <div className="relative z-10 max-w-7xl mx-auto">
+          <p className="mx-auto max-w-3xl text-base leading-relaxed text-white/60 md:text-lg">
+            Browse current third-party analytical results, batch information,
+            purity data, content verification, and previous test records.
+          </p>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-start">
+          <p className="mt-6 text-xs uppercase tracking-[0.22em] text-white/35">
+            Last Updated September 22, 2026
+          </p>
 
-            {/* IMAGE */}
-            <div className="flex items-center justify-center">
-
-              <div className="relative w-full max-w-[520px] aspect-square rounded-[42px] overflow-hidden border border-blue-400/10 bg-white/[0.03] shadow-[0_0_30px_rgba(96,165,250,0.15)]">
-
-                <FavoriteButton
-                  product={
-                    favoriteProduct
-                  }
-                />
-
-                <img
-                  src={
-                    selectedProduct.image
-                  }
-                  alt={
-                    selectedProduct.name
-                  }
-                  className="w-full h-full object-cover"
-                />
-
-              </div>
+          {/* SUMMARY */}
+          <div className="mx-auto mt-10 grid max-w-3xl grid-cols-3 overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm">
+            <div className="border-r border-white/10 px-4 py-5">
+              <p className="text-2xl font-black text-white">
+                {products.length}
+              </p>
+              <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-white/40">
+                Products
+              </p>
             </div>
 
-            {/* PRODUCT CARD */}
-            <div className="rounded-[32px] border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 md:p-8">
-
-              <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">
-                Research Peptide
+            <div className="border-r border-white/10 px-4 py-5">
+              <p className="text-2xl font-black text-green-300">
+                {verifiedCount}
               </p>
-
-              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-3">
-
-                <h1 className="text-4xl md:text-5xl font-black text-white">
-                  {
-                    selectedProduct.name
-                  }
-                </h1>
-
-                <div className="sm:text-right">
-
-                  <p className="text-3xl md:text-4xl font-black text-white">
-                    $
-                    {formatMoney(
-                      selectedTotal
-                    )}
-                  </p>
-
-                  {(isFlashSaleActive ||
-                    selectedDiscountPercent >
-                      0) && (
-                    <p className="text-white/35 text-sm line-through">
-                      $
-                      {formatMoney(
-                        regularTotal
-                      )}
-                    </p>
-                  )}
-
-                </div>
-              </div>
-
-              <p className="text-white/60 leading-relaxed mb-5">
-                High-purity
-                Tesamorelin research
-                peptide studied in
-                laboratory models
-                involving growth
-                hormone-releasing
-                hormone receptor
-                pathways, GH
-                signaling, IGF-1
-                response pathways,
-                and metabolic
-                regulation.
+              <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-white/40">
+                Verified
               </p>
+            </div>
 
-              {/* SIZE */}
-              <div className="mb-5">
-
-                <p className="uppercase tracking-widest text-white/45 text-xs mb-3">
-                  Select Size
-                </p>
-
-                <div className="grid grid-cols-2 gap-3">
-
-                  {(
-                    [
-                      "5mg",
-                      "10mg",
-                    ] as const
-                  ).map((mg) => {
-                    const option =
-                      productData[mg];
-
-                    const selected =
-                      selectedMg === mg;
-
-                    const optionOutOfStock =
-                      option.inventory <=
-                      0;
-
-                    const optionSale =
-                      getVariantFlashSaleInfo(
-                        mg
-                      );
-
-                    return (
-                      <button
-                        key={mg}
-                        type="button"
-                        onClick={() =>
-                          selectSize(mg)
-                        }
-                        className={`relative rounded-2xl border px-4 py-3.5 transition-all ${
-                          selected
-                            ? "border-blue-300 bg-blue-400/10"
-                            : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"
-                        }`}
-                      >
-
-                        {selected && (
-                          <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-                            <Check
-                              size={
-                                12
-                              }
-                              strokeWidth={
-                                3
-                              }
-                            />
-                          </span>
-                        )}
-
-                        <p className="font-black text-white">
-                          {mg}
-                        </p>
-
-                        <p className="text-white/55 text-sm mt-1">
-                          $
-                          {formatMoney(
-                            optionSale.effectivePrice
-                          )}
-                        </p>
-
-                        {optionSale.isActive && (
-                          <>
-                            <p className="text-white/25 text-[10px] line-through mt-0.5">
-                              $
-                              {formatMoney(
-                                option.price
-                              )}
-                            </p>
-
-                            <p className="text-[#A5D8FF] text-[9px] uppercase tracking-widest mt-1">
-                              Flash Sale
-                            </p>
-                          </>
-                        )}
-
-                        {optionOutOfStock && (
-                          <p className="text-red-300 text-[10px] uppercase tracking-widest mt-1">
-                            Out of Stock
-                          </p>
-                        )}
-
-                      </button>
-                    );
-                  })}
-
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-3 mb-5">
-
-                <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold uppercase tracking-widest">
-                  {selectedMg}
-                </span>
-
-                {isFlashSaleActive && (
-                  <span className="rounded-full border border-blue-300/25 bg-blue-400/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#A5D8FF]">
-                    Flash Sale · $
-                    {formatMoney(
-                      effectiveUnitPrice
-                    )}{" "}
-                    / vial
-                  </span>
-                )}
-
-                {selectedDiscountPercent >
-                  0 && (
-                  <span className="rounded-full border border-green-400/20 bg-green-500/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-green-200">
-                    Save{" "}
-                    {
-                      selectedDiscountPercent
-                    }
-                    %
-                  </span>
-                )}
-
-                {isLimitedStock && (
-                  <span className="text-yellow-300 text-sm font-semibold">
-                    Limited Stock
-                  </span>
-                )}
-
-                {isOutOfStock && (
-                  <span className="text-red-300 text-sm font-semibold">
-                    Out of Stock
-                  </span>
-                )}
-
-              </div>
-
-              <div className="h-px bg-white/10 mb-5" />
-
-              {/* QUANTITY */}
-              <div className="mb-5">
-
-                <div className="flex items-center justify-between gap-4 mb-3">
-
-                  <p className="uppercase tracking-widest text-white/45 text-xs">
-                    Quantity
-                  </p>
-
-                  {selectedQuantity > 1 && (
-                    <p className="text-[#A5D8FF] text-xs font-semibold">
-                      $
-                      {formatMoney(
-                        discountedUnitPrice
-                      )}{" "}
-                      / vial
-                    </p>
-                  )}
-
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-
-                  {/* 1 VIAL */}
-                  <button
-                    type="button"
-                    disabled={
-                      isOutOfStock
-                    }
-                    onClick={() =>
-                      selectQuantity(1)
-                    }
-                    className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-                      selectedQuantity ===
-                      1
-                        ? "border-blue-300 bg-blue-400/10"
-                        : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-                    } disabled:opacity-35 disabled:cursor-not-allowed`}
-                  >
-
-                    {selectedQuantity ===
-                      1 && (
-                      <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-                        <Check
-                          size={11}
-                          strokeWidth={3}
-                        />
-                      </span>
-                    )}
-
-                    <p className="font-black text-white text-sm">
-                      1 Vial
-                    </p>
-
-                    <p className="text-xs text-white/45 mt-1">
-                      $
-                      {formatMoney(
-                        effectiveUnitPrice
-                      )}
-                    </p>
-
-                    {isFlashSaleActive && (
-                      <p className="text-[10px] text-white/25 line-through mt-0.5">
-                        $
-                        {formatMoney(
-                          selectedPrice
-                        )}
-                      </p>
-                    )}
-
-                  </button>
-
-                  {/* ADMIN QUANTITY TIERS */}
-                  {quantityDiscounts.map(
-                    (tier) => {
-                      const tierUnavailable =
-                        selectedInventory <
-                        tier.quantity;
-
-                      const tierTotal =
-                        isFlashSaleActive
-                          ? effectiveUnitPrice *
-                            tier.quantity
-                          : selectedPrice *
-                            tier.quantity *
-                            (1 -
-                              tier.discount_percent /
-                                100);
-
-                      const selected =
-                        selectedQuantity ===
-                        tier.quantity;
-
-                      return (
-                        <button
-                          key={
-                            tier.id
-                          }
-                          type="button"
-                          disabled={
-                            tierUnavailable
-                          }
-                          onClick={() =>
-                            selectQuantity(
-                              tier.quantity
-                            )
-                          }
-                          className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
-                            selected
-                              ? "border-blue-300 bg-blue-400/10"
-                              : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-                          } disabled:opacity-30 disabled:cursor-not-allowed`}
-                        >
-
-                          {selected && (
-                            <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-                              <Check
-                                size={
-                                  11
-                                }
-                                strokeWidth={
-                                  3
-                                }
-                              />
-                            </span>
-                          )}
-
-                          <p className="font-black text-white text-sm">
-                            {
-                              tier.quantity
-                            }{" "}
-                            Vials
-                          </p>
-
-                          <p className="text-xs text-white/45 mt-1">
-                            $
-                            {formatMoney(
-                              tierTotal
-                            )}
-                          </p>
-
-                          {isFlashSaleActive ? (
-                            <p className="text-[9px] uppercase tracking-[0.14em] text-[#A5D8FF] mt-1">
-                              Flash Sale
-                            </p>
-                          ) : (
-                            <p className="text-[9px] uppercase tracking-[0.14em] text-green-300 mt-1">
-                              Save{" "}
-                              {
-                                tier.discount_percent
-                              }
-                              %
-                            </p>
-                          )}
-
-                        </button>
-                      );
-                    }
-                  )}
-
-                </div>
-              </div>
-
-              {/* FREE GIFT */}
-              <div className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-3 mb-5">
-
-                <p className="text-center text-blue-100 text-xs font-semibold uppercase tracking-wider">
-                  Complimentary gift
-                  with any 8 vials
-                </p>
-
-              </div>
-
-              {/* ACTIONS */}
-              <div className="grid grid-cols-2 gap-3">
-
-                {isOutOfStock ? (
-                  <button
-                    disabled
-                    className="col-span-2 bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-4 uppercase tracking-widest text-xs font-semibold"
-                  >
-                    Out of Stock
-                  </button>
-                ) : (
-                  <button
-                    onClick={
-                      addToCart
-                    }
-                    className="col-span-2 bg-white text-[#081526] hover:bg-blue-100 rounded-full py-4 uppercase tracking-widest text-xs font-bold transition-all flex items-center justify-center gap-2"
-                  >
-
-                    <ShoppingCart
-                      size={18}
-                    />
-
-                    {added
-                      ? "Added To Cart"
-                      : `Add ${selectedQuantity} ${
-                          selectedQuantity ===
-                          1
-                            ? "Vial"
-                            : "Vials"
-                        } To Cart`}
-
-                  </button>
-                )}
-
-                <a
-                  href="/cart"
-                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] rounded-full py-3.5 uppercase tracking-widest text-[11px] font-semibold text-center"
-                >
-                  View Cart
-                </a>
-
-                <a
-                  href="/products"
-                  className="border border-white/10 bg-white/[0.04] hover:bg-white/[0.07] rounded-full py-3.5 uppercase tracking-widest text-[11px] font-semibold text-center"
-                >
-                  Keep Shopping
-                </a>
-
-              </div>
-
-              {/* SIZE-SPECIFIC COA LINK */}
-              <a
-                href={
-                  selectedCoa.href
-                }
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
-              >
-                View {selectedMg} Certificate of Analysis →
-              </a>
-
+            <div className="px-4 py-5">
+              <p className="text-2xl font-black text-white/70">
+                {pendingCount}
+              </p>
+              <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-white/40">
+                Pending
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* SIZE-SPECIFIC COA */}
-      <section className="px-6 md:px-10 pb-12">
-        <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+      {/* SEARCH + FILTERS */}
+      <section className="relative border-b border-white/10 px-6 py-8">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="relative w-full lg:max-w-xl">
+            <Search
+              size={18}
+              className="absolute left-5 top-1/2 -translate-y-1/2 text-white/35"
+            />
 
-          {/* LATEST / CURRENT COA */}
-          <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
-            <div>
-              <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                {selectedCoa.lab}
-              </p>
-
-              <h3 className="text-2xl font-black text-white mb-4">
-                {selectedMg === "10mg"
-                  ? "Latest Tesamorelin 10mg Certificate of Analysis"
-                  : "Tesamorelin 5mg Certificate of Analysis"}
-              </h3>
-
-              <div className="flex flex-wrap gap-2">
-                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
-                  ✓ Identity Confirmed
-                </span>
-
-                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  {selectedCoa.purity} Purity
-                </span>
-
-                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  {selectedCoa.content} Net Content
-                </span>
-
-                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                  Lot: {selectedCoa.lot}
-                </span>
-
-                {selectedCoa.heavyMetals && (
-                  <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
-                    Heavy Metals: {selectedCoa.heavyMetals}
-                  </span>
-                )}
-
-                {selectedCoa.endotoxins && (
-                  <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
-                    Endotoxins: {selectedCoa.endotoxins}
-                  </span>
-                )}
-
-                {selectedCoa.sterility && (
-                  <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/50 text-sm">
-                    Sterility: {selectedCoa.sterility}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <div className="md:text-right">
-              <p className="text-4xl font-black text-[#A5D8FF]">
-                {selectedCoa.purity}
-              </p>
-
-              <p className="uppercase tracking-widest text-white/40 text-xs">
-                Purity
-              </p>
-
-              <a
-                href={selectedCoa.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
-              >
-                View Full COA
-              </a>
-            </div>
+            <input
+              type="text"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search product or batch..."
+              className="w-full rounded-full border border-white/10 bg-white/[0.04] py-4 pl-13 pr-5 text-sm text-white outline-none transition-all placeholder:text-white/30 focus:border-blue-400/50 focus:bg-white/[0.06]"
+              style={{ paddingLeft: "3.25rem" }}
+            />
           </div>
 
-          {/* 10MG PREVIOUS COA HISTORY — SAME STYLE AS MOTS-C */}
-          {selectedMg === "10mg" && (
-            <div className="mt-6 border-t border-white/10 pt-5">
-              <button
-                type="button"
-                onClick={() =>
-                  setShowPreviousCoa((prev) => !prev)
-                }
-                className="w-full rounded-full border border-white/10 bg-white/[0.04] py-3 text-xs uppercase tracking-widest text-white/80 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
-              >
-                {showPreviousCoa
-                  ? "Hide Previous COA"
-                  : "View Previous COA"}
-              </button>
+          <div className="flex w-full gap-2 overflow-x-auto lg:w-auto">
+            {(["All", "Verified", "Pending"] as StatusFilter[]).map(
+              (filter) => (
+                <button
+                  key={filter}
+                  type="button"
+                  onClick={() => setStatusFilter(filter)}
+                  className={`whitespace-nowrap rounded-full px-5 py-3 text-xs font-bold uppercase tracking-[0.18em] transition-all ${
+                    statusFilter === filter
+                      ? "bg-white text-[#081526]"
+                      : "border border-white/10 bg-white/[0.04] text-white/50 hover:border-blue-400/40 hover:text-white"
+                  }`}
+                >
+                  {filter}
+                </button>
+              ),
+            )}
+          </div>
+        </div>
+      </section>
 
-              {showPreviousCoa && (
-                <div className="mt-5">
-                  <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-                    <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
-                      <div>
-                        <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                          {previous10mgCoa.lab}
-                        </p>
+      {/* ACCORDION LIST */}
+      <section className="relative px-6 py-14 md:px-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.06),transparent_60%)]" />
 
-                        <h3 className="text-xl font-black text-white mb-4">
-                          Previous Tesamorelin 10mg Certificate of Analysis
-                        </h3>
+        <div className="relative z-10 mx-auto max-w-6xl">
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <p className="text-xs uppercase tracking-[0.24em] text-white/35">
+              {filteredProducts.length}{" "}
+              {filteredProducts.length === 1 ? "Result" : "Results"}
+            </p>
 
-                        <div className="flex flex-wrap gap-2">
-                          <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
-                            ✓ Identity Confirmed
-                          </span>
+            <p className="hidden text-xs text-white/30 sm:block">
+              Select a product to view test details
+            </p>
+          </div>
 
-                          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                            {previous10mgCoa.purity} Purity
-                          </span>
+          <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.025] shadow-[0_30px_100px_rgba(0,0,0,0.20)]">
+            {filteredProducts.map((product, index) => {
+              const isVerified = product.status === "Verified";
+              const isOpen = openProduct === product.name;
+              const hasPreviousCoas =
+                Array.isArray(product.previousCoas) &&
+                product.previousCoas.length > 0;
+              const isPreviousOpen =
+                openPreviousCoas === product.name;
 
-                          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                            {previous10mgCoa.content} Content
-                          </span>
+              return (
+                <article
+                  key={product.name}
+                  className={
+                    index !== filteredProducts.length - 1
+                      ? "border-b border-white/10"
+                      : ""
+                  }
+                >
+                  {/* COLLAPSED ROW */}
+                  <button
+                    type="button"
+                    onClick={() => toggleProduct(product.name)}
+                    aria-expanded={isOpen}
+                    className="group flex w-full items-center gap-4 px-5 py-5 text-left transition-all hover:bg-white/[0.045] sm:px-7 sm:py-6"
+                  >
+                    <div
+                      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border ${
+                        isVerified
+                          ? "border-green-500/20 bg-green-500/10"
+                          : "border-white/10 bg-white/[0.04]"
+                      }`}
+                    >
+                      {isVerified ? (
+                        <ShieldCheck
+                          size={19}
+                          className="text-green-300"
+                        />
+                      ) : (
+                        <Clock3
+                          size={19}
+                          className="text-white/35"
+                        />
+                      )}
+                    </div>
 
-                          <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                            Lot: {previous10mgCoa.lot}
-                          </span>
-                        </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
+                        <h2 className="truncate text-lg font-bold text-white sm:text-xl">
+                          {product.name}
+                        </h2>
+
+                        <span
+                          className={`w-fit rounded-full border px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.18em] ${
+                            isVerified
+                              ? "border-green-500/20 bg-green-500/10 text-green-300"
+                              : "border-white/10 bg-white/[0.04] text-white/35"
+                          }`}
+                        >
+                          {isVerified ? "Verified" : "Pending"}
+                        </span>
                       </div>
 
-                      <div className="md:text-right">
-                        <p className="text-3xl font-black text-[#A5D8FF]">
-                          {previous10mgCoa.purity}
-                        </p>
+                      <p className="mt-1 truncate text-xs text-white/35">
+                        {isVerified
+                          ? `Batch ${product.batch}${
+                              product.purity
+                                ? ` • ${product.purity} purity`
+                                : ""
+                            }`
+                          : "Third-party testing pending"}
+                      </p>
+                    </div>
 
-                        <p className="uppercase tracking-widest text-white/40 text-xs">
+                    {isVerified && product.purity && (
+                      <div className="hidden text-right md:block">
+                        <p className="text-lg font-bold text-white">
+                          {product.purity}
+                        </p>
+                        <p className="text-[10px] uppercase tracking-[0.18em] text-white/30">
                           Purity
                         </p>
+                      </div>
+                    )}
 
-                        <a
-                          href={previous10mgCoa.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
-                        >
-                          View Previous COA
-                        </a>
+                    <ChevronDown
+                      size={20}
+                      className={`shrink-0 text-white/35 transition-transform duration-300 group-hover:text-white/70 ${
+                        isOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {/* EXPANDED CONTENT */}
+                  <div
+                    className={`grid transition-all duration-300 ${
+                      isOpen
+                        ? "grid-rows-[1fr] opacity-100"
+                        : "grid-rows-[0fr] opacity-0"
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="border-t border-white/10 bg-[#06111f]/55 px-5 py-6 sm:px-7 sm:py-7">
+                        {isVerified ? (
+                          <>
+                            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                              <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+                                <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-white/30">
+                                  Batch
+                                </p>
+                                <p className="text-sm font-semibold text-white/85">
+                                  {product.batch}
+                                </p>
+                              </div>
+
+                              <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+                                <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-white/30">
+                                  Status
+                                </p>
+                                <p className="text-sm font-semibold text-green-300">
+                                  Third-Party Verified
+                                </p>
+                              </div>
+
+                              <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+                                <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-white/30">
+                                  Purity
+                                </p>
+                                <p className="text-sm font-semibold text-white/85">
+                                  {product.purity || "—"}
+                                </p>
+                              </div>
+
+                              <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+                                <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-white/30">
+                                  Total mg Content
+                                </p>
+                                <p className="text-sm font-semibold text-blue-200">
+                                  {product.totalContent ||
+                                    product.content ||
+                                    "—"}
+                                </p>
+                              </div>
+                            </div>
+
+                            {product.totalContent && product.content && (
+                              <div className="mt-3 rounded-2xl border border-white/10 bg-white/[0.025] p-4">
+                                <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-white/30">
+                                  Component Content
+                                </p>
+                                <p className="text-sm leading-relaxed text-white/65">
+                                  {product.content}
+                                </p>
+                              </div>
+                            )}
+
+                            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                              {product.coa && (
+                                <a
+                                  href={product.coa}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(event) =>
+                                    event.stopPropagation()
+                                  }
+                                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-white px-5 py-3.5 text-xs font-bold uppercase tracking-[0.18em] text-[#081526] transition-all hover:bg-blue-100"
+                                >
+                                  <FileText size={16} />
+                                  {hasPreviousCoas
+                                    ? "View Latest COA"
+                                    : "View COA"}
+                                </a>
+                              )}
+
+                              {hasPreviousCoas && (
+                                <button
+                                  type="button"
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    togglePreviousCoas(
+                                      product.name,
+                                    );
+                                  }}
+                                  aria-expanded={
+                                    isPreviousOpen
+                                  }
+                                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-5 py-3.5 text-xs font-bold uppercase tracking-[0.18em] text-white/70 transition-all hover:border-blue-400/40 hover:bg-white/[0.07] hover:text-white"
+                                >
+                                  {isPreviousOpen
+                                    ? "Hide Previous COAs"
+                                    : `Previous COAs (${product.previousCoas?.length || 0})`}
+                                  <ChevronDown
+                                    size={16}
+                                    className={`transition-transform duration-300 ${
+                                      isPreviousOpen
+                                        ? "rotate-180"
+                                        : ""
+                                    }`}
+                                  />
+                                </button>
+                              )}
+                            </div>
+
+                            {hasPreviousCoas && (
+                              <div
+                                className={`grid transition-all duration-300 ${
+                                  isPreviousOpen
+                                    ? "mt-5 grid-rows-[1fr] opacity-100"
+                                    : "grid-rows-[0fr] opacity-0"
+                                }`}
+                              >
+                                <div className="overflow-hidden">
+                                  <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.025] p-4 sm:p-5">
+                                    <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.22em] text-white/35">
+                                      Previous Test Results
+                                    </p>
+
+                                    <div className="space-y-3">
+                                      {product.previousCoas?.map(
+                                        (
+                                          previousCoa,
+                                          previousIndex,
+                                        ) => (
+                                          <div
+                                            key={`${product.name}-${previousCoa.batch}-${previousIndex}`}
+                                            className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-[#081526]/65 p-4 sm:flex-row sm:items-center sm:justify-between"
+                                          >
+                                            <div className="grid flex-1 grid-cols-3 gap-4">
+                                              <div>
+                                                <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-white/30">
+                                                  Batch
+                                                </p>
+                                                <p className="text-xs text-white/75">
+                                                  {
+                                                    previousCoa.batch
+                                                  }
+                                                </p>
+                                              </div>
+
+                                              <div>
+                                                <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-white/30">
+                                                  Purity
+                                                </p>
+                                                <p className="text-xs text-white/75">
+                                                  {
+                                                    previousCoa.purity
+                                                  }
+                                                </p>
+                                              </div>
+
+                                              <div>
+                                                <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-white/30">
+                                                  Total mg
+                                                </p>
+                                                <p className="text-xs text-white/75">
+                                                  {
+                                                    previousCoa.content
+                                                  }
+                                                </p>
+                                              </div>
+                                            </div>
+
+                                            <a
+                                              href={
+                                                previousCoa.coa
+                                              }
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              onClick={(event) =>
+                                                event.stopPropagation()
+                                              }
+                                              className="shrink-0 rounded-full border border-white/10 bg-white/[0.04] px-5 py-2.5 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-white/60 transition-all hover:border-blue-400/40 hover:text-white"
+                                            >
+                                              View
+                                            </a>
+                                          </div>
+                                        ),
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <div className="flex flex-col items-center justify-center rounded-[1.5rem] border border-dashed border-white/10 bg-white/[0.02] px-6 py-9 text-center">
+                            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/[0.04]">
+                              <Clock3
+                                size={20}
+                                className="text-white/35"
+                              />
+                            </div>
+
+                            <h3 className="text-base font-bold text-white/80">
+                              COA Coming Soon
+                            </h3>
+
+                            <p className="mt-2 max-w-md text-sm leading-relaxed text-white/35">
+                              Third-party analytical testing is
+                              pending. Results will be published here
+                              when available.
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          )}
-
-        </div>
-      </section>
-
-      {/* QUALITY */}
-      <section className="px-6 md:px-10 pb-10">
-
-        <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-7 grid grid-cols-1 md:grid-cols-4 gap-6">
-
-          {[
-            [
-              FlaskConical,
-              "Research Use Only",
-              "Strictly for laboratory research.",
-            ],
-
-            [
-              ShieldCheck,
-              "Third-Party Tested",
-              `${selectedMg} analytical testing is available from ${selectedCoa.lab}.`,
-            ],
-
-            [
-              ClipboardCheck,
-              "Batch Documented",
-              `${selectedMg} batch-specific analytical documentation is available.`,
-            ],
-
-            [
-              ShieldCheck,
-              `${selectedCoa.purity} Purity`,
-              `${selectedMg} analytical documentation reports ${selectedCoa.purity} purity.`,
-            ],
-          ].map(
-            ([Icon, title, text]: any) => (
-
-              <div
-                key={title}
-                className="flex gap-4"
-              >
-
-                <Icon
-                  className="text-[#A5D8FF]"
-                  size={28}
-                />
-
-                <div>
-
-                  <h3 className="text-white uppercase tracking-widest font-bold text-xs">
-                    {title}
-                  </h3>
-
-                  <p className="text-white/50 text-sm mt-1">
-                    {text}
-                  </p>
-
-                </div>
-
-              </div>
-            )
-          )}
-
-        </div>
-      </section>
-
-      {/* RESEARCH PROFILE */}
-      <section className="px-6 md:px-10 pb-14">
-
-        <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] p-8">
-
-          <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">
-            Research Profile
-          </p>
-
-          <h2 className="text-3xl font-black text-white mb-4">
-            GH-Releasing Pathway Overview
-          </h2>
-
-          <p className="text-white/65 leading-relaxed max-w-4xl mb-7">
-            Tesamorelin is studied
-            in laboratory research
-            for its interaction
-            with growth
-            hormone-releasing
-            hormone receptor
-            pathways, commonly
-            evaluated in endocrine
-            signaling, IGF-1
-            response, and
-            metabolic research
-            models.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-
-            {[
-              [
-                "GHRH Pathway",
-                "Studied for growth hormone-releasing hormone receptor signaling.",
-              ],
-
-              [
-                "IGF-1 Response",
-                "Evaluated in research models involving downstream IGF-1 activity.",
-              ],
-
-              [
-                "Metabolic Research",
-                "Used in laboratory studies involving metabolic and body-composition research pathways.",
-              ],
-
-              [
-                "Storage",
-                "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
-              ],
-            ].map(
-              ([title, text]) => (
-
-                <div
-                  key={title}
-                  className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
-                >
-
-                  <h3 className="text-white font-bold mb-2">
-                    {title}
-                  </h3>
-
-                  <p className="text-white/55 text-sm leading-relaxed">
-                    {text}
-                  </p>
-
-                </div>
-              )
-            )}
-
+                </article>
+              );
+            })}
           </div>
 
-        </div>
-      </section>
-
-      {/* RELATED */}
-      <section className="px-6 md:px-10 pb-14">
-
-        <div className="max-w-7xl mx-auto">
-
-          <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-            Frequently Researched Together
-          </p>
-
-          <h2 className="text-3xl font-black text-white mb-6">
-            Pair With Related Research Compounds
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-
-            {[
-              {
-                name: "CJC/IPA",
-
-                image:
-                  "/images/cjcipablue.png",
-
-                path:
-                  "/products/cjcipa",
-
-                text:
-                  "Research involving growth hormone signaling pathways and endocrine response models.",
-              },
-
-              {
-                name: "MOTS-C",
-
-                image:
-                  "/images/motscblue.png",
-
-                path:
-                  "/products/motsc",
-
-                text:
-                  "Studied in laboratory models involving mitochondrial signaling and metabolic research.",
-              },
-
-              {
-                name: "APX-3",
-
-                image:
-                  "/images/apx310blue.png",
-
-                path:
-                  "/products/apx3",
-
-                text:
-                  "Research involving metabolic signaling, energy regulation, and body-composition models.",
-              },
-            ].map((item) => (
-
-              <a
-                key={item.name}
-                href={item.path}
-                className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/40 transition-all"
-              >
-
-                <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
-
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
-                  />
-
-                </div>
-
-                <h3 className="text-xl font-black text-white mb-2">
-                  {item.name}
-                </h3>
-
-                <p className="text-white/55 text-sm leading-relaxed">
-                  {item.text}
-                </p>
-
-                <span className="inline-block mt-3 text-[#A5D8FF] text-sm font-semibold">
-                  View Product →
-                </span>
-
-              </a>
-            ))}
-
-          </div>
-        </div>
-      </section>
-
-      {/* DISCLAIMERS */}
-      {[
-        {
-          title:
-            "FDA Disclaimer",
-
-          text:
-            "These statements have not been evaluated by the U.S. Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only and are not for human or veterinary consumption.",
-        },
-
-        {
-          title:
-            "Customer Acknowledgment",
-
-          text:
-            "By purchasing this product, the customer acknowledges that this material is intended solely for lawful laboratory research purposes and will not be used for human consumption, veterinary use, medical use, diagnosis, treatment, cure, or prevention of disease. Apexx Biolabs does not provide dosing instructions, treatment recommendations, medical advice, or guidance regarding human use of any product.",
-        },
-      ].map(
-        (section) => (
-
-          <section
-            key={section.title}
-            className="px-6 md:px-10 pb-10"
-          >
-
-            <div className="max-w-7xl mx-auto rounded-[26px] border border-white/10 bg-white/[0.04] p-6">
-
-              <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-xs mb-3">
-                {section.title}
-              </h3>
-
-              <p className="text-white/55 text-sm leading-relaxed">
-                {section.text}
+          {filteredProducts.length === 0 && (
+            <div className="mt-8 rounded-[2rem] border border-white/10 bg-white/[0.03] px-6 py-14 text-center">
+              <Search
+                size={26}
+                className="mx-auto mb-4 text-white/25"
+              />
+              <p className="text-lg font-semibold text-white/70">
+                No COAs found
               </p>
-
+              <p className="mt-2 text-sm text-white/35">
+                Try another product name, batch, or status filter.
+              </p>
             </div>
+          )}
 
-          </section>
-        )
-      )}
-
+          <div className="mt-10 rounded-[1.5rem] border border-white/10 bg-white/[0.025] px-6 py-5 text-center">
+            <p className="text-xs leading-relaxed text-white/35">
+              Certificates are displayed for research transparency and
+              quality documentation. Testing status and batch records may
+              be updated as new analytical results become available.
+            </p>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

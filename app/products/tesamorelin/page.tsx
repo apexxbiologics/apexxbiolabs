@@ -50,7 +50,8 @@ type CoaData = {
 
 export default function TesamorelinPage() {
   const [added, setAdded] = useState(false);
-  const [showPreviousCoas, setShowPreviousCoas] =
+
+  const [showPreviousCoa, setShowPreviousCoa] =
     useState(false);
 
   const [selectedMg, setSelectedMg] =
@@ -100,8 +101,9 @@ export default function TesamorelinPage() {
    * SIZE-SPECIFIC COA DATA
    *
    * 5mg keeps the existing Freedom Diagnostics COA.
-   * 10mg shows the newest Precision Mass Spec COA as the current COA,
-   * while retaining the older Accumark Labs COA below as a previous COA.
+   * 10mg uses the newest Precision Mass Spec COA as the latest COA.
+   * The previous 10mg Accumark Labs COA is retained below, following
+   * the same latest + previous COA structure used on the MOTS-C page.
    */
   const coaData: Record<TesamorelinSize, CoaData> = {
     "5mg": {
@@ -124,18 +126,12 @@ export default function TesamorelinPage() {
     },
   };
 
-  const previousCoas: Partial<
-    Record<TesamorelinSize, CoaData[]>
-  > = {
-    "10mg": [
-      {
-        lab: "Accumark Labs",
-        purity: "99.99%",
-        content: "9.968mg",
-        lot: "TESA2608-01",
-        href: "/images/coas/tesamorelin-10mg-8-26-26.pdf",
-      },
-    ],
+  const previous10mgCoa: CoaData = {
+    lab: "Accumark Labs",
+    purity: "99.99%",
+    content: "9.968mg",
+    lot: "TESA2608-01",
+    href: "/images/coas/tesamorelin-10mg-8-26-26.pdf",
   };
 
   const selectedProduct =
@@ -598,7 +594,7 @@ export default function TesamorelinPage() {
     setSelectedMg(mg);
     setSelectedQuantity(1);
     setAdded(false);
-    setShowPreviousCoas(false);
+    setShowPreviousCoa(false);
   };
 
   const selectQuantity = (
@@ -1240,23 +1236,22 @@ export default function TesamorelinPage() {
 
       {/* SIZE-SPECIFIC COA */}
       <section className="px-6 md:px-10 pb-12">
-
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
 
+          {/* LATEST / CURRENT COA */}
           <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
-
             <div>
-
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
                 {selectedCoa.lab}
               </p>
 
               <h3 className="text-2xl font-black text-white mb-4">
-                Tesamorelin {selectedMg} Certificate of Analysis
+                {selectedMg === "10mg"
+                  ? "Latest Tesamorelin 10mg Certificate of Analysis"
+                  : "Tesamorelin 5mg Certificate of Analysis"}
               </h3>
 
               <div className="flex flex-wrap gap-2">
-
                 <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
                   ✓ Identity Confirmed
                 </span>
@@ -1266,7 +1261,7 @@ export default function TesamorelinPage() {
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  {selectedCoa.content} Content
+                  {selectedCoa.content} Net Content
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
@@ -1290,12 +1285,10 @@ export default function TesamorelinPage() {
                     Sterility: {selectedCoa.sterility}
                   </span>
                 )}
-
               </div>
             </div>
 
             <div className="md:text-right">
-
               <p className="text-4xl font-black text-[#A5D8FF]">
                 {selectedCoa.purity}
               </p>
@@ -1305,90 +1298,87 @@ export default function TesamorelinPage() {
               </p>
 
               <a
-                href={
-                  selectedCoa.href
-                }
+                href={selectedCoa.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
               >
-                View {selectedMg} COA
+                View Full COA
               </a>
-
             </div>
           </div>
 
-          {previousCoas[selectedMg] &&
-            previousCoas[selectedMg]!.length > 0 && (
-              <div className="mt-6 pt-6 border-t border-white/10">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowPreviousCoas(
-                      !showPreviousCoas
-                    )
-                  }
-                  className="w-full flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-left hover:bg-white/[0.06] transition-all"
-                >
-                  <div>
-                    <p className="text-white font-bold">
-                      Previous {selectedMg} Certificates of Analysis
-                    </p>
-                    <p className="text-white/40 text-xs mt-1">
-                      View earlier third-party analytical documentation.
-                    </p>
-                  </div>
+          {/* 10MG PREVIOUS COA HISTORY — SAME STYLE AS MOTS-C */}
+          {selectedMg === "10mg" && (
+            <div className="mt-6 border-t border-white/10 pt-5">
+              <button
+                type="button"
+                onClick={() =>
+                  setShowPreviousCoa((prev) => !prev)
+                }
+                className="w-full rounded-full border border-white/10 bg-white/[0.04] py-3 text-xs uppercase tracking-widest text-white/80 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+              >
+                {showPreviousCoa
+                  ? "Hide Previous COA"
+                  : "View Previous COA"}
+              </button>
 
-                  <span className="text-[#A5D8FF] text-xl font-semibold">
-                    {showPreviousCoas ? "−" : "+"}
-                  </span>
-                </button>
+              {showPreviousCoa && (
+                <div className="mt-5">
+                  <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+                    <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+                      <div>
+                        <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+                          {previous10mgCoa.lab}
+                        </p>
 
-                {showPreviousCoas && (
-                  <div className="mt-3 space-y-3">
-                    {previousCoas[selectedMg]!.map(
-                      (coa, index) => (
-                        <div
-                          key={`${coa.lot}-${index}`}
-                          className="rounded-2xl border border-white/10 bg-white/[0.025] p-5"
-                        >
-                          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                            <div>
-                              <p className="uppercase tracking-[0.25em] text-[#A5D8FF] text-[10px] mb-2">
-                                {coa.lab}
-                              </p>
+                        <h3 className="text-xl font-black text-white mb-4">
+                          Previous Tesamorelin 10mg Certificate of Analysis
+                        </h3>
 
-                              <div className="flex flex-wrap gap-2">
-                                <span className="px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-xs font-semibold">
-                                  {coa.purity} Purity
-                                </span>
+                        <div className="flex flex-wrap gap-2">
+                          <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+                            ✓ Identity Confirmed
+                          </span>
 
-                                <span className="px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-xs font-semibold">
-                                  {coa.content} Content
-                                </span>
+                          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                            {previous10mgCoa.purity} Purity
+                          </span>
 
-                                <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/55 text-xs">
-                                  Lot: {coa.lot}
-                                </span>
-                              </div>
-                            </div>
+                          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                            {previous10mgCoa.content} Content
+                          </span>
 
-                            <a
-                              href={coa.href}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex shrink-0 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
-                            >
-                              View Previous COA
-                            </a>
-                          </div>
+                          <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                            Lot: {previous10mgCoa.lot}
+                          </span>
                         </div>
-                      )
-                    )}
+                      </div>
+
+                      <div className="md:text-right">
+                        <p className="text-3xl font-black text-[#A5D8FF]">
+                          {previous10mgCoa.purity}
+                        </p>
+
+                        <p className="uppercase tracking-widest text-white/40 text-xs">
+                          Purity
+                        </p>
+
+                        <a
+                          href={previous10mgCoa.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
+                        >
+                          View Previous COA
+                        </a>
+                      </div>
+                    </div>
                   </div>
-                )}
-              </div>
-            )}
+                </div>
+              )}
+            </div>
+          )}
 
         </div>
       </section>

@@ -40,6 +40,10 @@ export default function MitoXPage() {
   const [quantityDiscounts, setQuantityDiscounts] =
     useState<QuantityDiscountTier[]>([]);
 
+  // =========================================================
+  // PRODUCT INFORMATION
+  // =========================================================
+
   const product = {
     id: "mitox",
     name: "MITO-X 120mg",
@@ -47,15 +51,29 @@ export default function MitoXPage() {
     path: "/products/mitox",
   };
 
+  // =========================================================
+  // CERTIFICATES OF ANALYSIS
+  // =========================================================
+
   const latestCoaPath =
     "/images/coas/10-7-mitox-120mg-axiom-coa.pdf";
 
-  const isOutOfStock = inventory !== null && inventory <= 0;
+  // =========================================================
+  // INVENTORY & FLASH SALE
+  // =========================================================
+
+  const isOutOfStock =
+    inventory !== null && inventory <= 0;
+
   const isLimitedStock =
-    inventory !== null && inventory > 0 && inventory <= 5;
+    inventory !== null &&
+    inventory > 0 &&
+    inventory <= 5;
 
   const flashSalePrice =
-    flashSale !== null ? Number(flashSale.sale_price) : null;
+    flashSale !== null
+      ? Number(flashSale.sale_price)
+      : null;
 
   const isFlashSaleActive =
     flashSalePrice !== null &&
@@ -75,28 +93,51 @@ export default function MitoXPage() {
     path: product.path,
   };
 
+  // =========================================================
+  // FETCH PRODUCT DATA
+  // =========================================================
+
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const [productResponse, saleResponse] = await Promise.all([
-          fetch("/api/products", { cache: "no-store" }),
-          fetch("/api/flash-sales", { cache: "no-store" }),
-        ]);
+        const [productResponse, saleResponse] =
+          await Promise.all([
+            fetch("/api/products", {
+              cache: "no-store",
+            }),
+            fetch("/api/flash-sales", {
+              cache: "no-store",
+            }),
+          ]);
 
         const productData = await productResponse.json();
-        const saleData = await saleResponse.json().catch(() => ({
-          success: false,
-          sales: [],
-        }));
+
+        const saleData = await saleResponse
+          .json()
+          .catch(() => ({
+            success: false,
+            sales: [],
+          }));
 
         if (!productData.success) return;
 
-        const mitoX = (productData.products || []).find(
+        const mitox = productData.products.find(
           (item: any) => {
-            const slug = String(item.slug || "").toLowerCase().trim();
-            const id = String(item.id || "").toLowerCase().trim();
-            const name = String(item.name || "").toLowerCase().trim();
-            const size = String(item.size || "").toLowerCase().trim();
+            const slug = String(item.slug || "")
+              .toLowerCase()
+              .trim();
+
+            const id = String(item.id || "")
+              .toLowerCase()
+              .trim();
+
+            const name = String(item.name || "")
+              .toLowerCase()
+              .trim();
+
+            const size = String(item.size || "")
+              .toLowerCase()
+              .trim();
 
             return (
               slug === "mitox" ||
@@ -115,20 +156,26 @@ export default function MitoXPage() {
           }
         );
 
-        if (mitoX) {
-          const dbId = String(mitoX.id);
-          const regularPrice = Number(mitoX.price ?? 70);
+        if (mitox) {
+          const dbId = String(mitox.id);
+          const regularPrice = Number(mitox.price ?? 70);
 
           setDatabaseProductId(dbId);
-          setInventory(Number(mitoX.inventory ?? 0));
+          setInventory(Number(mitox.inventory ?? 0));
           setPrice(regularPrice);
 
           const now = Date.now();
 
           const matchingSale = Array.isArray(saleData.sales)
             ? saleData.sales.find((sale: FlashSale) => {
-                const starts = new Date(sale.starts_at).getTime();
-                const ends = new Date(sale.ends_at).getTime();
+                const starts = new Date(
+                  sale.starts_at
+                ).getTime();
+
+                const ends = new Date(
+                  sale.ends_at
+                ).getTime();
+
                 const salePrice = Number(sale.sale_price);
 
                 return (
@@ -153,7 +200,11 @@ export default function MitoXPage() {
           setFlashSale(null);
         }
       } catch (error) {
-        console.error("Failed to fetch MITO-X data:", error);
+        console.error(
+          "Failed to fetch MITO-X data:",
+          error
+        );
+
         setDatabaseProductId(null);
         setInventory(null);
         setPrice(70);
@@ -161,37 +212,55 @@ export default function MitoXPage() {
       }
     };
 
+    // =====================================================
+    // FETCH QUANTITY DISCOUNTS
+    // =====================================================
+
     const fetchQuantityDiscounts = async () => {
       try {
-        const response = await fetch("/api/quantity-discounts", {
-          cache: "no-store",
-        });
+        const response = await fetch(
+          "/api/quantity-discounts",
+          { cache: "no-store" }
+        );
+
         const data = await response.json();
 
         if (!data.success) return;
 
-        const tiers: QuantityDiscountTier[] = (data.tiers || [])
+        const tiers = (data.tiers || [])
           .map((tier: any) => ({
             id: String(tier.id),
             name: String(tier.name || ""),
             quantity: Number(tier.quantity || 0),
-            discount_percent: Number(tier.discount_percent || 0),
+            discount_percent: Number(
+              tier.discount_percent || 0
+            ),
             sort_order: Number(tier.sort_order || 0),
           }))
           .filter(
             (tier: QuantityDiscountTier) =>
-              tier.quantity > 1 && tier.discount_percent >= 0
+              tier.quantity > 1 &&
+              tier.discount_percent >= 0
           )
           .sort(
-            (a: QuantityDiscountTier, b: QuantityDiscountTier) =>
-              a.sort_order !== b.sort_order
-                ? a.sort_order - b.sort_order
-                : a.quantity - b.quantity
+            (
+              a: QuantityDiscountTier,
+              b: QuantityDiscountTier
+            ) => {
+              if (a.sort_order !== b.sort_order) {
+                return a.sort_order - b.sort_order;
+              }
+
+              return a.quantity - b.quantity;
+            }
           );
 
         setQuantityDiscounts(tiers);
       } catch (error) {
-        console.error("Failed to fetch quantity discounts:", error);
+        console.error(
+          "Failed to fetch quantity discounts:",
+          error
+        );
       }
     };
 
@@ -203,13 +272,23 @@ export default function MitoXPage() {
       30_000
     );
 
-    return () => window.clearInterval(flashSaleRefresh);
+    return () => {
+      window.clearInterval(flashSaleRefresh);
+    };
   }, []);
 
-  const getDiscountTier = (quantity: number) =>
-    [...quantityDiscounts]
-      .filter((tier) => quantity >= tier.quantity)
-      .sort((a, b) => b.quantity - a.quantity)[0] || null;
+  // =========================================================
+  // QUANTITY DISCOUNT CALCULATIONS
+  // =========================================================
+
+  const getDiscountTier = (quantity: number) => {
+    return (
+      [...quantityDiscounts]
+        .filter((tier) => quantity >= tier.quantity)
+        .sort((a, b) => b.quantity - a.quantity)[0] ||
+      null
+    );
+  };
 
   const selectedTier = getDiscountTier(selectedQuantity);
 
@@ -218,18 +297,29 @@ export default function MitoXPage() {
     : selectedTier?.discount_percent || 0;
 
   const discountedUnitPrice =
-    effectiveUnitPrice * (1 - selectedDiscountPercent / 100);
+    effectiveUnitPrice *
+    (1 - selectedDiscountPercent / 100);
 
-  const selectedTotal = discountedUnitPrice * selectedQuantity;
+  const selectedTotal =
+    discountedUnitPrice * selectedQuantity;
+
   const regularTotal = price * selectedQuantity;
 
-  const formatMoney = (amount: number) => Number(amount).toFixed(2);
+  const formatMoney = (amount: number) =>
+    Number(amount).toFixed(2);
 
   const selectQuantity = (quantity: number) => {
-    if (inventory !== null && quantity > inventory) return;
+    if (inventory !== null && quantity > inventory) {
+      return;
+    }
+
     setSelectedQuantity(quantity);
     setAdded(false);
   };
+
+  // =========================================================
+  // ADD TO CART
+  // =========================================================
 
   const addToCart = () => {
     if (isOutOfStock) return;
@@ -246,7 +336,8 @@ export default function MitoXPage() {
       ? Number(existingProduct.quantity || 0)
       : 0;
 
-    const newQuantity = existingQuantity + selectedQuantity;
+    const newQuantity =
+      existingQuantity + selectedQuantity;
 
     if (inventory !== null && newQuantity > inventory) {
       alert(
@@ -266,7 +357,8 @@ export default function MitoXPage() {
       : newTier?.discount_percent || 0;
 
     const newDiscountedUnitPrice =
-      effectiveUnitPrice * (1 - newDiscountPercent / 100);
+      effectiveUnitPrice *
+      (1 - newDiscountPercent / 100);
 
     const cartProduct = {
       id: product.id,
@@ -278,10 +370,15 @@ export default function MitoXPage() {
       path: product.path,
       quantityDiscountPercent: newDiscountPercent,
       quantityDiscountTierId: newTier?.id || null,
-      quantityDiscountTierQuantity: newTier?.quantity || null,
+      quantityDiscountTierQuantity:
+        newTier?.quantity || null,
       flashSaleApplied: isFlashSaleActive,
-      flashSaleId: isFlashSaleActive ? flashSale?.id || null : null,
-      flashSalePrice: isFlashSaleActive ? effectiveUnitPrice : null,
+      flashSaleId: isFlashSaleActive
+        ? flashSale?.id || null
+        : null,
+      flashSalePrice: isFlashSaleActive
+        ? effectiveUnitPrice
+        : null,
       databaseProductId,
     };
 
@@ -293,25 +390,38 @@ export default function MitoXPage() {
         )
       : [...existingCart, cartProduct];
 
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(updatedCart)
+    );
+
     window.dispatchEvent(new Event("cartUpdated"));
     setAdded(true);
   };
 
+  // =========================================================
+  // PAGE
+  // =========================================================
+
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
 
-      {/* PRODUCT HERO */}
+      {/* =====================================================
+          PRODUCT HERO
+      ===================================================== */}
+
       <section className="relative px-5 md:px-10 py-10 md:py-14 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.10),transparent_55%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-start">
 
-            {/* IMAGE */}
+            {/* PRODUCT IMAGE */}
             <div className="flex items-center justify-center">
               <div className="relative w-full max-w-[520px] aspect-square rounded-[42px] overflow-hidden border border-blue-400/10 bg-white/[0.03] shadow-[0_0_30px_rgba(96,165,250,0.15)]">
+
                 <FavoriteButton product={favoriteProduct} />
+
                 <img
                   src={product.image}
                   alt={product.name}
@@ -337,7 +447,8 @@ export default function MitoXPage() {
                     ${formatMoney(selectedTotal)}
                   </p>
 
-                  {(isFlashSaleActive || selectedDiscountPercent > 0) && (
+                  {(isFlashSaleActive ||
+                    selectedDiscountPercent > 0) && (
                     <p className="text-white/35 text-sm line-through">
                       ${formatMoney(regularTotal)}
                     </p>
@@ -346,13 +457,14 @@ export default function MitoXPage() {
               </div>
 
               <p className="text-white/60 leading-relaxed mb-5">
-                MITO-X is a research blend containing NAD+, MOTS-c,
-                and 5-Amino-1MQ, investigated in laboratory models
-                involving mitochondrial-derived signaling, cellular
-                redox processes, metabolic pathways, and NNMT-associated
-                biochemical mechanisms.
+                MITO-X is a research blend containing NAD+,
+                MOTS-c, and 5-Amino-1MQ, studied in laboratory
+                models involving mitochondrial-derived signaling,
+                cellular redox processes, metabolic pathways,
+                and NNMT-associated biochemical mechanisms.
               </p>
 
+              {/* PRODUCT BADGES */}
               <div className="flex flex-wrap items-center gap-3 mb-5">
                 <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold uppercase tracking-widest">
                   120mg
@@ -385,7 +497,10 @@ export default function MitoXPage() {
 
               <div className="h-px bg-white/10 mb-5" />
 
-              {/* QUANTITY */}
+              {/* =================================================
+                  QUANTITY SELECTION
+              ================================================= */}
+
               <div className="mb-5">
                 <div className="flex items-center justify-between gap-4 mb-3">
                   <p className="uppercase tracking-widest text-white/45 text-xs">
@@ -401,7 +516,7 @@ export default function MitoXPage() {
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
 
-                  {/* 1 VIAL */}
+                  {/* SINGLE VIAL */}
                   <button
                     type="button"
                     disabled={isOutOfStock}
@@ -433,7 +548,7 @@ export default function MitoXPage() {
                     )}
                   </button>
 
-                  {/* ADMIN QUANTITY TIERS */}
+                  {/* ADMIN QUANTITY DISCOUNT TIERS */}
                   {quantityDiscounts.map((tier) => {
                     const tierUnavailable =
                       inventory !== null &&
@@ -453,7 +568,9 @@ export default function MitoXPage() {
                         key={tier.id}
                         type="button"
                         disabled={tierUnavailable}
-                        onClick={() => selectQuantity(tier.quantity)}
+                        onClick={() =>
+                          selectQuantity(tier.quantity)
+                        }
                         className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
                           selected
                             ? "border-blue-300 bg-blue-400/10"
@@ -496,7 +613,7 @@ export default function MitoXPage() {
                 </p>
               </div>
 
-              {/* ACTIONS */}
+              {/* ACTION BUTTONS */}
               <div className="grid grid-cols-2 gap-3">
                 {isOutOfStock ? (
                   <button
@@ -511,10 +628,13 @@ export default function MitoXPage() {
                     className="col-span-2 bg-white text-[#081526] hover:bg-blue-100 rounded-full py-4 uppercase tracking-widest text-xs font-bold transition-all flex items-center justify-center gap-2"
                   >
                     <ShoppingCart size={18} />
+
                     {added
                       ? "Added To Cart"
                       : `Add ${selectedQuantity} ${
-                          selectedQuantity === 1 ? "Vial" : "Vials"
+                          selectedQuantity === 1
+                            ? "Vial"
+                            : "Vials"
                         } To Cart`}
                   </button>
                 )}
@@ -547,11 +667,19 @@ export default function MitoXPage() {
         </div>
       </section>
 
-      {/* COA */}
+      {/* =====================================================
+          CERTIFICATE OF ANALYSIS
+          LATEST + PREVIOUS HISTORY
+          MATCHING SEMAX DESIGN
+      ===================================================== */}
+
       <section className="px-6 md:px-10 pb-12">
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
 
-          {/* LATEST COA */}
+          {/* =================================================
+              LATEST MITO-X COA — AXIOM ANALYTICS
+          ================================================= */}
+
           <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
             <div>
               <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
@@ -563,6 +691,7 @@ export default function MitoXPage() {
               </h3>
 
               <div className="flex flex-wrap gap-2">
+
                 <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
                   ✓ Component Identities Confirmed
                 </span>
@@ -596,14 +725,15 @@ export default function MitoXPage() {
                 </span>
 
                 <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
-                  Fentanyl: Not Detected
+                  Fentanyl Screen: Not Detected
                 </span>
+
               </div>
 
-              <p className="mt-4 text-xs text-white/40">
-                Certificate designation: Nexus
-                (NAD+/MOTS-c/5-Amino-1MQ).
+              <p className="text-white/40 text-xs mt-4">
                 Report AX-2026-3564-TF8R.
+                Certificate sample designation: Nexus
+                (NAD+/MOTS-c/5-Amino-1MQ).
               </p>
             </div>
 
@@ -627,12 +757,18 @@ export default function MitoXPage() {
             </div>
           </div>
 
-          {/* COA HISTORY */}
+          {/* =================================================
+              COA HISTORY — EXPANDABLE
+          ================================================= */}
+
           <div className="mt-6 border-t border-white/10 pt-5">
+
             <button
               type="button"
               aria-expanded={showPreviousCoa}
-              onClick={() => setShowPreviousCoa((prev) => !prev)}
+              onClick={() =>
+                setShowPreviousCoa((prev) => !prev)
+              }
               className="w-full rounded-full border border-white/10 bg-white/[0.04] py-3 text-xs uppercase tracking-widest text-white/80 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
             >
               {showPreviousCoa
@@ -642,20 +778,45 @@ export default function MitoXPage() {
 
             {showPreviousCoa && (
               <div className="mt-5 space-y-4">
+
+                {/* ===========================================
+                    PREVIOUS MITO-X COAs
+                =========================================== */}
+
                 <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-                  <p className="text-white/50 text-sm">
-                    No previous MITO-X certificates are currently available.
-                  </p>
+                  <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+
+                    <div>
+                      <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+                        Certificate History
+                      </p>
+
+                      <h3 className="text-xl font-black text-white mb-4">
+                        Previous Certificates of Analysis
+                      </h3>
+
+                      <p className="text-white/50 text-sm">
+                        No previous MITO-X certificates are currently available.
+                      </p>
+                    </div>
+
+                  </div>
                 </div>
+
               </div>
             )}
           </div>
+
         </div>
       </section>
 
-      {/* QUALITY */}
+      {/* =====================================================
+          QUALITY
+      ===================================================== */}
+
       <section className="px-6 md:px-10 pb-10">
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-7 grid grid-cols-1 md:grid-cols-4 gap-6">
+
           {[
             [
               FlaskConical,
@@ -665,7 +826,7 @@ export default function MitoXPage() {
             [
               ShieldCheck,
               "Third-Party Tested",
-              "Independent analytical testing is available for the documented lot.",
+              "Independent analytical testing is available for the documented research lot.",
             ],
             [
               ClipboardCheck,
@@ -679,56 +840,67 @@ export default function MitoXPage() {
             ],
           ].map(([Icon, title, text]: any) => (
             <div key={title} className="flex gap-4">
-              <Icon className="text-[#A5D8FF]" size={28} />
+              <Icon
+                className="text-[#A5D8FF]"
+                size={28}
+              />
 
               <div>
                 <h3 className="text-white uppercase tracking-widest font-bold text-xs">
                   {title}
                 </h3>
+
                 <p className="text-white/50 text-sm mt-1">
                   {text}
                 </p>
               </div>
             </div>
           ))}
+
         </div>
       </section>
 
-      {/* RESEARCH PROFILE */}
+      {/* =====================================================
+          RESEARCH PROFILE
+      ===================================================== */}
+
       <section className="px-6 md:px-10 pb-14">
         <div className="max-w-7xl mx-auto rounded-[32px] border border-white/10 bg-white/[0.04] p-8">
+
           <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-3">
             Research Profile
           </p>
 
           <h2 className="text-3xl font-black text-white mb-4">
-            Mitochondrial & Metabolic Research Overview
+            MITO-X Research Overview
           </h2>
 
           <p className="text-white/65 leading-relaxed max-w-4xl mb-7">
-            MITO-X combines NAD+, MOTS-c, and 5-Amino-1MQ
-            for laboratory investigation of mitochondrial-derived
-            signaling, cellular redox processes, and
-            NNMT-associated biochemical pathways.
+            MITO-X contains NAD+, MOTS-c, and 5-Amino-1MQ,
+            compounds studied in laboratory research models
+            involving mitochondrial signaling, cellular redox
+            reactions, metabolic regulation, and NNMT-associated
+            biochemical pathways.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+
             {[
               [
                 "NAD+ Research",
-                "Studied in cellular redox reactions and coenzyme-associated metabolic pathways.",
+                "Studied in cellular redox reactions, coenzyme activity, and metabolic pathways.",
               ],
               [
                 "MOTS-c Research",
-                "Investigated in models of mitochondrial-derived signaling.",
+                "Evaluated in laboratory models involving mitochondrial-derived signaling and metabolic regulation.",
               ],
               [
                 "5-Amino-1MQ Research",
-                "Investigated in NNMT-associated biochemical research.",
+                "Investigated in experimental models involving NNMT-associated biochemical pathways.",
               ],
               [
                 "Storage",
-                "Follow the manufacturer's storage and laboratory handling instructions.",
+                "Follow the manufacturer's storage instructions. Keep sealed and protected from light until laboratory research use.",
               ],
             ].map(([title, text]) => (
               <div
@@ -738,50 +910,60 @@ export default function MitoXPage() {
                 <h3 className="text-white font-bold mb-2">
                   {title}
                 </h3>
+
                 <p className="text-white/55 text-sm leading-relaxed">
                   {text}
                 </p>
               </div>
             ))}
+
           </div>
         </div>
       </section>
 
-      {/* RELATED */}
+      {/* =====================================================
+          RELATED RESEARCH
+      ===================================================== */}
+
       <section className="px-6 md:px-10 pb-14">
         <div className="max-w-7xl mx-auto">
+
           <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-            Frequently Researched Together
+            Related Research
           </p>
 
           <h2 className="text-3xl font-black text-white mb-6">
-            Pair With Related Research Compounds
+            Frequently Researched Together
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+
             {[
               {
                 name: "NAD+",
+                href: "/products/nad",
                 image: "/images/nadblue.png",
-                path: "/products/nad",
-                text: "Research involving cellular redox and coenzyme pathways.",
+                text:
+                  "Research involving cellular redox reactions, coenzyme activity, and metabolic pathways.",
               },
               {
                 name: "MOTS-c",
+                href: "/products/motsc",
                 image: "/images/motscblue.png",
-                path: "/products/motsc",
-                text: "Research involving mitochondrial-derived signaling.",
+                text:
+                  "Studied in laboratory models involving mitochondrial-derived signaling and metabolic regulation.",
               },
               {
                 name: "5-Amino-1MQ",
+                href: "/products/5amino1mq",
                 image: "/images/5amino1mqblue.png",
-                path: "/products/5amino1mq",
-                text: "Research involving NNMT-associated pathways.",
+                text:
+                  "Investigated in research involving NNMT-associated biochemical pathways.",
               },
             ].map((item) => (
               <a
                 key={item.name}
-                href={item.path}
+                href={item.href}
                 className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/40 transition-all"
               >
                 <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
@@ -805,19 +987,25 @@ export default function MitoXPage() {
                 </span>
               </a>
             ))}
+
           </div>
         </div>
       </section>
 
-      {/* DISCLAIMERS */}
+      {/* =====================================================
+          DISCLAIMERS
+      ===================================================== */}
+
       {[
         {
           title: "FDA Disclaimer",
-          text: "These statements have not been evaluated by the U.S. Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only and are not for human or veterinary consumption.",
+          text:
+            "These statements have not been evaluated by the U.S. Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only and are not for human or veterinary consumption.",
         },
         {
           title: "Customer Acknowledgment",
-          text: "By purchasing this product, the customer acknowledges that this material is intended solely for lawful laboratory research purposes and will not be used for human consumption, veterinary use, medical use, diagnosis, treatment, cure, or prevention of disease. Apexx Biolabs does not provide dosing instructions, treatment recommendations, medical advice, or guidance regarding human use of any product.",
+          text:
+            "By purchasing this product, the customer acknowledges that this material is intended solely for lawful laboratory research purposes and will not be used for human consumption, veterinary use, medical use, diagnosis, treatment, cure, or prevention of disease. Apexx Biolabs does not provide dosing instructions, treatment recommendations, medical advice, or guidance regarding human use of any product.",
         },
       ].map((section) => (
         <section
@@ -828,12 +1016,14 @@ export default function MitoXPage() {
             <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-xs mb-3">
               {section.title}
             </h3>
+
             <p className="text-white/55 text-sm leading-relaxed">
               {section.text}
             </p>
           </div>
         </section>
       ))}
+
     </main>
   );
 }

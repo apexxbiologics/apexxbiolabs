@@ -730,11 +730,6 @@ export default function MitoXPage() {
 
               </div>
 
-              <p className="text-white/40 text-xs mt-4">
-                Report AX-2026-3564-TF8R.
-                Certificate sample designation: Nexus
-                (NAD+/MOTS-c/5-Amino-1MQ).
-              </p>
             </div>
 
             <div className="md:text-right">

@@ -171,14 +171,24 @@ export default function COAsPage() {
       content: "11.36 mg",
       coa: "/images/coas/selank-10mg-brown-green-coa.pdf",
     },
-    {
-      name: "Semax 10mg",
-      batch: "SEMX1005182026-10",
-      status: "Verified",
-      purity: "99.33%",
-      content: "11.71 mg",
-      coa: "/images/coas/semax-10mg-coa.pdf",
-    },
+
+{
+  name: "Semax 10mg",
+  batch: "T-SEM-0091",
+  status: "Verified",
+  purity: "99.7%",
+  content: "10.49 mg",
+  coa: "/images/coas/10-7-semax-10mg-axiom-coa.pdf",
+},
+{
+  name: "Semax 10mg",
+  batch: "SEMX1005182026-10",
+  status: "Verified",
+  purity: "99.33%",
+  content: "11.71 mg",
+  coa: "/images/coas/semax-10mg-coa.pdf",
+},
+
 {
   name: "MOTS-c 10mg",
   batch: "MSC102609-RED",

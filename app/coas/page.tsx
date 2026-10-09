@@ -46,11 +46,15 @@ export default function COAsPage() {
   content: "38.46 mg",
   coa: "/images/coas/apx2-30mg-coa.pdf",
 },
-    {
-      name: "MITO-X 120mg",
-      batch: "Pending",
-      status: "Awaiting Testing",
-    },
+
+{
+  name: "MITO-X 120mg",
+  batch: "T-NEX-0099",
+  status: "Verified",
+  purity: "99.83%",
+  content: "124.67 mg",
+  coa: "/images/coas/10-7-mitox-120mg-axiom-coa.pdf",
+},
     {
       name: "NEURO-X 48mg",
       batch: "Pending",

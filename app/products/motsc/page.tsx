@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -10,6 +11,8 @@ import {
 } from "lucide-react";
 
 import FavoriteButton from "@/components/FavoriteButton";
+
+type MOTSCSize = "10mg" | "20mg";
 
 type QuantityDiscountTier = {
   id: string;
@@ -28,11 +31,80 @@ type FlashSale = {
   active: boolean;
 };
 
-export default function MOTSCPage() {
-  const [added, setAdded] = useState(false);
+type DatabaseProduct = {
+  id: string | number;
+  slug?: string;
+  name?: string;
+  price?: number | string;
+  inventory?: number | string;
+};
 
-  const [selectedQuantity, setSelectedQuantity] =
-    useState(1);
+const latestCoaPath =
+  "/images/coas/mots-c-10mg-msc102609-red-09-04-2026.pdf";
+
+const previousCoaPath =
+  "/images/coas/motsccoa.pdf";
+
+const oldestCoaPath =
+  "/images/coas/6-26-motsc-coa.pdf";
+
+const productOptions: {
+  size: MOTSCSize;
+  price: number;
+  image: string;
+  id: string;
+}[] = [
+  {
+    size: "10mg",
+    price: 45,
+    image: "/images/motsc10blue.png",
+    id: "motsc",
+  },
+  {
+    size: "20mg",
+    price: 60,
+    image: "/images/motsc20blue.png",
+    id: "motsc-20mg",
+  },
+];
+
+function findMOTSCProduct(
+  products: DatabaseProduct[],
+  size: MOTSCSize
+) {
+  return products.find((item) => {
+    const slug = String(item.slug || "").toLowerCase();
+    const name = String(item.name || "").toLowerCase();
+    const id = String(item.id || "").toLowerCase();
+
+    if (size === "20mg") {
+      return (
+        slug === "motsc-20mg" ||
+        slug === "mots-c-20mg" ||
+        id === "motsc-20mg" ||
+        (name.includes("mots") && name.includes("20mg"))
+      );
+    }
+
+    return (
+      slug === "motsc" ||
+      slug === "mots-c" ||
+      slug === "motsc-10mg" ||
+      slug === "mots-c-10mg" ||
+      id === "motsc" ||
+      id === "mots-c" ||
+      id === "motsc-10mg" ||
+      (name.includes("mots") && name.includes("10mg"))
+    );
+  });
+}
+
+export default function MOTSCPage() {
+  const [selectedSize, setSelectedSize] =
+    useState<MOTSCSize>("10mg");
+
+  const [added, setAdded] = useState(false);
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
 
   const [inventory, setInventory] =
     useState<number | null>(null);
@@ -51,24 +123,21 @@ export default function MOTSCPage() {
   const [quantityDiscounts, setQuantityDiscounts] =
     useState<QuantityDiscountTier[]>([]);
 
+  const [productLoaded, setProductLoaded] = useState(false);
+
+  const selectedOption =
+    productOptions.find((item) => item.size === selectedSize) ||
+    productOptions[0];
+
   const product = {
-    id: "motsc",
-    name: "MOTS-C",
-    image: "/images/motscblue.png",
+    id: selectedOption.id,
+    name: `MOTS-C ${selectedSize}`,
+    image: selectedOption.image,
     path: "/products/motsc",
   };
 
-const latestCoaPath =
-  "/images/coas/mots-c-10mg-msc102609-red-09-04-2026.pdf";
-
-const previousCoaPath =
-  "/images/coas/motsccoa.pdf";
-
-const oldestCoaPath =
-  "/images/coas/6-26-motsc-coa.pdf";
-
   const isOutOfStock =
-    inventory !== null && inventory <= 0;
+    productLoaded && (inventory === null || inventory <= 0);
 
   const isLimitedStock =
     inventory !== null &&
@@ -87,7 +156,7 @@ const oldestCoaPath =
     flashSalePrice < price;
 
   const effectiveUnitPrice =
-    isFlashSaleActive
+    isFlashSaleActive && flashSalePrice !== null
       ? flashSalePrice
       : price;
 
@@ -100,6 +169,8 @@ const oldestCoaPath =
   };
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchProductData = async () => {
       try {
         const [productResponse, saleResponse] =
@@ -107,265 +178,204 @@ const oldestCoaPath =
             fetch("/api/products", {
               cache: "no-store",
             }),
-
             fetch("/api/flash-sales", {
               cache: "no-store",
             }),
           ]);
 
-        const productData =
-          await productResponse.json();
+        const productData = await productResponse.json();
 
-        const saleData =
-          await saleResponse.json().catch(
-            () => ({
-              success: false,
-              sales: [],
-            })
-          );
+        const saleData = await saleResponse
+          .json()
+          .catch(() => ({
+            success: false,
+            sales: [],
+          }));
 
-        if (!productData.success) return;
+        if (cancelled) return;
 
-        const motsc =
-          productData.products.find(
-            (item: any) =>
-              item.slug === "motsc" ||
-              item.slug === "mots-c" ||
-              item.slug === "motsc-10mg" ||
-              item.slug === "mots-c-10mg" ||
-              item.id === "motsc" ||
-              item.id === "mots-c" ||
-              item.id === "motsc-10mg" ||
-              item.id === "MOTS-C-10mg" ||
-              item.name
-                ?.toLowerCase()
-                .includes("mots")
-          );
+        const products: DatabaseProduct[] =
+          productData.success &&
+          Array.isArray(productData.products)
+            ? productData.products
+            : [];
+
+        const motsc = findMOTSCProduct(
+          products,
+          selectedSize
+        );
 
         if (motsc) {
-          const dbId =
-            String(motsc.id);
+          const dbId = String(motsc.id);
 
-          const regularPrice =
-            Number(
-              motsc.price ?? 45
-            );
-
-          setDatabaseProductId(dbId);
-
-          setInventory(
-            Number(
-              motsc.inventory ?? 0
-            )
+          const regularPrice = Number(
+            motsc.price ?? (selectedSize === "20mg" ? 60 : 45)
           );
 
+          setDatabaseProductId(dbId);
+          setInventory(Number(motsc.inventory ?? 0));
           setPrice(regularPrice);
 
           const now = Date.now();
 
-          const matchingSale =
-            Array.isArray(saleData.sales)
-              ? saleData.sales.find(
-                  (sale: FlashSale) => {
-                    const starts =
-                      new Date(
-                        sale.starts_at
-                      ).getTime();
+          const matchingSale = Array.isArray(saleData.sales)
+            ? saleData.sales.find((sale: FlashSale) => {
+                const starts = new Date(
+                  sale.starts_at
+                ).getTime();
 
-                    const ends =
-                      new Date(
-                        sale.ends_at
-                      ).getTime();
+                const ends = new Date(
+                  sale.ends_at
+                ).getTime();
 
-                    const salePrice =
-                      Number(
-                        sale.sale_price
-                      );
+                const salePrice = Number(sale.sale_price);
 
-                    return (
-                      sale.active === true &&
-                      String(
-                        sale.product_id
-                      ) === dbId &&
-                      Number.isFinite(
-                        starts
-                      ) &&
-                      Number.isFinite(
-                        ends
-                      ) &&
-                      starts <= now &&
-                      ends > now &&
-                      Number.isFinite(
-                        salePrice
-                      ) &&
-                      salePrice > 0 &&
-                      salePrice < regularPrice
-                    );
-                  }
-                )
-              : null;
+                return (
+                  sale.active === true &&
+                  String(sale.product_id) === dbId &&
+                  Number.isFinite(starts) &&
+                  Number.isFinite(ends) &&
+                  starts <= now &&
+                  ends > now &&
+                  Number.isFinite(salePrice) &&
+                  salePrice > 0 &&
+                  salePrice < regularPrice
+                );
+              })
+            : null;
 
-          setFlashSale(
-            matchingSale || null
-          );
+          setFlashSale(matchingSale || null);
         } else {
           setDatabaseProductId(null);
-          setInventory(null);
-          setPrice(45);
+          setInventory(0);
+          setPrice(selectedSize === "20mg" ? 60 : 45);
           setFlashSale(null);
         }
+
+        setProductLoaded(true);
       } catch (error) {
+        if (cancelled) return;
+
         console.error(
           "Failed to fetch MOTS-C data:",
           error
         );
 
         setDatabaseProductId(null);
-        setInventory(null);
-        setPrice(45);
+        setInventory(0);
+        setPrice(selectedSize === "20mg" ? 60 : 45);
         setFlashSale(null);
+        setProductLoaded(true);
       }
     };
 
-    const fetchQuantityDiscounts =
-      async () => {
-        try {
-          const response = await fetch(
-            "/api/quantity-discounts",
-            {
-              cache: "no-store",
+    fetchProductData();
+
+    const flashSaleRefresh = window.setInterval(
+      fetchProductData,
+      30_000
+    );
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(flashSaleRefresh);
+    };
+  }, [selectedSize]);
+
+  useEffect(() => {
+    const fetchQuantityDiscounts = async () => {
+      try {
+        const response = await fetch(
+          "/api/quantity-discounts",
+          { cache: "no-store" }
+        );
+
+        const data = await response.json();
+
+        if (!data.success) return;
+
+        const tiers = (data.tiers || [])
+          .map((tier: any) => ({
+            id: String(tier.id),
+            name: String(tier.name || ""),
+            quantity: Number(tier.quantity || 0),
+            discount_percent: Number(
+              tier.discount_percent || 0
+            ),
+            sort_order: Number(tier.sort_order || 0),
+          }))
+          .filter(
+            (tier: QuantityDiscountTier) =>
+              tier.quantity > 1 &&
+              tier.discount_percent >= 0
+          )
+          .sort(
+            (
+              a: QuantityDiscountTier,
+              b: QuantityDiscountTier
+            ) => {
+              if (a.sort_order !== b.sort_order) {
+                return a.sort_order - b.sort_order;
+              }
+
+              return a.quantity - b.quantity;
             }
           );
 
-          const data =
-            await response.json();
-
-          if (!data.success) return;
-
-          const tiers = (
-            data.tiers || []
-          )
-            .map((tier: any) => ({
-              id: String(tier.id),
-
-              name: String(
-                tier.name || ""
-              ),
-
-              quantity: Number(
-                tier.quantity || 0
-              ),
-
-              discount_percent: Number(
-                tier.discount_percent || 0
-              ),
-
-              sort_order: Number(
-                tier.sort_order || 0
-              ),
-            }))
-            .filter(
-              (
-                tier: QuantityDiscountTier
-              ) =>
-                tier.quantity > 1 &&
-                tier.discount_percent >= 0
-            )
-            .sort(
-              (
-                a: QuantityDiscountTier,
-                b: QuantityDiscountTier
-              ) => {
-                if (
-                  a.sort_order !==
-                  b.sort_order
-                ) {
-                  return (
-                    a.sort_order -
-                    b.sort_order
-                  );
-                }
-
-                return (
-                  a.quantity -
-                  b.quantity
-                );
-              }
-            );
-
-          setQuantityDiscounts(tiers);
-        } catch (error) {
-          console.error(
-            "Failed to fetch quantity discounts:",
-            error
-          );
-        }
-      };
-
-    fetchProductData();
-    fetchQuantityDiscounts();
-
-    const flashSaleRefresh =
-      window.setInterval(
-        fetchProductData,
-        30_000
-      );
-
-    return () => {
-      window.clearInterval(
-        flashSaleRefresh
-      );
+        setQuantityDiscounts(tiers);
+      } catch (error) {
+        console.error(
+          "Failed to fetch quantity discounts:",
+          error
+        );
+      }
     };
+
+    fetchQuantityDiscounts();
   }, []);
 
-  const getDiscountTier = (
-    quantity: number
-  ) => {
+  const getDiscountTier = (quantity: number) => {
     return (
       [...quantityDiscounts]
-        .filter(
-          (tier) =>
-            quantity >= tier.quantity
-        )
-        .sort(
-          (a, b) =>
-            b.quantity - a.quantity
-        )[0] || null
+        .filter((tier) => quantity >= tier.quantity)
+        .sort((a, b) => b.quantity - a.quantity)[0] ||
+      null
     );
   };
 
-  const selectedTier =
-    getDiscountTier(
-      selectedQuantity
-    );
+  const selectedTier = getDiscountTier(selectedQuantity);
 
-  const selectedDiscountPercent =
-    isFlashSaleActive
-      ? 0
-      : selectedTier?.discount_percent ||
-        0;
+  const selectedDiscountPercent = isFlashSaleActive
+    ? 0
+    : selectedTier?.discount_percent || 0;
 
   const discountedUnitPrice =
     effectiveUnitPrice *
-    (1 -
-      selectedDiscountPercent /
-        100);
+    (1 - selectedDiscountPercent / 100);
 
   const selectedTotal =
-    discountedUnitPrice *
-    selectedQuantity;
+    discountedUnitPrice * selectedQuantity;
 
-  const regularTotal =
-    price * selectedQuantity;
+  const regularTotal = price * selectedQuantity;
 
-  const formatMoney = (
-    amount: number
-  ) =>
+  const formatMoney = (amount: number) =>
     Number(amount).toFixed(2);
 
-  const selectQuantity = (
-    quantity: number
-  ) => {
+  const selectSize = (size: MOTSCSize) => {
+    if (size === selectedSize) return;
+
+    setSelectedSize(size);
+    setSelectedQuantity(1);
+    setAdded(false);
+    setInventory(null);
+    setDatabaseProductId(null);
+    setFlashSale(null);
+    setPrice(size === "20mg" ? 60 : 45);
+    setProductLoaded(false);
+    setShowPreviousCoa(false);
+  };
+
+  const selectQuantity = (quantity: number) => {
     if (
       inventory !== null &&
       quantity > inventory
@@ -378,30 +388,28 @@ const oldestCoaPath =
   };
 
   const addToCart = () => {
-    if (isOutOfStock) return;
+    if (
+      !productLoaded ||
+      !databaseProductId ||
+      isOutOfStock
+    ) {
+      return;
+    }
 
     const existingCart = JSON.parse(
-      localStorage.getItem("cart") ||
-        "[]"
+      localStorage.getItem("cart") || "[]"
     );
 
-    const existingProduct =
-      existingCart.find(
-        (item: any) =>
-          item.id === product.id
-      );
+    const existingProduct = existingCart.find(
+      (item: any) => item.id === product.id
+    );
 
-    const existingQuantity =
-      existingProduct
-        ? Number(
-            existingProduct.quantity ||
-              0
-          )
-        : 0;
+    const existingQuantity = existingProduct
+      ? Number(existingProduct.quantity || 0)
+      : 0;
 
     const newQuantity =
-      existingQuantity +
-      selectedQuantity;
+      existingQuantity + selectedQuantity;
 
     if (
       inventory !== null &&
@@ -409,107 +417,61 @@ const oldestCoaPath =
     ) {
       alert(
         `Only ${inventory} vial${
-          inventory === 1
-            ? ""
-            : "s"
-        } of ${
-          product.name
-        } are currently available.`
+          inventory === 1 ? "" : "s"
+        } of ${product.name} are currently available.`
       );
 
       return;
     }
 
-    const newTier =
-      isFlashSaleActive
-        ? null
-        : getDiscountTier(
-            newQuantity
-          );
+    const newTier = isFlashSaleActive
+      ? null
+      : getDiscountTier(newQuantity);
 
-    const newDiscountPercent =
-      isFlashSaleActive
-        ? 0
-        : newTier?.discount_percent ||
-          0;
+    const newDiscountPercent = isFlashSaleActive
+      ? 0
+      : newTier?.discount_percent || 0;
 
     const newDiscountedUnitPrice =
       effectiveUnitPrice *
-      (1 -
-        newDiscountPercent /
-          100);
+      (1 - newDiscountPercent / 100);
 
     const cartProduct = {
       id: product.id,
-
       name: product.name,
-
-      price:
-        newDiscountedUnitPrice,
-
+      price: newDiscountedUnitPrice,
       basePrice: price,
-
-      quantity:
-        newQuantity,
-
-      image:
-        product.image,
-
-      path:
-        product.path,
-
-      quantityDiscountPercent:
-        newDiscountPercent,
-
-      quantityDiscountTierId:
-        newTier?.id || null,
-
+      quantity: newQuantity,
+      image: product.image,
+      path: product.path,
+      quantityDiscountPercent: newDiscountPercent,
+      quantityDiscountTierId: newTier?.id || null,
       quantityDiscountTierQuantity:
         newTier?.quantity || null,
-
-      flashSaleApplied:
-        isFlashSaleActive,
-
-      flashSaleId:
-        isFlashSaleActive
-          ? flashSale?.id || null
-          : null,
-
-      flashSalePrice:
-        isFlashSaleActive
-          ? effectiveUnitPrice
-          : null,
-
-      databaseProductId:
-        databaseProductId,
+      flashSaleApplied: isFlashSaleActive,
+      flashSaleId: isFlashSaleActive
+        ? flashSale?.id || null
+        : null,
+      flashSalePrice: isFlashSaleActive
+        ? effectiveUnitPrice
+        : null,
+      databaseProductId,
     };
 
-    const updatedCart =
-      existingProduct
-        ? existingCart.map(
-            (item: any) =>
-              item.id ===
-              product.id
-                ? {
-                    ...item,
-                    ...cartProduct,
-                  }
-                : item
-          )
-        : [
-            ...existingCart,
-            cartProduct,
-          ];
+    const updatedCart = existingProduct
+      ? existingCart.map((item: any) =>
+          item.id === product.id
+            ? { ...item, ...cartProduct }
+            : item
+        )
+      : [...existingCart, cartProduct];
 
     localStorage.setItem(
       "cart",
       JSON.stringify(updatedCart)
     );
 
-    window.dispatchEvent(
-      new Event("cartUpdated")
-    );
-
+    window.dispatchEvent(new Event("cartUpdated"));
     setAdded(true);
   };
 
@@ -521,23 +483,14 @@ const oldestCoaPath =
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-start">
-
             {/* IMAGE */}
             <div className="flex items-center justify-center">
               <div className="relative w-full max-w-[520px] aspect-square rounded-[42px] overflow-hidden border border-blue-400/10 bg-white/[0.03] shadow-[0_0_30px_rgba(96,165,250,0.15)]">
-                <FavoriteButton
-                  product={
-                    favoriteProduct
-                  }
-                />
+                <FavoriteButton product={favoriteProduct} />
 
                 <img
-                  src={
-                    product.image
-                  }
-                  alt={
-                    product.name
-                  }
+                  src={product.image}
+                  alt={product.name}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -551,67 +504,45 @@ const oldestCoaPath =
 
               <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-3">
                 <h1 className="text-4xl md:text-5xl font-black text-white">
-                  {product.name}
+                  MOTS-C
                 </h1>
 
                 <div className="sm:text-right">
                   <p className="text-3xl md:text-4xl font-black text-white">
-                    $
-                    {formatMoney(
-                      selectedTotal
-                    )}
+                    ${formatMoney(selectedTotal)}
                   </p>
 
                   {(isFlashSaleActive ||
-                    selectedDiscountPercent >
-                      0) && (
+                    selectedDiscountPercent > 0) && (
                     <p className="text-white/35 text-sm line-through">
-                      $
-                      {formatMoney(
-                        regularTotal
-                      )}
+                      ${formatMoney(regularTotal)}
                     </p>
                   )}
                 </div>
               </div>
 
               <p className="text-white/60 leading-relaxed mb-5">
-                High-purity MOTS-C
-                research peptide
-                studied in laboratory
-                models involving
-                mitochondrial
-                signaling, cellular
-                energy regulation,
-                metabolic pathway
-                models, and adaptive
-                stress-response
-                mechanisms.
+                MOTS-C research peptide studied in laboratory
+                models involving mitochondrial signaling,
+                cellular energy regulation, metabolic pathway
+                models, and adaptive stress-response mechanisms.
               </p>
 
               <div className="flex flex-wrap items-center gap-3 mb-5">
                 <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold uppercase tracking-widest">
-                  10mg
+                  {selectedSize}
                 </span>
 
                 {isFlashSaleActive && (
                   <span className="rounded-full border border-blue-300/25 bg-blue-400/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#A5D8FF]">
                     Flash Sale · $
-                    {formatMoney(
-                      effectiveUnitPrice
-                    )}{" "}
-                    / vial
+                    {formatMoney(effectiveUnitPrice)} / vial
                   </span>
                 )}
 
-                {selectedDiscountPercent >
-                  0 && (
+                {selectedDiscountPercent > 0 && (
                   <span className="rounded-full border border-green-400/20 bg-green-500/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-green-200">
-                    Save{" "}
-                    {
-                      selectedDiscountPercent
-                    }
-                    %
+                    Save {selectedDiscountPercent}%
                   </span>
                 )}
 
@@ -630,6 +561,66 @@ const oldestCoaPath =
 
               <div className="h-px bg-white/10 mb-5" />
 
+
+{/* =========================================================
+    PRODUCT SIZE SELECTOR — MATCH APX-3
+========================================================= */}
+
+<div className="mb-5">
+  <p className="uppercase tracking-[0.18em] text-white/40 text-xs mb-3">
+    Select Size
+  </p>
+
+  <div className="grid grid-cols-2 gap-3">
+    {productOptions.map((option) => {
+      const selected = selectedSize === option.size;
+
+      return (
+        <button
+          key={option.size}
+          type="button"
+          onClick={() => selectSize(option.size)}
+          aria-pressed={selected}
+          className={`relative min-h-[84px] rounded-[17px] border
+            px-3 py-3 transition-all
+            flex flex-col items-center justify-center
+            ${
+              selected
+                ? "border-blue-300 bg-blue-400/10"
+                : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+            }`}
+        >
+          {/* SELECTED CHECKMARK */}
+          {selected && (
+            <span className="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-blue-300 text-[#081526]">
+              <Check size={12} strokeWidth={3} />
+            </span>
+          )}
+
+          {/* SIZE */}
+          <p
+            className={`text-base font-black ${
+              selected ? "text-white" : "text-white/60"
+            }`}
+          >
+            {option.size}
+          </p>
+
+          {/* PRICE */}
+          <p
+            className={`text-sm mt-1 ${
+              selected ? "text-white/45" : "text-white/35"
+            }`}
+          >
+            ${formatMoney(option.price)}
+          </p>
+        </button>
+      );
+    })}
+  </div>
+</div>
+
+
               {/* QUANTITY */}
               <div className="mb-5">
                 <div className="flex items-center justify-between gap-4 mb-3">
@@ -645,14 +636,11 @@ const oldestCoaPath =
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-
-                  {/* 1 VIAL */}
+                  {/* ONE VIAL */}
                   <button
                     type="button"
-                    disabled={isOutOfStock}
-                    onClick={() =>
-                      selectQuantity(1)
-                    }
+                    disabled={!productLoaded || isOutOfStock}
+                    onClick={() => selectQuantity(1)}
                     className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
                       selectedQuantity === 1
                         ? "border-blue-300 bg-blue-400/10"
@@ -683,26 +671,21 @@ const oldestCoaPath =
                     )}
                   </button>
 
-                  {/* ADMIN QUANTITY TIERS */}
+                  {/* QUANTITY DISCOUNT TIERS */}
                   {quantityDiscounts.map((tier) => {
                     const tierUnavailable =
-                      inventory !== null &&
-                      inventory <
-                        tier.quantity;
+                      !productLoaded ||
+                      inventory === null ||
+                      inventory < tier.quantity;
 
-                    const tierTotal =
-                      isFlashSaleActive
-                        ? effectiveUnitPrice *
-                          tier.quantity
-                        : price *
-                          tier.quantity *
-                          (1 -
-                            tier.discount_percent /
-                              100);
+                    const tierTotal = isFlashSaleActive
+                      ? effectiveUnitPrice * tier.quantity
+                      : price *
+                        tier.quantity *
+                        (1 - tier.discount_percent / 100);
 
                     const selected =
-                      selectedQuantity ===
-                      tier.quantity;
+                      selectedQuantity === tier.quantity;
 
                     return (
                       <button
@@ -710,9 +693,7 @@ const oldestCoaPath =
                         type="button"
                         disabled={tierUnavailable}
                         onClick={() =>
-                          selectQuantity(
-                            tier.quantity
-                          )
+                          selectQuantity(tier.quantity)
                         }
                         className={`relative min-h-[92px] rounded-[18px] border px-2 py-3 transition-all flex flex-col items-center justify-center ${
                           selected
@@ -755,14 +736,20 @@ const oldestCoaPath =
               {/* FREE GIFT */}
               <div className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-3 mb-5">
                 <p className="text-center text-blue-100 text-xs font-semibold uppercase tracking-wider">
-                  Complimentary gift
-                  with any 8 vials
+                  Complimentary gift with any 8 vials
                 </p>
               </div>
 
               {/* ACTION BUTTONS */}
               <div className="grid grid-cols-2 gap-3">
-                {isOutOfStock ? (
+                {!productLoaded ? (
+                  <button
+                    disabled
+                    className="col-span-2 bg-white/[0.06] text-white/40 rounded-full py-4 uppercase tracking-widest text-xs font-semibold"
+                  >
+                    Loading Product
+                  </button>
+                ) : isOutOfStock ? (
                   <button
                     disabled
                     className="col-span-2 bg-white/[0.06] text-white/30 cursor-not-allowed rounded-full py-4 uppercase tracking-widest text-xs font-semibold"
@@ -774,15 +761,12 @@ const oldestCoaPath =
                     onClick={addToCart}
                     className="col-span-2 bg-white text-[#081526] hover:bg-blue-100 rounded-full py-4 uppercase tracking-widest text-xs font-bold transition-all flex items-center justify-center gap-2"
                   >
-                    <ShoppingCart
-                      size={18}
-                    />
+                    <ShoppingCart size={18} />
 
                     {added
                       ? "Added To Cart"
                       : `Add ${selectedQuantity} ${
-                          selectedQuantity ===
-                          1
+                          selectedQuantity === 1
                             ? "Vial"
                             : "Vials"
                         } To Cart`}
@@ -804,139 +788,71 @@ const oldestCoaPath =
                 </a>
               </div>
 
-              <a
-                href={latestCoaPath}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
-              >
-                View Certificate of
-                Analysis →
-              </a>
+              {/* SELECTED SIZE COA */}
+              {selectedSize === "10mg" ? (
+                <a
+                  href={latestCoaPath}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
+                >
+                  View Certificate of Analysis →
+                </a>
+              ) : (
+                <p className="text-center mt-4 text-xs uppercase tracking-widest text-white/40">
+                  Certificate of Analysis not yet available
+                </p>
+              )}
             </div>
           </div>
         </div>
       </section>
 
-{/* COA SUMMARY */}
-<section className="px-6 md:px-10 pb-12">
-  <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
-
-{/* LATEST COA */}
-<div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
-  <div>
-    <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-      Freedom Diagnostics
-    </p>
-
-    <h3 className="text-2xl font-black text-white mb-4">
-      Latest Certificate of Analysis
-    </h3>
-
-    <div className="flex flex-wrap gap-2">
-      <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
-        ✓ Identity Confirmed
-      </span>
-
-      <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-        99.62% Purity
-      </span>
-
-      <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-        13.04mg Net Content
-      </span>
-
-      <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-        Lot: MSC102609-RED
-      </span>
-
-      <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
-        No Fentanyl Detected
-      </span>
-
-      <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
-        Endotoxin: Pass
-      </span>
-    </div>
-  </div>
-
-  <div className="md:text-right">
-    <p className="text-4xl font-black text-[#A5D8FF]">
-      99.62%
-    </p>
-
-    <p className="uppercase tracking-widest text-white/40 text-xs">
-      Purity
-    </p>
-
-    <a
-      href={latestCoaPath}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
-    >
-      View Full COA
-    </a>
-  </div>
-</div>
-
-    {/* COA HISTORY */}
-    <div className="mt-6 border-t border-white/10 pt-5">
-
-      <button
-        type="button"
-        onClick={() =>
-          setShowPreviousCoa((prev) => !prev)
-        }
-        className="w-full rounded-full border border-white/10 bg-white/[0.04] py-3 text-xs uppercase tracking-widest text-white/80 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
-      >
-        {showPreviousCoa
-          ? "Hide Previous COAs"
-          : "View Previous COAs"}
-      </button>
-
-      {showPreviousCoa && (
-        <div className="mt-5 space-y-4">
-
-          {/* PREVIOUS COA — BLUE CAP */}
-          <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-
+      {/* COA SUMMARY */}
+      {selectedSize === "10mg" ? (
+        <section className="px-6 md:px-10 pb-12">
+          <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+            {/* LATEST COA */}
             <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
-
               <div>
                 <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                  Previous Certificate of Analysis
+                  Freedom Diagnostics
                 </p>
 
-                <h3 className="text-xl font-black text-white mb-4">
-                  Blue Cap-2
+                <h3 className="text-2xl font-black text-white mb-4">
+                  Latest Certificate of Analysis
                 </h3>
 
                 <div className="flex flex-wrap gap-2">
-
                   <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
                     ✓ Identity Confirmed
                   </span>
 
                   <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                    99.75% Purity
+                    99.62% Purity
                   </span>
 
                   <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                    12.42mg Content
+                    13.04mg Net Content
                   </span>
 
                   <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                    Lot: Blue Cap-2
+                    Lot: MSC102609-RED
                   </span>
 
+                  <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+                    No Fentanyl Detected
+                  </span>
+
+                  <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+                    Endotoxin: Pass
+                  </span>
                 </div>
               </div>
 
               <div className="md:text-right">
-
-                <p className="text-3xl font-black text-[#A5D8FF]">
-                  99.75%
+                <p className="text-4xl font-black text-[#A5D8FF]">
+                  99.62%
                 </p>
 
                 <p className="uppercase tracking-widest text-white/40 text-xs">
@@ -944,85 +860,158 @@ const oldestCoaPath =
                 </p>
 
                 <a
-                  href={previousCoaPath}
+                  href={latestCoaPath}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
                 >
-                  View COA
+                  View Full COA
                 </a>
-
               </div>
-
             </div>
-          </div>
 
-          {/* ORIGINAL COA — LIGHT PURPLE CAP */}
-          <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+            {/* COA HISTORY */}
+            <div className="mt-6 border-t border-white/10 pt-5">
+              <button
+                type="button"
+                onClick={() =>
+                  setShowPreviousCoa((prev) => !prev)
+                }
+                className="w-full rounded-full border border-white/10 bg-white/[0.04] py-3 text-xs uppercase tracking-widest text-white/80 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+              >
+                {showPreviousCoa
+                  ? "Hide Previous COAs"
+                  : "View Previous COAs"}
+              </button>
 
-            <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+              {showPreviousCoa && (
+                <div className="mt-5 space-y-4">
+                  {/* PREVIOUS COA */}
+                  <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+                    <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+                      <div>
+                        <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+                          Previous Certificate of Analysis
+                        </p>
 
-              <div>
-                <p className="uppercase tracking-[0.3em] text-white/40 text-xs mb-2">
-                  Original Certificate of Analysis
-                </p>
+                        <h3 className="text-xl font-black text-white mb-4">
+                          Blue Cap-2
+                        </h3>
 
-                <h3 className="text-xl font-black text-white mb-4">
-                  Light Purple Cap-1
-                </h3>
+                        <div className="flex flex-wrap gap-2">
+                          <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+                            ✓ Identity Confirmed
+                          </span>
 
-                <div className="flex flex-wrap gap-2">
+                          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                            99.75% Purity
+                          </span>
 
-                  <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
-                    ✓ Identity Confirmed
-                  </span>
+                          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                            12.42mg Content
+                          </span>
 
-                  <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                    99.48% Purity
-                  </span>
+                          <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                            Lot: Blue Cap-2
+                          </span>
+                        </div>
+                      </div>
 
-                  <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                    13.94mg Content
-                  </span>
+                      <div className="md:text-right">
+                        <p className="text-3xl font-black text-[#A5D8FF]">
+                          99.75%
+                        </p>
 
-                  <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                    Lot: Light Purple Cap-1
-                  </span>
+                        <p className="uppercase tracking-widest text-white/40 text-xs">
+                          Purity
+                        </p>
 
+                        <a
+                          href={previousCoaPath}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
+                        >
+                          View COA
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ORIGINAL COA */}
+                  <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+                    <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+                      <div>
+                        <p className="uppercase tracking-[0.3em] text-white/40 text-xs mb-2">
+                          Original Certificate of Analysis
+                        </p>
+
+                        <h3 className="text-xl font-black text-white mb-4">
+                          Light Purple Cap-1
+                        </h3>
+
+                        <div className="flex flex-wrap gap-2">
+                          <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+                            ✓ Identity Confirmed
+                          </span>
+
+                          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                            99.48% Purity
+                          </span>
+
+                          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                            13.94mg Content
+                          </span>
+
+                          <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                            Lot: Light Purple Cap-1
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="md:text-right">
+                        <p className="text-3xl font-black text-[#A5D8FF]">
+                          99.48%
+                        </p>
+
+                        <p className="uppercase tracking-widest text-white/40 text-xs">
+                          Purity
+                        </p>
+
+                        <a
+                          href={oldestCoaPath}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
+                        >
+                          View COA
+                        </a>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-              <div className="md:text-right">
-
-                <p className="text-3xl font-black text-[#A5D8FF]">
-                  99.48%
-                </p>
-
-                <p className="uppercase tracking-widest text-white/40 text-xs">
-                  Purity
-                </p>
-
-                <a
-                  href={oldestCoaPath}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
-                >
-                  View COA
-                </a>
-
-              </div>
-
+              )}
             </div>
           </div>
+        </section>
+      ) : (
+        <section className="px-6 md:px-10 pb-12">
+          <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+            <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+              Quality Documentation
+            </p>
 
-        </div>
+            <h3 className="text-2xl font-black text-white mb-3">
+              MOTS-C 20mg Certificate of Analysis
+            </h3>
+
+            <p className="text-white/55 leading-relaxed">
+              Certificate of Analysis not yet available
+              for the 20mg variant.
+            </p>
+          </div>
+        </section>
       )}
-
-    </div>
-
-  </div>
-</section>
 
       {/* QUALITY */}
       <section className="px-6 md:px-10 pb-10">
@@ -1033,47 +1022,39 @@ const oldestCoaPath =
               "Research Use Only",
               "Strictly for laboratory research.",
             ],
-
             [
               ShieldCheck,
               "Third-Party Tested",
               "Independent lab verified when available.",
             ],
-
             [
               ClipboardCheck,
               "Batch Documented",
               "Documentation available for verified lots.",
             ],
-
             [
               ShieldCheck,
               "Quality Target",
               "99%+ purity target.",
             ],
-          ].map(
-            ([Icon, title, text]: any) => (
-              <div
-                key={title}
-                className="flex gap-4"
-              >
-                <Icon
-                  className="text-[#A5D8FF]"
-                  size={28}
-                />
+          ].map(([Icon, title, description]: any) => (
+            <div key={title} className="flex gap-4">
+              <Icon
+                className="text-[#A5D8FF]"
+                size={28}
+              />
 
-                <div>
-                  <h3 className="text-white uppercase tracking-widest font-bold text-xs">
-                    {title}
-                  </h3>
+              <div>
+                <h3 className="text-white uppercase tracking-widest font-bold text-xs">
+                  {title}
+                </h3>
 
-                  <p className="text-white/50 text-sm mt-1">
-                    {text}
-                  </p>
-                </div>
+                <p className="text-white/50 text-sm mt-1">
+                  {description}
+                </p>
               </div>
-            )
-          )}
+            </div>
+          ))}
         </div>
       </section>
 
@@ -1085,20 +1066,14 @@ const oldestCoaPath =
           </p>
 
           <h2 className="text-3xl font-black text-white mb-4">
-            Mitochondrial Research
-            Overview
+            Mitochondrial Research Overview
           </h2>
 
           <p className="text-white/65 leading-relaxed max-w-4xl mb-7">
-            MOTS-C is studied in
-            laboratory research
-            involving mitochondrial
-            signaling, cellular
-            energy regulation,
-            metabolic pathway
-            models, and adaptive
-            stress-response
-            mechanisms.
+            MOTS-C is studied in laboratory research involving
+            mitochondrial signaling, cellular energy regulation,
+            metabolic pathway models, and adaptive
+            stress-response mechanisms.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -1107,123 +1082,94 @@ const oldestCoaPath =
                 "Mitochondrial Signaling",
                 "Studied in models involving mitochondrial-derived peptide communication.",
               ],
-
               [
                 "Energy Regulation",
                 "Evaluated in laboratory research involving cellular energy and metabolic pathways.",
               ],
-
               [
                 "Stress Response",
                 "Research focuses on adaptive cellular stress-response and homeostasis mechanisms.",
               ],
-
               [
                 "Storage",
                 "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
               ],
-            ].map(
-              ([title, text]) => (
-                <div
-                  key={title}
-                  className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
-                >
-                  <h3 className="text-white font-bold mb-2">
-                    {title}
-                  </h3>
+            ].map(([title, description]) => (
+              <div
+                key={title}
+                className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
+              >
+                <h3 className="text-white font-bold mb-2">
+                  {title}
+                </h3>
 
-                  <p className="text-white/55 text-sm leading-relaxed">
-                    {text}
-                  </p>
-                </div>
-              )
-            )}
+                <p className="text-white/55 text-sm leading-relaxed">
+                  {description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* RELATED */}
+      {/* RELATED PRODUCTS */}
       <section className="px-6 md:px-10 pb-14">
         <div className="max-w-7xl mx-auto">
           <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-            Frequently Researched
-            Together
+            Frequently Researched Together
           </p>
 
           <h2 className="text-3xl font-black text-white mb-6">
-            Pair With Related
-            Research Compounds
+            Pair With Related Research Compounds
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {[
               {
                 name: "APX-3",
-
-                image:
-                  "/images/apx310blue.png",
-
-                path:
-                  "/products/apx3",
-
-                text:
-                  "Triple agonist research peptide studied in metabolic regulation and body composition models.",
+                image: "/images/apx310blue.png",
+                path: "/products/apx3",
+                text: "Triple agonist research peptide studied in metabolic regulation and body composition models.",
               },
-
               {
                 name: "Adamax",
-
-                image:
-                  "/images/adamaxblue.PNG",
-
-                path:
-                  "/products/adamax",
-
-                text:
-                  "Research involving metabolic regulation and performance-focused laboratory models.",
+                image: "/images/adamaxblue.PNG",
+                path: "/products/adamax",
+                text: "Research involving metabolic regulation and performance-focused laboratory models.",
               },
-
               {
                 name: "CJC/IPA",
-
-                image:
-                  "/images/cjcipablue.png",
-
-                path:
-                  "/products/cjcipa",
-
-                text:
-                  "Research involving growth hormone signaling pathways and endocrine response models.",
+                image: "/images/cjcipablue.png",
+                path: "/products/cjcipa",
+                text: "Research involving growth hormone signaling pathways and endocrine response models.",
               },
-            ].map(
-              (item) => (
-                <a
-                  key={item.name}
-                  href={item.path}
-                  className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/40 transition-all"
-                >
-                  <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
-                    />
-                  </div>
+            ].map((item) => (
+              <a
+                key={item.name}
+                href={item.path}
+                className="group rounded-[26px] border border-white/10 bg-white/[0.04] p-4 hover:border-blue-400/40 transition-all"
+              >
+                <div className="rounded-[22px] overflow-hidden mb-4 bg-[#93C5FD] h-[200px]">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform"
+                  />
+                </div>
 
-                  <h3 className="text-xl font-black text-white mb-2">
-                    {item.name}
-                  </h3>
+                <h3 className="text-xl font-black text-white mb-2">
+                  {item.name}
+                </h3>
 
-                  <p className="text-white/55 text-sm leading-relaxed">
-                    {item.text}
-                  </p>
+                <p className="text-white/55 text-sm leading-relaxed">
+                  {item.text}
+                </p>
 
-                  <span className="inline-block mt-3 text-[#A5D8FF] text-sm font-semibold">
-                    View Product →
-                  </span>
-                </a>
-              )
-            )}
+                <span className="inline-block mt-3 text-[#A5D8FF] text-sm font-semibold">
+                  View Product →
+                </span>
+              </a>
+            ))}
           </div>
         </div>
       </section>
@@ -1231,38 +1177,29 @@ const oldestCoaPath =
       {/* DISCLAIMERS */}
       {[
         {
-          title:
-            "FDA Disclaimer",
-
-          text:
-            "These statements have not been evaluated by the U.S. Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only and are not for human or veterinary consumption.",
+          title: "FDA Disclaimer",
+          text: "These statements have not been evaluated by the U.S. Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Products sold by Apexx Biolabs are intended strictly for lawful laboratory research use only and are not for human or veterinary consumption.",
         },
-
         {
-          title:
-            "Customer Acknowledgment",
-
-          text:
-            "By purchasing this product, the customer acknowledges that this material is intended solely for lawful laboratory research purposes and will not be used for human consumption, veterinary use, medical use, diagnosis, treatment, cure, or prevention of disease. Apexx Biolabs does not provide dosing instructions, treatment recommendations, medical advice, or guidance regarding human use of any product.",
+          title: "Customer Acknowledgment",
+          text: "By purchasing this product, the customer acknowledges that this material is intended solely for lawful laboratory research purposes and will not be used for human consumption, veterinary use, medical use, diagnosis, treatment, cure, or prevention of disease. Apexx Biolabs does not provide dosing instructions, treatment recommendations, medical advice, or guidance regarding human use of any product.",
         },
-      ].map(
-        (section) => (
-          <section
-            key={section.title}
-            className="px-6 md:px-10 pb-10"
-          >
-            <div className="max-w-7xl mx-auto rounded-[26px] border border-white/10 bg-white/[0.04] p-6">
-              <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-xs mb-3">
-                {section.title}
-              </h3>
+      ].map((section) => (
+        <section
+          key={section.title}
+          className="px-6 md:px-10 pb-10"
+        >
+          <div className="max-w-7xl mx-auto rounded-[26px] border border-white/10 bg-white/[0.04] p-6">
+            <h3 className="text-[#A5D8FF] font-bold uppercase tracking-[0.25em] text-xs mb-3">
+              {section.title}
+            </h3>
 
-              <p className="text-white/55 text-sm leading-relaxed">
-                {section.text}
-              </p>
-            </div>
-          </section>
-        )
-      )}
+            <p className="text-white/55 text-sm leading-relaxed">
+              {section.text}
+            </p>
+          </div>
+        </section>
+      ))}
     </main>
   );
 }

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -28,7 +29,7 @@ type FlashSale = {
   active: boolean;
 };
 
-type ProductSize = "10mg" | "20mg";
+type ProductSize = "10mg" | "20mg" | "30mg";
 
 type ProductVariantData = {
   inventory: number | null;
@@ -77,6 +78,14 @@ export default function APX3Page() {
       path:
         "/products/apx3",
     },
+    "30mg": {
+      id: "apx3-30mg",
+      name: "APX-3 30mg",
+      image:
+        "/images/apx330blue.png",
+      path:
+        "/products/apx3",
+    },
   };
 
   const [productData, setProductData] =
@@ -96,6 +105,12 @@ export default function APX3Page() {
       "20mg": {
         inventory: null,
         price: 130,
+        databaseProductId: null,
+        flashSale: null,
+      },
+      "30mg": {
+        inventory: null,
+        price: 140,
         databaseProductId: null,
         flashSale: null,
       },
@@ -123,6 +138,7 @@ export default function APX3Page() {
 
       lot: "APX202608-BLK",
     },
+    "30mg": null,
   };
 
   const selectedProduct =
@@ -359,6 +375,20 @@ export default function APX3Page() {
                   );
                 }
 
+                if (size === "30mg") {
+                  return (
+                    slug === "apx3-30mg" ||
+                    slug === "apx-3-30mg" ||
+                    id === "apx3-30mg" ||
+                    id === "apx-3-30mg" ||
+                    ((name?.includes("apx-3") ||
+                      name?.includes("apx3")) &&
+                      itemSize === "30mg") ||
+                    name?.includes("apx-3 30") ||
+                    name?.includes("apx3 30")
+                  );
+                }
+
                 return (
                   slug ===
                     "apx3-20mg" ||
@@ -506,6 +536,11 @@ export default function APX3Page() {
                 "20mg",
                 130
               ),
+            "30mg":
+              buildVariantData(
+                "30mg",
+                140
+              ),
           });
         } catch (error) {
           console.error(
@@ -530,6 +565,16 @@ export default function APX3Page() {
                 null,
               price:
                 130,
+              databaseProductId:
+                null,
+              flashSale:
+                null,
+            },
+            "30mg": {
+              inventory:
+                null,
+              price:
+                140,
               databaseProductId:
                 null,
               flashSale:
@@ -978,12 +1023,13 @@ export default function APX3Page() {
                   Select Size
                 </p>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
 
                   {(
                     [
                       "10mg",
                       "20mg",
+                      "30mg",
                     ] as ProductSize[]
                   ).map(
                     (mg) => (
@@ -1321,6 +1367,7 @@ export default function APX3Page() {
 
               </div>
 
+              {selectedCoa && (
               <a
                 href={
                   selectedCoa.path
@@ -1332,6 +1379,7 @@ export default function APX3Page() {
                 View Certificate of
                 Analysis →
               </a>
+              )}
 
             </div>
           </div>
@@ -1339,7 +1387,7 @@ export default function APX3Page() {
       </section>
 
       {/* COA SUMMARY */}
-      <section className="px-6 md:px-10 pb-12">
+      {selectedCoa ? <section className="px-6 md:px-10 pb-12">
 
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
 
@@ -1378,7 +1426,7 @@ export default function APX3Page() {
                     : "Content"}
                 </span>
 
-                                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
                   Lot:{" "}
                   {
                     selectedCoa.lot
@@ -1506,7 +1554,16 @@ export default function APX3Page() {
           )}
 
         </div>
-      </section>
+      </section> : <section className="px-6 md:px-10 pb-12">
+        <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+          <h3 className="text-2xl font-black text-white">
+            APX-3 30mg
+          </h3>
+          <p className="text-white/60 mt-3">
+            Certificate of Analysis not yet available.
+          </p>
+        </div>
+      </section>}
 
       {/* QUALITY */}
       <section className="px-6 md:px-10 pb-10">

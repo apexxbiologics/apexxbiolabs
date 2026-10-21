@@ -579,7 +579,7 @@ Receive a Complimentary Gift With Any 8 Vials
                     {
             name: "Tesamorelin",
             desc: "5mg • 10mg Research Peptide",
-            image: "/images/tesa5.png",
+            image: "/images/tesa20.png",
             href: "/products/tesamorelin",
           },
           {
@@ -615,7 +615,7 @@ Receive a Complimentary Gift With Any 8 Vials
                     {
             name: "SS-31",
             desc: "10mg Research Peptide",
-            image: "/images/ss3110.png",
+            image: "/images/ss3150.png",
             href: "/products/ss31",
           },
                     {

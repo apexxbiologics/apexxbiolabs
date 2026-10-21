@@ -11,8 +11,11 @@ import {
 
 type PreviousCOA = {
   batch: string;
-  purity: string;
-  content: string;
+  laboratory?: string;
+  date?: string;
+  purity?: string;
+  content?: string;
+  totalContent?: string;
   coa: string;
 };
 
@@ -20,6 +23,9 @@ type ProductCOA = {
   name: string;
   batch: string;
   status: "Verified" | "Awaiting Testing";
+  laboratory?: string;
+  report?: string;
+  date?: string;
   purity?: string;
   content?: string;
   totalContent?: string;
@@ -76,6 +82,14 @@ export default function COAsPage() {
   content: "13.57 mg",
   coa: "/images/coas/ss31-10mg-ss102609-wht-09-04-2026.pdf",
 },
+{
+  name: "SS-31 50mg",
+  batch: "T-SS3-0017",
+  status: "Verified",
+  purity: "99.74%",
+  content: "51.98 mg",
+  coa: "/images/coas/SS-31_50mg_COA_Axiom_3pages.pdf",
+},
     {
       name: "APX-3 10mg",
       batch: "Blue Cap-1",
@@ -102,12 +116,18 @@ export default function COAsPage() {
 },
 {
   name: "BPC-157 10mg",
-  batch: "BPC102608-CBLU",
+  batch: "T-BPC-0032",
   status: "Verified",
-  purity: "99.80%",
-  content: "10.18 mg",
-  coa: "/images/coas/bpc157-10mg-bpc102608-cblu-09-07-2026.pdf",
+  purity: "99.57%",
+  content: "10.47 mg",
+  coa: "/images/coas/BPC-157_10mg_Axiom_COA_3pages.pdf",
   previousCoas: [
+    {
+      batch: "BPC102608-CBLU",
+      purity: "99.80%",
+      content: "10.18 mg",
+      coa: "/images/coas/bpc157-10mg-bpc102608-cblu-09-07-2026.pdf",
+    },
     {
       batch: "Blue Cap-2",
       purity: "99.72%",
@@ -213,6 +233,14 @@ export default function COAsPage() {
     },
   ],
 },
+{
+  name: "MOTS-C 20mg",
+  batch: "MSC202609-BLK",
+  status: "Verified",
+  purity: "99.78%",
+  content: "25.77 mg",
+  coa: "/images/coas/mots-c-20mg-msc202609.pdf",
+},
     {
       name: "ARA-290 10mg",
       batch: "Pending",
@@ -223,14 +251,22 @@ export default function COAsPage() {
       batch: "Pending",
       status: "Awaiting Testing",
     },
+{
+  name: "Adamax 10mg",
+  batch: "T-ADA-0018",
+  status: "Verified",
+  purity: "99.92%",
+  content: "10.29 mg",
+  coa: "/images/coas/Adamax_1032_10mg_COA_3pages.pdf",
+  previousCoas: [
     {
-      name: "Adamax 10mg",
       batch: "Black Cap-1",
-      status: "Verified",
       purity: "99.21%",
       content: "13.71 mg",
       coa: "/images/coas/adamaxcoa7-20-26.pdf",
     },
+  ],
+},
 {
   name: "CJC/IPA 10mg",
   batch: "CJC/IPA102609-PRPL-AB-CJIP-0916",
@@ -292,14 +328,22 @@ export default function COAsPage() {
       batch: "Pending",
       status: "Awaiting Testing",
     },
+{
+  name: "5-Amino-1MQ 50mg",
+  batch: "T-5AM-0015",
+  status: "Verified",
+  purity: "99.84%",
+  content: "53.42 mg",
+  coa: "/images/coas/Apexx_5-Amino-1MQ_COA_3pages.pdf",
+  previousCoas: [
     {
-      name: "5-Amino-1MQ 50mg",
       batch: "Orange Cap",
-      status: "Verified",
       purity: "99.90%",
       content: "59.02 mg",
       coa: "/images/coas/7-31-5-amino-1mq-coa.pdf",
     },
+  ],
+},
     {
       name: "Kisspeptin-10 10mg",
       batch: "Pending",
@@ -321,24 +365,41 @@ export default function COAsPage() {
     },
   ],
 },
+
+{
+  name: "Wolverine 20mg",
+  batch: "T-BPC-0025",
+  status: "Verified",
+  laboratory: "Axiom Analytics Laboratories",
+  report: "AX-2026-4260-BT48",
+  date: "October 19, 2026",
+  purity: "99.85%",
+  content: "10.49 mg BPC-157 / 10.57 mg TB-500",
+  totalContent: "21.06 mg",
+  coa: "/images/coas/BPC157_TB500_Wolverine_Axiom_COA_4pages.pdf",
+
+  previousCoas: [
     {
-      name: "Wolverine 20mg",
       batch: "WOLV202609-BLU-AB-WOLB-0911",
-      status: "Verified",
+      laboratory: "Freedom Diagnostics",
+      date: "September 14, 2026",
       purity: "99.38%",
       content: "11.10 mg BPC-157 / 10.14 mg TB-500",
       totalContent: "21.24 mg",
       coa: "/images/coas/9-14-wolverine-coa.pdf",
-      previousCoas: [
-        {
-          batch: "Clear Cap / Blue Crimp",
-          purity: "99.34%",
-          content: "24.77 mg",
-          coa: "/images/coas/7-31-wolverine-coa.pdf",
-        },
-      ],
     },
-  ];
+    {
+      batch: "Clear Cap / Blue Crimp",
+      laboratory: "Freedom Diagnostics",
+      date: "July 31, 2026",
+      purity: "99.34%",
+      content: "24.77 mg",
+      totalContent: "24.77 mg",
+      coa: "/images/coas/7-31-wolverine-coa.pdf",
+    },
+  ],
+},
+];
 
   const verifiedCount = products.filter(
     (product) => product.status === "Verified",

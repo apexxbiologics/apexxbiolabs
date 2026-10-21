@@ -9,7 +9,6 @@ import {
   ClipboardCheck,
   Check,
 } from "lucide-react";
-
 import FavoriteButton from "@/components/FavoriteButton";
 
 type MOTSCSize = "10mg" | "20mg";
@@ -41,32 +40,28 @@ type DatabaseProduct = {
 
 const latestCoaPath =
   "/images/coas/mots-c-10mg-msc102609-red-09-04-2026.pdf";
+const motsc20mgCoaPath =
+  "/images/coas/mots-c-20mg-msc202609.pdf";
+const previousCoaPath = "/images/coas/motsccoa.pdf";
+const oldestCoaPath = "/images/coas/6-26-motsc-coa.pdf";
 
-const previousCoaPath =
-  "/images/coas/motsccoa.pdf";
-
-const oldestCoaPath =
-  "/images/coas/6-26-motsc-coa.pdf";
-
-const productOptions: {
-  size: MOTSCSize;
-  price: number;
-  image: string;
-  id: string;
-}[] = [
+const productOptions = [
   {
-    size: "10mg",
+    size: "10mg" as MOTSCSize,
     price: 45,
     image: "/images/motsc10blue.png",
     id: "motsc",
   },
   {
-    size: "20mg",
+    size: "20mg" as MOTSCSize,
     price: 60,
     image: "/images/motsc20blue.png",
     id: "motsc-20mg",
   },
 ];
+
+const formatMoney = (amount: number) =>
+  Number(amount).toFixed(2);
 
 function findMOTSCProduct(
   products: DatabaseProduct[],
@@ -102,27 +97,16 @@ function findMOTSCProduct(
 export default function MOTSCPage() {
   const [selectedSize, setSelectedSize] =
     useState<MOTSCSize>("10mg");
-
   const [added, setAdded] = useState(false);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
-
-  const [inventory, setInventory] =
-    useState<number | null>(null);
-
+  const [inventory, setInventory] = useState<number | null>(null);
   const [price, setPrice] = useState(45);
-
   const [databaseProductId, setDatabaseProductId] =
     useState<string | null>(null);
-
-  const [flashSale, setFlashSale] =
-    useState<FlashSale | null>(null);
-
-  const [showPreviousCoa, setShowPreviousCoa] =
-    useState(false);
-
+  const [flashSale, setFlashSale] = useState<FlashSale | null>(null);
+  const [showPreviousCoa, setShowPreviousCoa] = useState(false);
   const [quantityDiscounts, setQuantityDiscounts] =
     useState<QuantityDiscountTier[]>([]);
-
   const [productLoaded, setProductLoaded] = useState(false);
 
   const selectedOption =
@@ -138,16 +122,11 @@ export default function MOTSCPage() {
 
   const isOutOfStock =
     productLoaded && (inventory === null || inventory <= 0);
-
   const isLimitedStock =
-    inventory !== null &&
-    inventory > 0 &&
-    inventory <= 5;
+    inventory !== null && inventory > 0 && inventory <= 5;
 
   const flashSalePrice =
-    flashSale !== null
-      ? Number(flashSale.sale_price)
-      : null;
+    flashSale !== null ? Number(flashSale.sale_price) : null;
 
   const isFlashSaleActive =
     flashSalePrice !== null &&
@@ -173,41 +152,28 @@ export default function MOTSCPage() {
 
     const fetchProductData = async () => {
       try {
-        const [productResponse, saleResponse] =
-          await Promise.all([
-            fetch("/api/products", {
-              cache: "no-store",
-            }),
-            fetch("/api/flash-sales", {
-              cache: "no-store",
-            }),
-          ]);
+        const [productResponse, saleResponse] = await Promise.all([
+          fetch("/api/products", { cache: "no-store" }),
+          fetch("/api/flash-sales", { cache: "no-store" }),
+        ]);
 
         const productData = await productResponse.json();
-
-        const saleData = await saleResponse
-          .json()
-          .catch(() => ({
-            success: false,
-            sales: [],
-          }));
+        const saleData = await saleResponse.json().catch(() => ({
+          success: false,
+          sales: [],
+        }));
 
         if (cancelled) return;
 
         const products: DatabaseProduct[] =
-          productData.success &&
-          Array.isArray(productData.products)
+          productData.success && Array.isArray(productData.products)
             ? productData.products
             : [];
 
-        const motsc = findMOTSCProduct(
-          products,
-          selectedSize
-        );
+        const motsc = findMOTSCProduct(products, selectedSize);
 
         if (motsc) {
           const dbId = String(motsc.id);
-
           const regularPrice = Number(
             motsc.price ?? (selectedSize === "20mg" ? 60 : 45)
           );
@@ -220,14 +186,8 @@ export default function MOTSCPage() {
 
           const matchingSale = Array.isArray(saleData.sales)
             ? saleData.sales.find((sale: FlashSale) => {
-                const starts = new Date(
-                  sale.starts_at
-                ).getTime();
-
-                const ends = new Date(
-                  sale.ends_at
-                ).getTime();
-
+                const starts = new Date(sale.starts_at).getTime();
+                const ends = new Date(sale.ends_at).getTime();
                 const salePrice = Number(sale.sale_price);
 
                 return (
@@ -255,12 +215,7 @@ export default function MOTSCPage() {
         setProductLoaded(true);
       } catch (error) {
         if (cancelled) return;
-
-        console.error(
-          "Failed to fetch MOTS-C data:",
-          error
-        );
-
+        console.error("Failed to fetch MOTS-C data:", error);
         setDatabaseProductId(null);
         setInventory(0);
         setPrice(selectedSize === "20mg" ? 60 : 45);
@@ -270,100 +225,68 @@ export default function MOTSCPage() {
     };
 
     fetchProductData();
-
-    const flashSaleRefresh = window.setInterval(
-      fetchProductData,
-      30_000
-    );
+    const interval = window.setInterval(fetchProductData, 30000);
 
     return () => {
       cancelled = true;
-      window.clearInterval(flashSaleRefresh);
+      window.clearInterval(interval);
     };
   }, [selectedSize]);
 
   useEffect(() => {
     const fetchQuantityDiscounts = async () => {
       try {
-        const response = await fetch(
-          "/api/quantity-discounts",
-          { cache: "no-store" }
-        );
-
+        const response = await fetch("/api/quantity-discounts", {
+          cache: "no-store",
+        });
         const data = await response.json();
-
         if (!data.success) return;
 
-        const tiers = (data.tiers || [])
+        const tiers: QuantityDiscountTier[] = (data.tiers || [])
           .map((tier: any) => ({
             id: String(tier.id),
             name: String(tier.name || ""),
             quantity: Number(tier.quantity || 0),
-            discount_percent: Number(
-              tier.discount_percent || 0
-            ),
+            discount_percent: Number(tier.discount_percent || 0),
             sort_order: Number(tier.sort_order || 0),
           }))
           .filter(
             (tier: QuantityDiscountTier) =>
-              tier.quantity > 1 &&
-              tier.discount_percent >= 0
+              tier.quantity > 1 && tier.discount_percent >= 0
           )
-          .sort(
-            (
-              a: QuantityDiscountTier,
-              b: QuantityDiscountTier
-            ) => {
-              if (a.sort_order !== b.sort_order) {
-                return a.sort_order - b.sort_order;
-              }
-
-              return a.quantity - b.quantity;
-            }
+          .sort((a: QuantityDiscountTier, b: QuantityDiscountTier) =>
+            a.sort_order !== b.sort_order
+              ? a.sort_order - b.sort_order
+              : a.quantity - b.quantity
           );
 
         setQuantityDiscounts(tiers);
       } catch (error) {
-        console.error(
-          "Failed to fetch quantity discounts:",
-          error
-        );
+        console.error("Failed to fetch quantity discounts:", error);
       }
     };
 
     fetchQuantityDiscounts();
   }, []);
 
-  const getDiscountTier = (quantity: number) => {
-    return (
-      [...quantityDiscounts]
-        .filter((tier) => quantity >= tier.quantity)
-        .sort((a, b) => b.quantity - a.quantity)[0] ||
-      null
-    );
-  };
+  const getDiscountTier = (quantity: number) =>
+    [...quantityDiscounts]
+      .filter((tier) => quantity >= tier.quantity)
+      .sort((a, b) => b.quantity - a.quantity)[0] || null;
 
   const selectedTier = getDiscountTier(selectedQuantity);
-
   const selectedDiscountPercent = isFlashSaleActive
     ? 0
     : selectedTier?.discount_percent || 0;
 
   const discountedUnitPrice =
-    effectiveUnitPrice *
-    (1 - selectedDiscountPercent / 100);
+    effectiveUnitPrice * (1 - selectedDiscountPercent / 100);
 
-  const selectedTotal =
-    discountedUnitPrice * selectedQuantity;
-
+  const selectedTotal = discountedUnitPrice * selectedQuantity;
   const regularTotal = price * selectedQuantity;
-
-  const formatMoney = (amount: number) =>
-    Number(amount).toFixed(2);
 
   const selectSize = (size: MOTSCSize) => {
     if (size === selectedSize) return;
-
     setSelectedSize(size);
     setSelectedQuantity(1);
     setAdded(false);
@@ -376,25 +299,13 @@ export default function MOTSCPage() {
   };
 
   const selectQuantity = (quantity: number) => {
-    if (
-      inventory !== null &&
-      quantity > inventory
-    ) {
-      return;
-    }
-
+    if (inventory !== null && quantity > inventory) return;
     setSelectedQuantity(quantity);
     setAdded(false);
   };
 
   const addToCart = () => {
-    if (
-      !productLoaded ||
-      !databaseProductId ||
-      isOutOfStock
-    ) {
-      return;
-    }
+    if (!productLoaded || !databaseProductId || isOutOfStock) return;
 
     const existingCart = JSON.parse(
       localStorage.getItem("cart") || "[]"
@@ -408,19 +319,14 @@ export default function MOTSCPage() {
       ? Number(existingProduct.quantity || 0)
       : 0;
 
-    const newQuantity =
-      existingQuantity + selectedQuantity;
+    const newQuantity = existingQuantity + selectedQuantity;
 
-    if (
-      inventory !== null &&
-      newQuantity > inventory
-    ) {
+    if (inventory !== null && newQuantity > inventory) {
       alert(
         `Only ${inventory} vial${
           inventory === 1 ? "" : "s"
         } of ${product.name} are currently available.`
       );
-
       return;
     }
 
@@ -433,8 +339,7 @@ export default function MOTSCPage() {
       : newTier?.discount_percent || 0;
 
     const newDiscountedUnitPrice =
-      effectiveUnitPrice *
-      (1 - newDiscountPercent / 100);
+      effectiveUnitPrice * (1 - newDiscountPercent / 100);
 
     const cartProduct = {
       id: product.id,
@@ -446,12 +351,9 @@ export default function MOTSCPage() {
       path: product.path,
       quantityDiscountPercent: newDiscountPercent,
       quantityDiscountTierId: newTier?.id || null,
-      quantityDiscountTierQuantity:
-        newTier?.quantity || null,
+      quantityDiscountTierQuantity: newTier?.quantity || null,
       flashSaleApplied: isFlashSaleActive,
-      flashSaleId: isFlashSaleActive
-        ? flashSale?.id || null
-        : null,
+      flashSaleId: isFlashSaleActive ? flashSale?.id || null : null,
       flashSalePrice: isFlashSaleActive
         ? effectiveUnitPrice
         : null,
@@ -466,14 +368,39 @@ export default function MOTSCPage() {
         )
       : [...existingCart, cartProduct];
 
-    localStorage.setItem(
-      "cart",
-      JSON.stringify(updatedCart)
-    );
-
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
     window.dispatchEvent(new Event("cartUpdated"));
     setAdded(true);
   };
+
+  const coaBadges10mg = [
+    "✓ Identity Confirmed",
+    "99.62% Purity",
+    "13.04mg Net Content",
+    "Lot: MSC102609-RED",
+    "No Fentanyl Detected",
+    "Endotoxin: Pass",
+  ];
+
+  const coaBadges20mg = [
+    "✓ Identity Confirmed",
+    "99.78% Purity",
+    "25.77mg Net Content",
+    "Lot: MSC202609-BLK",
+    "No Fentanyl Detected",
+    "Endotoxin: Pass",
+  ];
+
+  const coaBadgeClass = (text: string) =>
+    `px-4 py-2 rounded-full border text-sm font-semibold ${
+      text.includes("Confirmed") ||
+      text.includes("Detected") ||
+      text.includes("Pass")
+        ? "bg-green-500/10 border-green-500/20 text-green-400"
+        : text.includes("Lot:")
+        ? "bg-white/5 border-white/10 text-white/60"
+        : "bg-blue-500/10 border-blue-500/20 text-[#A5D8FF]"
+    }`;
 
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
@@ -483,11 +410,10 @@ export default function MOTSCPage() {
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-start">
-            {/* IMAGE */}
+            {/* PRODUCT IMAGE */}
             <div className="flex items-center justify-center">
               <div className="relative w-full max-w-[520px] aspect-square rounded-[42px] overflow-hidden border border-blue-400/10 bg-white/[0.03] shadow-[0_0_30px_rgba(96,165,250,0.15)]">
                 <FavoriteButton product={favoriteProduct} />
-
                 <img
                   src={product.image}
                   alt={product.name}
@@ -503,12 +429,12 @@ export default function MOTSCPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-3">
-                <h1 className="text-4xl md:text-5xl font-black text-white">
+                <h1 className="text-4xl md:text-5xl font-black">
                   MOTS-C
                 </h1>
 
                 <div className="sm:text-right">
-                  <p className="text-3xl md:text-4xl font-black text-white">
+                  <p className="text-3xl md:text-4xl font-black">
                     ${formatMoney(selectedTotal)}
                   </p>
 
@@ -561,65 +487,56 @@ export default function MOTSCPage() {
 
               <div className="h-px bg-white/10 mb-5" />
 
+              {/* SIZE SELECTOR */}
+              <div className="mb-5">
+                <p className="uppercase tracking-[0.18em] text-white/40 text-xs mb-3">
+                  Select Size
+                </p>
 
-{/* =========================================================
-    PRODUCT SIZE SELECTOR — MATCH APX-3
-========================================================= */}
+                <div className="grid grid-cols-2 gap-3">
+                  {productOptions.map((option) => {
+                    const selected = selectedSize === option.size;
 
-<div className="mb-5">
-  <p className="uppercase tracking-[0.18em] text-white/40 text-xs mb-3">
-    Select Size
-  </p>
+                    return (
+                      <button
+                        key={option.size}
+                        type="button"
+                        onClick={() => selectSize(option.size)}
+                        aria-pressed={selected}
+                        className={`relative min-h-[84px] rounded-[17px] border px-3 py-3 transition-all flex flex-col items-center justify-center ${
+                          selected
+                            ? "border-blue-300 bg-blue-400/10"
+                            : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
+                        }`}
+                      >
+                        {selected && (
+                          <span className="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-blue-300 text-[#081526]">
+                            <Check size={12} strokeWidth={3} />
+                          </span>
+                        )}
 
-  <div className="grid grid-cols-2 gap-3">
-    {productOptions.map((option) => {
-      const selected = selectedSize === option.size;
+                        <p
+                          className={`text-base font-black ${
+                            selected ? "text-white" : "text-white/60"
+                          }`}
+                        >
+                          {option.size}
+                        </p>
 
-      return (
-        <button
-          key={option.size}
-          type="button"
-          onClick={() => selectSize(option.size)}
-          aria-pressed={selected}
-          className={`relative min-h-[84px] rounded-[17px] border
-            px-3 py-3 transition-all
-            flex flex-col items-center justify-center
-            ${
-              selected
-                ? "border-blue-300 bg-blue-400/10"
-                : "border-white/10 bg-white/[0.025] hover:bg-white/[0.05]"
-            }`}
-        >
-          {/* SELECTED CHECKMARK */}
-          {selected && (
-            <span className="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-blue-300 text-[#081526]">
-              <Check size={12} strokeWidth={3} />
-            </span>
-          )}
-
-          {/* SIZE */}
-          <p
-            className={`text-base font-black ${
-              selected ? "text-white" : "text-white/60"
-            }`}
-          >
-            {option.size}
-          </p>
-
-          {/* PRICE */}
-          <p
-            className={`text-sm mt-1 ${
-              selected ? "text-white/45" : "text-white/35"
-            }`}
-          >
-            ${formatMoney(option.price)}
-          </p>
-        </button>
-      );
-    })}
-  </div>
-</div>
-
+                        <p
+                          className={`text-sm mt-1 ${
+                            selected
+                              ? "text-white/45"
+                              : "text-white/35"
+                          }`}
+                        >
+                          ${formatMoney(option.price)}
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
               {/* QUANTITY */}
               <div className="mb-5">
@@ -636,7 +553,6 @@ export default function MOTSCPage() {
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  {/* ONE VIAL */}
                   <button
                     type="button"
                     disabled={!productLoaded || isOutOfStock}
@@ -649,10 +565,7 @@ export default function MOTSCPage() {
                   >
                     {selectedQuantity === 1 && (
                       <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-                        <Check
-                          size={11}
-                          strokeWidth={3}
-                        />
+                        <Check size={11} strokeWidth={3} />
                       </span>
                     )}
 
@@ -671,7 +584,6 @@ export default function MOTSCPage() {
                     )}
                   </button>
 
-                  {/* QUANTITY DISCOUNT TIERS */}
                   {quantityDiscounts.map((tier) => {
                     const tierUnavailable =
                       !productLoaded ||
@@ -703,10 +615,7 @@ export default function MOTSCPage() {
                       >
                         {selected && (
                           <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-300 text-[#081526] flex items-center justify-center">
-                            <Check
-                              size={11}
-                              strokeWidth={3}
-                            />
+                            <Check size={11} strokeWidth={3} />
                           </span>
                         )}
 
@@ -762,7 +671,6 @@ export default function MOTSCPage() {
                     className="col-span-2 bg-white text-[#081526] hover:bg-blue-100 rounded-full py-4 uppercase tracking-widest text-xs font-bold transition-all flex items-center justify-center gap-2"
                   >
                     <ShoppingCart size={18} />
-
                     {added
                       ? "Added To Cart"
                       : `Add ${selectedQuantity} ${
@@ -789,93 +697,84 @@ export default function MOTSCPage() {
               </div>
 
               {/* SELECTED SIZE COA */}
-              {selectedSize === "10mg" ? (
-                <a
-                  href={latestCoaPath}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
-                >
-                  View Certificate of Analysis →
-                </a>
-              ) : (
-                <p className="text-center mt-4 text-xs uppercase tracking-widest text-white/40">
-                  Certificate of Analysis not yet available
-                </p>
-              )}
+              <a
+                href={
+                  selectedSize === "20mg"
+                    ? motsc20mgCoaPath
+                    : latestCoaPath
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
+              >
+                View Certificate of Analysis →
+              </a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* COA SUMMARY */}
-      {selectedSize === "10mg" ? (
-        <section className="px-6 md:px-10 pb-12">
-          <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
-            {/* LATEST COA */}
-            <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
-              <div>
-                <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                  Freedom Diagnostics
-                </p>
+      {/* CERTIFICATE OF ANALYSIS */}
+      <section className="px-6 md:px-10 pb-12">
+        <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+          <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+            <div>
+              <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+                Freedom Diagnostics
+              </p>
 
-                <h3 className="text-2xl font-black text-white mb-4">
-                  Latest Certificate of Analysis
-                </h3>
+              <h3 className="text-2xl font-black text-white mb-4">
+                {selectedSize === "20mg"
+                  ? "MOTS-C 20mg Certificate of Analysis"
+                  : "Latest Certificate of Analysis"}
+              </h3>
 
-                <div className="flex flex-wrap gap-2">
-                  <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
-                    ✓ Identity Confirmed
+              <div className="flex flex-wrap gap-2">
+                {(selectedSize === "20mg"
+                  ? coaBadges20mg
+                  : coaBadges10mg
+                ).map((badge) => (
+                  <span
+                    key={badge}
+                    className={coaBadgeClass(badge)}
+                  >
+                    {badge}
                   </span>
-
-                  <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                    99.62% Purity
-                  </span>
-
-                  <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                    13.04mg Net Content
-                  </span>
-
-                  <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                    Lot: MSC102609-RED
-                  </span>
-
-                  <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
-                    No Fentanyl Detected
-                  </span>
-
-                  <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
-                    Endotoxin: Pass
-                  </span>
-                </div>
-              </div>
-
-              <div className="md:text-right">
-                <p className="text-4xl font-black text-[#A5D8FF]">
-                  99.62%
-                </p>
-
-                <p className="uppercase tracking-widest text-white/40 text-xs">
-                  Purity
-                </p>
-
-                <a
-                  href={latestCoaPath}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
-                >
-                  View Full COA
-                </a>
+                ))}
               </div>
             </div>
 
-            {/* COA HISTORY */}
+            <div className="md:text-right">
+              <p className="text-4xl font-black text-[#A5D8FF]">
+                {selectedSize === "20mg" ? "99.78%" : "99.62%"}
+              </p>
+
+              <p className="uppercase tracking-widest text-white/40 text-xs">
+                Purity
+              </p>
+
+              <a
+                href={
+                  selectedSize === "20mg"
+                    ? motsc20mgCoaPath
+                    : latestCoaPath
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
+              >
+                View Full COA
+              </a>
+            </div>
+          </div>
+
+          {/* PREVIOUS COAS: 10MG ONLY */}
+          {selectedSize === "10mg" && (
             <div className="mt-6 border-t border-white/10 pt-5">
               <button
                 type="button"
                 onClick={() =>
-                  setShowPreviousCoa((prev) => !prev)
+                  setShowPreviousCoa((previous) => !previous)
                 }
                 className="w-full rounded-full border border-white/10 bg-white/[0.04] py-3 text-xs uppercase tracking-widest text-white/80 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
               >
@@ -886,169 +785,116 @@ export default function MOTSCPage() {
 
               {showPreviousCoa && (
                 <div className="mt-5 space-y-4">
-                  {/* PREVIOUS COA */}
-                  <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-                    <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
-                      <div>
-                        <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                          Previous Certificate of Analysis
-                        </p>
+                  {[
+                    {
+                      title: "Previous Certificate of Analysis",
+                      name: "Blue Cap-2",
+                      purity: "99.75%",
+                      content: "12.42mg Content",
+                      lot: "Blue Cap-2",
+                      path: previousCoaPath,
+                    },
+                    {
+                      title: "Original Certificate of Analysis",
+                      name: "Light Purple Cap-1",
+                      purity: "99.48%",
+                      content: "13.94mg Content",
+                      lot: "Light Purple Cap-1",
+                      path: oldestCoaPath,
+                    },
+                  ].map((coa) => (
+                    <div
+                      key={coa.path}
+                      className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5"
+                    >
+                      <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+                        <div>
+                          <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+                            {coa.title}
+                          </p>
 
-                        <h3 className="text-xl font-black text-white mb-4">
-                          Blue Cap-2
-                        </h3>
+                          <h3 className="text-xl font-black text-white mb-4">
+                            {coa.name}
+                          </h3>
 
-                        <div className="flex flex-wrap gap-2">
-                          <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
-                            ✓ Identity Confirmed
-                          </span>
+                          <div className="flex flex-wrap gap-2">
+                            {[
+                              "✓ Identity Confirmed",
+                              `${coa.purity} Purity`,
+                              coa.content,
+                              `Lot: ${coa.lot}`,
+                            ].map((badge) => (
+                              <span
+                                key={badge}
+                                className={coaBadgeClass(badge)}
+                              >
+                                {badge}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
 
-                          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                            99.75% Purity
-                          </span>
+                        <div className="md:text-right">
+                          <p className="text-3xl font-black text-[#A5D8FF]">
+                            {coa.purity}
+                          </p>
 
-                          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                            12.42mg Content
-                          </span>
+                          <p className="uppercase tracking-widest text-white/40 text-xs">
+                            Purity
+                          </p>
 
-                          <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                            Lot: Blue Cap-2
-                          </span>
+                          <a
+                            href={coa.path}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
+                          >
+                            View COA
+                          </a>
                         </div>
                       </div>
-
-                      <div className="md:text-right">
-                        <p className="text-3xl font-black text-[#A5D8FF]">
-                          99.75%
-                        </p>
-
-                        <p className="uppercase tracking-widest text-white/40 text-xs">
-                          Purity
-                        </p>
-
-                        <a
-                          href={previousCoaPath}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
-                        >
-                          View COA
-                        </a>
-                      </div>
                     </div>
-                  </div>
-
-                  {/* ORIGINAL COA */}
-                  <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-                    <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
-                      <div>
-                        <p className="uppercase tracking-[0.3em] text-white/40 text-xs mb-2">
-                          Original Certificate of Analysis
-                        </p>
-
-                        <h3 className="text-xl font-black text-white mb-4">
-                          Light Purple Cap-1
-                        </h3>
-
-                        <div className="flex flex-wrap gap-2">
-                          <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
-                            ✓ Identity Confirmed
-                          </span>
-
-                          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                            99.48% Purity
-                          </span>
-
-                          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                            13.94mg Content
-                          </span>
-
-                          <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                            Lot: Light Purple Cap-1
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="md:text-right">
-                        <p className="text-3xl font-black text-[#A5D8FF]">
-                          99.48%
-                        </p>
-
-                        <p className="uppercase tracking-widest text-white/40 text-xs">
-                          Purity
-                        </p>
-
-                        <a
-                          href={oldestCoaPath}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
-                        >
-                          View COA
-                        </a>
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               )}
             </div>
-          </div>
-        </section>
-      ) : (
-        <section className="px-6 md:px-10 pb-12">
-          <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
-            <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-              Quality Documentation
-            </p>
-
-            <h3 className="text-2xl font-black text-white mb-3">
-              MOTS-C 20mg Certificate of Analysis
-            </h3>
-
-            <p className="text-white/55 leading-relaxed">
-              Certificate of Analysis not yet available
-              for the 20mg variant.
-            </p>
-          </div>
-        </section>
-      )}
+          )}
+        </div>
+      </section>
 
       {/* QUALITY */}
       <section className="px-6 md:px-10 pb-10">
         <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-7 grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            [
-              FlaskConical,
-              "Research Use Only",
-              "Strictly for laboratory research.",
-            ],
-            [
-              ShieldCheck,
-              "Third-Party Tested",
-              "Independent lab verified when available.",
-            ],
-            [
-              ClipboardCheck,
-              "Batch Documented",
-              "Documentation available for verified lots.",
-            ],
-            [
-              ShieldCheck,
-              "Quality Target",
-              "99%+ purity target.",
-            ],
-          ].map(([Icon, title, description]: any) => (
+            {
+              Icon: FlaskConical,
+              title: "Research Use Only",
+              description: "Strictly for laboratory research.",
+            },
+            {
+              Icon: ShieldCheck,
+              title: "Third-Party Tested",
+              description:
+                "Independent lab verified when available.",
+            },
+            {
+              Icon: ClipboardCheck,
+              title: "Batch Documented",
+              description:
+                "Documentation available for verified lots.",
+            },
+            {
+              Icon: ShieldCheck,
+              title: "Quality Target",
+              description: "99%+ purity target.",
+            },
+          ].map(({ Icon, title, description }) => (
             <div key={title} className="flex gap-4">
-              <Icon
-                className="text-[#A5D8FF]"
-                size={28}
-              />
-
+              <Icon className="text-[#A5D8FF]" size={28} />
               <div>
                 <h3 className="text-white uppercase tracking-widest font-bold text-xs">
                   {title}
                 </h3>
-
                 <p className="text-white/50 text-sm mt-1">
                   {description}
                 </p>
@@ -1078,23 +924,27 @@ export default function MOTSCPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[
-              [
-                "Mitochondrial Signaling",
-                "Studied in models involving mitochondrial-derived peptide communication.",
-              ],
-              [
-                "Energy Regulation",
-                "Evaluated in laboratory research involving cellular energy and metabolic pathways.",
-              ],
-              [
-                "Stress Response",
-                "Research focuses on adaptive cellular stress-response and homeostasis mechanisms.",
-              ],
-              [
-                "Storage",
-                "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
-              ],
-            ].map(([title, description]) => (
+              {
+                title: "Mitochondrial Signaling",
+                description:
+                  "Studied in models involving mitochondrial-derived peptide communication.",
+              },
+              {
+                title: "Energy Regulation",
+                description:
+                  "Evaluated in laboratory research involving cellular energy and metabolic pathways.",
+              },
+              {
+                title: "Stress Response",
+                description:
+                  "Research focuses on adaptive cellular stress-response and homeostasis mechanisms.",
+              },
+              {
+                title: "Storage",
+                description:
+                  "Store refrigerated at 2–8°C. Keep sealed and protected from light until research use.",
+              },
+            ].map(({ title, description }) => (
               <div
                 key={title}
                 className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"

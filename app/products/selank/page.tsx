@@ -529,6 +529,30 @@ export default function SelankPage() {
     setAdded(true);
   };
 
+const latestCoa = {
+  laboratory: "Axiom Analytics Laboratories",
+  batch: "T-SEL-0079",
+  purity: "99.45%",
+  content: "10.47 mg",
+  report: "AX-2026-3941-UHKA",
+  issued: "October 20, 2026",
+  path: "/images/coas/Axiom_Analytics_Selank_Combined_COA.pdf",
+};
+
+const previousCoas = [
+  {
+    subtitle: "Janoshik",
+    label: "Previous Certificate of Analysis",
+    batch: "SEL1005192026-08",
+    purity: "99.62%",
+    content: "11.36 mg",
+    path: "/images/coas/selank-10mg-brown-green-coa.pdf",
+  },
+];
+
+const [showPreviousCoa, setShowPreviousCoa] = useState(false);
+
+
   return (
     <main className="min-h-screen bg-[#081526] text-white overflow-hidden">
       {/* PRODUCT HERO */}
@@ -888,20 +912,22 @@ export default function SelankPage() {
         </div>
       </section>
 
+{/* =====================================================
+    CERTIFICATES OF ANALYSIS
+===================================================== */}
 
-{/* COA SUMMARY */}
 <section className="px-6 md:px-10 pb-12">
 
   <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
 
-    {/* LATEST COA - AXIOM ANALYTICS */}
+    {/* LATEST AXIOM ANALYTICS COA */}
 
     <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
 
       <div>
 
         <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-          Axiom Analytics Laboratories
+          {latestCoa.laboratory}
         </p>
 
         <h3 className="text-2xl font-black text-white mb-4">
@@ -915,37 +941,34 @@ export default function SelankPage() {
           </span>
 
           <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-            99.45% Purity
+            {latestCoa.purity} Purity
           </span>
 
           <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-            10.47mg Content
+            {latestCoa.content} Content
           </span>
 
-          <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+          <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-300 text-sm font-semibold">
             Rapid PCR: Target DNA Not Detected
           </span>
 
-          <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+          <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-300 text-sm font-semibold">
             Fentanyl Screen: None Detected
           </span>
 
           <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-            Batch: T-SEL-0079
+            Batch: {latestCoa.batch}
           </span>
 
         </div>
-
-        <p className="mt-4 text-xs text-white/40">
-          Report: AX-2026-3941-UHKA · Issued: October 20, 2026
-        </p>
-
       </div>
+
+      {/* VIEW AND DOWNLOAD NEW COA */}
 
       <div className="md:text-right">
 
         <p className="text-4xl font-black text-[#A5D8FF]">
-          99.45%
+          {latestCoa.purity}
         </p>
 
         <p className="uppercase tracking-widest text-white/40 text-xs">
@@ -953,97 +976,106 @@ export default function SelankPage() {
         </p>
 
         <a
-          href="/images/coas/Axiom_Analytics_Selank_Combined_COA.pdf"
+          href={latestCoa.path}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20"
+          className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
         >
-          View Full COA
+          View Latest COA
         </a>
 
       </div>
     </div>
 
-    {/* PREVIOUS COA - JANOSHIK */}
+    {/* =================================================
+        PREVIOUS COAS DROPDOWN
+    ================================================= */}
 
     <div className="mt-6 border-t border-white/10 pt-5">
 
-      <details className="group">
+      <button
+        type="button"
+        onClick={() =>
+          setShowPreviousCoa(
+            (previous) => !previous
+          )
+        }
+        aria-expanded={showPreviousCoa}
+        className="w-full rounded-full border border-white/10 bg-white/[0.04] py-3 px-5 text-xs uppercase tracking-widest text-white/80 hover:border-blue-400/50 hover:bg-white/[0.07] transition-all"
+      >
+        {showPreviousCoa
+          ? "Hide Previous COAs"
+          : "See Previous COAs"}
+      </button>
 
-        <summary className="flex items-center justify-between cursor-pointer list-none rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-xs uppercase tracking-widest text-white/80 hover:border-blue-400/40 transition-all [&::-webkit-details-marker]:hidden">
+      {showPreviousCoa && (
+        <div className="mt-5 space-y-4">
 
-          <span>See Previous COAs</span>
+          {previousCoas.map((coa) => (
+            <div
+              key={coa.path}
+              className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5"
+            >
 
-          <span className="text-[#A5D8FF] transition-transform group-open:rotate-180">
-            ▼
-          </span>
+              <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
 
-        </summary>
+                <div>
 
-        <div className="mt-5 rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+                  <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+                    {coa.subtitle}
+                  </p>
 
-          <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+                  <h3 className="text-xl font-black text-white mb-4">
+                    {coa.label}
+                  </h3>
 
-            <div>
+                  <div className="flex flex-wrap gap-2">
 
-              <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                Janoshik
-              </p>
+                    <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                      {coa.purity} Purity
+                    </span>
 
-              <h3 className="text-xl font-black text-white mb-4">
-                Previous Certificate of Analysis
-              </h3>
+                    <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+                      {coa.content} Content
+                    </span>
 
-              <div className="flex flex-wrap gap-2">
+                    <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+                      Lot: {coa.batch}
+                    </span>
 
-                <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
-                  ✓ Identity Confirmed
-                </span>
+                  </div>
+                </div>
 
-                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  99.62% Purity
-                </span>
+                <div className="md:text-right">
 
-                <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
-                  11.36mg Content
-                </span>
+                  <p className="text-3xl font-black text-[#A5D8FF]">
+                    {coa.purity}
+                  </p>
 
-                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                  Batch: SEL1005192026-08
-                </span>
+                  <p className="uppercase tracking-widest text-white/40 text-xs">
+                    Purity
+                  </p>
 
+                  <a
+                    href={coa.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
+                  >
+                    View COA
+                  </a>
+
+                </div>
               </div>
             </div>
+          ))}
 
-            <div className="md:text-right">
-
-              <p className="text-4xl font-black text-[#A5D8FF]">
-                99.62%
-              </p>
-
-              <p className="uppercase tracking-widest text-white/40 text-xs">
-                Purity
-              </p>
-
-              <a
-                href="/images/coas/selank-10mg-brown-green-coa.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20"
-              >
-                View Previous COA
-              </a>
-
-            </div>
-          </div>
         </div>
+      )}
 
-      </details>
     </div>
-
   </div>
 </section>
-
 
       {/* QUALITY */}
       <section className="px-6 md:px-10 pb-10">

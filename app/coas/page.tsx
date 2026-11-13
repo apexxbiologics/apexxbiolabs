@@ -194,14 +194,15 @@ export default function COAsPage() {
   purity: "99.45%",
   content: "10.47 mg",
   coa: "/images/coas/Axiom_Analytics_Selank_Combined_COA.pdf",
-},
-{
-  name: "Selank 10mg",
-  batch: "SEL1005192026-08",
-  status: "Verified",
-  purity: "99.62%",
-  content: "11.36 mg",
-  coa: "/images/coas/selank-10mg-brown-green-coa.pdf",
+  previousCoas: [
+    {
+      laboratory: "Janoshik",
+      batch: "SEL1005192026-08",
+      purity: "99.62%",
+      content: "11.36 mg",
+      coa: "/images/coas/selank-10mg-brown-green-coa.pdf",
+    },
+  ],
 },
 {
   name: "Semax 10mg",

@@ -317,6 +317,14 @@ export default function COAsPage() {
       ],
     },
     {
+  name: "Tesamorelin 20mg",
+  batch: "TESA202610-RED",
+  status: "Verified",
+  purity: "99.56%",
+  content: "22.19 mg",
+  coa: "/images/coas/tesamorelin-20mg-coa.pdf",
+},
+    {
       name: "NAD+ 1000mg",
       batch: "Black Cap-1",
       status: "Verified",

@@ -105,7 +105,7 @@ const products: Product[] = [
     name: "Tesamorelin",
     desc: "5–10mg Research Peptide",
     category: "Secretagogue Research",
-    image: "/images/tesa10.png",
+    image: "/images/tesa20.png",
     href: "/products/tesamorelin",
   },
   {

@@ -353,11 +353,12 @@ export default function COAsPage() {
     },
   ],
 },
-    {
-      name: "Kisspeptin-10 10mg",
-      batch: "Pending",
-      status: "Awaiting Testing",
-    },
+{
+  name: "Kisspeptin-10 10mg",
+  batch: "9-22",
+  status: "Verified",
+  coa: "/images/coas/9-22-kisspeptin-coa.pdf",
+},
 {
   name: "KLOW 80mg",
   batch: "KLOW802609-BLK",

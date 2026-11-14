@@ -355,8 +355,10 @@ export default function COAsPage() {
 },
 {
   name: "Kisspeptin-10 10mg",
-  batch: "9-22",
+  batch: "KS102609-GRN-AB-KISG-0921",
   status: "Verified",
+  purity: "99.73%",
+  content: "10.25 mg",
   coa: "/images/coas/9-22-kisspeptin-coa.pdf",
 },
 {

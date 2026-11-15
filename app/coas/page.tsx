@@ -120,7 +120,7 @@ export default function COAsPage() {
   status: "Verified",
   purity: "99.93%",
   content: "33.04 mg",
-  coa: "/images/coas/apx3-30mg-coa.pdf",
+  coa: "/images/coas/apx3-30mg-coa11-14.pdf",
 },
 {
   name: "BPC-157 10mg",

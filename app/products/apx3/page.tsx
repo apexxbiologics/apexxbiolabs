@@ -138,7 +138,16 @@ export default function APX3Page() {
 
       lot: "APX202608-BLK",
     },
-    "30mg": null,
+  
+"30mg": {
+  lab: "Freedom Diagnostics",
+  purity: "99.93%",
+  content: "33.04mg",
+  lot: "APX3302611-CLR",
+  path: "/images/coas/apx3-30mg-coa.pdf",
+  endotoxins: "Pass (2 replicates)",
+},
+
   };
 
   const selectedProduct =

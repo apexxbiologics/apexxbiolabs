@@ -316,6 +316,7 @@ export default function COAsPage() {
         },
       ],
     },
+
     {
   name: "Tesamorelin 20mg",
   batch: "TESA202610-RED",
@@ -324,6 +325,7 @@ export default function COAsPage() {
   content: "22.19 mg",
   coa: "/images/coas/11-14tesamorelin-20mg-coa.pdf",
 },
+
     {
       name: "NAD+ 1000mg",
       batch: "Black Cap-1",

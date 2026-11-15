@@ -120,7 +120,13 @@ export default function TesamorelinPage() {
       endotoxins: "Not Detected",
       sterility: "Not Tested",
     },
-    "20mg": null,
+    "20mg": {
+      lab: "Precision Mass Spec",
+      purity: "99.56%",
+      content: "22.19mg",
+      lot: "TESA202610-RED",
+      href: "/images/coas/11-14tesamorelin-20mg-coa.pdf",
+    },
   };
 
   const previous10mgCoa: CoaData = {

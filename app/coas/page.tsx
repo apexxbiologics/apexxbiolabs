@@ -66,7 +66,7 @@ export default function COAsPage() {
   status: "Verified",
   purity: "99.53%",
   content: "48.09 mg",
-  coa: "/images/coas/neuro-x-48mg-coa.pdf",
+  coa: "/images/coas/neuro-x-48mg-coa11-14.pdf",
 },
 {
   name: "Glutathione 1500mg",

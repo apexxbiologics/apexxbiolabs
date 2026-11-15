@@ -144,7 +144,7 @@ export default function APX3Page() {
   purity: "99.93%",
   content: "33.04mg",
   lot: "APX3302611-CLR",
-  path: "/images/coas/apx3-30mg-coa.pdf",
+  path: "/images/coas/apx3-30mg-coa11-14.pdf",
   endotoxins: "Pass (2 replicates)",
 },
 

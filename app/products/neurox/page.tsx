@@ -893,65 +893,112 @@ export default function NeuroXPage() {
 
               </div>
 
-              <div className="block text-center mt-4 text-xs uppercase tracking-widest text-white/35">
-                COA Coming Soon
-              </div>
+<a
+  href="/images/coas/neuro-x-48mg-coa.pdf"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="block text-center mt-4 text-xs uppercase tracking-widest text-[#A5D8FF] hover:text-white transition-all"
+>
+  View Certificate of Analysis →
+</a>
+
 
             </div>
           </div>
         </div>
       </section>
 
-      {/* COA SUMMARY */}
-      <section className="px-6 md:px-10 pb-12">
 
-        <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
+{/* =====================================================
+    CERTIFICATE OF ANALYSIS
+===================================================== */}
 
-          <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+<section className="px-6 md:px-10 pb-12">
 
-            <div>
+  <div className="max-w-7xl mx-auto rounded-[28px] border border-white/10 bg-white/[0.04] p-6">
 
-              <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
-                Quality Verification
-              </p>
+    {/* LATEST FREEDOM DIAGNOSTICS COA */}
 
-              <h3 className="text-2xl font-black text-white mb-4">
-                Certificate of
-                Analysis
-              </h3>
+    <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
 
-              <div className="flex flex-wrap gap-2">
+      <div>
 
-                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm font-semibold">
-                  Testing Pending
-                </span>
+        <p className="uppercase tracking-[0.3em] text-[#A5D8FF] text-xs mb-2">
+          Freedom Diagnostics
+        </p>
 
-                <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
-                  48mg Blend
-                </span>
+        <h3 className="text-2xl font-black text-white mb-4">
+          Latest Certificate of Analysis
+        </h3>
 
-              </div>
-            </div>
+        <div className="flex flex-wrap gap-2">
 
-            <div className="md:text-right">
+          <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-semibold">
+            ✓ Identity Confirmed
+          </span>
 
-              <p className="uppercase tracking-widest text-white/40 text-xs">
-                Laboratory
-                Verification
-              </p>
+          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+            99.53% Purity
+          </span>
 
-              <button
-                type="button"
-                disabled
-                className="inline-flex mt-3 rounded-full border border-white/10 bg-white/[0.03] px-5 py-2.5 text-white/40 text-sm font-semibold cursor-not-allowed"
-              >
-                COA Coming Soon
-              </button>
+          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+            Pinealon: 13.52 mg
+          </span>
 
-            </div>
-          </div>
+          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+            N-Acetyl Selank Amide: 7.85 mg
+          </span>
+
+          <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-[#A5D8FF] text-sm font-semibold">
+            PE22-28 + N-Acetyl Semax Amide: 26.72 mg
+          </span>
+
+          <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-300 text-sm font-semibold">
+            Endotoxin Threshold: Pass (2 Replicates)
+          </span>
+
+          <span className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-300 text-sm font-semibold">
+            Fentanyl: Not Detected
+          </span>
+
+          <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm">
+            Lot: NX482611-RED
+          </span>
+
         </div>
-      </section>
+
+        <p className="mt-4 text-xs text-white/40">
+          Reported: November 14, 2026
+        </p>
+
+      </div>
+
+      {/* VIEW FULL COA */}
+
+      <div className="md:text-right">
+
+        <p className="text-4xl font-black text-[#A5D8FF]">
+          99.53%
+        </p>
+
+        <p className="uppercase tracking-widest text-white/40 text-xs">
+          Purity
+        </p>
+
+        <a
+          href="/images/coas/neuro-x-48mg-coa11-14.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex mt-3 rounded-full border border-blue-400/20 bg-blue-400/10 px-5 py-2.5 text-blue-300 text-sm font-semibold hover:bg-blue-400/20 transition-all"
+        >
+          View Full COA
+        </a>
+
+      </div>
+    </div>
+  </div>
+</section>
+
 
       {/* QUALITY */}
       <section className="px-6 md:px-10 pb-10">

@@ -322,7 +322,7 @@ export default function COAsPage() {
   status: "Verified",
   purity: "99.56%",
   content: "22.19 mg",
-  coa: "/images/coas/tesamorelin-20mg-coa.pdf",
+  coa: "/images/coas/11-14tesamorelin-20mg-coa.pdf",
 },
     {
       name: "NAD+ 1000mg",

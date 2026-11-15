@@ -967,10 +967,6 @@ export default function NeuroXPage() {
 
         </div>
 
-        <p className="mt-4 text-xs text-white/40">
-          Reported: November 14, 2026
-        </p>
-
       </div>
 
       {/* VIEW FULL COA */}

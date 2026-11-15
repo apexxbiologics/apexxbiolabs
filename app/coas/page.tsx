@@ -115,6 +115,14 @@ export default function COAsPage() {
   ],
 },
 {
+  name: "APX-3 30mg",
+  batch: "APX3302611-CLR",
+  status: "Verified",
+  purity: "99.93%",
+  content: "33.04 mg",
+  coa: "/images/coas/apx3-30mg-coa.pdf",
+},
+{
   name: "BPC-157 10mg",
   batch: "T-BPC-0032",
   status: "Verified",

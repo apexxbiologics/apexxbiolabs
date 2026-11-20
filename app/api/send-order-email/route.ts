@@ -1110,7 +1110,9 @@ export async function POST(request: Request) {
      * Promo / Affiliate tracking.
      */
     let discountRate = 0;
+    let fixedDiscountAmount = 0;
     let appliedPromoCode = "";
+    let adminPromoId: string | null = null;
 
     let affiliateId:
       | string
@@ -1381,13 +1383,110 @@ export async function POST(request: Request) {
     }
 
     /*
-     * Calculate customer promo
-     * discount.
+     * Check admin-created promo codes only if no built-in or
+     * active affiliate code matched. Never trust client pricing.
+     */
+    if (
+      normalizedPromoCode &&
+      !regularPromoRate &&
+      !affiliateId
+    ) {
+      const { data: adminPromo, error: adminPromoError } =
+        await supabaseAdmin
+          .from("promo_codes")
+          .select("id, code, discount_type, discount_value, starts_at, ends_at, usage_limit, active")
+          .eq("code", normalizedPromoCode)
+          .maybeSingle();
+
+      if (adminPromoError) {
+        console.error("Admin promo lookup error:", adminPromoError);
+        return NextResponse.json(
+          { success: false, error: "Unable to verify promo code." },
+          { status: 500 }
+        );
+      }
+
+      if (!adminPromo) {
+        return NextResponse.json(
+          { success: false, error: "Invalid promo code." },
+          { status: 400 }
+        );
+      }
+
+      const now = Date.now();
+      const value = Number(adminPromo.discount_value);
+      const validValue =
+        Number.isFinite(value) &&
+        value > 0 &&
+        (adminPromo.discount_type === "fixed" ||
+          (adminPromo.discount_type === "percentage" && value <= 100));
+
+      if (
+        !adminPromo.active ||
+        (adminPromo.starts_at && now < Date.parse(adminPromo.starts_at)) ||
+        (adminPromo.ends_at && now >= Date.parse(adminPromo.ends_at)) ||
+        !validValue
+      ) {
+        return NextResponse.json(
+          { success: false, error: "This promo code is not currently available." },
+          { status: 400 }
+        );
+      }
+
+      const perCustomerLimit = adminPromo.usage_limit;
+      if (
+        perCustomerLimit !== null &&
+        (!Number.isInteger(Number(perCustomerLimit)) || Number(perCustomerLimit) < 1)
+      ) {
+        return NextResponse.json(
+          { success: false, error: "This promo code has an invalid usage limit." },
+          { status: 500 }
+        );
+      }
+
+      // Preliminary check for a useful checkout error. The SQL RPC below
+      // enforces the limit atomically when recording the order redemption.
+      if (perCustomerLimit !== null) {
+        const { count, error: usageError } = await supabaseAdmin
+          .from("promo_code_redemptions")
+          .select("id", { count: "exact", head: true })
+          .eq("promo_code_id", adminPromo.id)
+          .eq("customer_email", normalizedCustomerEmail);
+
+        if (usageError) {
+          console.error("Promo usage lookup error:", usageError);
+          return NextResponse.json(
+            { success: false, error: "Unable to verify promo usage." },
+            { status: 500 }
+          );
+        }
+        if ((count ?? 0) >= Number(perCustomerLimit)) {
+          return NextResponse.json(
+            { success: false, error: "You have already used this promo code the maximum number of times." },
+            { status: 400 }
+          );
+        }
+      }
+
+      adminPromoId = String(adminPromo.id);
+      appliedPromoCode = normalizedPromoCode;
+      if (adminPromo.discount_type === "fixed") {
+        fixedDiscountAmount = value;
+      } else {
+        discountRate = value / 100;
+      }
+    }
+
+    /*
+     * Calculate customer promo discount from server-verified prices.
+     * Fixed discounts never exceed the merchandise subtotal.
      */
     const serverDiscount = Number(
-      (
-        serverSubtotal *
-        discountRate
+      Math.min(
+        serverSubtotal,
+        Math.max(0, fixedDiscountAmount > 0
+          ? fixedDiscountAmount
+          : serverSubtotal * discountRate)
       ).toFixed(2)
     );
 
@@ -1682,6 +1781,40 @@ export async function POST(request: Request) {
         },
         { status: 500 }
       );
+    }
+
+    /*
+     * Reserve one admin promo redemption for this email and order.
+     * The database function serializes concurrent attempts and rejects
+     * usage beyond the per-customer limit. Roll back the order if it fails.
+     */
+    if (adminPromoId) {
+      const { data: promoReserved, error: promoReserveError } =
+        await supabaseAdmin.rpc("reserve_promo_redemption", {
+          p_promo_code_id: adminPromoId,
+          p_order_id: order.id,
+          p_customer_email: normalizedCustomerEmail,
+        });
+
+      if (promoReserveError || promoReserved !== true) {
+        console.error("Promo redemption reservation error:", promoReserveError);
+        const { error: rollbackError } = await supabaseAdmin
+          .from("orders")
+          .delete()
+          .eq("id", order.id);
+        if (rollbackError) {
+          console.error("Failed to roll back promo order:", rollbackError);
+        }
+        return NextResponse.json(
+          {
+            success: false,
+            error: promoReserveError
+              ? "Unable to reserve this promo code. Please try again."
+              : "This promo code is no longer available for this email.",
+          },
+          { status: promoReserveError ? 500 : 400 }
+        );
+      }
     }
 
     /*

@@ -1,10 +1,7 @@
+
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
   BadgePercent,
@@ -14,6 +11,8 @@ import {
   Tag,
   Zap,
 } from "lucide-react";
+
+import PromoCodeManager from "./PromoCodeManager";
 
 type Product = {
   id: string;
@@ -76,12 +75,8 @@ function formatDateTime(value: string) {
 
 function getSaleState(sale: FlashSale) {
   const now = Date.now();
-  const startsAt = new Date(
-    sale.starts_at
-  ).getTime();
-  const endsAt = new Date(
-    sale.ends_at
-  ).getTime();
+  const startsAt = new Date(sale.starts_at).getTime();
+  const endsAt = new Date(sale.ends_at).getTime();
 
   if (!sale.active) {
     return {
@@ -115,38 +110,24 @@ function getSaleState(sale: FlashSale) {
 }
 
 export default function AdminPromosPage() {
-  const [products, setProducts] =
-    useState<Product[]>([]);
-
-  const [sales, setSales] =
-    useState<FlashSale[]>([]);
-
+  const [products, setProducts] = useState<Product[]>([]);
+  const [sales, setSales] = useState<FlashSale[]>([]);
   const [form, setForm] =
-    useState<FlashSaleForm>(
-      initialForm
-    );
+    useState<FlashSaleForm>(initialForm);
 
-  const [loading, setLoading] =
-    useState(true);
-
-  const [saving, setSaving] =
-    useState(false);
-
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [endingId, setEndingId] =
     useState<string | null>(null);
 
-  const [message, setMessage] =
-    useState("");
-
-  const [error, setError] =
-    useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const selectedProduct = useMemo(
     () =>
       products.find(
         (product) =>
-          String(product.id) ===
-          form.productId
+          String(product.id) === form.productId
       ) || null,
     [products, form.productId]
   );
@@ -168,15 +149,12 @@ export default function AdminPromosPage() {
 
       if (!response.ok || !data.success) {
         throw new Error(
-          data.error ||
-            "Unable to load promos."
+          data.error || "Unable to load flash sales."
         );
       }
 
       setSales(
-        Array.isArray(data.sales)
-          ? data.sales
-          : []
+        Array.isArray(data.sales) ? data.sales : []
       );
 
       setProducts(
@@ -188,7 +166,7 @@ export default function AdminPromosPage() {
       setError(
         err instanceof Error
           ? err.message
-          : "Unable to load promos."
+          : "Unable to load flash sales."
       );
     } finally {
       setLoading(false);
@@ -196,7 +174,7 @@ export default function AdminPromosPage() {
   };
 
   useEffect(() => {
-    loadData();
+    void loadData();
   }, []);
 
   const createFlashSale = async () => {
@@ -206,14 +184,10 @@ export default function AdminPromosPage() {
       setError("");
 
       if (!form.productId) {
-        throw new Error(
-          "Choose a product."
-        );
+        throw new Error("Choose a product.");
       }
 
-      const salePrice = Number(
-        form.salePrice
-      );
+      const salePrice = Number(form.salePrice);
 
       if (
         !Number.isFinite(salePrice) ||
@@ -226,44 +200,27 @@ export default function AdminPromosPage() {
 
       if (
         selectedProduct &&
-        salePrice >=
-          Number(
-            selectedProduct.price || 0
-          )
+        salePrice >= Number(selectedProduct.price || 0)
       ) {
         throw new Error(
           `Sale price must be lower than ${formatMoney(
-            Number(
-              selectedProduct.price || 0
-            )
+            Number(selectedProduct.price || 0)
           )}.`
         );
       }
 
-      if (
-        !form.startsAt ||
-        !form.endsAt
-      ) {
+      if (!form.startsAt || !form.endsAt) {
         throw new Error(
           "Choose a start and end time."
         );
       }
 
-      const startDate = new Date(
-        form.startsAt
-      );
-
-      const endDate = new Date(
-        form.endsAt
-      );
+      const startDate = new Date(form.startsAt);
+      const endDate = new Date(form.endsAt);
 
       if (
-        !Number.isFinite(
-          startDate.getTime()
-        ) ||
-        !Number.isFinite(
-          endDate.getTime()
-        )
+        !Number.isFinite(startDate.getTime()) ||
+        !Number.isFinite(endDate.getTime())
       ) {
         throw new Error(
           "Enter valid sale dates."
@@ -281,17 +238,13 @@ export default function AdminPromosPage() {
         {
           method: "POST",
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            product_id:
-              form.productId,
+            product_id: form.productId,
             sale_price: salePrice,
-            starts_at:
-              startDate.toISOString(),
-            ends_at:
-              endDate.toISOString(),
+            starts_at: startDate.toISOString(),
+            ends_at: endDate.toISOString(),
             active: true,
           }),
         }
@@ -323,9 +276,7 @@ export default function AdminPromosPage() {
     }
   };
 
-  const endFlashSale = async (
-    saleId: string
-  ) => {
+  const endFlashSale = async (saleId: string) => {
     try {
       setEndingId(saleId);
       setMessage("");
@@ -336,8 +287,7 @@ export default function AdminPromosPage() {
         {
           method: "PATCH",
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             id: saleId,
@@ -355,10 +305,7 @@ export default function AdminPromosPage() {
         );
       }
 
-      setMessage(
-        "Flash sale ended."
-      );
-
+      setMessage("Flash sale ended.");
       await loadData();
     } catch (err) {
       setError(
@@ -372,19 +319,19 @@ export default function AdminPromosPage() {
   };
 
   const liveSales = sales.filter(
-    (sale) =>
-      getSaleState(sale).label === "Live"
+    (sale) => getSaleState(sale).label === "Live"
   );
 
   const scheduledSales = sales.filter(
     (sale) =>
-      getSaleState(sale).label ===
-      "Scheduled"
+      getSaleState(sale).label === "Scheduled"
   );
 
   return (
     <main className="min-h-screen bg-[#081526] px-6 py-12 text-white">
       <div className="mx-auto max-w-6xl">
+        {/* PAGE HEADER */}
+
         <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <a
@@ -404,8 +351,8 @@ export default function AdminPromosPage() {
             </h1>
 
             <p className="mt-4 max-w-2xl text-white/55">
-              Manage flash sales and
-              limited-time promotional
+              Manage flash sales, promotional
+              discount codes, and limited-time
               pricing without changing a
               product&apos;s regular price.
             </p>
@@ -419,20 +366,21 @@ export default function AdminPromosPage() {
             <RefreshCw
               size={16}
               className={
-                loading
-                  ? "animate-spin"
-                  : ""
+                loading ? "animate-spin" : ""
               }
             />
-            Refresh
+            Refresh Flash Sales
           </button>
         </div>
+
+        {/* FLASH SALE STATISTICS */}
 
         <div className="mb-8 grid grid-cols-1 gap-5 md:grid-cols-3">
           <div className="rounded-[28px] border border-blue-400/15 bg-white/[0.04] p-6">
             <p className="text-xs uppercase tracking-[0.22em] text-white/45">
               Live Sales
             </p>
+
             <p className="mt-3 text-4xl font-black text-emerald-300">
               {liveSales.length}
             </p>
@@ -442,6 +390,7 @@ export default function AdminPromosPage() {
             <p className="text-xs uppercase tracking-[0.22em] text-white/45">
               Scheduled
             </p>
+
             <p className="mt-3 text-4xl font-black text-yellow-200">
               {scheduledSales.length}
             </p>
@@ -449,13 +398,16 @@ export default function AdminPromosPage() {
 
           <div className="rounded-[28px] border border-blue-400/15 bg-white/[0.04] p-6">
             <p className="text-xs uppercase tracking-[0.22em] text-white/45">
-              Total Records
+              Total Flash Sales
             </p>
+
             <p className="mt-3 text-4xl font-black text-blue-300">
               {sales.length}
             </p>
           </div>
         </div>
+
+        {/* FLASH SALE MESSAGES */}
 
         {message ? (
           <div className="mb-6 rounded-2xl border border-emerald-400/20 bg-emerald-500/[0.08] px-5 py-4 text-sm text-emerald-200">
@@ -469,6 +421,8 @@ export default function AdminPromosPage() {
           </div>
         ) : null}
 
+        {/* CREATE FLASH SALE */}
+
         <section className="mb-8 overflow-hidden rounded-[32px] border border-blue-400/15 bg-white/[0.04]">
           <div className="border-b border-white/10 p-7 md:p-8">
             <div className="flex items-center gap-3">
@@ -480,6 +434,7 @@ export default function AdminPromosPage() {
                 <p className="text-xs uppercase tracking-[0.25em] text-blue-300">
                   Limited Time Pricing
                 </p>
+
                 <h2 className="mt-1 text-2xl font-black">
                   Create Flash Sale
                 </h2>
@@ -498,8 +453,7 @@ export default function AdminPromosPage() {
                 onChange={(event) =>
                   setForm((current) => ({
                     ...current,
-                    productId:
-                      event.target.value,
+                    productId: event.target.value,
                     salePrice: "",
                   }))
                 }
@@ -509,25 +463,21 @@ export default function AdminPromosPage() {
                   Select a product
                 </option>
 
-                {products.map(
-                  (product) => (
-                    <option
-                      key={product.id}
-                      value={product.id}
-                    >
-                      {product.name}
-                      {product.size
-                        ? ` • ${product.size}`
-                        : ""}
-                      {" • "}
-                      {formatMoney(
-                        Number(
-                          product.price || 0
-                        )
-                      )}
-                    </option>
-                  )
-                )}
+                {products.map((product) => (
+                  <option
+                    key={product.id}
+                    value={product.id}
+                  >
+                    {product.name}
+                    {product.size
+                      ? ` • ${product.size}`
+                      : ""}
+                    {" • "}
+                    {formatMoney(
+                      Number(product.price || 0)
+                    )}
+                  </option>
+                ))}
               </select>
             </label>
 
@@ -540,8 +490,7 @@ export default function AdminPromosPage() {
                 {selectedProduct
                   ? formatMoney(
                       Number(
-                        selectedProduct.price ||
-                          0
+                        selectedProduct.price || 0
                       )
                     )
                   : "Choose a product"}
@@ -564,13 +513,10 @@ export default function AdminPromosPage() {
                   step="0.01"
                   value={form.salePrice}
                   onChange={(event) =>
-                    setForm(
-                      (current) => ({
-                        ...current,
-                        salePrice:
-                          event.target.value,
-                      })
-                    )
+                    setForm((current) => ({
+                      ...current,
+                      salePrice: event.target.value,
+                    }))
                   }
                   placeholder="0.00"
                   className="h-12 w-full rounded-2xl border border-white/10 bg-[#0b1b30] pl-8 pr-4 text-sm text-white outline-none transition focus:border-blue-400/50"
@@ -589,8 +535,7 @@ export default function AdminPromosPage() {
                 onChange={(event) =>
                   setForm((current) => ({
                     ...current,
-                    startsAt:
-                      event.target.value,
+                    startsAt: event.target.value,
                   }))
                 }
                 className="h-12 w-full rounded-2xl border border-white/10 bg-[#0b1b30] px-4 text-sm text-white outline-none transition focus:border-blue-400/50"
@@ -608,8 +553,7 @@ export default function AdminPromosPage() {
                 onChange={(event) =>
                   setForm((current) => ({
                     ...current,
-                    endsAt:
-                      event.target.value,
+                    endsAt: event.target.value,
                   }))
                 }
                 className="h-12 w-full rounded-2xl border border-white/10 bg-[#0b1b30] px-4 text-sm text-white outline-none transition focus:border-blue-400/50"
@@ -629,14 +573,15 @@ export default function AdminPromosPage() {
               </button>
 
               <p className="mt-3 text-xs leading-relaxed text-white/40">
-                Flash sale pricing is
-                temporary. The regular
-                product price in Products
-                remains unchanged.
+                Flash sale pricing is temporary.
+                The regular product price in
+                Products remains unchanged.
               </p>
             </div>
           </div>
         </section>
+
+        {/* FLASH SALE HISTORY */}
 
         <section className="rounded-[32px] border border-blue-400/15 bg-white/[0.04]">
           <div className="flex flex-col gap-4 border-b border-white/10 p-7 md:flex-row md:items-center md:justify-between md:p-8">
@@ -644,6 +589,7 @@ export default function AdminPromosPage() {
               <p className="text-xs uppercase tracking-[0.25em] text-blue-300">
                 Promotion History
               </p>
+
               <h2 className="mt-1 text-2xl font-black">
                 Flash Sales
               </h2>
@@ -651,8 +597,7 @@ export default function AdminPromosPage() {
 
             <div className="flex items-center gap-2 text-xs text-white/40">
               <Clock3 size={15} />
-              Times shown in your local
-              timezone
+              Times shown in your local timezone
             </div>
           </div>
 
@@ -667,34 +612,32 @@ export default function AdminPromosPage() {
                   size={28}
                   className="mx-auto mb-3 text-blue-300/60"
                 />
+
                 <p className="font-bold">
                   No flash sales yet
                 </p>
+
                 <p className="mt-2 text-sm text-white/45">
-                  Create your first
-                  limited-time product sale
-                  above.
+                  Create your first limited-time
+                  product sale above.
                 </p>
               </div>
             </div>
           ) : (
             <div className="divide-y divide-white/10">
               {sales.map((sale) => {
-                const state =
-                  getSaleState(sale);
+                const state = getSaleState(sale);
 
-                const regularPrice =
-                  Number(
-                    sale.regular_price || 0
-                  );
+                const regularPrice = Number(
+                  sale.regular_price || 0
+                );
 
                 const savings =
                   regularPrice > 0
                     ? Math.round(
                         (1 -
                           Number(
-                            sale.sale_price ||
-                              0
+                            sale.sale_price || 0
                           ) /
                             regularPrice) *
                           100
@@ -748,8 +691,7 @@ export default function AdminPromosPage() {
                             Sale{" "}
                             {formatMoney(
                               Number(
-                                sale.sale_price ||
-                                  0
+                                sale.sale_price || 0
                               )
                             )}
                           </span>
@@ -783,13 +725,10 @@ export default function AdminPromosPage() {
                       {canEnd ? (
                         <button
                           onClick={() =>
-                            endFlashSale(
-                              sale.id
-                            )
+                            endFlashSale(sale.id)
                           }
                           disabled={
-                            endingId ===
-                            sale.id
+                            endingId === sale.id
                           }
                           className="inline-flex h-11 shrink-0 items-center justify-center rounded-xl border border-red-400/20 bg-red-500/[0.08] px-5 text-sm font-bold text-red-200 transition hover:bg-red-500/[0.14] disabled:opacity-50"
                         >
@@ -809,6 +748,8 @@ export default function AdminPromosPage() {
             </div>
           )}
         </section>
+
+        {/* EXISTING PRICING RULES */}
 
         <section className="mt-8 rounded-[32px] border border-blue-400/10 bg-blue-500/[0.04] p-7 md:p-8">
           <div className="flex gap-4">
@@ -835,6 +776,10 @@ export default function AdminPromosPage() {
             </div>
           </div>
         </section>
+
+        {/* NEW PROMO CODE MANAGER */}
+
+        <PromoCodeManager />
       </div>
     </main>
   );

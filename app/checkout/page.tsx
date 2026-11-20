@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -49,8 +50,13 @@ export default function CheckoutPage() {
     successOrderNumber,
     setSuccessOrderNumber,
   ] = useState("");
+
   const [promoCode, setPromoCode] = useState("");
   const [validatedPromoRate, setValidatedPromoRate] =
+    useState(0);
+  const [validatedPromoType, setValidatedPromoType] =
+    useState<"percentage" | "fixed">("percentage");
+  const [validatedPromoValue, setValidatedPromoValue] =
     useState(0);
   const [promoValidating, setPromoValidating] =
     useState(false);
@@ -126,9 +132,9 @@ export default function CheckoutPage() {
 
         setLoggedInEmail(normalizedEmail);
         setCustomerEmail(normalizedEmail);
-setAccessToken(
-  session?.access_token || ""
-);
+        setAccessToken(
+          session?.access_token || ""
+        );
 
         const [
           profileResult,
@@ -281,119 +287,129 @@ setAccessToken(
     .trim()
     .toUpperCase();
 
-  /*
-   * Promo codes are validated securely through
-   * /api/validate-promo so regular Apexx codes
-   * and active affiliate codes both work here.
-   *
-   * The customer only receives the discount rate.
-   * Affiliate commission information is never
-   * exposed to this checkout page.
-   */
+  // The order server independently verifies all discounts.
   const discountRate = validatedPromoRate;
 
-  const discount = Number(
-    (subtotal * discountRate).toFixed(2)
-  );
+  const discount = promoIsValid
+    ? Number(
+        Math.min(
+          subtotal,
+          validatedPromoType === "fixed"
+            ? validatedPromoValue
+            : subtotal * discountRate
+        ).toFixed(2)
+      )
+    : 0;
 
   useEffect(() => {
-    const code = promoCode
-      .trim()
-      .toUpperCase();
+    const code = promoCode.trim().toUpperCase();
+    const email = customerEmail.trim().toLowerCase();
+
+    setValidatedPromoRate(0);
+    setValidatedPromoValue(0);
+    setValidatedPromoType("percentage");
+    setPromoIsValid(false);
+    setPromoError("");
 
     if (!code) {
-      setValidatedPromoRate(0);
-      setPromoIsValid(false);
-      setPromoError("");
       setPromoValidating(false);
       return;
     }
 
     const controller = new AbortController();
 
-    const timeout = window.setTimeout(
-      async () => {
-        setPromoValidating(true);
+    const timeout = window.setTimeout(async () => {
+      setPromoValidating(true);
 
-        try {
-          const response = await fetch(
-            "/api/validate-promo",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                ...(accessToken
-                  ? {
-                      Authorization: `Bearer ${accessToken}`,
-                    }
-                  : {}),
-              },
-              body: JSON.stringify({
-                code,
-              }),
-              signal: controller.signal,
-            }
-          );
-
-          const data =
-            await response.json();
-
-          if (
-            response.ok &&
-            data.valid &&
-            Number(
-              data.discountRate
-            ) > 0
-          ) {
-            setValidatedPromoRate(
-              Number(
-                data.discountRate
-              )
-            );
-            setPromoIsValid(true);
-            setPromoError("");
-          } else {
-            setValidatedPromoRate(0);
-            setPromoIsValid(false);
-            setPromoError(
-              data.error || "Invalid promo code"
-            );
+      try {
+        const response = await fetch(
+          "/api/validate-promo",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(accessToken
+                ? {
+                    Authorization: `Bearer ${accessToken}`,
+                  }
+                : {}),
+            },
+            body: JSON.stringify({
+              code,
+              email,
+            }),
+            signal: controller.signal,
           }
-        } catch (error) {
-          if (
-            error instanceof DOMException &&
-            error.name ===
-              "AbortError"
-          ) {
-            return;
-          }
+        );
 
-          console.error(
-            "Promo validation error:",
-            error
+        const data = await response.json();
+
+        if (controller.signal.aborted) return;
+
+        const type =
+          data.discountType === "fixed"
+            ? "fixed"
+            : "percentage";
+
+        const rate = Number(data.discountRate || 0);
+
+        const value = Number(
+          data.discountValue ?? rate * 100
+        );
+
+        if (
+          response.ok &&
+          data.valid === true &&
+          Number.isFinite(value) &&
+          value > 0 &&
+          (type !== "percentage" || value <= 100)
+        ) {
+          setValidatedPromoType(type);
+          setValidatedPromoValue(value);
+          setValidatedPromoRate(
+            type === "percentage" ? rate : 0
           );
-
+          setPromoIsValid(true);
+          setPromoError("");
+        } else {
           setValidatedPromoRate(0);
+          setValidatedPromoValue(0);
           setPromoIsValid(false);
           setPromoError(
-            "Unable to validate promo code. Please try again."
+            data.error || "Invalid promo code"
           );
-        } finally {
-          if (
-            !controller.signal.aborted
-          ) {
-            setPromoValidating(false);
-          }
         }
-      },
-      500
-    );
+      } catch (error) {
+        if (
+          error instanceof DOMException &&
+          error.name === "AbortError"
+        ) {
+          return;
+        }
+
+        console.error(
+          "Promo validation error:",
+          error
+        );
+
+        setValidatedPromoRate(0);
+        setValidatedPromoValue(0);
+        setPromoIsValid(false);
+        setPromoError(
+          "Unable to validate promo code. Please try again."
+        );
+      } finally {
+        if (!controller.signal.aborted) {
+          setPromoValidating(false);
+        }
+      }
+    }, 500);
 
     return () => {
       window.clearTimeout(timeout);
       controller.abort();
     };
-  }, [promoCode, accessToken]);
+  }, [promoCode, customerEmail, accessToken]);
 
   const availablePoints = Math.max(
     0,
@@ -437,10 +453,6 @@ setAccessToken(
     return options;
   }, [maximumRedeemablePoints]);
 
-  /*
-   * Reset the selected reward if a promo or
-   * cart change makes it invalid.
-   */
   useEffect(() => {
     if (
       redeemedPoints >
@@ -556,11 +568,6 @@ setAccessToken(
         "Content-Type": "application/json",
       };
 
-      /*
-       * Send the signed-in customer's Supabase token whenever
-       * a session exists. This is required for WELCOME10
-       * account validation as well as rewards.
-       */
       if (accessToken) {
         headers.Authorization = `Bearer ${accessToken}`;
       }
@@ -581,10 +588,9 @@ setAccessToken(
             zipCode,
             paymentMethod,
             cart,
-            promoCode:
-              discountRate > 0
-                ? normalizedPromoCode
-                : "",
+            promoCode: promoIsValid
+              ? normalizedPromoCode
+              : "",
             redeemedPoints,
             marketingConsent,
           }),
@@ -1374,15 +1380,13 @@ setAccessToken(
                     )}
 
                     {!promoValidating &&
-                      promoIsValid &&
-                      discountRate > 0 && (
+                      promoIsValid && (
                         <p className="mt-2 text-sm font-semibold text-green-300">
-                          ✓ {normalizedPromoCode}{" "}
-                          Applied (
-                          {Math.round(
-                            discountRate * 100
-                          )}
-                          % Off)
+                          ✓ {normalizedPromoCode} Applied (
+                          {validatedPromoType === "fixed"
+                            ? `$${validatedPromoValue.toFixed(2)} Off`
+                            : `${validatedPromoValue}% Off`}
+                          )
                         </p>
                       )}
 

@@ -352,14 +352,14 @@ export default function PromoCodeManager() {
 
           <label className="md:col-span-2">
             <span className="mb-2 block text-sm font-bold text-white/75">
-              Usage Limit (Optional)
+              Uses Per Customer (Optional)
             </span>
             <input
               type="number"
               min="1"
               step="1"
               className={inputClass}
-              placeholder="Leave blank for unlimited uses"
+              placeholder="Leave blank for unlimited uses per customer"
               value={form.usage_limit}
               onChange={(e) =>
                 setForm({

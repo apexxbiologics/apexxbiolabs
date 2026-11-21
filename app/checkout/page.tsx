@@ -316,10 +316,9 @@ if (!code) {
   setPromoValidating(false);
   return;
 }
-
 if (!emailIsValid && code !== "WELCOME10") {
   setPromoValidating(false);
-  setPromoError("Enter a valid checkout email to apply this promo code.");
+  setPromoError("");
   return;
 }
 

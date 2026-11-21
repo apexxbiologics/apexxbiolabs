@@ -25,6 +25,11 @@ const emptyForm = {
   usage_limit: "",
 };
 
+// Browser automatically includes the existing admin session cookie.
+function adminHeaders(json = false): HeadersInit {
+  return json ? { "Content-Type": "application/json" } : {};
+}
+
 function getStatus(promo: PromoCode) {
   const now = Date.now();
 
@@ -61,6 +66,7 @@ function formatDate(date: string | null) {
 
 export default function PromoCodeManager() {
   const [promos, setPromos] = useState<PromoCode[]>([]);
+  const [, setClock] = useState(0);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -75,7 +81,7 @@ export default function PromoCodeManager() {
 
       const response = await fetch(
         "/api/admin/promo-codes",
-        { cache: "no-store" }
+        { cache: "no-store", credentials: "same-origin", headers: adminHeaders() }
       );
 
       const data = await response.json();
@@ -98,6 +104,8 @@ export default function PromoCodeManager() {
 
   useEffect(() => {
     void loadPromos();
+    const interval = window.setInterval(() => setClock((n) => n + 1), 15000);
+    return () => window.clearInterval(interval);
   }, []);
 
   async function createPromo() {
@@ -146,9 +154,8 @@ export default function PromoCodeManager() {
         "/api/admin/promo-codes",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          credentials: "same-origin",
+          headers: adminHeaders(true),
           body: JSON.stringify({
             code,
             discount_type: form.discount_type,
@@ -185,6 +192,9 @@ export default function PromoCodeManager() {
 
   async function togglePromo(promo: PromoCode) {
     try {
+      if (!promo.active && promo.ends_at && Date.parse(promo.ends_at) <= Date.now()) {
+        throw new Error("This promotion has expired. Create a new promotion with the same code instead.");
+      }
       setUpdatingId(promo.id);
       setError("");
       setMessage("");
@@ -193,9 +203,8 @@ export default function PromoCodeManager() {
         "/api/admin/promo-codes",
         {
           method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          credentials: "same-origin",
+          headers: adminHeaders(true),
           body: JSON.stringify({
             id: promo.id,
             active: !promo.active,

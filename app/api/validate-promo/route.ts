@@ -216,8 +216,13 @@ export async function POST(request: Request) {
       .select(
         "id, code, discount_type, discount_value, starts_at, ends_at, usage_limit, active"
       )
-      .eq("code", code)
-      .maybeSingle();
+.eq("code", code)
+.eq("active", true)
+.or(`starts_at.is.null,starts_at.lte.${new Date().toISOString()}`)
+.or(`ends_at.is.null,ends_at.gt.${new Date().toISOString()}`)
+.order("created_at", { ascending: false })
+.limit(1)
+.maybeSingle();
 
     if (promoError) {
       console.error(

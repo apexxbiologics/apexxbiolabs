@@ -617,9 +617,8 @@ export default function AdminOrdersPage() {
         response.ok &&
         result.success
       ) {
-        setUnlocked(true);
+setUnlocked(true);
 setLoginError("");
-window.location.href = "/admin/promos";
 return;
       }
 

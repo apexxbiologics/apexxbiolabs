@@ -304,6 +304,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     const code = promoCode.trim().toUpperCase();
     const email = customerEmail.trim().toLowerCase();
+      const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     setValidatedPromoRate(0);
     setValidatedPromoValue(0);
@@ -311,10 +312,16 @@ export default function CheckoutPage() {
     setPromoIsValid(false);
     setPromoError("");
 
-    if (!code) {
-      setPromoValidating(false);
-      return;
-    }
+if (!code) {
+  setPromoValidating(false);
+  return;
+}
+
+if (!emailIsValid && code !== "WELCOME10") {
+  setPromoValidating(false);
+  setPromoError("Enter a valid checkout email to apply this promo code.");
+  return;
+}
 
     const controller = new AbortController();
 

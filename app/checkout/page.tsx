@@ -1389,15 +1389,14 @@ export default function CheckoutPage() {
                           )
                         </p>
                       )}
-
-                    {!promoValidating &&
-                      promoCode.trim() !== "" &&
-                      !promoIsValid && (
-                        <p className="mt-2 text-sm text-red-300">
-                          {promoError ||
-                            "Invalid promo code"}
-                        </p>
-                      )}
+{!promoValidating &&
+  promoCode.trim() !== "" &&
+  !promoIsValid &&
+  promoError !== "" && (
+    <p className="mt-2 text-sm text-red-300">
+      {promoError}
+    </p>
+  )}
                   </div>
 
                   <div className="flex justify-between text-white/60">

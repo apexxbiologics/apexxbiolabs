@@ -472,10 +472,10 @@ export default function PromoCodeManager() {
                         : `$${Number(promo.discount_value).toFixed(2)} OFF`}
                     </p>
 
-                    <p className="mt-2 text-sm text-white/50">
-                      Used {promo.times_used} /{" "}
-                      {promo.usage_limit ?? "Unlimited"}
-                    </p>
+<p className="mt-2 text-sm text-white/50">
+  Uses per customer:{" "}
+  {promo.usage_limit ?? "Unlimited"}
+</p>
 
                     <p className="mt-2 text-xs text-white/40">
                       Starts: {formatDate(promo.starts_at)}

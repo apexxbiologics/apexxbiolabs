@@ -1391,12 +1391,28 @@ export async function POST(request: Request) {
       !regularPromoRate &&
       !affiliateId
     ) {
-      const { data: adminPromo, error: adminPromoError } =
+      // Only select the currently usable promotion. Historical promotions
+      // may share this code, but their redemption histories remain separate.
+      const promoLookupTime = new Date().toISOString();
+      const { data: matchingAdminPromos, error: adminPromoError } =
         await supabaseAdmin
           .from("promo_codes")
           .select("id, code, discount_type, discount_value, starts_at, ends_at, usage_limit, active")
           .eq("code", normalizedPromoCode)
-          .maybeSingle();
+          .eq("active", true)
+          .or(`starts_at.is.null,starts_at.lte.${promoLookupTime}`)
+          .or(`ends_at.is.null,ends_at.gt.${promoLookupTime}`)
+          .limit(2);
+
+      if (matchingAdminPromos && matchingAdminPromos.length > 1) {
+        console.error("Overlapping active admin promotions:", normalizedPromoCode);
+        return NextResponse.json(
+          { success: false, error: "This promo code has a configuration conflict. Please contact support." },
+          { status: 500 }
+        );
+      }
+
+      const adminPromo = matchingAdminPromos?.[0] ?? null;
 
       if (adminPromoError) {
         console.error("Admin promo lookup error:", adminPromoError);

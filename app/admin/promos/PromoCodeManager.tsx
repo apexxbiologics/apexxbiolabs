@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BadgePercent, Plus, RefreshCw } from "lucide-react";
+import { BadgePercent, Plus, RefreshCw, ChevronDown } from "lucide-react";
 
 type PromoCode = {
   id: string;
@@ -73,6 +73,7 @@ export default function PromoCodeManager() {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [promoHistoryOpen, setPromoHistoryOpen] = useState(false);
 
   async function loadPromos() {
     try {
@@ -405,7 +406,13 @@ export default function PromoCodeManager() {
       )}
 
       <section className="rounded-[32px] border border-blue-400/15 bg-white/[0.04]">
-        <div className="flex items-center justify-between gap-4 border-b border-white/10 p-7 md:p-8">
+        <div className="flex items-center justify-between gap-4 p-7 md:p-8">
+          <button
+            type="button"
+            onClick={() => setPromoHistoryOpen((open) => !open)}
+            aria-expanded={promoHistoryOpen}
+            className="flex flex-1 items-center justify-between gap-4 text-left"
+          >
           <div>
             <p className="text-xs uppercase tracking-[0.25em] text-blue-300">
               Promotion History
@@ -414,6 +421,8 @@ export default function PromoCodeManager() {
               Your Promo Codes
             </h2>
           </div>
+          <ChevronDown size={20} className={`shrink-0 text-blue-300 transition-transform ${promoHistoryOpen ? "rotate-180" : ""}`} />
+          </button>
 
           <button
             onClick={loadPromos}
@@ -428,8 +437,8 @@ export default function PromoCodeManager() {
           </button>
         </div>
 
-        {loading ? (
-          <p className="p-8 text-sm text-white/50">
+        {promoHistoryOpen && (loading ? (
+          <p className="border-t border-white/10 p-8 text-sm text-white/50">
             Loading promo codes...
           </p>
         ) : promos.length === 0 ? (
@@ -497,7 +506,7 @@ export default function PromoCodeManager() {
               );
             })}
           </div>
-        )}
+        ))}
       </section>
     </div>
   );

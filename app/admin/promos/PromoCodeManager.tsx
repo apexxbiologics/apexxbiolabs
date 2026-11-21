@@ -49,13 +49,6 @@ function getStatus(promo: PromoCode) {
     return "Expired";
   }
 
-  if (
-    promo.usage_limit !== null &&
-    promo.times_used >= promo.usage_limit
-  ) {
-    return "Used Up";
-  }
-
   return "Active";
 }
 

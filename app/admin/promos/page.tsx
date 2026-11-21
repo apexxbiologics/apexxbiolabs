@@ -8,6 +8,7 @@ import {
   CalendarClock,
   Clock3,
   RefreshCw,
+  ChevronDown,
   Tag,
   Zap,
 } from "lucide-react";
@@ -122,6 +123,7 @@ export default function AdminPromosPage() {
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [flashHistoryOpen, setFlashHistoryOpen] = useState(false);
 
   const selectedProduct = useMemo(
     () =>
@@ -581,10 +583,15 @@ export default function AdminPromosPage() {
           </div>
         </section>
 
-        {/* FLASH SALE HISTORY */}
+        {/* FLASH SALE HISTORY — collapsed by default */}
 
         <section className="rounded-[32px] border border-blue-400/15 bg-white/[0.04]">
-          <div className="flex flex-col gap-4 border-b border-white/10 p-7 md:flex-row md:items-center md:justify-between md:p-8">
+          <button
+            type="button"
+            onClick={() => setFlashHistoryOpen((open) => !open)}
+            aria-expanded={flashHistoryOpen}
+            className="flex w-full flex-col gap-4 p-7 text-left md:flex-row md:items-center md:justify-between md:p-8"
+          >
             <div>
               <p className="text-xs uppercase tracking-[0.25em] text-blue-300">
                 Promotion History
@@ -595,13 +602,14 @@ export default function AdminPromosPage() {
               </h2>
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-white/40">
+            <div className="flex items-center gap-3 text-xs text-white/50">
               <Clock3 size={15} />
               Times shown in your local timezone
+              <ChevronDown size={20} className={`transition-transform ${flashHistoryOpen ? "rotate-180" : ""}`} />
             </div>
-          </div>
+          </button>
 
-          {loading ? (
+          {flashHistoryOpen && (loading ? (
             <div className="p-8 text-sm text-white/50">
               Loading flash sales...
             </div>
@@ -746,7 +754,7 @@ export default function AdminPromosPage() {
                 );
               })}
             </div>
-          )}
+          ))}
         </section>
 
         {/* EXISTING PRICING RULES */}
